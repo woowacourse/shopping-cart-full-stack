@@ -66,9 +66,9 @@
   - http status code : 204
   - 설계 결정 이유 : 엔드포인트 요청은 성공하고, 데이터를 서버에서 삭제한 뒤 204 No Content 응답을 받는 것이 DELETE에 적합하다.
 
-## carts
+## cart
 - GET
-  - endpoint : GET /carts
+  - endpoint : GET /cart
   - request body : X
   - response body : 예시
     ```json
@@ -89,7 +89,7 @@
   - 설계 결정 이유 : product의 quantity는 총 재고의 개념이고, carts의 quantity는 상품의 총 재고(서버)를 알 필요는 없이 클라이언트가 몇 개를 구매할 것인지 표현하는 데이터로 헷갈리지 않게 따로 명시
   - productId를 사용하지 않고, cartItemId를 사용하는 이유: 같은 상품일지라도 추후 옵션 기능이 추가되었을 때 구분하기 위함 / 쿠폰 적용(확장 가능성 고려)
 - POST
- - endpoint: POST /carts
+ - endpoint: POST /cart
  - request body : 예시 
     ```json
     {
@@ -113,7 +113,7 @@
   - http status code : 201
   - 설계 결정 이유 : 추후 사용자가 장바구니에 담기를 눌렀을 때, 해당 상품의 Id와 담은 수량을 POST를 통해 장바구니에 보내줘야 함. 보내주면, cartItemId가 생성되고 사용자가 구매하기로 처음 결정한 해당 item의 수량, 상품정보를 응답한다.
 - PATCH 
-    - endpoint : PATCH /carts/:cartItemId
+    - endpoint : PATCH /cart/:cartItemId
     - request body: 예시 
         ```json
         {
@@ -136,7 +136,7 @@
     - http status code : 200
     - 설계 결정 이유 : quantity만 부분 수정하므로 PUT대신 PATCH를 사용한다. 수정된 body를 다시 response 받아서 화면에 표시해야 하기 때문에, 200을 사용한다.
 - DELETE
-    - endpoint : DELETE /carts/:cartItemId
+    - endpoint : DELETE /cart/:cartItemId
     - requests body: X
     - response body: X 204 No Content
     - 설계 결정 이유: 삭제 성공 후 반환할 데이터가 없으므로 204 No Content를 사용한다.
@@ -150,7 +150,7 @@
   - 상품명은 최대 100자이다
 
 - 400
-  - 적용 엔드포인트: POST /products, POST /carts, PATCH /carts/:cartItemId
+  - 적용 엔드포인트: POST /products, POST /cart, PATCH /cart/:cartItemId
   - 검증 조건: 
      1. 필수 필드 누락: /products의 productId, name, price, thumbnailUrl, totalQuantity 데이터 누락
      2. 필수 필드 누락: /carts의 productId, quantity 데이터 누락
@@ -162,7 +162,7 @@
   - 설계 결정 이유: 클라이언트가 서버로 보내는 요청이 잘못되거나, 문법이 어긋나는 경우에 발생하는 것이 400 에러이다.
 
 - 404
-  - 적용 엔드포인트: DELETE /products/:productId, DELETE /carts/:cartItemId, PATCH /carts/:cartItemId
+  - 적용 엔드포인트: DELETE /products/:productId, DELETE /cart/:cartItemId, PATCH /cart/:cartItemId
   - 검증 조건: 
        1. 존재하지 않는 장바구니 아이템 수량 변경 요청 시: cartItemId가 존재하지 않을 경우
        2. DELETE 시 productId, cartItemId가 서버에 존재하지 않을 때
