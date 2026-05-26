@@ -1,7 +1,7 @@
 export default class Product {
   private name: string;
   private price: number;
-  private image?: string;
+  private image?: string | null;
   private id: string;
 
   constructor({
@@ -11,7 +11,7 @@ export default class Product {
   }: {
     name: string;
     price: number;
-    image: string;
+    image?: string;
   }) {
     this.name = name;
     this.price = price;
