@@ -68,10 +68,14 @@ server/src
 ├── index.ts
 ├── modules
 │   ├── products
+│   │   ├── product.model.ts
+│   │   ├── product.controller.ts
 │   │   ├── product.routes.ts
 │   │   ├── product.service.ts
 │   │   └── product.repository.ts
-│   └── carts
+│   └── cart
+│       ├── cart.model.ts
+│       ├── cart.controller.ts
 │       ├── cart.routes.ts
 │       ├── cart.service.ts
 │       └── cart.repository.ts
@@ -80,3 +84,34 @@ server/src
 └── errors
     └── AppError.ts
 ```
+
+### Clean Architecture 레이어별 역할
+
+#### 파일별 역할 정리
+
+| 레이어           | 파일                          | 역할                                         | 의존 대상            |
+| ---------------- | ----------------------------- | -------------------------------------------- | -------------------- |
+| **Entity**       | `product.model.ts`            | 도메인 규칙 캡슐화 (재고 검증, 가격 계산 등) | 없음                 |
+| **Controller**   | `product.controller.ts`       |                                              | 없음                 |
+| **Repository**   | `product.repository.ts`       | DB 접근, Entity ↔ DB row 변환                | DB 드라이버          |
+| **Service**      | `product.service.ts`          | Use Case 조율, Entity와 Repository 연결      | Entity, Repository   |
+| **Routes**       | `product.routes.ts`           | HTTP 요청/응답 처리, 입력 파싱               | Service              |
+| **AppError**     | `errors/AppError.ts`          | 구조화된 에러 객체 정의                      | 없음                 |
+| **errorHandler** | `middlewares/errorHandler.ts` | 에러를 HTTP 응답으로 변환                    | AppError             |
+| **app.ts**       | `app.ts`                      | Express 설정, 미들웨어/라우터 등록           | Routes, errorHandler |
+| **index.ts**     | `index.ts`                    | 서버 시작, 포트 리스닝                       | app.ts               |
+
+#### 의존 방향 흐름
+
+```
+index.ts
+  → app.ts
+    → routes      (HTTP 처리)
+      → service   (조율)
+        → model   (도메인 규칙 판단)
+        → repository (DB 접근)
+          → model (DB row → Entity 변환)
+```
+
+> 핵심은 **model이 아무것도 의존하지 않는다**는 것.
+> 가장 안쪽에 위치하고 단독 테스트가 가능하다.
