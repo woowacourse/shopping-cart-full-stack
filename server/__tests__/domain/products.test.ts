@@ -43,4 +43,14 @@ describe('상품 도메인 예외 테스트', () => {
 
     expect(() => new Product(data)).toThrow('상품명이 100자를 초과합니다.');
   });
+
+  test('가격이 0원 이하이면 예외 처리한다.', () => {
+    const data = {
+      name: '나이키',
+      price: 0,
+      image: 'img/test',
+    };
+
+    expect(() => new Product(data)).toThrow('가격은 1원 이상입니다.');
+  });
 });
