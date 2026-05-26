@@ -81,13 +81,12 @@ Error
 DELETE /products/{productId} : 특정 상품을 삭제한다.
 
 ```js
-// request
-{
-}
+// response status 204, DELETE 요청이 성공했을 때는 응답 값이 없다.
+// No Contents
 ```
 
+존재하지 않는 상품의 경우
+
 ```js
-// response
-{
-}
+// response status 404
 ```
