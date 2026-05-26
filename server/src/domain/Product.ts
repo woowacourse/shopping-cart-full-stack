@@ -22,6 +22,8 @@ export default class Product {
 
   #validatorName(name: string) {
     if (name.length === 0) throw new Error('상품명이 공백입니다.');
+
+    if (name.length > 100) throw new Error('상품명이 100자를 초과합니다.');
   }
 
   getProduct() {
