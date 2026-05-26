@@ -22,3 +22,15 @@ describe('상품 도메인 테스트', () => {
     expect(product.getProduct().price).toBe(1000);
   });
 });
+
+describe('상품 도메인 예외 테스트', () => {
+  test('상품명이 공백이면 예외 처리한다.', () => {
+    const data = {
+      name: '',
+      price: 1000,
+      image: 'img/test',
+    };
+
+    expect(() => new Product(data)).toThrow('상품명이 공백입니다.');
+  });
+});
