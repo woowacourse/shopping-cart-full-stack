@@ -25,4 +25,15 @@ describe('쇼핑 장바구니 도메인 예외 테스트', () => {
       '상품 수량이 1 이상이어야 합니다.',
     );
   });
+
+  test('장바구니 상품 수량이 100 이상이면 예외 처리한다.', () => {
+    const data = {
+      id: 'testId',
+      quantity: 100,
+    };
+
+    expect(() => new ShoppingCart(data)).toThrow(
+      '상품 수량이 99 이하여야 합니다.',
+    );
+  });
 });
