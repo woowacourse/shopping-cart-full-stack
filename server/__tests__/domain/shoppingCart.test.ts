@@ -13,3 +13,16 @@ describe('쇼핑 장바구니 도메인 테스트', () => {
     expect(shoppingCart.getShoppingCart().quantity).toBe(3);
   });
 });
+
+describe('쇼핑 장바구니 도메인 예외 테스트', () => {
+  test('장바구니 상품 수량이 0 이하이면 예외 처리한다.', () => {
+    const data = {
+      id: 'testId',
+      quantity: 0,
+    };
+
+    expect(() => new ShoppingCart(data)).toThrow(
+      '상품 수량이 1 이상이어야 합니다.',
+    );
+  });
+});
