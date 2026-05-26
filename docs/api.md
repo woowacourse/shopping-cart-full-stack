@@ -29,7 +29,6 @@
             "name": "신발A",
             "price": 35000,
             "thumbnailUrl": "https://example.com/image.png",
-            "quantity": 1,
             "totalQuantity": 10
         }
         ]
