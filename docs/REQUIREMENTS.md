@@ -30,7 +30,7 @@
 
 ### 검증
 
-- [ ] 필수 필드 누락 시 에러를 응답한다 (400 Bad Request)
-- [ ] quantity는 1 이상 99 이하의 정수여야 한다 (400 Bad Request)
-- [ ] price는 0보다 큰 숫자여야 한다 (400 Bad Request)
-- [ ] 상품명은 최대 100자이다 (400 Bad Request)
+- [x] 필수 필드 누락 시 에러를 응답한다 (400 Bad Request)
+- [x] quantity는 1 이상 99 이하의 정수여야 한다 (400 Bad Request)
+- [x] price는 0보다 큰 숫자여야 한다 (400 Bad Request)
+- [x] 상품명은 최대 100자이다 (400 Bad Request)
