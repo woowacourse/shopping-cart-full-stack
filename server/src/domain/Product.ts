@@ -29,6 +29,8 @@ export default class Product {
 
   #validatorPrice(price: number) {
     if (price <= 0) throw new Error('가격은 1원 이상입니다.');
+
+    if (isNaN(price)) throw new Error('가격은 숫자입니다.');
   }
 
   getProduct() {
