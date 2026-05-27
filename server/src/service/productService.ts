@@ -1,5 +1,6 @@
 import { products } from '../database/inMemoryDatabase.ts';
 import Product from '../domain/Product.ts';
+import { deleteShoppingCart } from './shoppingCartService.ts';
 
 export function createProduct({
   name,
@@ -21,4 +22,5 @@ export function getAllProducts() {
 
 export function deleteProduct(id: string) {
   products.delete(id);
+  deleteShoppingCart(id);
 }
