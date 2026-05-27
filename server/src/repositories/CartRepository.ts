@@ -9,6 +9,11 @@ class CartRepository {
     this.#nextId = 1;
   }
 
+  // cartItemId를 기반으로 장바구니의 목록 1개 집어오기
+  findById(cartItemId: number): CartItemData | null {
+    return this.#cart.get(cartItemId) ?? null;
+  }
+
   // `getCartProducts()` 장바구니 목록 조회
   getCartProducts(): CartItemData[] {
     return [...this.#cart.values()];
@@ -24,14 +29,16 @@ class CartRepository {
   }
 
   // `changeQuantity()` 장바구니 수량 변경
-  changeQuantity(cartItemId: number, newQuantity: number): void {
+  changeQuantity(cartItemId: number, newQuantity: number): CartItemData | null {
     validateCartItemData(newQuantity);
     // cartItemId를 찾아서
     const cartItem = this.#cart.get(cartItemId);
-    if (!cartItem) return;
+    if (!cartItem) return null;
     // newQuantity로 업데이트
     const newItem = { ...cartItem, quantity: newQuantity };
     this.#cart.set(cartItemId, newItem);
+
+    return newItem;
   }
 
   // ` deleteByCartId()` 장바구니 목록 제거
