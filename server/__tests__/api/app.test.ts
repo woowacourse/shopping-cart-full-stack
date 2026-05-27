@@ -103,11 +103,47 @@ describe('장바구니 상품 API 테스트', () => {
   test('클라이언트가 DELETE 요청 시 해당 상품을 삭제한다.', async () => {
     const id = getAllProducts()[0].getProduct().id;
 
-    deleteShoppingCart(id);
-
     const response = await request(app).delete(`/carts/${id}`);
 
     expect(response.status).toBe(204);
     expect(getShoppingCart()).toEqual([]);
+  });
+});
+
+describe('유효하지 않은 경로 테스트', () => {
+  test('잘못된 경로로 상품 GET 요청 시 에러 처리한다.', async () => {
+    const response = await request(app).get('/products1');
+    expect(response.status).toBe(404);
+  });
+
+  test('잘못된 경로로 상품 DELETE 요청 시 에러 처리한다.', async () => {
+    const response = await request(app).delete('/products/a');
+    expect(response.status).toBe(404);
+  });
+
+  test('잘못된 경로로 상품 POST 요청 시 에러 처리한다.', async () => {
+    const data = {
+      name: 'test',
+      price: 1000,
+      image: 'example/com',
+    };
+
+    const response = await request(app).post('/products1').send(data);
+    expect(response.status).toBe(404);
+  });
+
+  test('잘못된 경로로 장바구니 GET 요청 시 에러 처리한다.', async () => {
+    const response = await request(app).get('/carts1');
+    expect(response.status).toBe(404);
+  });
+
+  test('잘못된 경로로 장바구니 PATCH 요청 시 에러 처리한다.', async () => {
+    const response = await request(app).patch('/carts1/1');
+    expect(response.status).toBe(404);
+  });
+
+  test('잘못된 경로로 장바구니 DELETE 요청 시 에러 처리한다.', async () => {
+    const response = await request(app).delete('/carts1/1');
+    expect(response.status).toBe(404);
   });
 });
