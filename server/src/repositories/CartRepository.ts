@@ -52,6 +52,11 @@ export default class CartRepository {
       .filter(([_, cartItemData]) => cartItemData.productId === productId)
       .forEach(([cartItemId]) => this.#cart.delete(cartItemId));
   }
+
+  clear(): void {
+    this.#cart.clear();
+    this.#nextId = 1;
+  }
 }
 
 export const cartRepository = new CartRepository();
