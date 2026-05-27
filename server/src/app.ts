@@ -17,4 +17,14 @@ app.get("/api/products/", (_req, res) => {
   res.send({ products: products.map((product) => product.getProduct()) });
 });
 
+app.post("/api/products/", (_req, res) => {
+  const { name, price, thumbnail } = _req.body;
+
+  const product = new Product(name, price, thumbnail);
+  products.push(product);
+  const post = { id: product.getProduct().id };
+
+  res.status(201).send(post);
+});
+
 export default app;

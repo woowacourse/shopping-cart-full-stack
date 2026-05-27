@@ -32,4 +32,15 @@ describe("GET /api/products/", () => {
         done,
       );
   });
+
+  test("프로덕트를 추가한다.", (done) => {
+    request(app)
+      .post("/api/products/")
+      .send({ name: "피자", price: 30000, thumnail: "pizza.png" })
+      .set("Accept", "application/json")
+      .expect(function (res) {
+        res.body.id = "fixed id";
+      })
+      .expect(201, { id: "fixed id" }, done);
+  });
 });
