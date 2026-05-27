@@ -70,3 +70,5 @@ export const createProduct = (productRequest: Partial<ProductRequest>) => {
 
   return product;
 };
+
+export const deleteProduct = (id: number) => {};

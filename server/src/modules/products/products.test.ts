@@ -150,4 +150,22 @@ describe("product service 테스트", () => {
       });
     });
   });
+
+  describe("deleteProduct 테스트", () => {
+    it("id에 해당하는 상품을 삭제한다.", () => {
+      const product = productsService.createProduct({
+        price: 25000,
+        name: "Eco Bag",
+        imgUrl: "https://example.com/images/eco-bag.png",
+      });
+      const productsBeforeDelete = productsService.getProducts();
+
+      productsService.deleteProduct(product.id);
+
+      const productsAfterDelete = productsService.getProducts();
+
+      expect(productsAfterDelete).toHaveLength(productsBeforeDelete.length - 1);
+      expect(productsAfterDelete).not.toContainEqual(product);
+    });
+  });
 });
