@@ -8,9 +8,10 @@ describe('쇼핑 장바구니 도메인 테스트', () => {
       quantity: 3,
     };
 
-    const shoppingCart = new ShoppingCart(data);
+    const shoppingCart = new ShoppingCart();
+    shoppingCart.add(data);
 
-    expect(shoppingCart.getShoppingCart().quantity).toBe(3);
+    expect(shoppingCart.getQuantity('testId')).toBe(3);
   });
 });
 
@@ -21,7 +22,9 @@ describe('쇼핑 장바구니 도메인 예외 테스트', () => {
       quantity: 0,
     };
 
-    expect(() => new ShoppingCart(data)).toThrow(
+    const shoppingCart = new ShoppingCart();
+
+    expect(() => shoppingCart.add(data)).toThrow(
       '상품 수량이 1 이상이어야 합니다.',
     );
   });
@@ -32,7 +35,9 @@ describe('쇼핑 장바구니 도메인 예외 테스트', () => {
       quantity: 100,
     };
 
-    expect(() => new ShoppingCart(data)).toThrow(
+    const shoppingCart = new ShoppingCart();
+
+    expect(() => shoppingCart.add(data)).toThrow(
       '상품 수량이 99 이하여야 합니다.',
     );
   });
