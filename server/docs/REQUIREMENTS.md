@@ -28,22 +28,22 @@
 ## 도메인 테스트 케이스
 ### product service
 #### getProducts
-- [ ] 상품 리스트를 반환한다.
+- [x] 상품 리스트를 반환한다.
 
 #### createProduct
-- [ ] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 새 상품을 추가한다.
-- [ ] 필수값이 누락된 경우 BadRequestError를 던진다 (MISSING_FIELD)
-    - [ ] price
-    - [ ] name
-    - [ ] imgUrl
-- [ ] 전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다 (TYPE_MISMATCH)
-- [ ] 도메인 규칙에 맞지 않는 값이 포함된 경우 BadRequestError를 던진다 (INVALID)
-    - [ ] price가 0보다 큰 숫자가 아니면
-    - [ ] name이 100자 초과이면
+- [x] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 새 상품을 추가한다.
+- [x] 필수값이 누락된 경우 BadRequestError를 던진다 (MISSING_FIELD)
+    - [x] price
+    - [x] name
+    - [x] imgUrl
+- [x] 전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다 (TYPE_MISMATCH)
+- [x] 도메인 규칙에 맞지 않는 값이 포함된 경우 BadRequestError를 던진다 (INVALID)
+    - [x] price가 0보다 큰 숫자가 아니면
+    - [x] name이 100자 초과이면
 
-#### deleteProducts
-- [ ] 정상 요청이 온 경우 요청받은 id에 해당하는 상품을 삭제한다
-- [ ] 전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 BadRequestError를 던진다 (RESOURCE_NOT_FOUND)
+#### deleteProduct
+- [x] id에 해당하는 상품을 삭제한다
+- [x] 전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 BadRequestError를 던진다 (RESOURCE_NOT_FOUND)
 
 ## API 호출 테스트 케이스
 ### product controller
@@ -53,3 +53,7 @@
 - [ ] 엔드포인트에 해당하는 라우터가 없는 경우 404 ROUTE_NOT_FOUND 로 간주한다
 - [ ] 엔드포인트에 대한 method 에 해당하는 라우터가 없는 경우 405 METHOD_NOT_ALLOWED 로 간주한다
 - [ ] 요청 body가 json이 아닌 경우 400 NO_JSON으로 간주한다
+
+## TODO
+- [ ] errorCode 상수화
+- [ ] 필수값 누락 예외 테스트 케이스 완성된 객체에서 필드 하나씩 제거하며 테스트하는 방식 -> 빈 객체 전달하여 배열에 모든 필수값과 errorCode를 반환하는지 확인하는 방식
