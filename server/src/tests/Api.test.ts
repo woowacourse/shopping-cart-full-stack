@@ -95,12 +95,10 @@ describe("카트 API 테스트", () => {
 
   test("장바구니 내 아이템 수량을 수정한다.", (done) => {
     request(app)
-      .patch("/api/card/items/123")
-      .send({ quantity: 10 })
-      .expect(function (res) {
-        res.body.id = "fixed id";
-      })
-      .expect(200, { id: "fixed id", product_id: 123, quantity: 10 }, done);
+      .patch("/api/cart/items/123/")
+      .send({ quantity: 40 })
+      .set("Accept", "application/json")
+      .expect(200, { product_id: "123", quantity: 40 }, done);
   });
 
   test("장바구니 내 아이템을 삭제한다.", (done) => {

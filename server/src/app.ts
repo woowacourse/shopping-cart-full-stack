@@ -38,5 +38,13 @@ export function createApp<Storage extends StorageHandlerType>(
     res.send({ items: cart.getAllItems() });
   });
 
+  app.patch("/api/cart/items/:id/", (req, res) => {
+    const { id } = req.params;
+    const { quantity } = req.body;
+    const cart = storageHandler.getItem<Cart>("cart", "my-cart") as Cart;
+    cart.updateItem(id, quantity);
+    res.status(200).send({ product_id: id, quantity: quantity });
+  });
+
   return app;
 }
