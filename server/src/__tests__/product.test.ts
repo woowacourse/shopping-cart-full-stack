@@ -22,6 +22,23 @@ describe('상품 추가 기능 테스트', () => {
         .find((product) => product.name === mockProduct.name),
     ).not.toBe(undefined);
   });
+
+  test('처음 추가된 상품의 id는 1이고, 상품이 1개씩 추가될 때마다 1씩 증가한다.', () => {
+    // given
+    const productManager = new ProductManager();
+
+    // when
+    productManager.addProduct(mockProduct);
+    productManager.addProduct(mockProduct);
+    productManager.addProduct(mockProduct);
+
+    // then
+    expect(
+      productManager
+        .getProducts()
+        .every((product, index) => product.id === index + 1),
+    ).toBe(true);
+  });
 });
 
 describe('상품 추가 예외 테스트', () => {
@@ -169,5 +186,24 @@ describe('상품 추가 예외 테스트', () => {
         quantity: undefined,
       });
     }).toThrow('재고 필드가 누락되었습니다.');
+  });
+});
+
+describe('상품 삭제 기능 테스트', () => {
+  test('상품 1개를 삭제하면, 해당 상품이 상품 목록에서 삭제된다.', () => {
+    // given
+    const productManager = new ProductManager();
+    productManager.addProduct(mockProduct);
+    const firstAddedProductId = 1;
+
+    // when
+    productManager.deleteProduct(firstAddedProductId);
+
+    // then
+    expect(
+      productManager
+        .getProducts()
+        .find((product) => product.id === firstAddedProductId),
+    ).toBe(undefined);
   });
 });
