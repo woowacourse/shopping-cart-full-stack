@@ -9,7 +9,6 @@
   - 장바구니에 상품을 담을 수 있다.
   - 이미 장바구니에 담긴 상품을 다시 담으면 기존 장바구니 항목의 수량을 증가시킨다.
   - 장바구니에 담긴 상품 목록을 조회할 수 있다.
-  - 장바구니 상품 금액, 배송비, 총 결제 금액을 조회할 수 있다.
   - 장바구니 상품의 수량을 변경할 수 있다.
   - 장바구니에 담긴 상품을 제거할 수 있다.
 
@@ -36,13 +35,6 @@
 - 장바구니에 담긴 상품 목록을 조회할 수 있다.
   - `GET /users/:userId/cart/items` 요청
   - 장바구니에 담긴 상품이 없으면 빈 배열을 응답한다.
-- 장바구니 금액 요약을 조회할 수 있다.
-  - `GET /users/:userId/cart/summary` 요청
-  - {orderAmount, deliveryFee, totalPaymentAmount, freeDeliveryThreshold}
-  - `cartItemIds` query parameter를 전달하면 해당 장바구니 상품만 기준으로 금액을 계산한다.
-  - `cartItemIds`를 전달하지 않으면 장바구니 전체 상품을 기준으로 금액을 계산한다.
-  - 상품 금액 합계가 무료 배송 기준 금액 이상이면 배송비는 0원이다.
-  - 상품 금액 합계가 0원이면 배송비와 총 결제 금액도 0원이다.
 - 장바구니 상품의 수량을 변경할 수 있다.
   - `PATCH /users/:userId/cart/items/:cartItemId` 요청 {purchaseQuantity}
 - 장바구니에 담긴 상품을 제거할 수 있다.
