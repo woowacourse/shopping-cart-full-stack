@@ -11,10 +11,10 @@ export const findById = () => {
 };
 
 export const create = (product: ProductRequest) => {
-  const id = Number(rawProducts.at(-1)?.id ?? 0) + 1;
+  const id = (rawProducts.at(-1)?.id ?? 0) + 1;
   const newProduct = {
     ...product,
-    id: String(id),
+    id,
   };
 
   rawProducts.push(newProduct);

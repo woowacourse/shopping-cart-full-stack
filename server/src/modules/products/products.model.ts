@@ -1,5 +1,5 @@
 export class Product {
-  id: string;
+  id: number;
   price: number;
   name: string;
   imgUrl: string;
@@ -10,7 +10,7 @@ export class Product {
     name,
     imgUrl,
   }: {
-    id: string;
+    id: number;
     price: number;
     name: string;
     imgUrl: string;
