@@ -30,4 +30,8 @@ export default class ShoppingCart {
   deleteProduct(productId: string) {
     this.items.delete(productId);
   }
+
+  hasProductId(productId: string) {
+    return this.items.has(productId);
+  }
 }
