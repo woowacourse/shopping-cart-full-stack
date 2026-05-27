@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type ErrorRequestHandler } from 'express';
 
 import {
   getAllProducts,
@@ -16,59 +16,87 @@ import { shoppingCart } from './database/inMemoryDatabase.ts';
 const app = express();
 app.use(express.json());
 
-app.get('/products', (req, res) => {
-  res.status(200).send(getAllProducts());
-});
-
-app.post('/products', (req, res) => {
-  const request = req.body;
-
-  if (!request.name || !request.price) {
-    res.status(400).send({ message: '유효하지 않은 형식입니다.' });
+app.get('/products', (req, res, next) => {
+  try {
+    res.status(200).send(getAllProducts());
+  } catch (error) {
+    next(error);
   }
-
-  res.status(201).send(createProduct(request));
 });
 
-app.delete('/products/:id', (req, res) => {
-  const productId = req.params.id;
+app.post('/products', (req, res, next) => {
+  try {
+    const request = req.body;
 
-  if (!products.has(productId)) {
-    res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+    if (!request.name || !request.price) {
+      return res.status(400).send({ message: '유효하지 않은 형식입니다.' });
+    }
+
+    res.status(201).send(createProduct(request));
+  } catch (error) {
+    next(error);
   }
-  deleteProduct(productId);
-  res.status(204).send();
 });
 
-app.get('/carts', (_req, res) => {
-  res.status(200).send(getShoppingCart());
-});
+app.delete('/products/:id', (req, res, next) => {
+  try {
+    const productId = req.params.id;
 
-app.patch('/carts/:id', (req, res) => {
-  const productId = req.params.id;
-  const request = req.body.quantity;
-  if (!shoppingCart.hasProductId(productId)) {
-    res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+    if (!products.has(productId)) {
+      return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+    }
+    deleteProduct(productId);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
-
-  patchShoppingCart(productId, request);
-  res.status(204).send();
 });
 
-app.delete('/carts/:id', (req, res) => {
-  const productId = req.params.id;
-  if (!shoppingCart.hasProductId(productId)) {
-    res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+app.get('/carts', (_req, res, next) => {
+  try {
+    res.status(200).send(getShoppingCart());
+  } catch (error) {
+    next(error);
   }
-  deleteProduct(productId);
-  res.status(204).send();
 });
 
-app.get('/slow', async (req, res) => {
-  await new Promise((resolve) => setTimeout(resolve, 3001));
+app.patch('/carts/:id', (req, res, next) => {
+  try {
+    const productId = req.params.id;
+    const request = req.body.quantity;
+    if (!shoppingCart.hasProductId(productId)) {
+      return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+    }
 
-  if (!res.headersSent) {
-    res.status(408).send({ message: '요청 시간이 초과되었습니다.' });
+    patchShoppingCart(productId, request);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/carts/:id', (req, res, next) => {
+  try {
+    const productId = req.params.id;
+    if (!shoppingCart.hasProductId(productId)) {
+      return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+    }
+    deleteProduct(productId);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/slow', async (req, res, next) => {
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 3001));
+
+    if (!res.headersSent) {
+      return res.status(408).send({ message: '요청 시간이 초과되었습니다.' });
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -79,7 +107,7 @@ app.use((_req, res) => {
 app.use((req, res, next) => {
   const timeout = setTimeout(() => {
     if (!res.headersSent) {
-      res.status(408).send({
+      return res.status(408).send({
         message: '요청 시간이 초과되었습니다.',
       });
     }
@@ -93,6 +121,11 @@ app.use((req, res, next) => {
 });
 
 // 500
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  res.status(500).send({ message: '서버 내부 오류입니다.' });
+};
+
+app.use(errorHandler);
 
 // 501
 
