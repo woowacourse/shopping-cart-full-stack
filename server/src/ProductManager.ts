@@ -30,7 +30,14 @@ class ProductManager {
     }
   }
 
+  private validateProductQuantity(quantity: number) {
+    if (quantity < 1 || quantity > 99) {
+      throw new Error('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+    }
+  }
+
   addProduct(product: ProductCreateDTO) {
+    this.validateProductQuantity(product.quantity);
     this.validateProductName(product.name);
     this.validateProductPrice(product.price);
     this.products.push({ ...product, id: this.id++ });

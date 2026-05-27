@@ -62,4 +62,21 @@ describe('상품 추가 예외 테스트', () => {
       });
     }).toThrow('가격은 0보다 큰 숫자여야 합니다.');
   });
+
+  test('재고 수량이 범위(1~99)를 벗어날 경우 에러를 발생시킨다.', () => {
+    // when & then
+    expect(() => {
+      productManager.addProduct({
+        ...mockProduct,
+        quantity: 0,
+      });
+    }).toThrow('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+
+    expect(() => {
+      productManager.addProduct({
+        ...mockProduct,
+        quantity: 100,
+      });
+    }).toThrow('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+  });
 });
