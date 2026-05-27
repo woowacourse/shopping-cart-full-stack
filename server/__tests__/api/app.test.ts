@@ -4,7 +4,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import { getAllProducts } from '../../src/service/productService';
 
-describe('상품 GET API 테스트', () => {
+describe('상품 API 테스트', () => {
   test('클라이언트가 POST 요청 시 상품을 등록한다.', async () => {
     const data = {
       name: 'test',
@@ -39,5 +39,14 @@ describe('상품 GET API 테스트', () => {
         ...data,
       },
     ]);
+  });
+
+  test('클라이언트가 DELETE 요청 시 상품을 삭제한다.', async () => {
+    const response = await request(app).delete(
+      `/products/${getAllProducts()[0].getProduct().id}`,
+    );
+
+    expect(response.status).toBe(204);
+    expect(getAllProducts()).toEqual([]);
   });
 });
