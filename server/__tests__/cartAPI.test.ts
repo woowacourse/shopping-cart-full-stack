@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import request from 'supertest';
 import { BodyForTest, TestDB } from './testDB';
+import { Validator } from '../src/validation';
 
 const app = express();
 app.use(express.json());
@@ -80,7 +81,15 @@ app.put('/cart', function (req: Request, res: Response) {
   }
 
   TestDB.Cart[toBeUpdatedIndex] = req.body;
-  res.status(204).send();
+
+  try {
+    Validator.validateRequestBody(req.body);
+    res.status(204).send();
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ errorMessage: error.message });
+    }
+  }
 });
 
 const productInCart: BodyForTest = {
@@ -129,6 +138,17 @@ describe('PUT /cart', function () {
 
     expect(response.status).toBe(404);
     expect(response.body).toEqual({ errorMessage: '상품을 찾을 수 없습니다.' });
+  });
+
+  it('잘못된 요청이 들어오면 400 에러', async function () {
+    const invalidProduct = { ...productToBeUpdated };
+    invalidProduct.quantity = 0;
+    const response = await request(app)
+      .put('/cart')
+      .send(invalidProduct)
+      .set('Accept', 'application/json');
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ errorMessage: 'quantity는 1 이상 99 이하의 정수여야 합니다.' });
   });
 });
 

@@ -1,4 +1,5 @@
 export interface RequestBody {
+  id?: number;
   imageUrl: string;
   name: string;
   price: number;
@@ -35,5 +36,12 @@ export const Validator = {
       throw new Error('상품명은 100자 이하여야합니다.');
     }
     return true;
+  },
+
+  validateRequestBody(requestBody: RequestBody): void {
+    this.validateRequiredFields(requestBody) &&
+      this.validateQuantity(requestBody) &&
+      this.validatePrice(requestBody) &&
+      this.validateName(requestBody);
   },
 };
