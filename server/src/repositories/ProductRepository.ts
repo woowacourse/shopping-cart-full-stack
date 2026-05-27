@@ -37,6 +37,11 @@ export default class ProductRepository {
   deleteById(productId: number): void {
     this.#products.delete(productId);
   }
+
+    clear(): void {
+    this.#products.clear();
+    this.#nextId = 1;
+  }
 }
 
 export const productRepository = new ProductRepository();
