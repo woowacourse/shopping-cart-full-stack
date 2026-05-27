@@ -42,12 +42,6 @@
 
 ---
 
-## 인증
-
-> 세션 or JWT 선택 예정.
-
----
-
 ## API 데이터 구조
 
 ### Product
@@ -107,7 +101,6 @@ POST /products
 **Headers**
 
 ```
-Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
@@ -171,12 +164,6 @@ DELETE /products/:productId
 | ----------- | -------- | ----------------------- |
 | `productId` | `string` | 삭제할 상품 고유 식별자 |
 
-**Headers**
-
-```
-Authorization: Bearer <token>
-```
-
 #### 응답
 
 ```json
@@ -205,22 +192,12 @@ Authorization: Bearer <token>
 
 ## 장바구니 API
 
-> 모든 장바구니 API는 인증이 필요하다.
-
 > 장바구니 항목에 상품 `productId`를 그대로 사용하지 않고 고유 식별자(`cartItemId`)를 별도로 부여한다. 추후 옵션 기능 구현 시 확장성을 고려한 결정이다.
 
 ### 장바구니 조회
 
 ```
 GET /cart
-```
-
-#### 요청
-
-**Headers**
-
-```
-Authorization: Bearer <token>
 ```
 
 #### 응답
@@ -250,7 +227,6 @@ POST /cart
 **Headers**
 
 ```
-Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
@@ -354,7 +330,6 @@ PATCH /cart/:cartItemId
 **Headers**
 
 ```
-Authorization: Bearer <token>
 Content-Type: application/json
 ```
 
@@ -425,12 +400,6 @@ DELETE /cart/:cartItemId
 | 파라미터     | 타입     | 설명                             |
 | ------------ | -------- | -------------------------------- |
 | `cartItemId` | `string` | 삭제할 장바구니 항목 고유 식별자 |
-
-**Headers**
-
-```
-Authorization: Bearer <token>
-```
 
 #### 응답
 
