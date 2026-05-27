@@ -242,11 +242,3 @@ describe('요청 시간 초과 테스트', () => {
     expect(response.status).toBe(408);
   });
 });
-
-describe('500 내부 서버 에러 테스트', () => {
-  test('예상치 못한 에러가 발생하면 500을 반환한다.', async () => {
-    const response = await request(app).get('/slow');
-
-    expect(response.status).toBe(408);
-  });
-});
