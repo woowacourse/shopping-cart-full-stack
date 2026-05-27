@@ -23,6 +23,7 @@ export default class ShoppingCart {
   }
 
   setQuantity(productId: string, quantity: number) {
+    this.#validateQuantity(quantity);
     this.items.set(productId, quantity);
   }
 
