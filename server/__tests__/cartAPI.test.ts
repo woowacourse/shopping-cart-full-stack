@@ -132,7 +132,29 @@ describe('PUT /cart', function () {
   });
 });
 
-// const toBeUpdatedIndex = TestDB.Cart.findIndex(product => product.hasOwnProperty(productId));
+// DELETE API
+app.delete('/cart/:id', (req: Request, res: Response) => {
+  const requestId = Number(req.params.id);
+  if (!TestDB.Cart) {
+    return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
+  }
+  const isIdExist = TestDB.Cart.find((product) => product.id === requestId);
+  if (!isIdExist) {
+    return res.status(404).send({ errorMessage: '상품을 찾을 수 없습니다.' });
+  }
+  TestDB.Cart = TestDB.Cart.filter((product) => product.id === requestId);
 
-// id가 1인 인덱스가 2라고 가정
-// TestDB.Cart[toBeUpdatedIndex] = requestBody
+  res.status(204).send();
+});
+
+describe('DELETE /cart/:id', function () {
+  it('상품이 삭제되면, 응답 코드는 204 OK 이다.', async function () {
+    const response = await request(app).delete('/cart/1').set('Accept', 'application/json');
+    expect(response.status).toBe(204);
+  });
+  it('해당 id가 DB에 존재하지 않는다면 404 에러', async function () {
+    const response = await request(app).delete('/cart/2').set('Accept', 'application/json');
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ errorMessage: '상품을 찾을 수 없습니다.' });
+  });
+});
