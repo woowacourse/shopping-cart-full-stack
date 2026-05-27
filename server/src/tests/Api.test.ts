@@ -66,3 +66,38 @@ describe("프로덕트 API 테스트", () => {
     request(app).del(`/api/products/${id}/`).expect(204, {}, done);
   });
 });
+
+describe("카트 API 테스트", () => {
+  const storageHandler = new StorageHandler(new InMemoryStorage());
+  const app = createApp<InMemoryStorage>(storageHandler);
+
+  test("장바구니 내 아이템목록을 반환한다.", (done) => {
+    request(app)
+      .get("/api/cart/")
+      .expect(function (res) {
+        res.body.map((item) => (item.id = "fixed id"));
+      })
+      .expect(
+        200,
+        [
+          { id: "fixed id", product_id: 1, quantity: 20 },
+          { id: "fixed id", product_id: 2, quantity: 10 },
+        ],
+        done,
+      );
+  });
+
+  test("장바구니 내 아이템 수량을 수정한다.", (done) => {
+    request(app)
+      .patch("/api/card/items/123")
+      .send({ quantity: 10 })
+      .expect(function (res) {
+        res.body.id = "fixed id";
+      })
+      .expect(200, { id: "fixed id", product_id: 123, quantity: 10 }, done);
+  });
+
+  test("장바구니 내 아이템을 삭제한다.", (done) => {
+    request(app).delete("/api/card/items/123").expect(204, {}, done);
+  });
+});
