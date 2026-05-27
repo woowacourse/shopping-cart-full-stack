@@ -295,7 +295,7 @@ Content-Type: application/json
 장바구니에 담긴 상품 목록을 조회할 수 있다.
 
 ```http
-GET /cart/items
+GET /cart
 ```
 
 ### Response
@@ -352,7 +352,7 @@ id와 수량을 이용해 장바구니 상품의 수량을 변경한다.
 수량은 1개 이상 현재 재고 이하여야 한다.
 
 ```http
-PATCH /cart/items/:id
+PATCH /cart/:id
 Content-Type: application/json
 ```
 
@@ -466,7 +466,7 @@ Content-Type: application/json
 id를 이용해 장바구니의 상품을 제거한다.
 
 ```http
-DELETE /cart/items/:id
+DELETE /cart/:id
 ```
 
 ### Request
