@@ -7,3 +7,7 @@ export interface CreateProductRequestBody {
   price: number;
   imageUrl: string;
 }
+
+export interface UpdateCartQuantityRequestBody {
+  quantity: number;
+}
