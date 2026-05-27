@@ -1,15 +1,11 @@
-import request from "supertest";
+import * as productsService from "./products.service.ts";
 
-import app from "../../app.ts";
+describe("product service 테스트", () => {
+  describe("getProducts 테스트", () => {
+    it("상품 리스트를 반환한다.", () => {
+      const products = productsService.getProducts();
 
-describe("GET /products", () => {
-  it("returns product list", async () => {
-    const response = await request(app).get("/products");
-
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      status: 200,
-      data: [
+      expect(products).toEqual([
         {
           id: "1",
           price: 18000,
@@ -28,7 +24,7 @@ describe("GET /products", () => {
           name: "Reusable Cup",
           imgUrl: "https://example.com/images/reusable-cup.png",
         },
-      ],
+      ]);
     });
   });
 });
