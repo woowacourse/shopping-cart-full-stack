@@ -10,3 +10,8 @@ export const InsertProductRequestBodySchema = z.object({
 export const DeleteProductRequestParamsSchema = z.object({
   productId: z.string(),
 });
+
+export const InsertCartItemBodySchema = z.object({
+  productId: z.string(),
+  quantity: z.number(),
+});
