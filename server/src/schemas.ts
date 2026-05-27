@@ -6,3 +6,7 @@ export const InsertProductRequestBodySchema = z.object({
   image: z.string(),
   stock: z.number(),
 });
+
+export const DeleteProductRequestParamsSchema = z.object({
+  productId: z.string(),
+});

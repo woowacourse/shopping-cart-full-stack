@@ -27,4 +27,14 @@ describe('상품', () => {
       .expect(400);
   });
 
+  it('상품을 삭제할 수 있다.', async () => {
+    const createRes = await request(app).post('/products').send({
+      name: '상품이름A',
+      price: 35000,
+      image: '이미지',
+      stock: 1,
+    });
+
+    await request(app).delete(`/products/${createRes.body.data.productId}`).expect(200);
+  });
 });

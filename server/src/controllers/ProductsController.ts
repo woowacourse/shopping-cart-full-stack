@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import ProductsService from '../services/ProductsService';
-import { InsertProductRequestBodySchema } from './../schemas';
+import { InsertProductRequestBodySchema, DeleteProductRequestParamsSchema } from './../schemas';
 import { ZodError } from 'zod';
+import { NotFoundError } from './../errors';
 
 class ProductsController {
   service;
@@ -47,6 +48,39 @@ class ProductsController {
       res.status(500).json({
         status: 'error',
         data: '상품을 추가하는 중 에러가 발생했습니다.',
+      });
+    }
+  };
+
+  deleteProducts = async (req: Request, res: Response) => {
+    try {
+      const parsedParams = DeleteProductRequestParamsSchema.parse(req.params);
+
+      const productId = await this.service.deleteProduct(parsedParams.productId);
+      res.status(200).json({
+        status: 'success',
+        data: productId,
+      });
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        const { fieldErrors } = error.flatten();
+
+        res.status(400).json({
+          status: 'fail',
+          data: fieldErrors,
+        });
+      }
+
+      if (error instanceof NotFoundError) {
+        res.status(404).json({
+          status: 'fail',
+          data: { [error.resource]: error.message },
+        });
+      }
+
+      res.status(500).json({
+        status: 'error',
+        data: '상품을 지우는 중 에러가 발생했습니다.',
       });
     }
   };
