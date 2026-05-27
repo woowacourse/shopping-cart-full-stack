@@ -72,5 +72,14 @@ export const createProduct = (productRequest: Partial<ProductRequest>) => {
 };
 
 export const deleteProduct = (id: number) => {
+  const product = productsRepository.findById(id);
+
+  if (!product) {
+    throw new BadRequestError(
+      "RESOURCE_NOT_FOUND",
+      "id에 해당하는 상품이 존재하지 않습니다.",
+    );
+  }
+
   productsRepository.deleteById(id);
 };
