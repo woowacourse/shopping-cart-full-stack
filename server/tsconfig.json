@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "bundler",
-    "moduleResolution": "bundler",
+    "module": "nodeNext",
+    "moduleResolution": "nodeNext",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -24,6 +24,9 @@
       ],
       "@modules/*": [
         "./src/modules/*"
+      ],
+      "@db/*": [
+        "./src/db/*"
       ]
     }
   },
