@@ -86,7 +86,7 @@ describe("product service 테스트", () => {
       });
     });
 
-    it("전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다 (TYPE_MISMATCH)", () => {
+    it("전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다.", () => {
       const invalidProducts = [
         {
           price: "25000",
@@ -117,6 +117,36 @@ describe("product service 테스트", () => {
         expect(caughtError).toMatchObject({
           errorCode: "TYPE_MISMATCH",
         });
+      });
+    });
+
+    it("도메인 규칙에 맞지 않는 값이 포함된 경우 BadRequestError를 던진다.", () => {
+      const product = {
+        price: 0,
+        name: "a".repeat(101),
+        imgUrl: "https://example.com/images/eco-bag.png",
+      };
+
+      let caughtError: unknown;
+      try {
+        productsService.createProduct(product);
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).toBeInstanceOf(BadRequestError);
+      expect(caughtError).toMatchObject({
+        errorCode: "INVALID",
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            type: "price",
+            errorCode: "INVALID_PRICE",
+          }),
+          expect.objectContaining({
+            type: "name",
+            errorCode: "INVALID_NAME",
+          }),
+        ]),
       });
     });
   });
