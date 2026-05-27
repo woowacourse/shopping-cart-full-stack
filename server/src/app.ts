@@ -132,6 +132,12 @@ app.get('/slow', async (req, res, next) => {
   }
 });
 
+app.post('/carts', (_req, res) => {
+  res.status(501).send({
+    message: 'Not Implemented',
+  });
+});
+
 app.use((_req, res) => {
   res.status(404).send({ message: '유효하지 않은 경로입니다.' });
 });
@@ -157,7 +163,5 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 };
 
 app.use(errorHandler);
-
-// 501
 
 export default app;
