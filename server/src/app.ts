@@ -8,20 +8,24 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-const products = [
-  new Product("수건", 10000, "/some_image2"),
-  new Product("양말", 3000, "/some_image1"),
-];
+const product1 = new Product("수건", 10000, "/some_image2");
+const product2 = new Product("양말", 3000, "/some_image1");
+const products = new Map([
+  [product1.getId(), product1],
+  [product2.getId(), product2],
+]);
 
 app.get("/api/products/", (_req, res) => {
-  res.send({ products: products.map((product) => product.getProduct()) });
+  res.send({
+    products: [...products.values()].map((product) => product.getProduct()),
+  });
 });
 
 app.post("/api/products/", (_req, res) => {
   const { name, price, thumbnail } = _req.body;
 
   const product = new Product(name, price, thumbnail);
-  products.push(product);
+  products.set(product.getId(), product);
   const post = { id: product.getProduct().id };
 
   res.status(201).send(post);

@@ -18,6 +18,10 @@ class Product {
     this.#thumbnail = thumbnail;
   }
 
+  getId() {
+    return this.#id;
+  }
+
   getProduct() {
     return {
       id: this.#id,
