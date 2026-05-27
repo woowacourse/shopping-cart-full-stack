@@ -39,4 +39,10 @@ app.patch('/carts/:id', (req, res) => {
   res.status(204).send();
 });
 
+app.delete('/carts/:id', (req, res) => {
+  const productId = req.params.id;
+  deleteProduct(productId);
+  res.status(204).send();
+});
+
 export default app;
