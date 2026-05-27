@@ -1,22 +1,21 @@
+import { productsDB } from '../../db.js';
 import type { Product } from './product.model.js';
 
-export class ProductRepository {
-  private products = new Map<string, Product>();
-
+export const productRepository = {
   save(product: Product) {
-    this.products.set(product.productId, product);
+    productsDB.set(product.productId, product);
     return product;
-  }
+  },
 
   findAll() {
-    return Array.from(this.products.values());
-  }
+    return Array.from(productsDB.values());
+  },
 
   findById(productId: string) {
-    return this.products.get(productId);
-  }
+    return productsDB.get(productId);
+  },
 
   deleteById(productId: string) {
-    return this.products.delete(productId);
-  }
-}
+    return productsDB.delete(productId);
+  },
+};

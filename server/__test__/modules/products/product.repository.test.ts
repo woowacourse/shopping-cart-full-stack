@@ -1,5 +1,6 @@
+import { productsDB } from '../../../src/db.js';
 import { Product } from '../../../src/modules/products/product.model.js';
-import { ProductRepository } from '../../../src/modules/products/product.repository.js';
+import { productRepository } from '../../../src/modules/products/product.repository.js';
 
 const createProduct = (productId = '1') =>
   new Product({
@@ -10,11 +11,9 @@ const createProduct = (productId = '1') =>
     imageUrl: 'src/assets/coke.png',
   });
 
-let productRepository: ProductRepository;
-
 describe('ProductRepository', () => {
   beforeEach(() => {
-    productRepository = new ProductRepository();
+    productsDB.clear();
   });
 
   test('상품을 저장한다', () => {
