@@ -81,6 +81,9 @@ describe('쇼핑 장바구니 도메인 예외 테스트', () => {
     expect(() => shoppingCart.add(data)).toThrow(
       '상품 수량이 1 이상이어야 합니다.',
     );
+    expect(() => shoppingCart.setQuantity('testId', 0)).toThrow(
+      '상품 수량이 1 이상이어야 합니다.',
+    );
   });
 
   test('장바구니 상품 수량이 100 이상이면 예외 처리한다.', () => {
@@ -92,6 +95,9 @@ describe('쇼핑 장바구니 도메인 예외 테스트', () => {
     const shoppingCart = new ShoppingCart();
 
     expect(() => shoppingCart.add(data)).toThrow(
+      '상품 수량이 99 이하여야 합니다.',
+    );
+    expect(() => shoppingCart.setQuantity('testId', 100)).toThrow(
       '상품 수량이 99 이하여야 합니다.',
     );
   });
