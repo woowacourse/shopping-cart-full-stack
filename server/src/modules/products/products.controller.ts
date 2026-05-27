@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { validateProduct } from "./products.schema";
 import * as productsService from "./products.service";
+import ERROR_CODES from "./products.constants";
 
 export const getProducts: RequestHandler = (_, res) => {
   // products를 가져오는 서비스 함수를 호출한다.
@@ -26,10 +27,16 @@ export const addProduct: RequestHandler = (req, res) => {
       data: product,
     });
   } catch (error) {
-    res.status(400).json({
+    const errorMessage = error instanceof Error ? error.message : "";
+    const statusCode =
+      ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.status || 400;
+    const message =
+      ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.message ||
+      "상품 등록에 실패하였습니다.";
+
+    res.status(statusCode).json({
       status: "error",
-      message:
-        error instanceof Error ? error.message : "상품 등록에 실패하였습니다.",
+      message: message,
     });
   }
 };

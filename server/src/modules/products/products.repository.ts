@@ -29,3 +29,11 @@ export const addProductQuery = (product: Omit<Product, "id">) => {
 
   return newProducts;
 };
+
+export const getProductByNameQuery = (name: string) => {
+  const product = [...ProductDB.values()].find(
+    (product) => product.name === name,
+  );
+
+  return product;
+};
