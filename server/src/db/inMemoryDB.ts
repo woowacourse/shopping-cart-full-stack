@@ -1,4 +1,4 @@
-import type { Cart, Product } from "./type";
+import type { CartId, Product } from "./type";
 
 export const ProductDB = new Map<number, Product>();
-export const CartDB = new Map<number, Cart>();
+export const CartDB = new Set<CartId>();

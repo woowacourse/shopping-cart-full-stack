@@ -5,6 +5,4 @@ export interface Product {
   price: number;
 }
 
-export interface Cart {
-  carts: Product["id"][];
-}
+export type CartId = Product["id"];
