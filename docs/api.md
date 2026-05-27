@@ -149,7 +149,7 @@
   - 상품명은 최대 100자이다
 
 - 400
-  - 적용 엔드포인트: POST /products, POST /cart, PATCH /cart/:cartItemId
+  - 적용 엔드포인트: POST /products, POST /cart, PATCH /cart/:cartItemId DELETE /products/:productId, DELETE /cart/:cartItemId
   - 검증 조건: 
      1. 필수 필드 누락: /products의 productId, name, price, thumbnailUrl, totalQuantity 데이터 누락
      2. 필수 필드 누락: /carts의 productId, quantity 데이터 누락
@@ -157,6 +157,7 @@
      4. quantity는 1이상 99이하의 정수여야 한다: 전부
      5. price는 0보다 큰 숫자여야 한다: POST
      6. 상품명은 최대 100자이다: POST
+     7. 삭제할 productId와 cartItemId가 잘못 전달되는 경우
   - response body: { message: "`${field}가 잘못되었습니다!`" }
   - 설계 결정 이유: 클라이언트가 서버로 보내는 요청이 잘못되거나, 문법이 어긋나는 경우에 발생하는 것이 400 에러이다.
 
