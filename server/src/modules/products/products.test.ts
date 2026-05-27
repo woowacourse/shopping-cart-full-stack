@@ -50,7 +50,7 @@ describe("product service 테스트", () => {
       });
     });
 
-    it("필수값이 누락된 경우 BadRequestError를 던진다", () => {
+    it("필수값이 누락된 경우 BadRequestError를 던진다.", () => {
       const requiredFields = ["price", "name", "imgUrl"] as const;
       const product = {
         price: 25000,
@@ -79,7 +79,7 @@ describe("product service 테스트", () => {
           data: expect.arrayContaining([
             expect.objectContaining({
               type: field,
-              errorCode: "MISSING_FIELD",
+              errorCode: `${field.toUpperCase()}_MISSING_FIELD`,
             }),
           ]),
         });
