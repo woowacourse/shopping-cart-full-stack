@@ -43,6 +43,21 @@ export const ERROR_RESPONSE = {
     message: "요청한 상품을 찾을 수 없습니다.",
   },
 
+  CART_ITEM_NOT_FOUND: {
+    code: "CART_ITEM_NOT_FOUND",
+    message: "장바구니 상품을 찾을 수 없습니다.",
+  },
+
+  REQUIRED_CART_ITEM_QUANTITY: {
+    code: "REQUIRED_CART_ITEM_QUANTITY",
+    message: "장바구니 상품 수량은 필수입니다.",
+  },
+
+  INVALID_CART_ITEM_QUANTITY: {
+    code: "INVALID_CART_ITEM_QUANTITY",
+    message: "장바구니 상품 수량은 1개 이상이어야 합니다.",
+  },
+
   INTERNAL_SERVER_ERROR: {
     code: "INTERNAL_SERVER_ERROR",
     message: "서버 내부 오류가 발생했습니다.",
