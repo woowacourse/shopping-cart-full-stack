@@ -13,6 +13,44 @@ describe('쇼핑 장바구니 도메인 테스트', () => {
 
     expect(shoppingCart.getQuantity('testId')).toBe(3);
   });
+
+  test('해당 장바구니 상품의 수량을 증가시킨다.', () => {
+    const data1 = {
+      id: 'testId1',
+      quantity: 3,
+    };
+
+    const data2 = {
+      id: 'testId1',
+      quantity: 5,
+    };
+
+    const shoppingCart = new ShoppingCart();
+    shoppingCart.add(data1);
+    shoppingCart.setQuantity(data2.id, data2.quantity);
+
+    expect(shoppingCart.getQuantity('testId1')).toBe(5);
+  });
+
+  test('해당 장바구니 상품의 수량을 감소시킨다.', () => {
+    const data1 = {
+      id: 'testId1',
+      quantity: 3,
+    };
+
+    const data2 = {
+      id: 'testId1',
+      quantity: 1,
+    };
+
+    const shoppingCart = new ShoppingCart();
+    shoppingCart.add(data1);
+    shoppingCart.setQuantity(data2.id, data2.quantity);
+
+    expect(shoppingCart.getQuantity('testId1')).toBe(1);
+  });
+
+  // 3. 상품 삭제할 때
 });
 
 describe('쇼핑 장바구니 도메인 예외 테스트', () => {
