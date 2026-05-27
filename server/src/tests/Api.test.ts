@@ -102,6 +102,6 @@ describe("카트 API 테스트", () => {
   });
 
   test("장바구니 내 아이템을 삭제한다.", (done) => {
-    request(app).delete("/api/card/items/123").expect(204, {}, done);
+    request(app).delete("/api/cart/items/123").expect(204, {}, done);
   });
 });

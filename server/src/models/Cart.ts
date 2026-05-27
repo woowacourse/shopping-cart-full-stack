@@ -12,6 +12,10 @@ class Cart {
     return this.#items.get(id);
   }
 
+  deleteItem(id: string) {
+    return this.#items.delete(id);
+  }
+
   getAllItems() {
     const items = [];
     for (const key of this.#items.keys()) {
