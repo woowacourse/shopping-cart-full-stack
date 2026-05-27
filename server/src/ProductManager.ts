@@ -1,8 +1,4 @@
-export type Product = ProductCreateDTO & {
-  id: number;
-};
-
-export type ProductCreateDTO = {
+export type Product = {
   name: string;
   price: number;
   quantity: number;
@@ -10,11 +6,11 @@ export type ProductCreateDTO = {
 };
 
 class ProductManager {
-  private products: Product[];
+  private products: Map<number, Product>;
   private id: number;
 
   constructor() {
-    this.products = [];
+    this.products = new Map<number, Product>();
     this.id = 1;
   }
 
@@ -46,24 +42,29 @@ class ProductManager {
     }
   }
 
-  addProduct(product: ProductCreateDTO) {
+  addProduct(product: Product) {
     this.validateProductQuantity(product.quantity);
     this.validateProductName(product.name);
     this.validateProductPrice(product.price);
-    this.products.push({ ...product, id: this.id++ });
+    this.products.set(this.id++, product);
   }
 
   deleteProduct(id: number) {
-    const findProduct = this.products.find((product) => product.id === id);
-    if (!findProduct) {
+    if (!this.products.has(id)) {
       throw new Error('삭제하려는 상품이 존재하지 않습니다.');
     }
 
-    this.products = this.products.filter((product) => product.id !== id);
+    this.products.delete(id);
   }
 
   getProducts() {
-    return [...this.products];
+    let result: Array<Product & { id: number }> = [];
+
+    this.products.forEach((product, id) => {
+      result.push({ id, ...product });
+    });
+
+    return result;
   }
 }
 
