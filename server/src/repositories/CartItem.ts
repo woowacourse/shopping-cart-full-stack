@@ -1,18 +1,11 @@
-export interface StoredCartItem {
-  cartItemId: number;
-  productId: number;
-  quantity: number;
+export interface CartItemData {
+    cartItemId: number;
+    productId: number;
+    quantity: number;
 }
 
-export interface CartItemData {
-  cartItemId: number;
-  quantity: number;
-  productId: number;
-  productData: {
-    productId: number;
-    name: string;
-    price: number;
-    thumbnailUrl: string;
-    totalQuantity: number;
-  };
-}
+export const validateCartItemData = (quantity: number): void => {
+  if (quantity < 1 || quantity > 99) {
+    throw new Error("quantity는 1~99 사이어야합니다.");
+  }
+};
