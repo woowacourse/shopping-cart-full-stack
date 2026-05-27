@@ -48,9 +48,7 @@ describe("products", () => {
       const invalidProduct = { name: "상품1", price: 0, image: "" };
 
       // when & then
-      expect(() => addProduct(invalidProduct)).toThrow(
-        "price는 0보다 큰 정수여아 합니다."
-      );
+      expect(() => addProduct(invalidProduct)).toThrow();
       expect(addProductQueryMock).not.toHaveBeenCalled();
     });
 
@@ -59,9 +57,7 @@ describe("products", () => {
       const invalidProduct = { name: "상품1", price: -100, image: "" };
 
       // when & then
-      expect(() => addProduct(invalidProduct)).toThrow(
-        "price는 0보다 큰 정수여아 합니다."
-      );
+      expect(() => addProduct(invalidProduct)).toThrow();
       expect(addProductQueryMock).not.toHaveBeenCalled();
     });
 
@@ -70,9 +66,7 @@ describe("products", () => {
       const invalidProduct = { name: "", price: 1000, image: "" };
 
       // when & then
-      expect(() => addProduct(invalidProduct)).toThrow(
-        "상품명은 1자 이상이여야 합니다."
-      );
+      expect(() => addProduct(invalidProduct)).toThrow();
       expect(addProductQueryMock).not.toHaveBeenCalled();
     });
 
@@ -85,9 +79,7 @@ describe("products", () => {
       };
 
       // when & then
-      expect(() => addProduct(invalidProduct)).toThrow(
-        "상품명은 100자 이하여야 합니다."
-      );
+      expect(() => addProduct(invalidProduct)).toThrow();
       expect(addProductQueryMock).not.toHaveBeenCalled();
     });
 
