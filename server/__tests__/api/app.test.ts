@@ -242,3 +242,11 @@ describe('요청 시간 초과 테스트', () => {
     expect(response.status).toBe(408);
   });
 });
+
+describe('구현되지 않은 기능 501 테스트', () => {
+  test('아직 구현되지 않은 요청이 들어오면 501을 반환한다.', async () => {
+    const response = await request(app).post('/carts');
+
+    expect(response.status).toBe(501);
+  });
+});
