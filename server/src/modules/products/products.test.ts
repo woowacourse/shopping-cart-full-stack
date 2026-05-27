@@ -85,5 +85,39 @@ describe("product service 테스트", () => {
         });
       });
     });
+
+    it("전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다 (TYPE_MISMATCH)", () => {
+      const invalidProducts = [
+        {
+          price: "25000",
+          name: "Eco Bag",
+          imgUrl: "https://example.com/images/eco-bag.png",
+        },
+        {
+          price: 25000,
+          name: 123,
+          imgUrl: "https://example.com/images/eco-bag.png",
+        },
+        {
+          price: 25000,
+          name: "Eco Bag",
+          imgUrl: 123,
+        },
+      ] as const;
+
+      invalidProducts.forEach((product) => {
+        let caughtError: unknown;
+        try {
+          productsService.createProduct(product as unknown as ProductRequest);
+        } catch (error) {
+          caughtError = error;
+        }
+
+        expect(caughtError).toBeInstanceOf(BadRequestError);
+        expect(caughtError).toMatchObject({
+          errorCode: "TYPE_MISMATCH",
+        });
+      });
+    });
   });
 });
