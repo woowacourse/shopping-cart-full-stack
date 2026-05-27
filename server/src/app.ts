@@ -1,5 +1,7 @@
 import express from 'express';
 
+import {productController} from './controllers/ProductController.js';
+
 const app = express();
 app.use(express.json());
 
@@ -81,70 +83,9 @@ const updateCartQuantity = (targetId: string, quantity: number) => {
   return targetCart;
 };
 
-app.get('/products', (req, res) => {
-  let resData: GetProductRes = {
-    body: [],
-  };
-
-  try {
-    resData.body.push(...products);
-  } catch (error) {
-    return res.status(500).send();
-  }
-
-  res.status(200).json(resData);
-});
-
-app.post('/products', (req, res) => {
-  const {name, price, imageUrl} = req.body;
-
-  let resData: PostProductRes = {
-    body: {
-      id: '',
-    },
-  };
-
-  const newId = Number(products[products.length - 1].id) + 1;
-
-  const isDuplicated = products.find((product) => product.name === name);
-  if (isDuplicated) {
-    return res.status(409).send();
-  }
-
-  try {
-    products.push({
-      id: `${newId}`,
-      name: name,
-      price: price,
-      imageUrl: imageUrl,
-    });
-
-    resData.body.id = `${newId}`;
-  } catch (error) {
-    return res.status(500).send();
-  }
-
-  //201: Created
-  res.status(201).json(resData);
-});
-
-app.delete('/products/:id', (req, res) => {
-  const reqId = req.params.id;
-
-  const isExistId = products.some((product) => product.id === reqId);
-  if (!isExistId) {
-    return res.status(404).send();
-  }
-
-  try {
-    //삭제
-    products = products.filter((product) => product.id !== reqId);
-  } catch (error) {
-    return res.status(500).send();
-  }
-
-  res.sendStatus(204);
-});
+app.get('/products', productController.getProducts);
+app.post('/products', productController.createProduct);
+app.delete('/products/:id', productController.deleteProduct);
 
 app.get('/carts', (req, res) => {
   let resData: GetCartRes = {
