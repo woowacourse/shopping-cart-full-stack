@@ -1,11 +1,9 @@
-## 상품 조회
+## 상품
 
 ### `GET` `/products` - 상품들의 정보를 모두 가져온다.
 
 <details>
-<summary>
-
-</summary>
+<summary>상세 보기</summary>
 
 Success
 
@@ -36,10 +34,10 @@ Success
 
 </details>
 
-### `GET` `/products/:id` - 특정 상품의 정보를 가져온다.
+### `GET` `/products/:productId` - 특정 상품의 정보를 가져온다.
 
 <details>
-<summary></summary>
+<summary>상세 보기</summary>
 
 path params
 
@@ -93,7 +91,7 @@ Success
 ### `POST` `/products` - 상품 정보를 등록한다.
 
 <details>
-<summary></summary>
+<summary>상세 보기</summary>
 
 Success
 
@@ -137,23 +135,12 @@ Success
 }
 ```
 
-404 Error
-
-```js
-// request status 404,
-// 리소스(상품 정보)의 id가 없어서 메세지 body에 전달되지 않았기 때문
-{
-  result: "error",
-  message: "해당하는 상품의 id가 없습니다.",
-};
-```
-
 </details>
 
-### `DELETE` `/products/:id` : 특정 상품을 삭제한다.
+### `DELETE` `/products/:productId` : 특정 상품을 삭제한다.
 
 <details>
-<summary></summary>
+<summary>상세 보기</summary>
 
 Success
 
@@ -177,7 +164,120 @@ Success
 
 ## 장바구니
 
-<details>
-<summary>
+### `GET` `/cart` - 장바구니안의 상품 정보들을 모두 가져온다.
 
-</summary>
+<details>
+<summary>상세 보기</summary>
+
+장바구니는 단 한명의 유저를 위해서 복수형이 아닌 단수형으로 표현
+
+Success
+
+```js
+// Response Status: 200
+
+{
+  result: "success",
+  data: {
+    cartItems: [
+      {
+        productId: 1,
+        productName: "상품이름A",
+        productImg: "/src.com",
+        productPrice: 35000,
+        quantity: 2,
+      },
+      {
+        productId: 2,
+        productName: "상품이름B",
+        productImg: "/src.com",
+        productPrice: 25000,
+        quantity: 2,
+      },
+    ],
+  },
+}
+```
+
+</details>
+
+### `PATCH` `/cart/:productId` - 장바구니에서 해당 상품의 수량을 변경한다.
+
+<details>
+<summary>상세 보기</summary>
+
+path params
+
+```js
+productId: number;
+```
+
+body params
+
+```js
+{
+  quantity: 3,
+}
+```
+
+Success
+
+```js
+// Response Status: 200
+
+{
+  result: "success",
+  data: {
+    cartItemId: 1,
+    quantity: 3,
+  },
+}
+```
+
+400 Error
+
+```js
+// Response Status: 400
+// quantity가 1 미만이거나 유효하지 않은 값일 때
+
+{
+  result: "error",
+  message: "수량이 유효하지 않습니다.",
+}
+```
+
+404 Error
+
+```js
+// Response Status: 404
+// 해당하는 장바구니 항목이 존재하지 않을 때
+
+{
+  result: "error",
+  message: "해당하는 장바구니 항목이 없습니다.",
+}
+```
+
+</details>
+
+### `DELETE` `/cart/:productId` - 장바구니의 특정 상품을 삭제한다.
+
+<details>
+<summary>상세 보기</summary>
+
+path params
+
+```js
+id: number; // productId
+```
+
+Success
+
+```js
+// Response Status: 204
+// 삭제 성공 또는 존재하지 않는 id — 멱등성을 위해 동일하게 204 반환
+
+// No Contents
+```
+
+</details>
