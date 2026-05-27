@@ -167,3 +167,11 @@ describe('유효하지 않은 POST 형식 테스트', () => {
     expect(response.status).toBe(400);
   });
 });
+
+describe('요청 시간 초과 테스트', () => {
+  test('요청 처리가 제한 시간보다 오래 걸리면 408을 반환한다', async () => {
+    const response = await request(app).get('/slow');
+
+    expect(response.status).toBe(408);
+  });
+});
