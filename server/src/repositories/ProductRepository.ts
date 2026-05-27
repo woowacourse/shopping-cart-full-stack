@@ -1,7 +1,7 @@
 import type { ProductData, ProductInput } from "./Product.ts";
 import { validateProductData } from "./Product.ts";
 
-class ProductRepository {
+export default class ProductRepository {
   // Product의 데이터를 담고 있는 private 변수
   // Map 형태에 넣어주기 위한 index로 nextId
   #products: Map<number, ProductData>;

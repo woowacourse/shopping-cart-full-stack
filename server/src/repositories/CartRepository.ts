@@ -1,6 +1,6 @@
 import { CartItemData, validateCartItemData } from "./CartItem";
 
-class CartRepository {
+export default class CartRepository {
   #cart: Map<number, CartItemData>;
   #nextId: number;
 
