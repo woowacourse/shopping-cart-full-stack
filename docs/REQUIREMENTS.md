@@ -3,9 +3,9 @@
 ### 기능 구현 목록
 
 - 상품 (Products Controller)
-  - [ ] 상품 목록을 조회할 수 있다. (GET /products)
-    - [ ] PRODUCTS DB가 존재하지 않으면 500 에러
-    - [ ] 성공시 200 OK
+  - [x] 상품 목록을 조회할 수 있다. (GET /products)
+    - [x] PRODUCTS DB가 존재하지 않으면 500 에러
+    - [x] 성공시 200 OK
   - [ ] 상품을 추가할 수 있다. (POST /products/)
     - [ ] 성공시 201 Created
   - [ ] 상품을 삭제할 수 있다. (DELETE /products/:id)
