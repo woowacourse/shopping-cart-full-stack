@@ -147,3 +147,23 @@ describe('유효하지 않은 경로 테스트', () => {
     expect(response.status).toBe(404);
   });
 });
+
+describe('유효하지 않은 POST 형식 테스트', () => {
+  test('빈 이름으로 POST 요청 시 예외 처리한다.', async () => {
+    const data = {
+      name: '',
+      price: 1000,
+    };
+    const response = await request(app).post('/products').send(data);
+
+    expect(response.status).toBe(400);
+  });
+  test('가격이 누락된 POST 요청 시 예외 처리한다.', async () => {
+    const data = {
+      name: 'test',
+    };
+    const response = await request(app).post('/products').send(data);
+
+    expect(response.status).toBe(400);
+  });
+});
