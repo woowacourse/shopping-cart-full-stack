@@ -27,7 +27,7 @@ export const createProduct = (productRequest: Partial<ProductRequest>) => {
       "필수값이 누락되었습니다.",
       missingFields.map((field) => ({
         type: field,
-        errorCode: `${field.toUpperCase()}_MISSING_FIELD`,
+        errorCode: `MISSING_FIELD_${field.toUpperCase()}`,
       })),
     );
   }

@@ -79,7 +79,7 @@ describe("product service 테스트", () => {
           data: expect.arrayContaining([
             expect.objectContaining({
               type: field,
-              errorCode: `${field.toUpperCase()}_MISSING_FIELD`,
+              errorCode: `MISSING_FIELD_${field.toUpperCase()}`,
             }),
           ]),
         });
