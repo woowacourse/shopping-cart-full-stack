@@ -19,13 +19,13 @@ describe('장바구니 API', () => {
   });
 
   it('장바구니 목록 요청', async () => {
-    const response = await request(app).get('/users/1/cart/items');
+    const response = await request(app).get('/cart/items');
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual([]);
   });
   it('장바구니에 상품 추가', async () => {
-    const response = await request(app).post('/users/1/cart/items').send({
+    const response = await request(app).post('/cart/items').send({
       productId: mockCartItem.productId,
     });
 
@@ -34,25 +34,25 @@ describe('장바구니 API', () => {
   });
   it('상품 삭제', async () => {
     // 장바구니에 상품 추가
-    const response = await request(app).post('/users/1/cart/items').send({
+    const response = await request(app).post('/cart/items').send({
       productId: mockCartItem.productId,
     });
 
     // 상품 삭제
     const deleteRes = await request(app).delete(
-      `/users/1/cart/items/${response.body.cartItemId}`,
+      `/cart/items/${response.body.cartItemId}`,
     );
     expect(deleteRes.status).toBe(204);
   });
   it('상품 수량 업데이트', async () => {
     // 장바구니에 상품 추가
-    const response = await request(app).post('/users/1/cart/items').send({
+    const response = await request(app).post('/cart/items').send({
       productId: mockCartItem.productId,
     });
 
     // 상품 수량 수정
     const patchRes = await request(app)
-      .patch(`/users/1/cart/items/${response.body.cartItemId}`)
+      .patch(`/cart/items/${response.body.cartItemId}`)
       .send({ purchaseQuantity: 2 });
     expect(patchRes.status).toBe(200);
   });
