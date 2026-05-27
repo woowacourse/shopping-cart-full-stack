@@ -1,6 +1,8 @@
-const products = new Map();
+import { Product } from './../types';
 
-class ProductsRepositoryts {
+const products = new Map<string, Product>();
+
+class ProductsRepository {
   store;
 
   constructor() {
@@ -8,8 +10,20 @@ class ProductsRepositoryts {
   }
 
   async getAll() {
-    return this.store.entries();
+    return Array.from(this.store.entries()).map((entry) => entry[1]);
+  }
+
+  async insert(product: Omit<Product, 'productId' | 'isDeleted'>) {
+    const productObj = {
+      isDeleted: false,
+      productId: products.size.toString(),
+      ...product,
+    };
+
+    products.set(productObj.productId, productObj);
+
+    return productObj;
   }
 }
 
-export default ProductsRepositoryts;
+export default ProductsRepository;
