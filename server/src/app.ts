@@ -22,6 +22,11 @@ app.get('/products', (req, res) => {
 
 app.post('/products', (req, res) => {
   const request = req.body;
+
+  if (!request.name || !request.price) {
+    res.status(400).send({ message: '유효하지 않은 형식입니다.' });
+  }
+
   res.status(201).send(createProduct(request));
 });
 
