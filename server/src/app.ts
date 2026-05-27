@@ -1,15 +1,18 @@
 import express from "express";
 import Product from "./models/Product.js";
 import StorageHandler from "./StorageHandler.js";
+import { type StorageHandlerType } from "./StorageHandler.js";
 
-export function createApp<T>(storageHandler: StorageHandler<T>) {
+export function createApp<Storage extends StorageHandlerType>(
+  storageHandler: StorageHandler<Storage>,
+) {
   const app = express();
   app.use(express.json());
 
   app.get("/api/products/", (_req, res) => {
     res.send({
-      products: [...storageHandler.allItems("products")].map((product) =>
-        product.getProduct(),
+      products: [...storageHandler.allItems<Product>("products")].map(
+        (product) => product.getProduct(),
       ),
     });
   });

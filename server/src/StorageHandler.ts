@@ -1,32 +1,41 @@
-class StorageHandler<Storage> {
+export interface StorageHandlerType {
+  getItem<T>(table: string, id: string): T | undefined;
+  addItem<T>(table: string, id: string, obj: T): T;
+  updateItem<T>(table: string, id: string, obj: T): T;
+  deleteItem(table: string, id: string): void;
+  allItems<T>(table: string): T[];
+  clearAllItems(table: string): void;
+}
+
+class StorageHandler<Storage extends StorageHandlerType> {
   #storage: Storage;
 
   constructor(storage: Storage) {
     this.#storage = storage;
   }
 
-  getItem(table: string, id: string) {
-    return this.#storage.getItem(table, id);
+  getItem<T>(table: string, id: string): T | undefined {
+    return this.#storage.getItem<T>(table, id);
   }
 
-  addItem<T>(table: string, id: string, obj: T) {
-    return this.#storage.addItem(table, id, obj);
+  addItem<T>(table: string, id: string, obj: T): T {
+    return this.#storage.addItem<T>(table, id, obj);
   }
 
-  updateItem<T>(table: string, id: string, obj: T) {
-    return this.#storage.updateItem(table, id, obj);
+  updateItem<T>(table: string, id: string, obj: T): T {
+    return this.#storage.updateItem<T>(table, id, obj);
   }
 
-  deleteItem(table: string, id: string) {
-    return this.#storage.deleteItem(table, id);
+  deleteItem(table: string, id: string): void {
+    this.#storage.deleteItem(table, id);
   }
 
-  allItems(table: string) {
-    return this.#storage.allItems(table);
+  allItems<T>(table: string): T[] {
+    return this.#storage.allItems<T>(table);
   }
 
-  clearAllItems(table: string) {
-    return this.#storage.clearAllItems(table);
+  clearAllItems(table: string): void {
+    this.#storage.clearAllItems(table);
   }
 }
 
