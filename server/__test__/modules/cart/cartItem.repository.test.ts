@@ -1,4 +1,4 @@
-import { productsDB, userDB } from '../../../src/db.js';
+import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
 import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
 import { Product } from '../../../src/modules/products/product.model.js';
@@ -12,7 +12,7 @@ const createCartItem = (cartItemId = '1') =>
 
 describe('CartItemRepository', () => {
   beforeEach(() => {
-    userDB[0].cartItemsDB.clear();
+    cartItemsDB.clear();
   });
 
   test('장바구니에 상품을 저장한다', () => {

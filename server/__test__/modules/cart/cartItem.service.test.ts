@@ -1,12 +1,12 @@
 //서비스와 레포지를 이용해서 기능을 도작하게 한다
 
-import { userDB } from '../../../src/db.js';
+import { cartItemsDB } from '../../../src/db.js';
 import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
 import { cartItemService } from '../../../src/modules/cart/cartItem.service.js';
 
 describe('CartItemService', () => {
   beforeEach(() => {
-    userDB[0].cartItemsDB.clear();
+    cartItemsDB.clear();
   });
 
   // 상품을 조회하는 기능

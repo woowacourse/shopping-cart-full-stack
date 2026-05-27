@@ -1,7 +1,7 @@
 import express from 'express';
 import request from 'supertest';
-import { userDB } from '../../../src/db.js';
 import { cartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
+import { cartItemsDB } from '../../../src/db.js';
 
 const mockCartItem = {
   productId: '1',
@@ -15,7 +15,7 @@ app.use(cartItemRouter);
 
 describe('장바구니 API', () => {
   beforeEach(() => {
-    userDB[0].cartItemsDB.clear();
+    cartItemsDB.clear();
   });
 
   it('장바구니 목록 요청', async () => {

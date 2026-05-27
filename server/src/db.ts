@@ -3,9 +3,4 @@ import { Product } from './modules/products/product.model.js';
 
 export const productsDB = new Map<string, Product>();
 
-export const userDB = [
-  {
-    userId: '1',
-    cartItemsDB: new Map<string, CartItem>(),
-  },
-];
+export const cartItemsDB = new Map<string, CartItem>();

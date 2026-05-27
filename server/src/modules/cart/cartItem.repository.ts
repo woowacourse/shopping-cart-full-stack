@@ -1,21 +1,21 @@
-import { userDB } from '../../db.js';
+import { cartItemsDB } from '../../db.js';
 import { CartItem } from './cartItem.model.js';
 
 export const cartItemRepository = {
   save(cartItem: CartItem) {
-    userDB[0].cartItemsDB.set(cartItem.cartItemId, cartItem);
+    cartItemsDB.set(cartItem.cartItemId, cartItem);
     return cartItem;
   },
 
   findAll() {
-    return Array.from(userDB[0].cartItemsDB.values());
+    return Array.from(cartItemsDB.values());
   },
 
   findById(cartItemId: string) {
-    return userDB[0].cartItemsDB.get(cartItemId);
+    return cartItemsDB.get(cartItemId);
   },
 
   deleteById(cartItemId: string) {
-    return userDB[0].cartItemsDB.delete(cartItemId);
+    return cartItemsDB.delete(cartItemId);
   },
 };
