@@ -1,5 +1,5 @@
-import type { ProductResponse } from "./products.dto.js";
-import * as productsRepository from "./products.repository.js";
+import type { ProductResponse } from "./products.dto.ts";
+import * as productsRepository from "./products.repository.ts";
 
 export const getProducts = (): ProductResponse[] => {
   return productsRepository.findAll().map((product) => ({

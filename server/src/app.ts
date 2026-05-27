@@ -1,6 +1,6 @@
 import express from "express";
 
-import router from "./router/index.js";
+import router from "./router/index.ts";
 
 const app = express();
 app.use(express.json());

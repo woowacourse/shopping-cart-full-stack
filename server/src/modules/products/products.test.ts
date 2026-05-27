@@ -1,6 +1,6 @@
 import request from "supertest";
 
-import app from "../../app.js";
+import app from "../../app.ts";
 
 describe("GET /products", () => {
   it("returns product list", async () => {
