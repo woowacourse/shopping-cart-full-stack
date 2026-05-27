@@ -16,7 +16,6 @@
 
 ### 2-1. 기능 명세
 
-> userId: 유저 식별 id <br>
 > productId: 상품 식별 id <br>
 > cartItemId: 장바구니에 담긴 상품 항목 식별 id
 
@@ -30,20 +29,20 @@
   - `DELETE /products/:productId` 요청
   - 해당 상품이 장바구니에 있으면 함께 제거한다.
 - 장바구니에 상품을 담을 수 있다.
-  - `POST /users/:userId/cart/items` 요청 {productId, purchaseQuantity}
+  - `POST /cart/items` 요청 {productId, purchaseQuantity}
   - 이미 장바구니에 담긴 상품을 다시 담으면 기존 장바구니 항목의 수량을 증가시킨다.
 - 장바구니에 담긴 상품 목록을 조회할 수 있다.
-  - `GET /users/:userId/cart/items` 요청
+  - `GET /cart/items` 요청
   - 장바구니에 담긴 상품이 없으면 빈 배열을 응답한다.
 - 장바구니 상품의 수량을 변경할 수 있다.
-  - `PATCH /users/:userId/cart/items/:cartItemId` 요청 {purchaseQuantity}
+  - `PATCH /cart/items/:cartItemId` 요청 {purchaseQuantity}
 - 장바구니에 담긴 상품을 제거할 수 있다.
-  - `DELETE /users/:userId/cart/items/:cartItemId` 요청
+  - `DELETE /cart/items/:cartItemId` 요청
 
 ### 2-2. 검증
 
 - 필수 필드 누락 시 에러를 응답한다.
-- 존재하지 않는 유저/상품/장바구니 아이템 요청 시 에러를 응답한다.
+- 존재하지 않는 상품/장바구니 아이템 요청 시 에러를 응답한다.
 - remainingQuantity는 1 이상 99 이하의 정수여야 한다.
 - purchaseQuantity는 1 이상 99 이하의 정수여야 한다.
 - productPrice는 0보다 큰 숫자여야 한다.

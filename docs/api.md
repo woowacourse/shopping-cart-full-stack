@@ -23,7 +23,6 @@ http://localhost:3000
 
 | 이름         | 설명                              |
 | ------------ | --------------------------------- |
-| `userId`     | 유저 식별 id                      |
 | `productId`  | 상품 식별 id                      |
 | `cartItemId` | 장바구니에 담긴 상품 항목 식별 id |
 
@@ -170,7 +169,7 @@ DELETE /products/:productId
 ### 3-1. 장바구니 상품 목록 조회
 
 ```http
-GET /users/:userId/cart/items
+GET /cart/items
 ```
 
 #### Request
@@ -198,25 +197,14 @@ GET /users/:userId/cart/items
 
 #### Error
 
-`404 Not Found`
-
-```json
-{
-  "code": "INVALID_USER_ID",
-  "message": "존재하지 않는 유저입니다."
-}
-```
-
-| 에러 코드         | 설명                                          |
-| ----------------- | --------------------------------------------- |
-| `INVALID_USER_ID` | `userId`에 해당하는 유저가 존재하지 않는 경우 |
+없음
 
 ---
 
 ### 3-2. 장바구니 금액 요약 조회
 
 ```http
-GET /users/:userId/cart/summary
+GET /cart/summary
 ```
 
 #### Request
@@ -230,7 +218,7 @@ Query Parameters
 예시:
 
 ```http
-GET /users/:userId/cart/summary?cartItemIds=10,11
+GET /cart/summary?cartItemIds=10,11
 ```
 
 `cartItemIds`를 전달하지 않으면 장바구니에 담긴 전체 상품을 기준으로 금액을 계산한다.
@@ -264,22 +252,21 @@ GET /users/:userId/cart/summary?cartItemIds=10,11
 
 ```json
 {
-  "code": "INVALID_USER_ID",
-  "message": "존재하지 않는 유저입니다."
+  "code": "INVALID_CART_ITEM_ID",
+  "message": "존재하지 않는 장바구니 상품입니다."
 }
 ```
 
-| 에러 코드              | 설명                                                                                          |
-| ---------------------- | --------------------------------------------------------------------------------------------- |
-| `INVALID_USER_ID`      | `userId`에 해당하는 유저가 존재하지 않는 경우                                                 |
-| `INVALID_CART_ITEM_ID` | `cartItemIds`에 포함된 장바구니 상품이 존재하지 않거나, 해당 유저의 장바구니 상품이 아닌 경우 |
+| 에러 코드              | 설명                                                           |
+| ---------------------- | -------------------------------------------------------------- |
+| `INVALID_CART_ITEM_ID` | `cartItemIds`에 포함된 장바구니 상품이 존재하지 않는 경우      |
 
 ---
 
 ### 3-3. 장바구니에 상품 추가
 
 ```http
-POST /users/:userId/cart/items
+POST /cart/items
 ```
 
 #### Request
@@ -311,14 +298,13 @@ POST /users/:userId/cart/items
 
 ```json
 {
-  "code": "INVALID_USER_ID",
-  "message": "존재하지 않는 유저입니다."
+  "code": "INVALID_PRODUCT_ID",
+  "message": "존재하지 않는 상품입니다."
 }
 ```
 
 | 에러 코드                    | 설명                                                               |
 | ---------------------------- | ------------------------------------------------------------------ |
-| `INVALID_USER_ID`            | `userId`에 해당하는 유저가 존재하지 않는 경우                      |
 | `INVALID_PRODUCT_ID`         | `productId`가 정의되지 않았거나, 해당 상품이 존재하지 않는 경우    |
 | `INVALID_PURCHASE_QUANTITY`  | `purchaseQuantity`가 정의되지 않았거나, 1 이상 99 이하가 아닌 경우 |
 | `EXCEEDS_REMAINING_QUANTITY` | 장바구니에 담으려는 수량이 상품의 남은 수량보다 많은 경우          |
@@ -328,7 +314,7 @@ POST /users/:userId/cart/items
 ### 3-4. 장바구니 상품 수량 변경
 
 ```http
-PATCH /users/:userId/cart/items/:cartItemId
+PATCH /cart/items/:cartItemId
 ```
 
 #### Request
@@ -367,7 +353,6 @@ PATCH /users/:userId/cart/items/:cartItemId
 
 | 에러 코드                    | 설명                                                               |
 | ---------------------------- | ------------------------------------------------------------------ |
-| `INVALID_USER_ID`            | `userId`에 해당하는 유저가 존재하지 않는 경우                      |
 | `INVALID_CART_ITEM_ID`       | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우         |
 | `INVALID_PURCHASE_QUANTITY`  | `purchaseQuantity`가 정의되지 않았거나, 1 이상 99 이하가 아닌 경우 |
 | `EXCEEDS_REMAINING_QUANTITY` | 변경하려는 수량이 상품의 남은 수량보다 많은 경우                   |
@@ -377,7 +362,7 @@ PATCH /users/:userId/cart/items/:cartItemId
 ### 3-5. 장바구니 상품 제거
 
 ```http
-DELETE /users/:userId/cart/items/:cartItemId
+DELETE /cart/items/:cartItemId
 ```
 
 #### Request
@@ -401,7 +386,6 @@ DELETE /users/:userId/cart/items/:cartItemId
 
 | 에러 코드              | 설명                                                       |
 | ---------------------- | ---------------------------------------------------------- |
-| `INVALID_USER_ID`      | `userId`에 해당하는 유저가 존재하지 않는 경우              |
 | `INVALID_CART_ITEM_ID` | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우 |
 
 ## 4. 엔드포인트
@@ -411,51 +395,41 @@ DELETE /users/:userId/cart/items/:cartItemId
 | 상품 목록 조회          | `GET`    | `/products`                             | 저장된 모든 상품을 조회한다.                                     |
 | 상품 추가               | `POST`   | `/products`                             | 새로운 상품을 추가한다.                                          |
 | 상품 삭제               | `DELETE` | `/products/:productId`                  | 상품을 삭제하고, 해당 상품이 장바구니에 있으면 함께 제거한다.    |
-| 장바구니 상품 목록 조회 | `GET`    | `/users/:userId/cart/items`             | 특정 유저의 장바구니에 담긴 상품 목록을 조회한다.                |
-| 장바구니 금액 요약 조회 | `GET`    | `/users/:userId/cart/summary`           | 특정 유저의 장바구니 상품 금액, 배송비, 총 결제 금액을 조회한다. |
-| 장바구니에 상품 추가    | `POST`   | `/users/:userId/cart/items`             | 특정 유저의 장바구니에 상품을 추가한다.                          |
-| 장바구니 상품 수량 변경 | `PATCH`  | `/users/:userId/cart/items/:cartItemId` | 특정 장바구니 상품의 수량을 변경한다.                            |
-| 장바구니 상품 제거      | `DELETE` | `/users/:userId/cart/items/:cartItemId` | 특정 장바구니 상품을 제거한다.                                   |
+| 장바구니 상품 목록 조회 | `GET`    | `/cart/items`                           | 장바구니에 담긴 상품 목록을 조회한다.                            |
+| 장바구니 금액 요약 조회 | `GET`    | `/cart/summary`                         | 장바구니 상품 금액, 배송비, 총 결제 금액을 조회한다.             |
+| 장바구니에 상품 추가    | `POST`   | `/cart/items`                           | 장바구니에 상품을 추가한다.                                      |
+| 장바구니 상품 수량 변경 | `PATCH`  | `/cart/items/:cartItemId`               | 특정 장바구니 상품의 수량을 변경한다.                            |
+| 장바구니 상품 제거      | `DELETE` | `/cart/items/:cartItemId`               | 특정 장바구니 상품을 제거한다.                                   |
 
 ## 5. 설계 결정 이유
 
 ### 5-1. 상품 id와 장바구니 상품 id를 분리한 이유
 
-`productId`는 상품 자체를 식별하고, `cartItemId`는 유저의 장바구니에 담긴 상품 항목을 식별한다.
+`productId`는 상품 자체를 식별하고, `cartItemId`는 장바구니에 담긴 상품 항목을 식별한다.
 
 같은 상품이라도 장바구니에서는 수량, 선택 상태, 옵션 등 장바구니 전용 정보를 가질 수 있으므로 상품 id와 장바구니 상품 id를 분리한다. 이를 통해 상품 수정/삭제와 장바구니 항목 수정/삭제의 책임을 명확히 구분할 수 있다.
 
-### 5-2. 유저별 장바구니 경로를 사용한 이유
+### 5-2. `cart`는 단수, `items`는 복수로 표현한 이유
 
-유저가 여러 명인 서비스를 가정하므로 장바구니 API 경로에 `userId`를 포함한다.
-
-```http
-/users/:userId/cart/items
-```
-
-이를 통해 특정 유저의 장바구니 상품 목록, 추가, 수정, 삭제 요청임을 경로만으로 알 수 있다. 또한 `cartItemId`를 사용할 때 해당 장바구니 상품이 요청한 `userId`의 장바구니에 속하는지 검증할 수 있다.
-
-### 5-3. `cart`는 단수, `items`는 복수로 표현한 이유
-
-현재 서비스에서는 유저가 하나의 장바구니를 가진다고 가정한다. 따라서 장바구니 자체는 `cart` 단수로 표현한다.
+현재 서비스에서는 하나의 장바구니를 가진다고 가정한다. 따라서 장바구니 자체는 `cart` 단수로 표현한다.
 
 반면 장바구니 안에는 여러 상품 항목이 담길 수 있으므로 항목 컬렉션은 `items` 복수로 표현한다.
 
 ```http
-GET /users/:userId/cart/items
-POST /users/:userId/cart/items
-PATCH /users/:userId/cart/items/:cartItemId
-DELETE /users/:userId/cart/items/:cartItemId
+GET /cart/items
+POST /cart/items
+PATCH /cart/items/:cartItemId
+DELETE /cart/items/:cartItemId
 ```
 
-### 5-4. Path parameter와 Request body를 분리한 이유
+### 5-3. Path parameter와 Request body를 분리한 이유
 
 리소스를 식별하는 값은 path parameter로 전달하고, 생성하거나 변경할 데이터는 request body로 전달한다.
 
-예를 들어 장바구니 상품 수량 변경 API에서 `userId`와 `cartItemId`는 이미 경로에 포함되어 있으므로 request body에 다시 포함하지 않는다.
+예를 들어 장바구니 상품 수량 변경 API에서 `cartItemId`는 이미 경로에 포함되어 있으므로 request body에 다시 포함하지 않는다.
 
 ```http
-PATCH /users/:userId/cart/items/:cartItemId
+PATCH /cart/items/:cartItemId
 ```
 
 ```json
@@ -466,7 +440,7 @@ PATCH /users/:userId/cart/items/:cartItemId
 
 이렇게 분리하면 path의 id와 body의 id가 서로 다른 경우 어느 값을 신뢰해야 하는지 애매해지는 문제를 막을 수 있다.
 
-### 5-5. 장바구니 추가 요청에서 상품 정보를 직접 받지 않는 이유
+### 5-4. 장바구니 추가 요청에서 상품 정보를 직접 받지 않는 이유
 
 장바구니에 상품을 추가할 때는 `productId`와 `purchaseQuantity`만 요청 body로 전달한다.
 
@@ -479,7 +453,7 @@ PATCH /users/:userId/cart/items/:cartItemId
 
 상품 이름, 가격, 이미지 경로는 서버가 `productId`를 기준으로 조회한다. 클라이언트가 상품 가격이나 이름을 직접 보내면 서버에 저장된 상품 정보와 불일치할 수 있으므로, 장바구니 추가 요청에서는 상품 식별자와 수량만 받는다.
 
-### 5-6. 상품 목록이 비어 있을 때 `200 OK`를 반환하는 이유
+### 5-5. 상품 목록이 비어 있을 때 `200 OK`를 반환하는 이유
 
 `GET /products`는 특정 상품 하나가 아니라 상품 목록 컬렉션을 조회하는 API다. 상품이 하나도 없더라도 상품 목록이라는 리소스는 존재하므로 `404 Not Found`가 아니라 `200 OK`와 빈 배열을 반환한다.
 
@@ -487,29 +461,29 @@ PATCH /users/:userId/cart/items/:cartItemId
 []
 ```
 
-### 5-7. DELETE 요청에서 request body를 사용하지 않는 이유
+### 5-6. DELETE 요청에서 request body를 사용하지 않는 이유
 
 삭제 대상은 경로의 id로 식별한다.
 
 ```http
 DELETE /products/:productId
-DELETE /users/:userId/cart/items/:cartItemId
+DELETE /cart/items/:cartItemId
 ```
 
 따라서 request body에 `productId`나 `cartItemId`를 다시 전달하지 않는다. 삭제 성공 시에는 `204 No Content`를 반환하고 응답 본문은 비워 둔다.
 
-### 5-8. 장바구니 총 금액을 저장하지 않고 계산하는 이유
+### 5-7. 장바구니 총 금액을 저장하지 않고 계산하는 이유
 
 장바구니 총 금액은 상품 가격, 구매 수량, 배송비 정책으로 계산할 수 있는 값이다. 따라서 클라이언트가 계산한 총 금액을 서버에 전달해 반영하거나 별도로 저장하지 않는다.
 
 총 금액을 request body로 받아 저장하면 상품 가격이나 수량과 총 금액이 서로 달라질 수 있다. 서버는 장바구니 항목과 상품 정보를 기준으로 금액을 다시 계산하고, 클라이언트는 조회 API의 응답 값을 화면에 표시한다.
 
 ```http
-GET /users/:userId/cart/summary
+GET /cart/summary
 ```
 
 선택된 상품 기준 금액이 필요한 경우에는 선택된 `cartItemId` 목록을 query parameter로 전달해 계산한다. 선택 상태 자체는 장바구니 상품의 본질적인 데이터가 아니므로 별도 저장하지 않는다.
 
 ```http
-GET /users/:userId/cart/summary?cartItemIds=10,11
+GET /cart/summary?cartItemIds=10,11
 ```
