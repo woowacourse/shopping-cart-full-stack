@@ -54,18 +54,7 @@ export default tseslint.config(
       "no-else-return": "error",
 
       // 축약 이름 제한 예시
-      "id-denylist": [
-        "error",
-        "req",
-        "res",
-        "ctx",
-        "err",
-        "msg",
-        "num",
-        "str",
-        "obj",
-        "arr",
-      ],
+      "id-denylist": ["error", "req", "res", "ctx", "err", "msg", "num", "str", "obj", "arr"],
 
       // 클래스 멤버 접근제어 명시
       "@typescript-eslint/explicit-member-accessibility": [
@@ -103,14 +92,8 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: [
-                "express",
-                "../controllers/*",
-                "../routes/*",
-                "../http/*",
-              ],
-              message:
-                "domain 계층에서는 HTTP/Express 계층을 import하지 마세요.",
+              group: ["express", "../controllers/*", "../routes/*", "../http/*"],
+              message: "domain 계층에서는 HTTP/Express 계층을 import하지 마세요.",
             },
           ],
         },

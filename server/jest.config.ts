@@ -1,30 +1,26 @@
-import type { Config } from 'jest';
+import type { Config } from "jest";
 
 const config: Config = {
-  testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'],
+  testEnvironment: "node",
+  extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   transform: {
-    '^.+\\.tsx?$': [
-      '@swc/jest',
+    "^.+\\.tsx?$": [
+      "@swc/jest",
       {
         jsc: {
-          parser: { syntax: 'typescript', tsx: false },
-          target: 'es2022',
+          parser: { syntax: "typescript", tsx: false },
+          target: "es2022",
         },
-        module: { type: 'es6' },
+        module: { type: "es6" },
       },
     ],
   },
-  testMatch: ['<rootDir>/**/*.test.ts'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.test.ts',
-    '!src/index.ts',
-  ],
+  testMatch: ["<rootDir>/**/*.test.ts"],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.test.ts", "!src/index.ts"],
 };
 
 export default config;
