@@ -1,9 +1,9 @@
 export default class ShoppingCart {
   private items = new Map<string, number>();
 
-  add({ id, quantity }: { id: string; quantity: number }) {
+  add({ productId, quantity }: { productId: string; quantity: number }) {
     this.#validateQuantity(quantity);
-    this.items.set(id, quantity);
+    this.items.set(productId, quantity);
   }
 
   #validateQuantity(quantity: number) {
@@ -18,11 +18,15 @@ export default class ShoppingCart {
     }));
   }
 
-  getQuantity(id: string) {
-    return this.items.get(id);
+  getQuantity(productId: string) {
+    return this.items.get(productId);
   }
 
-  setQuantity(id: string, quantity: number) {
-    this.items.set(id, quantity);
+  setQuantity(productId: string, quantity: number) {
+    this.items.set(productId, quantity);
+  }
+
+  deleteProduct(productId: string) {
+    this.items.delete(productId);
   }
 }
