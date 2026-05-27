@@ -6,8 +6,10 @@ export const findAll = () => {
   return rawProducts.map((product) => new Product(product));
 };
 
-export const findById = () => {
-  return rawProducts.map((product) => new Product(product));
+export const findById = (id: number) => {
+  const product = rawProducts.find((product) => product.id === id);
+
+  return product ? new Product(product) : undefined;
 };
 
 export const create = (product: ProductRequest) => {
@@ -20,4 +22,12 @@ export const create = (product: ProductRequest) => {
   rawProducts.push(newProduct);
 
   return newProduct;
+};
+
+export const deleteById = (id: number) => {
+  const productIndex = rawProducts.findIndex((product) => product.id === id);
+
+  if (productIndex === -1) return;
+
+  rawProducts.splice(productIndex, 1);
 };
