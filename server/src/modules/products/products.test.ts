@@ -1,4 +1,6 @@
+import { BadRequestError } from "../../common/error.ts";
 import * as productsService from "./products.service.ts";
+import type { ProductRequest } from "./products.dto.ts";
 
 describe("product service 테스트", () => {
   describe("getProducts 테스트", () => {
@@ -45,6 +47,42 @@ describe("product service 테스트", () => {
       expect(productsAfterCreate).toContainEqual({
         id: expect.any(String),
         ...product,
+      });
+    });
+
+    it("필수값이 누락된 경우 BadRequestError를 던진다", () => {
+      const requiredFields = ["price", "name", "imgUrl"] as const;
+      const product = {
+        price: 25000,
+        name: "Eco Bag",
+        imgUrl: "https://example.com/images/eco-bag.png",
+      };
+
+      requiredFields.forEach((field) => {
+        const productWithoutRequiredField: Partial<ProductRequest> = {
+          ...product,
+        };
+        delete productWithoutRequiredField[field];
+
+        let caughtError: unknown;
+        try {
+          productsService.createProduct(
+            productWithoutRequiredField as ProductRequest,
+          );
+        } catch (error) {
+          caughtError = error;
+        }
+
+        expect(caughtError).toBeInstanceOf(BadRequestError);
+        expect(caughtError).toMatchObject({
+          errorCode: "MISSING_FIELD",
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              type: field,
+              errorCode: "MISSING_FIELD",
+            }),
+          ]),
+        });
       });
     });
   });
