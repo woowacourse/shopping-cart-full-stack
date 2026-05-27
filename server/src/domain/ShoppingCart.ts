@@ -21,4 +21,8 @@ export default class ShoppingCart {
   getQuantity(id: string) {
     return this.items.get(id);
   }
+
+  setQuantity(id: string, quantity: number) {
+    this.items.set(id, quantity);
+  }
 }
