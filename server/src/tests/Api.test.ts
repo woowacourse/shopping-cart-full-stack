@@ -1,6 +1,7 @@
 import app from "../app.js";
 import request from "supertest";
 import { ProductType } from "../models/Product.js";
+import { products } from "../app.js";
 
 describe("GET /api/products/", () => {
   test("프로덕트 목록을 반환한다.", (done) => {
@@ -31,6 +32,11 @@ describe("GET /api/products/", () => {
         },
         done,
       );
+  });
+
+  test("프로덕트를 삭제한다.", (done) => {
+    const id = [...products.keys()][0];
+    request(app).del(`/api/products/${id}/`).expect(204, {}, done);
   });
 
   test("프로덕트를 추가한다.", (done) => {

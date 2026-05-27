@@ -10,7 +10,7 @@ app.get("/health", (_req, res) => {
 
 const product1 = new Product("수건", 10000, "/some_image2");
 const product2 = new Product("양말", 3000, "/some_image1");
-const products = new Map([
+export const products = new Map([
   [product1.getId(), product1],
   [product2.getId(), product2],
 ]);
@@ -23,12 +23,17 @@ app.get("/api/products/", (_req, res) => {
 
 app.post("/api/products/", (_req, res) => {
   const { name, price, thumbnail } = _req.body;
-
   const product = new Product(name, price, thumbnail);
   products.set(product.getId(), product);
   const post = { id: product.getProduct().id };
 
   res.status(201).send(post);
+});
+
+app.delete("/api/products/:id/", (_req, res) => {
+  const { id } = _req.params;
+  products.delete(id);
+  res.status(204).send();
 });
 
 export default app;
