@@ -30,6 +30,8 @@ export function createApp<Storage extends StorageHandlerType>(
   app.delete("/api/products/:id/", (req, res) => {
     const { id } = req.params;
     storageHandler.deleteItem("products", id);
+    const cart = storageHandler.getItem("cart", "my-cart") as Cart;
+    cart.deleteItem(id);
     res.status(204).send();
   });
 
