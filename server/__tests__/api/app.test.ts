@@ -2,7 +2,11 @@ import request from 'supertest';
 import app from '../../src/app';
 import { describe, expect, test } from '@jest/globals';
 
-import { getAllProducts } from '../../src/service/productService';
+import {
+  getAllProducts,
+  createProduct,
+} from '../../src/service/productService';
+import { createShoppingCart } from '../../src/service/shoppingCartService';
 
 describe('상품 API 테스트', () => {
   test('클라이언트가 POST 요청 시 상품을 등록한다.', async () => {
@@ -48,5 +52,28 @@ describe('상품 API 테스트', () => {
 
     expect(response.status).toBe(204);
     expect(getAllProducts()).toEqual([]);
+  });
+});
+
+describe('장바구니 상품 API 테스트', () => {
+  test('클라이언트가 GET 요청 시 장바구니 상품 목록을 받아온다.', async () => {
+    const productData = {
+      name: 'test',
+      price: 1000,
+      image: 'example/com',
+    };
+    const product = createProduct(productData);
+
+    createShoppingCart(product[0].getProduct().id, 3);
+
+    const response = await request(app).get('/carts');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      {
+        product: { id: product[0].getProduct().id, ...productData },
+        quantity: 3,
+      },
+    ]);
   });
 });
