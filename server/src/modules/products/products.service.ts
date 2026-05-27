@@ -14,6 +14,7 @@ export const getProducts = (): ProductResponse[] => {
 };
 
 export const createProduct = (productRequest: Partial<ProductRequest>) => {
+  // 필수값 검증
   const requiredFields = ["price", "name", "imgUrl"] as const;
   const missingFields = getMissingFields(
     productRequest,
@@ -31,6 +32,7 @@ export const createProduct = (productRequest: Partial<ProductRequest>) => {
     );
   }
 
+  // 타입 검증
   const isTypeMismatch = requiredFields.some((field) => {
     if (field === "price") return typeof productRequest[field] !== "number";
 
@@ -39,6 +41,29 @@ export const createProduct = (productRequest: Partial<ProductRequest>) => {
 
   if (isTypeMismatch) {
     throw new BadRequestError("TYPE_MISMATCH", "타입이 일치하지 않습니다.");
+  }
+
+  // 도메인 규칙 검증
+  const invalidFields = [
+    {
+      type: "price",
+      isInvalid: productRequest.price! <= 0,
+    },
+    {
+      type: "name",
+      isInvalid: productRequest.name!.length > 100,
+    },
+  ].filter(({ isInvalid }) => isInvalid);
+
+  if (invalidFields.length > 0) {
+    throw new BadRequestError(
+      "INVALID",
+      "도메인 규칙에 맞지 않는 값입니다.",
+      invalidFields.map(({ type }) => ({
+        type,
+        errorCode: `INVALID_${type.toUpperCase()}`,
+      })),
+    );
   }
 
   const product = productsRepository.create(productRequest as ProductRequest);
