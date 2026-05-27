@@ -64,8 +64,36 @@ app.delete('/carts/:id', (req, res) => {
   res.status(204).send();
 });
 
+app.get('/slow', async (req, res) => {
+  await new Promise((resolve) => setTimeout(resolve, 3001));
+
+  if (!res.headersSent) {
+    res.status(408).send({ message: '요청 시간이 초과되었습니다.' });
+  }
+});
+
 app.use((_req, res) => {
   res.status(404).send({ message: '유효하지 않은 경로입니다.' });
 });
+
+app.use((req, res, next) => {
+  const timeout = setTimeout(() => {
+    if (!res.headersSent) {
+      res.status(408).send({
+        message: '요청 시간이 초과되었습니다.',
+      });
+    }
+  }, 3000);
+
+  res.on('finish', () => {
+    clearTimeout(timeout);
+  });
+
+  next();
+});
+
+// 500
+
+// 501
 
 export default app;
