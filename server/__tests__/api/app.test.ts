@@ -158,6 +158,7 @@ describe('유효하지 않은 POST 형식 테스트', () => {
 
     expect(response.status).toBe(400);
   });
+
   test('가격이 누락된 POST 요청 시 예외 처리한다.', async () => {
     const data = {
       name: 'test',
@@ -166,10 +167,84 @@ describe('유효하지 않은 POST 형식 테스트', () => {
 
     expect(response.status).toBe(400);
   });
+
+  test('상품명이 100자 초과이면 POST 요청 시 예외 처리한다.', async () => {
+    const data = {
+      name: 'a'.repeat(104),
+      price: 1000,
+    };
+    const response = await request(app).post('/products').send(data);
+
+    expect(response.status).toBe(400);
+  });
+
+  test('가격이 0 이하로 POST 요청 시 예외 처리한다.', async () => {
+    const data = {
+      name: 'test',
+      price: 0,
+    };
+    const response = await request(app).post('/products').send(data);
+
+    expect(response.status).toBe(400);
+  });
+
+  test('가격이 숫자 아닌 상태로 POST 요청 시 예외 처리한다.', async () => {
+    const data = {
+      name: 'test',
+      price: 'test',
+    };
+    const response = await request(app).post('/products').send(data);
+
+    expect(response.status).toBe(400);
+  });
+
+  // 5. 중복된 상품명이면 400을 응답한다.
+  test('중복된 상품명이 있는 상품을 POST 요청 시 예외 처리한다.', async () => {
+    const productData1 = {
+      name: 'test',
+      price: 1000,
+      image: 'example/com',
+    };
+    const productData2 = {
+      name: 'test',
+      price: 1000,
+      image: 'example/com',
+    };
+    const product1 = createProduct(productData1);
+    const response = await request(app).post('/products').send(productData2);
+
+    expect(response.status).toBe(400);
+  });
+
+  test('상품 수량이 허용 범위를 벗어난 PATCH 요청 시 예외 처리한다.', async () => {
+    const productData = {
+      name: 'test',
+      price: 1000,
+      image: 'example/com',
+    };
+    const product = createProduct(productData);
+    const id = product[0].getProduct().id;
+
+    patchShoppingCart(id, 10);
+
+    const response = await request(app)
+      .patch(`/carts/${id}`)
+      .send({ quantity: -2 });
+
+    expect(response.status).toBe(400);
+  });
 });
 
 describe('요청 시간 초과 테스트', () => {
   test('요청 처리가 제한 시간보다 오래 걸리면 408을 반환한다', async () => {
+    const response = await request(app).get('/slow');
+
+    expect(response.status).toBe(408);
+  });
+});
+
+describe('500 내부 서버 에러 테스트', () => {
+  test('예상치 못한 에러가 발생하면 500을 반환한다.', async () => {
     const response = await request(app).get('/slow');
 
     expect(response.status).toBe(408);
