@@ -21,8 +21,8 @@ app.get("/api/products/", (_req, res) => {
   });
 });
 
-app.post("/api/products/", (_req, res) => {
-  const { name, price, thumbnail } = _req.body;
+app.post("/api/products/", (req, res) => {
+  const { name, price, thumbnail } = req.body;
   const product = new Product(name, price, thumbnail);
   products.set(product.getId(), product);
   const post = { id: product.getProduct().id };
@@ -30,8 +30,8 @@ app.post("/api/products/", (_req, res) => {
   res.status(201).send(post);
 });
 
-app.delete("/api/products/:id/", (_req, res) => {
-  const { id } = _req.params;
+app.delete("/api/products/:id/", (req, res) => {
+  const { id } = req.params;
   products.delete(id);
   res.status(204).send();
 });
