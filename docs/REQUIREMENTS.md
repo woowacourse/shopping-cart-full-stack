@@ -4,10 +4,11 @@
 
 - 상품 (Products Controller)
   - [x] 상품 목록을 조회할 수 있다. (GET /products)
-    - [x] PRODUCTS DB가 존재하지 않으면 500 에러
+    - [x] DB에 PRODUCTS 테이블이 존재하지 않으면 500 에러
     - [x] 성공시 200 OK
-  - [ ] 상품을 추가할 수 있다. (POST /products/)
-    - [ ] 성공시 201 Created
+  - [x] 상품을 추가할 수 있다. (POST /products/)
+    - [x] 성공시 201 Created
+    - [x] DB에 PRODUCTS 테이블이 존재하지 않으면 500 에러
   - [ ] 상품을 삭제할 수 있다. (DELETE /products/:id)
     - [ ] 해당 상품이 장바구니에 있으면 함께 제거한다. (삭제될 상품 id에 해당하는 id를 포함하는 객체를 CART db에서 삭제)
     - [ ] 성공시 204 OK
