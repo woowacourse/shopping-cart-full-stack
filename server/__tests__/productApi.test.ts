@@ -45,9 +45,16 @@ const DB: TestDB = {
   ],
 };
 
+const initialProducts = DB.Products!.map((product) => ({ ...product }));
+
+beforeEach(() => {
+  DB.Products = initialProducts.map((p) => ({ ...p }));
+});
+
+// GET API
 app.get('/products', (req: Request, res: Response) => {
   if (!DB.Products) {
-    return res.status(500).json({ error: '잘못된 서버 요청입니다.' });
+    return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
   res.status(200).json(DB.Products);
 });
@@ -60,14 +67,11 @@ describe('GET /products', function () {
   });
 
   it('PRODUCTS DB가 존재하지 않으면 500 에러', async function () {
-    const OriginalProducts = DB.Products;
     DB.Products = undefined;
 
     const response = await request(app).get('/products').set('Accept', 'application/json');
     expect(response.status).toBe(500);
-    expect(response.body).toEqual({ error: '잘못된 서버 요청입니다.' });
-
-    DB.Products = OriginalProducts;
+    expect(response.body).toEqual({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   });
 });
 
@@ -78,9 +82,10 @@ const newProduct: BodyForTest = {
   quantity: 5,
 };
 
+// POST API
 app.post('/products', (req: Request, res: Response) => {
   if (!DB.Products) {
-    return res.status(500).json({ error: '잘못된 서버 요청입니다.' });
+    return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
   const { imageUrl, name, price, quantity } = req.body;
   const newProduct = {
@@ -106,7 +111,6 @@ describe('POST /products', function () {
   });
 
   it('PRODUCTS DB가 존재하지 않으면 500 에러', async function () {
-    const OriginalProducts = DB.Products;
     DB.Products = undefined;
 
     const response = await request(app)
@@ -115,8 +119,37 @@ describe('POST /products', function () {
       .set('Accept', 'application/json');
 
     expect(response.status).toBe(500);
-    expect(response.body).toEqual({ error: '잘못된 서버 요청입니다.' });
+    expect(response.body).toEqual({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
+  });
+});
 
-    DB.Products = OriginalProducts;
+// DELETE API
+app.delete('/products/:id', (req: Request, res: Response) => {
+  const requestedId = Number(req.params.id);
+  if (!DB.Products) {
+    return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
+  }
+  const isIdExist = DB.Products.find((product) => product.id === requestedId);
+  if (!isIdExist) {
+    return res.status(404).send({ errorMessage: '상품을 찾을 수 없습니다.' });
+  }
+  DB.Products = DB.Products.filter((product) => product.id !== requestedId);
+  DB.Cart = DB.Cart!.filter((product) => product.id !== requestedId);
+
+  res.status(204).send();
+});
+
+describe('DELETE /products/:id', function () {
+  it('상품이 삭제되면, 응답 상태코드는 204 OK 이며 장바구니에 해당 상품이 있을 때 같이 삭제된다.', async function () {
+    const response = await request(app).delete('/products/1').set('Accept', 'application/json');
+    expect(DB.Products!.length).toBe(1);
+    expect(DB.Cart!.length).toBe(0);
+    expect(response.status).toBe(204);
+  });
+
+  it('해당 id가 DB에 존재하지 않는다면 404 에러', async function () {
+    const response = await request(app).delete('/products/3').set('Accept', 'application/json');
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ errorMessage: '상품을 찾을 수 없습니다.' });
   });
 });
