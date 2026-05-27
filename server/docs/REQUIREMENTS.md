@@ -28,10 +28,10 @@
 ## 도메인 테스트 케이스
 ### product service
 #### getProducts
-- [ ] 정상 요청이 온 경우 상품 리스트를 반환한다
+- [ ] 상품 리스트를 반환한다.
 
-#### createProducts
-- [ ] 정상 요청이 온 경우 새 상품을 추가한다
+#### createProduct
+- [ ] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 새 상품을 추가한다.
 - [ ] 필수값이 누락된 경우 BadRequestError를 던진다 (MISSING_FIELD)
     - [ ] price
     - [ ] name

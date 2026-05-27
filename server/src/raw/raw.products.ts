@@ -1,4 +1,6 @@
-export const rawProducts = [
+import { Product } from "../modules/products/products.model.ts";
+
+export const rawProducts: Product[] = [
   {
     id: "1",
     price: 18000,

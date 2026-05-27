@@ -11,4 +11,8 @@ export const getProducts = (): ProductResponse[] => {
   }));
 };
 
-export const createProducts = (req: ProductRequest) => {};
+export const createProduct = (productRequest: ProductRequest) => {
+  const product = productsRepository.create(productRequest);
+
+  return product;
+};
