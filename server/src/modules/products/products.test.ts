@@ -27,4 +27,25 @@ describe("product service 테스트", () => {
       ]);
     });
   });
+
+  describe("createProducts 테스트", () => {
+    it("필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 새 상품을 추가한다.", () => {
+      const product = {
+        price: 25000,
+        name: "Eco Bag",
+        imgUrl: "https://example.com/images/eco-bag.png",
+      };
+      const productsBeforeCreate = productsService.getProducts();
+
+      productsService.createProducts(product);
+
+      const productsAfterCreate = productsService.getProducts();
+
+      expect(productsAfterCreate).toHaveLength(productsBeforeCreate.length + 1);
+      expect(productsAfterCreate).toContainEqual({
+        id: expect.any(String),
+        ...product,
+      });
+    });
+  });
 });

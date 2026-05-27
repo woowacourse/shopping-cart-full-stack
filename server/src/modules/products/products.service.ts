@@ -1,5 +1,6 @@
 import type { ProductResponse } from "./products.dto.ts";
 import * as productsRepository from "./products.repository.ts";
+import { ProductRequest } from "./products.dto.ts";
 
 export const getProducts = (): ProductResponse[] => {
   return productsRepository.findAll().map((product) => ({
@@ -9,3 +10,5 @@ export const getProducts = (): ProductResponse[] => {
     imgUrl: product.imgUrl,
   }));
 };
+
+export const createProducts = (req: ProductRequest) => {};

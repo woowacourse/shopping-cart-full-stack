@@ -4,3 +4,9 @@ export interface ProductResponse {
   name: string;
   imgUrl: string;
 }
+
+export interface ProductRequest {
+  price: number;
+  name: string;
+  imgUrl: string;
+}
