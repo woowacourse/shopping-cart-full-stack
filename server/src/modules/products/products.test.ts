@@ -167,5 +167,23 @@ describe("product service 테스트", () => {
       expect(productsAfterDelete).toHaveLength(productsBeforeDelete.length - 1);
       expect(productsAfterDelete).not.toContainEqual(product);
     });
+
+    it("전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 BadRequestError를 던진다.", () => {
+      const products = productsService.getProducts();
+      const nonExistentId =
+        Math.max(...products.map((product) => product.id)) + 1;
+
+      let caughtError: unknown;
+      try {
+        productsService.deleteProduct(nonExistentId);
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).toBeInstanceOf(BadRequestError);
+      expect(caughtError).toMatchObject({
+        errorCode: "RESOURCE_NOT_FOUND",
+      });
+    });
   });
 });
