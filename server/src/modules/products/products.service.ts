@@ -2,6 +2,7 @@ import type { ProductResponse } from "./products.dto.ts";
 import * as productsRepository from "./products.repository.ts";
 import { BadRequestError } from "../../common/error.ts";
 import type { ProductRequest } from "./products.dto.ts";
+import { getMissingFields } from "../../validate/getMissingFields.ts";
 
 export const getProducts = (): ProductResponse[] => {
   return productsRepository.findAll().map((product) => ({
@@ -14,8 +15,9 @@ export const getProducts = (): ProductResponse[] => {
 
 export const createProduct = (productRequest: Partial<ProductRequest>) => {
   const requiredFields = ["price", "name", "imgUrl"] as const;
-  const missingFields = requiredFields.filter(
-    (field) => productRequest[field] === undefined,
+  const missingFields = getMissingFields(
+    productRequest,
+    requiredFields as unknown as string[],
   );
 
   if (missingFields.length > 0) {
