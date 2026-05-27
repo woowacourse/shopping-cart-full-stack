@@ -73,14 +73,9 @@
     ```json
     [   
         {
-            "cartItemId" : 1,
+            "cartItemId": 1,
+            "productId": 1,
             "quantity": 1, 
-            "product": {
-              "productId": 2,
-              "name": "신발B",
-              "price": 35000,
-              "thumbnailUrl": "https://example.com/image.png",
-            },
         }
     ]
     ```
@@ -100,13 +95,8 @@
     ```json
     {
     "cartItemId": 1,
+    "productId": 1,
     "quantity": 1,
-    "product": {
-        "productId": 1,
-        "name": "신발A",
-        "price": 35000,
-        "thumbnailUrl": "https://example.com/image.png"
-    },
     }
     ```
   - http status code : 201
@@ -123,13 +113,8 @@
         ```json
         {
         "cartItemId": 1,
+        "productId": 1,
         "quantity": 3,
-        "product": {
-            "productId": 1,
-            "name": "신발A",
-            "price": 35000,
-            "thumbnailUrl": "https://example.com/image.png"
-        },
         }
         ```
     - http status code : 200
