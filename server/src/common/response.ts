@@ -15,23 +15,27 @@ interface FailResponse<T> {
 }
 
 export const success = <T>(res: Response, data: T, status = 200) => {
-  return res.status(status).json({
+  const response: SuccessResponse<T> = {
     status,
     data,
-  });
+  };
+
+  return res.status(status).json(response);
 };
 
 export const fail = <T>(
   res: Response,
-  data: T,
   errorCode: string,
   errorMessage: string,
   status = 500,
+  data?: T,
 ) => {
-  return res.status(status).json({
+  const response: FailResponse<T> = {
     status,
-    data,
     errorCode,
     errorMessage,
-  });
+    ...(data ? { data } : {}),
+  };
+
+  return res.status(status).json(response);
 };
