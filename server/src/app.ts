@@ -1,4 +1,5 @@
 import express, { type ErrorRequestHandler } from 'express';
+import cors from 'cors';
 
 import {
   getAllProducts,
@@ -14,6 +15,7 @@ import { products } from './database/inMemoryDatabase.ts';
 import { shoppingCart } from './database/inMemoryDatabase.ts';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get('/products', (req, res, next) => {
