@@ -27,7 +27,8 @@
 - 결정 이유: 서버가 단순히 `productId`와 `count`만 저장하더라도, 클라이언트가 화면에 렌더링하기 쉬운 형태로 `name`, `price`, `imageUrl`를 함께 제공하는 것이 구현과 유지보수에 좋다고 판단했습니다.
 
 ## 상품 API
-- 전체적으로 response 형식으로는 {status, message}를 공통적으로 포함하도록 설계해서 모든 응답에 {status, message}가 항상 포함되도록 설계했습니다.
+- 서버 구현은 응답 본문에 `status`나 `message`를 공통으로 포함하지 않고,
+  HTTP 상태 코드로 결과를 표현합니다.
 
 ### 1. 전체 상품 목록 조회
 - Method: `GET`
@@ -36,8 +37,6 @@
 #### Response
 ```json
 {
-  "status": number,
-  "message": "string",
   "body": [
     {
       "id": "string",
@@ -48,6 +47,7 @@
   ]
 }
 ```
+- HTTP 상태 코드: `200`
 - 결정 이유: 상품 목록 화면에서 필요한 모든 상품 정보를 한 번에 받아오도록 설계했습니다.
 
 ### 2. 상품 추가
@@ -63,30 +63,45 @@
 }
 ```
 
-#### Response
+#### Response (성공)
 ```json
 {
-  "status": number,
-  "message": "string",
-  "body": {
-    "id": "string"
-  }
+  "body": [
+    {
+      "id": "string"
+    }
+  ]
 }
 ```
+- HTTP 상태 코드: `201`
 - 결정 이유: 상품 생성 시 클라이언트는 상품 속성만 보내고, 서버는 새로 생성된 `id`만 응답하여 추가 상태를 관리하기 쉽게 했습니다.
+
+#### Response (중복)
+- HTTP 상태 코드: `409`
+- body: 없음
+- 결정 이유: 이미 존재하는 상품을 다시 등록하려는 경우, 서버 상태와 충돌(conflict)이므로 `409`를 사용합니다.
+
+#### Response (서버 오류)
+- HTTP 상태 코드: `500`
+- body: 없음
 
 ### 3. 상품 삭제
 - Method: `DELETE`
 - URL: `/products/:id`
 
-#### Response
-```json
-{
-  "status": number,
-  "message": "string"
-}
-```
-- 결정 이유: 상품이 삭제되면 해당 상품과 연관된 장바구니 항목도 함께 제거되어 데이터 일관성을 유지하도록 합니다.
+#### Response (성공)
+- HTTP 상태 코드: `204`
+- body: 없음
+
+#### Response (존재하지 않음)
+- HTTP 상태 코드: `404`
+- body: 없음
+
+#### Response (서버 오류)
+- HTTP 상태 코드: `500`
+- body: 없음
+
+- 결정 이유: 상품이 삭제되면 본문 없이 `204`로 응답하고, 없는 상품 요청에는 `404`를 사용해 명확하게 처리합니다.
 
 ## 장바구니 API
 
