@@ -29,6 +29,16 @@ export const createProduct = (productRequest: Partial<ProductRequest>) => {
     );
   }
 
+  const isTypeMismatch = requiredFields.some((field) => {
+    if (field === "price") return typeof productRequest[field] !== "number";
+
+    return typeof productRequest[field] !== "string";
+  });
+
+  if (isTypeMismatch) {
+    throw new BadRequestError("TYPE_MISMATCH", "타입이 일치하지 않습니다.");
+  }
+
   const product = productsRepository.create(productRequest as ProductRequest);
 
   return product;
