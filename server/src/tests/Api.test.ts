@@ -3,6 +3,7 @@ import InMemoryStorage from "../storages/InMemoryStorage.js";
 import StorageHandler from "../StorageHandler.js";
 import Product from "../models/Product.js";
 import request from "supertest";
+import Cart from "../models/Cart.js";
 import { ProductType } from "../models/Product.js";
 
 describe("프로덕트 API 테스트", () => {
@@ -70,19 +71,24 @@ describe("프로덕트 API 테스트", () => {
 describe("카트 API 테스트", () => {
   const storageHandler = new StorageHandler(new InMemoryStorage());
   const app = createApp<InMemoryStorage>(storageHandler);
+  const cart = storageHandler.getItem<Cart>("cart", "my-cart") as Cart;
+
+  beforeEach(() => {
+    cart.updateItem("123", 10);
+    cart.updateItem("456", 20);
+  });
 
   test("장바구니 내 아이템목록을 반환한다.", (done) => {
     request(app)
       .get("/api/cart/")
-      .expect(function (res) {
-        res.body.map((item) => (item.id = "fixed id"));
-      })
       .expect(
         200,
-        [
-          { id: "fixed id", product_id: 1, quantity: 20 },
-          { id: "fixed id", product_id: 2, quantity: 10 },
-        ],
+        {
+          items: [
+            { product_id: "123", quantity: 10 },
+            { product_id: "456", quantity: 20 },
+          ],
+        },
         done,
       );
   });

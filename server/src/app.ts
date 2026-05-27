@@ -2,6 +2,7 @@ import express from "express";
 import Product from "./models/Product.js";
 import StorageHandler from "./StorageHandler.js";
 import { type StorageHandlerType } from "./StorageHandler.js";
+import Cart from "./models/Cart.js";
 
 export function createApp<Storage extends StorageHandlerType>(
   storageHandler: StorageHandler<Storage>,
@@ -30,6 +31,11 @@ export function createApp<Storage extends StorageHandlerType>(
     const { id } = req.params;
     storageHandler.deleteItem("products", id);
     res.status(204).send();
+  });
+
+  app.get("/api/cart/", (_req, res) => {
+    const cart = storageHandler.getItem<Cart>("cart", "my-cart") as Cart;
+    res.send({ items: cart.getAllItems() });
   });
 
   return app;

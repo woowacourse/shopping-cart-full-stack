@@ -1,7 +1,11 @@
 import Product from "../models/Product.js";
+import Cart from "../models/Cart.js";
+
+const MY_CART_ID = "my-cart";
 
 const defaultData = {
   products: new Map<string, Product>(),
+  cart: new Map<string, Cart>([[MY_CART_ID, new Cart()]]),
 };
 
 class InMemoryStorage {
