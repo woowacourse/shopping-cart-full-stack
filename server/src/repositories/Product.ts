@@ -18,4 +18,10 @@ export const validateProductData = (data: ProductInput): void => {
   if (data.price <= 0) {
     throw new Error("price는 0보다 큰 숫자이어야합니다.");
   }
+  if (!data.name) {
+    throw new Error("name은 필수 항목입니다.");
+  }
+  if (!data.thumbnailUrl) {
+    throw new Error("thumbnailUrl은 필수 항목입니다.");
+  }
 };
