@@ -1,6 +1,14 @@
-import {products} from '../db.js';
+import {cartItems, products} from '../db.js';
 import {Product} from '../models/Product.js';
 import type {CreateProductRequestBody} from '../type.js';
+
+type DeleteProductResult =
+  | {
+      status: 'deleted';
+    }
+  | {
+      status: 'notFound';
+    };
 
 export const productService = {
   getProducts() {
@@ -19,7 +27,18 @@ export const productService = {
     return newId;
   },
 
-  deleteProduct(id: string) {
-    return products.deleteById(id);
+  deleteProduct(id: string): DeleteProductResult {
+    if (!products.findById(id)) {
+      return {
+        status: 'notFound',
+      };
+    }
+
+    cartItems.deleteByProductId(id);
+    products.deleteById(id);
+
+    return {
+      status: 'deleted',
+    };
   },
 };

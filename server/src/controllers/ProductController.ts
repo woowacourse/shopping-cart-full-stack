@@ -27,9 +27,10 @@ export const productController = {
 
   deleteProduct(req: Request<IdParams>, res: Response) {
     const reqId = req.params.id;
-    const isDeleted = productService.deleteProduct(reqId);
 
-    if (!isDeleted) {
+    const result = productService.deleteProduct(reqId);
+
+    if (result.status === 'notFound') {
       return res.status(404).send();
     }
 

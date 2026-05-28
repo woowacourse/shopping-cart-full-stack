@@ -32,4 +32,15 @@ export class CartItems {
     this.cartItems.splice(targetIndex, 1);
     return true;
   }
+
+  deleteByProductId(id: string) {
+    const targetIndex = this.cartItems.findIndex((cartItem) => cartItem.productInfo.id === id);
+
+    if (targetIndex === -1) {
+      return false;
+    }
+
+    this.cartItems.splice(targetIndex, 1);
+    return true;
+  }
 }
