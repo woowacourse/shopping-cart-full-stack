@@ -6,3 +6,8 @@ export interface Product {
 }
 
 export type CartId = Product["id"];
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
