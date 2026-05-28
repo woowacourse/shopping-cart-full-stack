@@ -26,3 +26,11 @@ export function validateMinNumber(label: string, min: number) {
     }
   };
 }
+
+export function validateNumberRange(label: string, min: number, max: number) {
+  return function validate(value: number) {
+    if (min > value || value > max) {
+      throw new Error(`${label}은 ${min} 이상 ${max} 이하여야 합니다.`);
+    }
+  };
+}

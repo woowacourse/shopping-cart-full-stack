@@ -2,6 +2,7 @@ import {
   validateIsNotEmpty,
   validateLengthRange,
   validateMinNumber,
+  validateNumberRange,
 } from "../validators.js";
 
 describe("validators 테스트", () => {
@@ -24,5 +25,12 @@ describe("validators 테스트", () => {
     expect(() => {
       validator(10000);
     }).toThrow("가격은 20000 보다 큰 숫자여야 합니다.");
+  });
+
+  test("숫자범위 내의 숫자가 아니면 에러가 반환된다.", () => {
+    const validator = validateNumberRange("수량", 0, 100);
+    expect(() => {
+      validator(101);
+    }).toThrow("수량은 0 이상 100 이하여야 합니다.");
   });
 });
