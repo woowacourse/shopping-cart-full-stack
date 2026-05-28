@@ -65,6 +65,58 @@ describe("프로덕트 API 테스트", () => {
     const id = product1.getId();
     request(app).del(`/api/products/${id}/`).expect(204, {}, done);
   });
+
+  test("필수필드를 전달하지 않으면 400 에러가 발생한다.", (done) => {
+    request(app)
+      .post("/api/products/")
+      .send({ name: "", price: "", thumnail: "hamburger.png" })
+      .set("Accept", "application/json")
+      .expect(
+        400,
+        {
+          errors: {
+            name: ["상품명 필드가 누락되었습니다."],
+            price: ["가격 필드가 누락되었습니다."],
+          },
+        },
+        done,
+      );
+  });
+
+  test("상품명길이가 100자 이상인 경우 400 에러가 발생한다.", (done) => {
+    const name = "엄청 긴 상품명".repeat(100);
+    request(app)
+      .post("/api/products/")
+      .send({ name: name, price: "10000", thumnail: "hamburger.png" })
+      .set("Accept", "application/json")
+      .expect(
+        400,
+        {
+          errors: {
+            name: ["상품명은 0 이상 100 이하여야 합니다."],
+            price: [],
+          },
+        },
+        done,
+      );
+  });
+
+  test("가격이 0보다 작으면 400 에러가 발생한다.", (done) => {
+    request(app)
+      .post("/api/products/")
+      .send({ name: "햄버거", price: "0", thumnail: "hamburger.png" })
+      .set("Accept", "application/json")
+      .expect(
+        400,
+        {
+          errors: {
+            name: [],
+            price: ["가격은 0 보다 큰 숫자여야 합니다."],
+          },
+        },
+        done,
+      );
+  });
 });
 
 describe("카트 API 테스트", () => {
