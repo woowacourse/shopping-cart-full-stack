@@ -1,3 +1,5 @@
+import ERROR_CODES from "./products.constants";
+
 export interface CreateProductRequest {
   name: string;
   price: number;
@@ -22,7 +24,19 @@ export const checkIsProduct = (arg: unknown): arg is CreateProductRequest => {
 };
 
 export const validateProduct = (arg: unknown) => {
-  if (!checkIsProduct(arg)) throw new Error("올바른 데이터가 아닙니다.");
+  if (!checkIsProduct(arg)) throw new Error(ERROR_CODES.INVALID_PRODUCT.code);
+
+  return arg;
+};
+
+export const checkIsID = (arg: unknown): arg is string => {
+  if (!!arg && typeof arg === "string") return true;
+
+  return false;
+};
+
+export const validateID = (arg: unknown) => {
+  if (!checkIsID(arg)) throw new Error(ERROR_CODES.INVALID_ID.code);
 
   return arg;
 };
