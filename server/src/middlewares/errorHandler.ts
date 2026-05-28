@@ -10,6 +10,7 @@ const errorHandler: ErrorRequestHandler = (error, _request, response, next) => {
     return;
   }
 
+  /* istanbul ignore next */
   response.status(500).json({
     code: "INTERNAL_SERVER_ERROR",
     message: "서버 내부 오류가 발생했습니다.",
