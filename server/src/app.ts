@@ -104,20 +104,27 @@ export function createApp(storage: Storage) {
     }
   });
 
-  app.use((err, req, res, next) => {
-    const code = err.message;
-    if (code === "404") {
-      res.status(404).send({
-        code: "RESOURCE_NOT_FOUND",
-        message: "요청한 리소스를 찾을 수 없습니다.",
-      });
-    } else {
-      res.status(500).send({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "예기치 못한 오류가 발생했습니다.",
-      });
-    }
-  });
+  app.use(
+    (
+      err: Error,
+      _req: express.Request,
+      res: express.Response,
+      _next: express.NextFunction,
+    ) => {
+      const code = err.message;
+      if (code === "404") {
+        res.status(404).send({
+          code: "RESOURCE_NOT_FOUND",
+          message: "요청한 리소스를 찾을 수 없습니다.",
+        });
+      } else {
+        res.status(500).send({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "예기치 못한 오류가 발생했습니다.",
+        });
+      }
+    },
+  );
 
   return app;
 }
