@@ -7,3 +7,9 @@ export function validateLengthRange(value: string, min: number, max: number) {
     throw new Error(`${min} 이상 ${max} 이하여야 합니다.`);
   }
 }
+
+export function validateMinPrice(value: number, min: number) {
+  if (value <= min) {
+    throw new Error(`상품가격은 ${min} 보다 큰 숫자여야 합니다.`);
+  }
+}
