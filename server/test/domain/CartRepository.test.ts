@@ -1,4 +1,4 @@
-import CartRepository from "../../src/repositories/CartRepository.ts";
+import CartRepository from "../../src/repositories/CartRepository";
 
 describe("CartRepository 단위 테스트", () => {
   let repository: CartRepository;
