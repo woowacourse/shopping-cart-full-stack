@@ -1,67 +1,32 @@
 import { Request, Response } from "express";
-import { cartRepository } from "../repositories/CartRepository";
-import { productRepository } from "../repositories/ProductRepository";
+import {
+  getCartItemsService,
+  deleteCartItemService,
+  postCartItemService,
+  patchCartItemService,
+} from "../service/CartService";
 
-const getCartItems = (_request: Request, response: Response): Response => {
-  const cartItems = cartRepository.getCartProducts();
-  return response.status(200).json(cartItems);
+const getCartItems = (_request: Request, response: Response): void => {
+  const cartItems = getCartItemsService();
+  response.status(200).json(cartItems);
 };
 
 const runPostCartItem = (request: Request, response: Response): void => {
   const { productId, quantity } = request.body;
-  const product = productRepository.findById(Number(productId));
-
-  if (!product) {
-    response.status(404).json({ message: "해당 상품이 존재하지 않습니다." });
-  }
-
-  const addedCartItem = cartRepository.addProductToCart(
-    Number(productId),
-    Number(quantity),
-  ); //이거 분리
+  const addedCartItem = postCartItemService(Number(productId), Number(quantity));
   response.status(201).json(addedCartItem);
 };
 
 const runDeleteCartItem = (request: Request, response: Response): void => {
   const cartItemId = Number(request.params.cartItemId);
-  if (!cartItemId) {
-    response.status(400).json({ message: "유효하지 않은 장바구니 ID입니다." });
-  }
-
-  const cartItem = cartRepository.findById(cartItemId); //이거 분리
-  if (!cartItem) {
-    response
-      .status(404)
-      .json({ message: "해당 장바구니 상품이 존재하지 않습니다." });
-  }
-
-  cartRepository.deleteByCartId(cartItemId);
-
+  deleteCartItemService(cartItemId);
   response.status(204).send();
 };
 
 const runPatchCartItem = (request: Request, response: Response): void => {
   const cartItemId = Number(request.params.cartItemId);
-  if (!cartItemId) {
-    response.status(400).json({ message: "유효하지 않은 장바구니 ID입니다." });
-  }
-
   const newQuantity = Number(request.body.quantity);
-  if (!newQuantity) {
-    response.status(400).json({ message: "유효하지 않은 수량입니다." });
-  }
-
-  const patchedCartItem = cartRepository.changeQuantity(
-    cartItemId,
-    newQuantity,
-  ); //이거 분리
-
-  if (!patchedCartItem) {
-    response
-      .status(404)
-      .json({ message: "해당 장바구니 상품이 존재하지 않습니다." });
-  }
-
+  const patchedCartItem = patchCartItemService(cartItemId, newQuantity);
   response.status(200).json(patchedCartItem);
 };
 

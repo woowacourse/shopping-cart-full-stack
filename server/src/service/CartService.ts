@@ -1,68 +1,34 @@
-import type { StoredCartItem, CartItemData } from "../repositories/CartItem";
+import type { CartItemData } from "../repositories/CartItem";
 import { productRepository } from "../repositories/ProductRepository";
 import { cartRepository } from "../repositories/CartRepository";
-import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
-import { ERROR_MESSAGE } from "../errors/ErrorMessage";
-import { validateQuantity } from "../repositories/util/Validator";
 
 export const getCartItemsService = (): CartItemData[] => {
-  return cartRepository.getCartProducts().map((cartItem) => {
-    const product = productRepository.findById(cartItem.productId);
-    return {
-      cartItemId: cartItem.cartItemId,
-      quantity: cartItem.quantity,
-      productId: cartItem.productId,
-      productData: product!,
-    };
-  });
+  return cartRepository.getCartProducts();
 };
 
-export const postCartItemService = (
-  productId: number,
-  quantity: number,
-): StoredCartItem => {
-  const product = productRepository.findById(productId);
-  if (!product)
-    throw new NotFoundError(
-      "NOT_FOUND_PRODUCT",
-      ERROR_MESSAGE.NOT_FOUND_PRODUCT,
-    );
-  validateQuantity(quantity);
+export const postCartItemService = (productId: number, quantity: number): CartItemData => {
+  const product = productRepository.findById(Number(productId));
+  if (!product) throw Error("해당 상품이 존재하지 않습니다.");
+
   return cartRepository.addProductToCart(productId, quantity);
 };
 
 export const deleteCartItemService = (cartItemId: number): void => {
-  if (isNaN(cartItemId) || cartItemId <= 0)
-    throw new InvalidError("INVALID_CART_ID", ERROR_MESSAGE.INVALID_CART_ID);
+  if (!cartItemId) throw new Error("유효하지 않은 장바구니 ID입니다.");
 
   const cartItem = cartRepository.findById(cartItemId);
-  if (!cartItem)
-    throw new NotFoundError(
-      "NOT_FOUND_CART_ITEM",
-      ERROR_MESSAGE.NOT_FOUND_CART_ITEM,
-    );
+  if (!cartItem) throw new Error("해당 장바구니 상품이 존재하지 않습니다.");
 
   cartRepository.deleteByCartId(cartItemId);
 };
 
-export const patchCartItemService = (
-  cartItemId: number,
-  newQuantity: number,
-): StoredCartItem => {
-  if (isNaN(cartItemId) || cartItemId <= 0)
-    throw new InvalidError("INVALID_CART_ID", ERROR_MESSAGE.INVALID_CART_ID);
-  validateQuantity(newQuantity);
+export const patchCartItemService = (cartItemId: number, newQuantity: number): CartItemData => {
+  if (!cartItemId) throw new Error("유효하지 않은 장바구니 ID입니다.");
+  if (!newQuantity) throw new Error("유효하지 않은 수량입니다.");
 
-  const updatedQuantity = cartRepository.changeQuantity(
-    cartItemId,
-    newQuantity,
-  );
-
+  const updatedQuantity = cartRepository.changeQuantity(cartItemId, newQuantity);
   if (!updatedQuantity)
-    throw new NotFoundError(
-      "NOT_FOUND_CART_ITEM",
-      ERROR_MESSAGE.NOT_FOUND_CART_ITEM,
-    );
+    throw new Error("해당 장바구니 상품이 존재하지 않습니다.");
 
   return updatedQuantity;
 };
