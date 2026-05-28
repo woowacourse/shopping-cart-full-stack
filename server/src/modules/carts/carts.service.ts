@@ -1,6 +1,7 @@
 import ERROR_CODES from "@/ERROR_CODE";
 import { getProductByIdQuery } from "../products/products.repository";
 import {
+  deleteCartsProductQuery,
   getCartItemByProductIdQuery,
   getCartsQuery,
   updateCartQuantityQuery,
@@ -27,4 +28,15 @@ export const changeCartQuantity = (id: number, quantity: number) => {
     product,
     quantity: quantity,
   };
+};
+
+export const deleteCartsProduct = (id: number) => {
+  // 카트 안에 상품이 있는지 확인
+  const existingCartsProduct = getCartItemByProductIdQuery(id);
+
+  if (!existingCartsProduct) {
+    throw new Error(ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.code);
+  }
+
+  return deleteCartsProductQuery(id);
 };
