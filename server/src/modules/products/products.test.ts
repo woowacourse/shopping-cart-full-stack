@@ -1,4 +1,4 @@
-import { BadRequestError } from "../../common/error.ts";
+import { ServiceError } from "../../common/error.ts";
 import * as productsService from "./products.service.ts";
 import type { ProductRequest } from "./products.dto.ts";
 
@@ -50,7 +50,7 @@ describe("product service 테스트", () => {
       });
     });
 
-    it("필수값이 누락된 경우 BadRequestError를 던진다.", () => {
+    it("필수값이 누락된 경우 ServiceError를 던진다.", () => {
       const requiredFields = ["price", "name", "imgUrl"] as const;
       const product = {
         price: 25000,
@@ -73,7 +73,7 @@ describe("product service 테스트", () => {
           caughtError = error;
         }
 
-        expect(caughtError).toBeInstanceOf(BadRequestError);
+        expect(caughtError).toBeInstanceOf(ServiceError);
         expect(caughtError).toMatchObject({
           errorCode: "MISSING_FIELD",
           data: expect.arrayContaining([
@@ -86,7 +86,7 @@ describe("product service 테스트", () => {
       });
     });
 
-    it("전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다.", () => {
+    it("전달받은 값의 타입이 하나라도 불일치하는 경우 ServiceError를 던진다.", () => {
       const invalidProducts = [
         {
           price: "25000",
@@ -113,14 +113,14 @@ describe("product service 테스트", () => {
           caughtError = error;
         }
 
-        expect(caughtError).toBeInstanceOf(BadRequestError);
+        expect(caughtError).toBeInstanceOf(ServiceError);
         expect(caughtError).toMatchObject({
           errorCode: "TYPE_MISMATCH",
         });
       });
     });
 
-    it("도메인 규칙에 맞지 않는 값이 포함된 경우 BadRequestError를 던진다.", () => {
+    it("도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다.", () => {
       const product = {
         price: 0,
         name: "a".repeat(101),
@@ -134,7 +134,7 @@ describe("product service 테스트", () => {
         caughtError = error;
       }
 
-      expect(caughtError).toBeInstanceOf(BadRequestError);
+      expect(caughtError).toBeInstanceOf(ServiceError);
       expect(caughtError).toMatchObject({
         errorCode: "INVALID",
         data: expect.arrayContaining([
@@ -168,7 +168,7 @@ describe("product service 테스트", () => {
       expect(productsAfterDelete).not.toContainEqual(product);
     });
 
-    it("전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 BadRequestError를 던진다.", () => {
+    it("전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 ServiceError를 던진다.", () => {
       const products = productsService.getProducts();
       const nonExistentId =
         Math.max(...products.map((product) => product.id)) + 1;
@@ -180,7 +180,7 @@ describe("product service 테스트", () => {
         caughtError = error;
       }
 
-      expect(caughtError).toBeInstanceOf(BadRequestError);
+      expect(caughtError).toBeInstanceOf(ServiceError);
       expect(caughtError).toMatchObject({
         errorCode: "RESOURCE_NOT_FOUND",
       });

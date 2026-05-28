@@ -1,4 +1,4 @@
-export class BadRequestError<T> extends Error {
+export class ServiceError<T> extends Error {
   errorCode: string;
   errorMessage: string;
   data?: T;
