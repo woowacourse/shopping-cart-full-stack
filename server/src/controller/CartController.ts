@@ -5,6 +5,7 @@ import {
   postCartItemService,
   patchCartItemService,
 } from "../service/CartService";
+import { handleError } from "./ErrorHandler";
 
 const getCartItems = (_request: Request, response: Response): void => {
   const cartItems = getCartItemsService();
@@ -35,12 +36,6 @@ const postCartItem = (request: Request, response: Response): void => {
     runPostCartItem(request, response);
   } catch (error) {
     handleError(response, error);
-    //   if (error instanceof Error) {
-    //     return response.status(400).json({ message: "잘못된 요청 형식입니다." });
-    //   }
-    //   return response
-    //     .status(500)
-    //     .json({ message: "네트워크 에러가 발생했습니다!" });
   }
 };
 
@@ -49,7 +44,6 @@ const deleteCartItem = (request: Request, response: Response): void => {
     runDeleteCartItem(request, response);
   } catch (error) {
     handleError(response, error);
-    response.status(500).json({ message: "네트워크 에러가 발생했습니다!" });
   }
 };
 
@@ -58,12 +52,6 @@ const patchCartItem = (request: Request, response: Response): void => {
     runPatchCartItem(request, response);
   } catch (error) {
     handleError(response, error);
-    // if (error instanceof Error) {
-    //   response.status(400).json({ message: "잘못된 요청 형식입니다." });
-    // }
-    // response
-    //   .status(500)
-    //   .json({ message: "네트워크 에러가 발생했습니다!" });
   }
 };
 
