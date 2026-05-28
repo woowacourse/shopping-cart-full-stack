@@ -141,6 +141,39 @@ describe("carts service 테스트", () => {
         });
       });
     });
+
+    it("존재하지 않는 cartId 또는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)", () => {
+      const requests = [
+        {
+          cartId: 999,
+          productId: 1,
+          cartUpdateOption: {
+            quantity: 3,
+          },
+        },
+        {
+          cartId: 1,
+          productId: 999,
+          cartUpdateOption: {
+            quantity: 3,
+          },
+        },
+      ];
+
+      requests.forEach(({ cartId, productId, cartUpdateOption }) => {
+        let caughtError: unknown;
+        try {
+          cartsService.updateCartProduct(cartId, productId, cartUpdateOption);
+        } catch (error) {
+          caughtError = error;
+        }
+
+        expect(caughtError).toBeInstanceOf(ServiceError);
+        expect(caughtError).toMatchObject({
+          errorCode: "RESOURCE_NOT_FOUND",
+        });
+      });
+    });
   });
 
   describe("deleteCartProduct 테스트", () => {
