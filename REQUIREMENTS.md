@@ -39,6 +39,6 @@
 - [] API.md 보충
 - [] 도메인 테스트 보충
 - [] ID 모킹
-- [] getItem -> getItemById 형식으로 전환
+- [x] getItem -> getItemById 형식으로 전환
 - [x] getProduct 네이밍 변화
 - [] 장바구니 목록 응답형태 수정

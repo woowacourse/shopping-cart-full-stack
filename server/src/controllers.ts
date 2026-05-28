@@ -34,7 +34,7 @@ export function createProductController(storage: Storage): ProductController {
       try {
         const { name, price, thumbnail } = req.body;
         const product = new Product(name, price, thumbnail);
-        storage.addItem<Product>("products", product.getId(), product);
+        storage.addItemById<Product>("products", product.getId(), product);
         const post = { id: product.toObject().id };
 
         res.status(201).send(post);
@@ -45,13 +45,13 @@ export function createProductController(storage: Storage): ProductController {
     delete: (req, res, next) => {
       try {
         const id = req.params.id as string;
-        const hasItem = storage.hasItem("products", id);
+        const hasItem = storage.hasItemById("products", id);
         if (!hasItem) {
           throw new NotFoundError();
         }
-        storage.deleteItem("products", id);
-        const cart = storage.getItem("cart", MY_CART_ID) as Cart;
-        cart.deleteItem(id);
+        storage.deleteItemById("products", id);
+        const cart = storage.getItemById("cart", MY_CART_ID) as Cart;
+        cart.deleteItemByProductId(id);
         res.status(204).send();
       } catch (err) {
         next(err);
@@ -64,7 +64,7 @@ export function createCartController(storage: Storage): CartController {
   return {
     get: (_req, res, next) => {
       try {
-        const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
+        const cart = storage.getItemById<Cart>("cart", MY_CART_ID) as Cart;
         res.send({ items: cart.getAllItems() });
       } catch (err) {
         next(err);
@@ -74,12 +74,12 @@ export function createCartController(storage: Storage): CartController {
       try {
         const id = req.params.id;
         const { quantity } = req.body;
-        const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
-        if (!cart.hasItem(id)) {
+        const cart = storage.getItemById<Cart>("cart", MY_CART_ID) as Cart;
+        if (!cart.hasItemByProductId(id)) {
           throw new NotFoundError();
         }
 
-        cart.updateItem(id, quantity);
+        cart.updateItemByProductId(id, quantity);
         res.status(200).send({ product_id: id, quantity: quantity });
       } catch (err) {
         next(err);
@@ -88,11 +88,11 @@ export function createCartController(storage: Storage): CartController {
     delete: (req, res, next) => {
       try {
         const id = req.params.id;
-        const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
-        if (!cart.hasItem(id)) {
+        const cart = storage.getItemById<Cart>("cart", MY_CART_ID) as Cart;
+        if (!cart.hasItemByProductId(id)) {
           throw new NotFoundError();
         }
-        cart.deleteItem(id);
+        cart.deleteItemByProductId(id);
         res.status(204).send();
       } catch (err) {
         next(err);

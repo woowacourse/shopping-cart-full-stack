@@ -4,15 +4,15 @@ class Cart {
     this.#items = new Map();
   }
 
-  updateItem(productId: string, quantity: number) {
+  updateItemByProductId(productId: string, quantity: number) {
     return this.#items.set(productId, quantity);
   }
 
-  hasItem(productId: string) {
+  hasItemByProductId(productId: string) {
     return this.#items.has(productId);
   }
 
-  deleteItem(productId: string) {
+  deleteItemByProductId(productId: string) {
     return this.#items.delete(productId);
   }
 

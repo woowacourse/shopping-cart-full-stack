@@ -20,8 +20,8 @@ describe("프로덕트 API 테스트", () => {
   const product2 = new Product("치킨", 20000, "chicken.png");
 
   beforeEach(() => {
-    storage.addItem("products", product1.getId(), product1);
-    storage.addItem("products", product2.getId(), product2);
+    storage.addItemById("products", product1.getId(), product1);
+    storage.addItemById("products", product2.getId(), product2);
   });
 
   afterEach(() => {
@@ -126,11 +126,11 @@ describe("카트 API 테스트", () => {
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
   const app = createApp({ productController, cartController });
-  const cart = storage.getItem("cart", "my-cart") as Cart;
+  const cart = storage.getItemById("cart", "my-cart") as Cart;
 
   beforeEach(() => {
-    cart.updateItem("123", 10);
-    cart.updateItem("456", 20);
+    cart.updateItemByProductId("123", 10);
+    cart.updateItemByProductId("456", 20);
   });
 
   test("장바구니 내 아이템목록을 반환한다.", async () => {
