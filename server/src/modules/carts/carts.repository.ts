@@ -35,3 +35,15 @@ export const updateProductQuantity = (
 
   return findById(cartId)?.products.find((product) => product.id === productId);
 };
+
+export const deleteProductInCart = (cartId: number, productId: number) => {
+  const cart = rawCarts.find((cart) => cart.id === cartId);
+  if (!cart) return;
+
+  const productIndex = cart.products.findIndex(
+    (product) => product.id === productId,
+  );
+  if (productIndex === -1) return;
+
+  cart.products.splice(productIndex, 1);
+};

@@ -71,4 +71,6 @@ export const updateCartProduct = (
   };
 };
 
-export const deleteCartProduct = (cartId: number, productId: number) => {};
+export const deleteCartProduct = (cartId: number, productId: number) => {
+  cartsRepository.deleteProductInCart(cartId, productId);
+};
