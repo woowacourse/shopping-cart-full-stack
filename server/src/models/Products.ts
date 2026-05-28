@@ -3,7 +3,7 @@ import {Product} from './Product.js';
 export class Products {
   constructor(private products: Array<Product>) {}
 
-  getAll() {
+  findAll() {
     return [...this.products];
   }
 

@@ -18,7 +18,7 @@ const isValidQuantity = (quantity: unknown) => {
 
 export const cartService = {
   getCartItems() {
-    return cartItems.getAll();
+    return cartItems.findAll();
   },
 
   updateQuantity(id: string, quantity: number): UpdateQuantityResult {

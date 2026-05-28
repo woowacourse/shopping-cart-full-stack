@@ -3,7 +3,7 @@ import {CartItem} from './CartItem.js';
 export class CartItems {
   constructor(private cartItems: Array<CartItem>) {}
 
-  getAll() {
+  findAll() {
     return [...this.cartItems];
   }
 

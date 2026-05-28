@@ -52,7 +52,7 @@ const isValidCreateProductBody = (body: unknown): body is CreateProductRequestBo
 
 export const productService = {
   getProducts() {
-    return products.getAll();
+    return products.findAll();
   },
 
   createProduct(body: unknown): CreateProductResult {
