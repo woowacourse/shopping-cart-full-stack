@@ -1,3 +1,4 @@
+import { ModelError } from '../../../src/errors/ModelError.js';
 import { Product } from '../../../src/modules/products/product.model.js';
 
 describe('product 모델 테스트', () => {
@@ -29,7 +30,7 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('상품 가격은 0원이 될 수 없습니다.');
+    }).toThrow('유효하지 않은 상품 가격입니다.');
   });
 
   test('상품 이름이 공백인 경우 에러 발생', () => {
@@ -43,7 +44,7 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('상품 이름은 공백일 수 없습니다.');
+    }).toThrow('유효하지 않은 상품 이름입니다.');
   });
 
   test('상품 이름이 100자를 초과하면 에러 발생', () => {
@@ -57,7 +58,7 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('상품 이름은 100자를 초과할 수 없습니다.');
+    }).toThrow('유효하지 않은 상품 이름입니다.');
   });
 
   test('상품 수량이 0일때 에러 발생', () => {
@@ -71,7 +72,7 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('수량은 1개 이상 99개 이하여야 합니다.');
+    }).toThrow('유효하지 않은 상품 수량입니다.');
   });
 
   test('상품 수량이 100일때 에러 발생', () => {
@@ -85,7 +86,7 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('수량은 1개 이상 99개 이하여야 합니다.');
+    }).toThrow('유효하지 않은 상품 수량입니다.');
   });
 
   test('상품 수량이 정수가 아닐 때 에러 발생', () => {
@@ -99,7 +100,7 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('수량은 정수여야 합니다.');
+    }).toThrow('유효하지 않은 상품 수량입니다.');
   });
 
   test('상품 가격이 숫자가 아닐 때 에러 발생', () => {
@@ -113,6 +114,23 @@ describe('product 모델 테스트', () => {
 
     expect(() => {
       new Product(mockProduct);
-    }).toThrow('상품 가격은 숫자여야 합니다.');
+    }).toThrow('유효하지 않은 상품 가격입니다.');
+  });
+
+  test('상품 이름 도메인 검증 실패 시 INVALID_PRODUCT_NAME 코드를 가진 ModelError를 던진다', () => {
+    const mockProduct = {
+      productId: '1',
+      productName: ' ',
+      productPrice: 1300,
+      remainingQuantity: 25,
+      imageUrl: 'src/assets/coke.png',
+    };
+
+    try {
+      new Product(mockProduct);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ModelError);
+      expect((error as ModelError).code).toBe('INVALID_PRODUCT_NAME');
+    }
   });
 });

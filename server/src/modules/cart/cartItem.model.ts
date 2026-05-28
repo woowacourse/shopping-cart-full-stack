@@ -1,3 +1,5 @@
+import { ModelError } from '../../errors/ModelError.js';
+
 export type Type = {
   cartItemId: string;
   productId: string;
@@ -19,10 +21,16 @@ export class CartItem {
 
   validator(product: Type) {
     if (!Number.isInteger(product.purchaseQuantity)) {
-      throw new Error('수량은 정수여야 합니다.');
+      throw new ModelError(
+        'INVALID_PURCHASE_QUANTITY',
+        '유효하지 않은 구매 수량입니다.',
+      );
     }
     if (product.purchaseQuantity < 1 || product.purchaseQuantity > 99) {
-      throw new Error('수량은 1이상 99이하여야 합니다.');
+      throw new ModelError(
+        'INVALID_PURCHASE_QUANTITY',
+        '유효하지 않은 구매 수량입니다.',
+      );
     }
   }
 }

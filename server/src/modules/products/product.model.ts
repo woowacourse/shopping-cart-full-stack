@@ -1,3 +1,5 @@
+import { ModelError } from '../../errors/ModelError.js';
+
 export type Type = {
   productId: string;
   productName: string;
@@ -25,22 +27,40 @@ export class Product {
 
   validator(product: Type) {
     if (product.productName.trim() === '') {
-      throw new Error('상품 이름은 공백일 수 없습니다.');
+      throw new ModelError(
+        'INVALID_PRODUCT_NAME',
+        '유효하지 않은 상품 이름입니다.',
+      );
     }
     if (product.productName.length > 100) {
-      throw new Error('상품 이름은 100자를 초과할 수 없습니다.');
+      throw new ModelError(
+        'INVALID_PRODUCT_NAME',
+        '유효하지 않은 상품 이름입니다.',
+      );
     }
     if (!Number.isFinite(product.productPrice)) {
-      throw new Error('상품 가격은 숫자여야 합니다.');
+      throw new ModelError(
+        'INVALID_PRODUCT_PRICE',
+        '유효하지 않은 상품 가격입니다.',
+      );
     }
     if (product.productPrice <= 0) {
-      throw new Error('상품 가격은 0원이 될 수 없습니다.');
+      throw new ModelError(
+        'INVALID_PRODUCT_PRICE',
+        '유효하지 않은 상품 가격입니다.',
+      );
     }
     if (!Number.isInteger(product.remainingQuantity)) {
-      throw new Error('수량은 정수여야 합니다.');
+      throw new ModelError(
+        'INVALID_REMAINING_QUANTITY',
+        '유효하지 않은 상품 수량입니다.',
+      );
     }
     if (product.remainingQuantity < 1 || product.remainingQuantity > 99) {
-      throw new Error('수량은 1개 이상 99개 이하여야 합니다.');
+      throw new ModelError(
+        'INVALID_REMAINING_QUANTITY',
+        '유효하지 않은 상품 수량입니다.',
+      );
     }
   }
 }
