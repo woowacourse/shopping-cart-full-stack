@@ -43,4 +43,31 @@ describe("carts service 테스트", () => {
       });
     });
   });
+
+  describe("updateCartProduct 테스트", () => {
+    it("필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 장바구니 상품 수량을 변경한다.", () => {
+      const cartId = 1;
+      const productId = 1;
+      const quantity = 3;
+      const cartUpdateOption = {
+        quantity,
+      };
+
+      const updatedProduct = cartsService.updateCartProduct(
+        cartId,
+        productId,
+        cartUpdateOption,
+      );
+      const cart = cartsService.getCartById(cartId);
+
+      expect(updatedProduct).toEqual({
+        id: productId,
+        price: 18000,
+        name: "Shopping Basket",
+        imgUrl: "https://example.com/images/shopping-basket.png",
+        quantity,
+      });
+      expect(cart.products).toContainEqual(updatedProduct);
+    });
+  });
 });
