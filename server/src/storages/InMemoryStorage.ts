@@ -1,18 +1,11 @@
-import Product from "../models/Product.js";
-import Cart from "../models/Cart.js";
 import { Storage } from "./Storage.js";
-import { MY_CART_ID } from "../constanst.js";
-
-const defaultData = {
-  products: new Map<string, Product>(),
-  cart: new Map<string, Cart>([[MY_CART_ID, new Cart()]]),
-};
+import { INITIAL_DATA } from "../data.js";
 
 class InMemoryStorage implements Storage {
   #data: Record<string, any>;
 
   constructor() {
-    this.#data = { ...defaultData };
+    this.#data = INITIAL_DATA;
   }
 
   getItem(table: string, id: string) {
