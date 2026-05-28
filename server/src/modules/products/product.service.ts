@@ -1,9 +1,10 @@
 import { AppError } from '../../errors/AppError.js';
+import { ModelError } from '../../errors/ModelError.js';
 import { cartItemRepository } from '../cart/cartItem.repository.js';
 import { Product } from './product.model.js';
 import { productRepository } from './product.repository.js';
 
-type productParams = {
+type ProductParams = {
   productName: string;
   productPrice: number;
   remainingQuantity: number;
@@ -11,13 +12,24 @@ type productParams = {
 };
 
 export const productService = {
-  addProduct(params: productParams) {
+  addProduct(params: ProductParams) {
     // 필드 검사
-    productFieldValidate(params);
+    validateProductFields(params);
 
-    const product = new Product({ productId: crypto.randomUUID(), ...params });
-    productRepository.save(product);
-    return { productId: product.productId };
+    try {
+      const product = new Product({
+        productId: crypto.randomUUID(),
+        ...params,
+      });
+      productRepository.save(product);
+      return { productId: product.productId };
+    } catch (error) {
+      if (error instanceof ModelError) {
+        throw new AppError(400, error.code, error.message);
+      }
+
+      throw error;
+    }
   },
 
   getProducts() {
@@ -34,29 +46,39 @@ export const productService = {
   },
 };
 
-const productFieldValidate = (params: productParams) => {
-  if (params.productName.trim() === '')
+const validateProductFields = (params: ProductParams) => {
+  if (typeof params.productName !== 'string') {
     throw new AppError(
       400,
       'INVALID_PRODUCT_NAME',
       '유효하지 않은 상품 이름입니다.',
     );
-  if (params.productPrice <= 0)
+  }
+
+  if (typeof params.productPrice !== 'number') {
     throw new AppError(
       400,
       'INVALID_PRODUCT_PRICE',
       '유효하지 않은 상품 가격입니다.',
     );
-  if (!params.remainingQuantity)
+  }
+
+  if (typeof params.remainingQuantity !== 'number') {
     throw new AppError(
       400,
       'INVALID_REMAINING_QUANTITY',
       '유효하지 않은 상품 수량입니다.',
     );
-  if (params.imageUrl && params.imageUrl.trim() === '')
+  }
+
+  if (
+    params.imageUrl !== undefined &&
+    (typeof params.imageUrl !== 'string' || params.imageUrl.trim() === '')
+  ) {
     throw new AppError(
       400,
       'INVALID_IMAGE_URL',
       '유효하지 않은 이미지 경로입니다.',
     );
+  }
 };

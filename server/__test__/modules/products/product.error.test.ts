@@ -13,7 +13,6 @@ describe('상품 에러 테스트', () => {
   describe('상품 추가 에러 테스트', () => {
     test('상품 추가 시, 상품의 이름이 유효하지 않은 경우 INVALID_PRODUCT_NAME 에러를 반환한다.', async () => {
       const addRes = await request(app).post('/products').send({
-        productName: ' ',
         productPrice: 1300,
         remainingQuantity: 25,
         imageUrl: 'src/assets/coke.png',
@@ -27,7 +26,6 @@ describe('상품 에러 테스트', () => {
     test('상품 추가 시, 상품의 가격이 유효하지 않은 경우 INVALID_PRODUCT_PRICE 에러를 반환한다.', async () => {
       const addRes = await request(app).post('/products').send({
         productName: '콜라',
-        productPrice: ' ',
         remainingQuantity: 25,
         imageUrl: 'src/assets/coke.png',
       });
@@ -49,7 +47,7 @@ describe('상품 에러 테스트', () => {
       expect(addRes.body.message).toEqual('유효하지 않은 상품 수량입니다.');
     });
 
-    test('상품 추가 시, 상품의 이름이 유효하지 않은 경우 INVALID_PRODUCT_NAME 에러를 반환한다.', async () => {
+    test('상품 추가 시, 상품의 이미지 경로가 유효하지 않은 경우 INVALID_IMAGE_URL 에러를 반환한다.', async () => {
       const addRes = await request(app).post('/products').send({
         productName: '콜라',
         productPrice: 1300,
