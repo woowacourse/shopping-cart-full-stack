@@ -15,11 +15,12 @@ export const cartItemRepository = {
     return cartItemsDB.get(cartItemId);
   },
   findByProductId(productId: string) {
-    for (const cartItem of cartItemsDB.values()) {
-      if (cartItem.productId === productId) {
-        return cartItem;
-      }
-    }
+    const cartItem = [...cartItemsDB.values()].find(
+      (cardItem) => cardItem.productId === productId,
+    );
+
+    if (cartItem) return cartItem;
+
     return undefined;
   },
 
@@ -28,10 +29,10 @@ export const cartItemRepository = {
   },
 
   deleteByProductId(productId: string) {
-    for (const cartItem of cartItemsDB.values()) {
-      if (cartItem.productId === productId) {
-        cartItemsDB.delete(cartItem.cartItemId);
-      }
-    }
+    const cartItem = [...cartItemsDB.values()].find(
+      (cardItem) => cardItem.productId === productId,
+    );
+
+    if (cartItem) cartItemsDB.delete(cartItem.cartItemId);
   },
 };
