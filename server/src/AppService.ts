@@ -1,3 +1,4 @@
+import AppError from './AppError.js';
 import Cart from './Cart.js';
 import ProductManager from './ProductManager.js';
 
@@ -20,7 +21,7 @@ class AppService {
     }
 
     if (targetProduct.quantity < orderCount) {
-      throw new Error('보유한 상품의 개수를 넘어섰습니다.');
+      throw new AppError('PRODUCT_ORDER_COUNT_EXCEEDED');
     }
 
     this.cart.setOrderCount(id, orderCount);

@@ -1,3 +1,4 @@
+import AppError from '../AppError.js';
 import Cart from '../Cart.js';
 
 describe('장바구니 상품 수량 변경 기능 테스트', () => {
@@ -38,12 +39,12 @@ describe('장바구니 상품 수량 변경 예외 테스트', () => {
     expect(() => {
       // @ts-ignore 예외 처리를 위한 타입 무시
       cart.setOrderCount(productId, 'abc');
-    }).toThrow('변경할 수량은 0보다 큰 숫자여야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_ORDER_COUNT_TYPE'));
 
     expect(() => {
       // @ts-ignore 예외 처리를 위한 타입 무시
       cart.setOrderCount(productId, '2');
-    }).toThrow('변경할 수량은 0보다 큰 숫자여야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_ORDER_COUNT_TYPE'));
   });
 
   test('장바구니에 존재하지 않는 상품의 수량을 변경하면 에러를 발생시킨다.', () => {
@@ -55,7 +56,7 @@ describe('장바구니 상품 수량 변경 예외 테스트', () => {
     expect(() => {
       // @ts-ignore 예외 처리를 위한 타입 무시
       cart.setOrderCount(wrongProductId, 2);
-    }).toThrow('수량을 변경하려는 상품이 존재하지 않습니다.');
+    }).toThrow(new AppError('PRODUCT_NOT_EXIST_FOR_ORDER'));
   });
 
   test('필수 필드 누락 시 에러를 응답한다.', () => {
@@ -67,17 +68,17 @@ describe('장바구니 상품 수량 변경 예외 테스트', () => {
     expect(() => {
       // @ts-ignore 예외 처리를 위한 타입 무시
       cart.setOrderCount(productId, '');
-    }).toThrow('주문 수량 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_ORDER_COUNT'));
 
     expect(() => {
       // @ts-ignore 예외 처리를 위한 타입 무시
       cart.setOrderCount(productId, null);
-    }).toThrow('주문 수량 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_ORDER_COUNT'));
 
     expect(() => {
       // @ts-ignore 예외 처리를 위한 타입 무시
       cart.setOrderCount(productId, undefined);
-    }).toThrow('주문 수량 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_ORDER_COUNT'));
   });
 });
 
@@ -104,6 +105,6 @@ describe('장바구니 상품 삭제 예외 테스트', () => {
     // when & then
     expect(() => {
       cart.deleteCartItem(wrongProductId);
-    }).toThrow('삭제하려는 상품이 장바구니에 존재하지 않습니다.');
+    }).toThrow(new AppError('PRODUCT_NOT_EXIST_IN_CART'));
   });
 });

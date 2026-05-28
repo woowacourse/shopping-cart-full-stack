@@ -1,3 +1,4 @@
+import AppError from '../AppError.js';
 import AppService from '../AppService.js';
 import Cart from '../Cart.js';
 import ProductManager from '../ProductManager.js';
@@ -35,7 +36,7 @@ describe('앱 서비스 테스트', () => {
     // when & then
     expect(() => {
       appService.updateCartOrderCount(productId, orderCount);
-    }).toThrow('보유한 상품의 개수를 넘어섰습니다.');
+    }).toThrow(new AppError('PRODUCT_ORDER_COUNT_EXCEEDED'));
   });
 
   test('상품 1개를 삭제하면, 삭제된 상품이 장바구니에서 같이 삭제된다.', () => {

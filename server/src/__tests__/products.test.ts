@@ -1,3 +1,4 @@
+import AppError from '../AppError.js';
 import ProductManager, { Product } from '../ProductManager.js';
 
 const mockProduct: Product = {
@@ -56,7 +57,7 @@ describe('상품 추가 예외 테스트', () => {
         ...mockProduct,
         name: '아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말아디다스양말',
       });
-    }).toThrow('상품명은 100자를 초과할 수 없습니다.');
+    }).toThrow(new AppError('PRODUCT_NAME_LENGTH_EXCEEDED'));
   });
 
   test('가격이 숫자가 아니면 에러를 발생시킨다.', () => {
@@ -67,7 +68,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         price: 'abc',
       });
-    }).toThrow('가격은 0보다 큰 숫자여야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_PRICE_TYPE'));
   });
 
   test('가격이 숫자가 아니면 에러를 발생시킨다.', () => {
@@ -78,7 +79,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         price: '2',
       });
-    }).toThrow('가격은 0보다 큰 숫자여야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_PRICE_TYPE'));
   });
 
   test('가격이 0 이하이면 에러를 발생시킨다.', () => {
@@ -88,7 +89,7 @@ describe('상품 추가 예외 테스트', () => {
         ...mockProduct,
         price: 0,
       });
-    }).toThrow('가격은 0보다 큰 숫자여야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_PRICE_TYPE'));
   });
 
   test('재고 수량이 범위(1~99)를 벗어날 경우 에러를 발생시킨다.', () => {
@@ -98,14 +99,14 @@ describe('상품 추가 예외 테스트', () => {
         ...mockProduct,
         quantity: 0,
       });
-    }).toThrow('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_QUANTITY_RANGE'));
 
     expect(() => {
       productManager.addProduct({
         ...mockProduct,
         quantity: 100,
       });
-    }).toThrow('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_QUANTITY_RANGE'));
 
     expect(() => {
       productManager.addProduct({
@@ -113,7 +114,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         quantity: '2',
       });
-    }).toThrow('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+    }).toThrow(new AppError('INVALID_PRODUCT_QUANTITY_RANGE'));
   });
 
   test('상품명 필드가 누락된 경우 에러를 발생시킨다.', () => {
@@ -123,7 +124,7 @@ describe('상품 추가 예외 테스트', () => {
         ...mockProduct,
         name: '',
       });
-    }).toThrow('상품명 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_NAME'));
 
     expect(() => {
       productManager.addProduct({
@@ -131,7 +132,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         name: null,
       });
-    }).toThrow('상품명 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_NAME'));
 
     expect(() => {
       productManager.addProduct({
@@ -139,7 +140,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         name: undefined,
       });
-    }).toThrow('상품명 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_NAME'));
   });
 
   test('상품 가격 필드가 누락된 경우 에러를 발생시킨다.', () => {
@@ -150,7 +151,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         price: null,
       });
-    }).toThrow('가격 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_PRICE'));
 
     expect(() => {
       productManager.addProduct({
@@ -158,7 +159,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         price: undefined,
       });
-    }).toThrow('가격 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_PRICE'));
   });
 
   test('재고 필드가 누락된 경우 에러를 발생시킨다.', () => {
@@ -169,7 +170,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         quantity: '',
       });
-    }).toThrow('재고 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_QUANTITY'));
 
     expect(() => {
       productManager.addProduct({
@@ -177,7 +178,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         quantity: null,
       });
-    }).toThrow('재고 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_QUANTITY'));
 
     expect(() => {
       productManager.addProduct({
@@ -185,7 +186,7 @@ describe('상품 추가 예외 테스트', () => {
         // @ts-ignore 예외 처리를 위한 타입 무시
         quantity: undefined,
       });
-    }).toThrow('재고 필드가 누락되었습니다.');
+    }).toThrow(new AppError('EMPTY_PRODUCT_QUANTITY'));
   });
 });
 
@@ -219,6 +220,6 @@ describe('상품 삭제 예외 테스트', () => {
     // when & then
     expect(() => {
       productManager.deleteProduct(wrongProductId);
-    }).toThrow('삭제하려는 상품이 존재하지 않습니다.');
+    }).toThrow(new AppError('PRODUCT_NOT_EXIST'));
   });
 });

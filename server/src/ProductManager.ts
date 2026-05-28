@@ -1,3 +1,5 @@
+import AppError from './AppError.js';
+
 export type Product = {
   name: string;
   price: number;
@@ -16,29 +18,29 @@ class ProductManager {
 
   private validateProductName(name: string) {
     if (!name || name.trim().length === 0) {
-      throw new Error('상품명 필드가 누락되었습니다.');
+      throw new AppError('EMPTY_PRODUCT_NAME');
     }
     if (name.length > 100) {
-      throw new Error('상품명은 100자를 초과할 수 없습니다.');
+      throw new AppError('PRODUCT_NAME_LENGTH_EXCEEDED');
     }
   }
 
   private validateProductPrice(price: number) {
     // price가 null이나 undefined일 때만 필드 누락으로 간주
     if (!price && price !== 0) {
-      throw new Error('가격 필드가 누락되었습니다.');
+      throw new AppError('EMPTY_PRODUCT_PRICE');
     }
     if (price <= 0 || typeof price === 'string') {
-      throw new Error('가격은 0보다 큰 숫자여야 합니다.');
+      throw new AppError('INVALID_PRODUCT_PRICE_TYPE');
     }
   }
 
   private validateProductQuantity(quantity: number) {
     if (!quantity && quantity !== 0) {
-      throw new Error('재고 필드가 누락되었습니다.');
+      throw new AppError('EMPTY_PRODUCT_QUANTITY');
     }
     if (typeof quantity === 'string' || quantity < 1 || quantity > 99) {
-      throw new Error('상품 재고는 1이상 99이하의 정수이어야 합니다.');
+      throw new AppError('INVALID_PRODUCT_QUANTITY_RANGE');
     }
   }
 
@@ -51,7 +53,7 @@ class ProductManager {
 
   deleteProduct(id: number) {
     if (!this.products.has(id)) {
-      throw new Error('삭제하려는 상품이 존재하지 않습니다.');
+      throw new AppError('PRODUCT_NOT_EXIST');
     }
 
     this.products.delete(id);

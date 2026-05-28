@@ -1,3 +1,5 @@
+import AppError from './AppError.js';
+
 type CartItem = Map<number, number>;
 
 class Cart {
@@ -27,21 +29,21 @@ class Cart {
 
   private validateOrderCount(id: number, orderCount: number) {
     if (!this.cartItems.has(id)) {
-      throw new Error('수량을 변경하려는 상품이 존재하지 않습니다.');
+      throw new AppError('PRODUCT_NOT_EXIST_FOR_ORDER');
     }
 
     if (!orderCount && orderCount !== 0) {
-      throw new Error('주문 수량 필드가 누락되었습니다.');
+      throw new AppError('EMPTY_PRODUCT_ORDER_COUNT');
     }
 
     if (typeof orderCount === 'string' || orderCount < 1) {
-      throw new Error('변경할 수량은 0보다 큰 숫자여야 합니다.');
+      throw new AppError('INVALID_PRODUCT_ORDER_COUNT_TYPE');
     }
   }
 
   private validateCardItemDeletion(id: number) {
     if (!this.cartItems.has(id)) {
-      throw new Error('삭제하려는 상품이 장바구니에 존재하지 않습니다.');
+      throw new AppError('PRODUCT_NOT_EXIST_IN_CART');
     }
   }
 }
