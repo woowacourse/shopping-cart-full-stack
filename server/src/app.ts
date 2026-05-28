@@ -31,6 +31,14 @@ export function createApp(storage: Storage) {
 
   app.delete("/api/products/:id/", (req, res) => {
     const { id } = req.params;
+    const hasItem = storage.hasItem("products", id);
+    if (!hasItem)
+      res
+        .status(404)
+        .send({
+          code: "RESOURCE_NOT_FOUND",
+          message: "요청한 리소스를 찾을 수 없습니다.",
+        });
     storage.deleteItem("products", id);
     const cart = storage.getItem("cart", MY_CART_ID) as Cart;
     cart.deleteItem(id);

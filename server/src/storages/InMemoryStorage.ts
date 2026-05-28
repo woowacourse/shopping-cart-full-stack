@@ -23,6 +23,10 @@ class InMemoryStorage implements Storage {
     return this.#data[table].set(id, obj);
   }
 
+  hasItem(table: string, id: string): boolean {
+    return this.#data[table].has(id);
+  }
+
   updateItem<T>(table: string, id: string, obj: T) {
     return this.#data[table].set(id, obj);
   }

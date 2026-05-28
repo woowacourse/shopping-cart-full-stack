@@ -117,6 +117,19 @@ describe("프로덕트 API 테스트", () => {
         done,
       );
   });
+
+  test("존재하지 않는 상품을 제거하려고 하면 404 에러가 발생한다.", (done) => {
+    request(app)
+      .del(`/api/products/unknown/`)
+      .expect(
+        404,
+        {
+          code: "RESOURCE_NOT_FOUND",
+          message: "요청한 리소스를 찾을 수 없습니다.",
+        },
+        done,
+      );
+  });
 });
 
 describe("카트 API 테스트", () => {
