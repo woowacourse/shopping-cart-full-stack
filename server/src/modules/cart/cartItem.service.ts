@@ -13,12 +13,17 @@ export const cartItemService = {
     // 추가하려는 상품이 장바구니에 이미 존재할 경우
     const foundCartItem = cartItemRepository.findByProductId(productId);
     if (foundCartItem) {
-      validateRemainingQuantity(product, purchaseQuantity);
-      foundCartItem.purchaseQuantity++;
+      const nextPurchaseQuantity =
+        foundCartItem.purchaseQuantity + purchaseQuantity;
 
-      return { cartItemId: foundCartItem.cartItemId };
+      validatePurchaseQuantity(nextPurchaseQuantity);
+      validateRemainingQuantity(product, nextPurchaseQuantity);
+      foundCartItem.purchaseQuantity = nextPurchaseQuantity;
+
+      return { cartItemId: foundCartItem.cartItemId, isNew: false };
     }
 
+    // 추가하려는 상품이 장바구니에 존재하지 않는 경우
     const cartItem = new CartItem({
       cartItemId: crypto.randomUUID(),
       productId,
@@ -26,7 +31,7 @@ export const cartItemService = {
     });
 
     cartItemRepository.save(cartItem);
-    return { cartItemId: cartItem.cartItemId };
+    return { cartItemId: cartItem.cartItemId, isNew: true };
   },
 
   getCartItems() {

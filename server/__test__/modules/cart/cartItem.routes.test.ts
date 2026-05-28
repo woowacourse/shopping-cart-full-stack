@@ -44,6 +44,21 @@ describe('장바구니 API', () => {
     expect(response.status).toBe(201);
     expect(response.body).toEqual({ cartItemId: expect.any(String) });
   });
+  it('장바구니에 이미 존재하는 상품을 다시 추가', async () => {
+    const responseA = await request(app).post('/cart/items').send({
+      productId: mockCartItem.productId,
+      purchaseQuantity: mockCartItem.purchaseQuantity,
+    });
+    const responseB = await request(app).post('/cart/items').send({
+      productId: mockCartItem.productId,
+      purchaseQuantity: mockCartItem.purchaseQuantity,
+    });
+
+    expect(responseA.status).toBe(201);
+    expect(responseB.status).toBe(200);
+    expect(responseA.body).toEqual({ cartItemId: expect.any(String) });
+    expect(responseB.body).toEqual({ cartItemId: expect.any(String) });
+  });
   it('상품 삭제', async () => {
     // 장바구니에 상품 추가
     const response = await request(app).post('/cart/items').send({

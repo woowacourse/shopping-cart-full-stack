@@ -74,6 +74,25 @@ describe('장바구니 에러 테스트', () => {
       expect(addRes.body.code).toBe('EXCEEDS_REMAINING_QUANTITY');
       expect(addRes.body.message).toBe('상품의 남은 수량을 초과했습니다.');
     });
+
+    test('이미 장바구니에 담긴 상품을 다시 추가할 때 합산 수량이 상품의 남은 수량보다 많으면 EXCEEDS_REMAINING_QUANTITY 에러를 반환한다.', async () => {
+      const product = createProduct('product-1', 1);
+      productsDB.set(product.productId, product);
+
+      await request(app).post('/cart/items').send({
+        productId: product.productId,
+        purchaseQuantity: 1,
+      });
+
+      const addRes = await request(app).post('/cart/items').send({
+        productId: product.productId,
+        purchaseQuantity: 1,
+      });
+
+      expect(addRes.status).toBe(400);
+      expect(addRes.body.code).toBe('EXCEEDS_REMAINING_QUANTITY');
+      expect(addRes.body.message).toBe('상품의 남은 수량을 초과했습니다.');
+    });
   });
 
   describe('장바구니 상품 수량 변경 에러 테스트', () => {

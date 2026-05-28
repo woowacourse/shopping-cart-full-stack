@@ -17,7 +17,11 @@ cartItemRouter.post('/cart/items', (req, res, next) => {
       req.body?.productId,
       req.body?.purchaseQuantity,
     );
-    res.status(201).json(cartItem);
+
+    const responseBody = { cartItemId: cartItem.cartItemId };
+
+    if (cartItem.isNew) res.status(201).json(responseBody);
+    else res.status(200).json(responseBody);
   } catch (error) {
     next(error);
   }
