@@ -1,10 +1,25 @@
 import express from "express";
+import ProductController from "./controllers/productController.js";
 
-const app = express();
-app.use(express.json());
+export function createApp(db: unknown) {
+  const productController = new ProductController(db);
 
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
+  const app = express();
+  app.use(express.json());
 
-export default app;
+  app.get("/products", (req, res) => {
+    productController.getProductAll(req, res);
+  });
+  app.get("/products/:id", (req, res) => {
+    productController.getProduct(req, res);
+  });
+  app.post("/products/:id", (req, res) => {
+    productController.addProduct(req, res);
+  });
+  app.delete("/products/:id", (req, res) => {
+    productController.removeProduct(req, res);
+  });
+
+  app.use(errorMiddleware);
+  return app;
+}
