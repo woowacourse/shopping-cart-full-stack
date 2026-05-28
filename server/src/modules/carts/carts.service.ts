@@ -48,6 +48,27 @@ export const updateCartProduct = (
     );
   }
 
+  const invalidFields = [
+    {
+      type: "quantity",
+      isInvalid:
+        !Number.isInteger(cartUpdateOption.quantity) ||
+        cartUpdateOption.quantity! < 1 ||
+        cartUpdateOption.quantity! > 99,
+    },
+  ].filter(({ isInvalid }) => isInvalid);
+
+  if (invalidFields.length > 0) {
+    throw new ServiceError(
+      "INVALID",
+      "도메인 규칙에 맞지 않는 값입니다.",
+      invalidFields.map(({ type }) => ({
+        type,
+        errorCode: `INVALID_${type.toUpperCase()}`,
+      })),
+    );
+  }
+
   const product = cartsRepository.updateProductQuantity(
     cartId,
     productId,
