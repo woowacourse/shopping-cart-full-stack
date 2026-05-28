@@ -19,3 +19,19 @@ export const findById = (id: number) => {
     products: products.map((product) => new ProductInCart(product)),
   });
 };
+
+export const updateProductQuantity = (
+  cartId: number,
+  productId: number,
+  quantity: number,
+) => {
+  const cart = rawCarts.find((cart) => cart.id === cartId);
+  if (!cart) return undefined;
+
+  const product = cart.products.find((product) => product.id === productId);
+  if (!product) return undefined;
+
+  product.quantity = quantity;
+
+  return findById(cartId)?.products.find((product) => product.id === productId);
+};
