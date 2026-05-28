@@ -47,3 +47,17 @@ export const deleteProductInCart = (cartId: number, productId: number) => {
 
   cart.products.splice(productIndex, 1);
 };
+
+export const findProductInCart = (cartId: number, productId: number) => {
+  const cart = rawCarts.find((cart) => cart.id === cartId);
+  if (!cart) return undefined;
+
+  const product = cart.products.find((product) => product.id === productId);
+  if (!product) return undefined;
+
+  const productData = rawProducts.find(
+    (rawProduct) => rawProduct.id === product.id,
+  )!;
+
+  return { ...product, ...productData };
+};

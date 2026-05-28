@@ -72,5 +72,14 @@ export const updateCartProduct = (
 };
 
 export const deleteCartProduct = (cartId: number, productId: number) => {
+  const product = cartsRepository.findProductInCart(cartId, productId);
+
+  if (!product) {
+    throw new ServiceError(
+      "RESOURCE_NOT_FOUND",
+      "id에 해당하는 장바구니 상품이 존재하지 않습니다.",
+    );
+  }
+
   cartsRepository.deleteProductInCart(cartId, productId);
 };
