@@ -6,6 +6,7 @@ import {
   productBodyValidateMiddelware,
   cartBodyValidateMiddelware,
 } from "./middlewares/BodyValiadateMiddleware.js";
+import { NotFoundError, InternalServerError } from "./errors.js";
 import Cart from "./models/Cart.js";
 
 export function createApp(storage: Storage) {
@@ -45,11 +46,9 @@ export function createApp(storage: Storage) {
     try {
       const { id } = req.params;
       const hasItem = storage.hasItem("products", id);
-      if (!hasItem)
-        res.status(404).send({
-          code: "RESOURCE_NOT_FOUND",
-          message: "요청한 리소스를 찾을 수 없습니다.",
-        });
+      if (!hasItem) {
+        throw new NotFoundError();
+      }
       storage.deleteItem("products", id);
       const cart = storage.getItem("cart", MY_CART_ID) as Cart;
       cart.deleteItem(id);
@@ -77,7 +76,7 @@ export function createApp(storage: Storage) {
         const { quantity } = req.body;
         const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
         if (!cart.hasItem(id)) {
-          throw new Error("404");
+          throw new NotFoundError();
         }
 
         cart.updateItem(id, quantity);
@@ -92,11 +91,9 @@ export function createApp(storage: Storage) {
     try {
       const { id } = req.params;
       const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
-      if (!cart.hasItem(id))
-        res.status(404).send({
-          code: "RESOURCE_NOT_FOUND",
-          message: "요청한 리소스를 찾을 수 없습니다.",
-        });
+      if (!cart.hasItem(id)) {
+        throw new NotFoundError();
+      }
       cart.deleteItem(id);
       res.status(204).send();
     } catch (err) {
@@ -111,16 +108,16 @@ export function createApp(storage: Storage) {
       res: express.Response,
       _next: express.NextFunction,
     ) => {
-      const code = err.message;
-      if (code === "404") {
-        res.status(404).send({
-          code: "RESOURCE_NOT_FOUND",
-          message: "요청한 리소스를 찾을 수 없습니다.",
+      if (err instanceof NotFoundError) {
+        res.status(err.statusCode).send({
+          code: err.code,
+          message: err.message,
         });
       } else {
-        res.status(500).send({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "예기치 못한 오류가 발생했습니다.",
+        const err = new InternalServerError();
+        res.status(err.statusCode).send({
+          code: err.code,
+          message: err.message,
         });
       }
     },
