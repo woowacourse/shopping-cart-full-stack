@@ -13,16 +13,20 @@ export const cartController = {
   updateQuantity(req: Request<IdParams, unknown, UpdateCartQuantityRequestBody>, res: Response) {
     const targetId = req.params.id;
     const {quantity} = req.body;
-    const updatedCart = cartService.updateQuantity(targetId, quantity);
+    const result = cartService.updateQuantity(targetId, quantity);
 
-    if (!updatedCart) {
+    if (result.status === 'invalid') {
+      return res.status(400).send();
+    }
+
+    if (result.status === 'notFound') {
       return res.status(404).send();
     }
 
     res.status(200).json({
       body: {
         id: targetId,
-        quantity: updatedCart.getQuantity(),
+        quantity: result.quantity,
       },
     });
   },
