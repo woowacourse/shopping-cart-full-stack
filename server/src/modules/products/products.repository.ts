@@ -2,7 +2,9 @@ import type { Product } from "@/type";
 import { ProductDB } from "@db/inMemoryDB";
 
 const makeCrateId = () => {
-  const lastCount = { count: 0 };
+  const initialCount =
+    ProductDB.size === 0 ? 0 : Math.max(...ProductDB.keys()) + 1;
+  const lastCount = { count: initialCount };
 
   return function () {
     return lastCount.count++;

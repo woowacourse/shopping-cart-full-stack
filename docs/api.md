@@ -41,12 +41,14 @@
 {
   "status": "success",
   "message": "상품 목록을 정상적으로 조회하였습니다.",
-  "data": {
-    "id": "number",
-    "image": "string",
-    "name": "string",
-    "price": "number"
-  }
+  "data": [
+    {
+      "id": "number",
+      "image": "string",
+      "name": "string",
+      "price": "number"
+    }
+  ]
 }
 ```
 
