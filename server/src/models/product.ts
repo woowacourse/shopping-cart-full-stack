@@ -3,6 +3,7 @@ import {
   productErrors,
   ProductValidationError,
 } from "../errors/productError.js";
+
 export interface ProductData {
   name: string;
   price: number;

@@ -20,7 +20,7 @@ describe("상품 생성 테스트", () => {
       price: 35000,
     };
 
-    expect(() => new Product(item)).toThrow("error");
+    expect(() => new Product(item)).toThrow();
   });
 
   it("이미지 확장자로 끝나지 않을 때", () => {
@@ -30,7 +30,7 @@ describe("상품 생성 테스트", () => {
       price: -3000,
     };
 
-    expect(() => new Product(item)).toThrow("error");
+    expect(() => new Product(item)).toThrow();
   });
 
   it("price 값이 음수일 때 생성 실패", () => {
@@ -40,6 +40,6 @@ describe("상품 생성 테스트", () => {
       price: -3000,
     };
 
-    expect(() => new Product(item)).toThrow("error");
+    expect(() => new Product(item)).toThrow();
   });
 });

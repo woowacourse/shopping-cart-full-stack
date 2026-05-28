@@ -1,5 +1,5 @@
 import Product from "../models/Product.js";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import type { DBInterface } from "../db/db.js";
 import { ProductValidationError } from "../errors/productError.js";
 
@@ -107,6 +107,7 @@ export default class ProductController {
         return res.status(204).json();
       }
 
+      this.#db.CART_TABLE.delete(numberId);
       this.#db.PRODUCT_TABLE.delete(numberId);
       res.status(204).json();
     } catch (error) {
