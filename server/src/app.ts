@@ -1,9 +1,11 @@
 import express from "express";
-import ProductController from "./controllers/productController.js";
+import ProductController from "./controllers/ProductController.js";
 import { DBInterface } from "./db/db.js";
+import CartController from "./controllers/cartController.js";
 
 export function createApp(db: DBInterface) {
   const productController = new ProductController(db);
+  const cartController = new CartController(db);
 
   const app = express();
   app.use(express.json());
@@ -19,6 +21,15 @@ export function createApp(db: DBInterface) {
   });
   app.delete("/products/:productId", (req, res) => {
     productController.removeProduct(req, res);
+  });
+  app.get("/cart", (req, res) => {
+    cartController.getAllItems(req, res);
+  });
+  app.patch("/cart/:productId", (req, res) => {
+    cartController.upqdateQuantitiy(req, res);
+  });
+  app.delete("/cart/:productId", (req, res) => {
+    cartController.deleteItem(req, res);
   });
 
   return app;
