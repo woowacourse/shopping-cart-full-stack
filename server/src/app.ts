@@ -2,7 +2,7 @@ import express from "express";
 import Product from "./models/Product.js";
 import { type Storage } from "./storages/Storage.js";
 import { MY_CART_ID } from "./constanst.js";
-import { productBodyMiddelware } from "./middlewares/BodyValiadateMiddleware.js";
+import { productBodyValidateMiddelware } from "./middlewares/BodyValiadateMiddleware.js";
 import Cart from "./models/Cart.js";
 
 export function createApp(storage: Storage) {
@@ -17,7 +17,7 @@ export function createApp(storage: Storage) {
     });
   });
 
-  app.post("/api/products/", productBodyMiddelware, (req, res) => {
+  app.post("/api/products/", productBodyValidateMiddelware, (req, res) => {
     const { name, price, thumbnail } = req.body;
     const product = new Product(name, price, thumbnail);
     storage.addItem<Product>("products", product.getId(), product);

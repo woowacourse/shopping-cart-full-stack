@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ProductFieldValidators } from "../validators.js";
 import { runValidate } from "../utils.js";
 
-export function productBodyMiddelware(
+export function productBodyValidateMiddelware(
   req: Request,
   res: Response,
   next: NextFunction,
