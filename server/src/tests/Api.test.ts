@@ -1,24 +1,23 @@
 import { createApp } from "../app.js";
 import InMemoryStorage from "../storages/InMemoryStorage.js";
-import StorageHandler from "../StorageHandler.js";
 import Product from "../models/Product.js";
 import request from "supertest";
 import Cart from "../models/Cart.js";
 import { ProductType } from "../models/Product.js";
 
 describe("프로덕트 API 테스트", () => {
-  const storageHandler = new StorageHandler(new InMemoryStorage());
-  const app = createApp<InMemoryStorage>(storageHandler);
+  const storage = new InMemoryStorage();
+  const app = createApp(storage);
   const product1 = new Product("피자", 30000, "pizza.png");
   const product2 = new Product("치킨", 20000, "chicken.png");
 
   beforeEach(() => {
-    storageHandler.addItem("products", product1.getId(), product1);
-    storageHandler.addItem("products", product2.getId(), product2);
+    storage.addItem("products", product1.getId(), product1);
+    storage.addItem("products", product2.getId(), product2);
   });
 
   afterEach(() => {
-    storageHandler.clearAllItems("products");
+    storage.clearAllItems("products");
   });
 
   test("프로덕트 목록을 반환한다.", (done) => {
@@ -69,9 +68,9 @@ describe("프로덕트 API 테스트", () => {
 });
 
 describe("카트 API 테스트", () => {
-  const storageHandler = new StorageHandler(new InMemoryStorage());
-  const app = createApp<InMemoryStorage>(storageHandler);
-  const cart = storageHandler.getItem<Cart>("cart", "my-cart") as Cart;
+  const storage = new InMemoryStorage();
+  const app = createApp(storage);
+  const cart = storage.getItem("cart", "my-cart") as Cart;
 
   beforeEach(() => {
     cart.updateItem("123", 10);
