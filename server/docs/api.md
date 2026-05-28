@@ -1,4 +1,5 @@
 ## API 명세
+[스프레드 시트](https://docs.google.com/spreadsheets/d/1iiz7oDPPuxbiY5ZE2Q-C0IRAMwK9NqmZ1Cq2pxbCs2Q/)
 
 ### 상품 (Products)
 
