@@ -1,6 +1,6 @@
 ## API 명세서
 
-base url : https://shopping-cart-full-stack-production-9304.up.railway.app/
+base url : https://shopping-cart-full-stack-production-1515.up.railway.app
 PORT: 8080
 CORS 설정:
 
