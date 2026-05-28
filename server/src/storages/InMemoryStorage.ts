@@ -1,8 +1,7 @@
 import Product from "../models/Product.js";
 import Cart from "../models/Cart.js";
 import { Storage } from "./Storage.js";
-
-const MY_CART_ID = "my-cart";
+import { MY_CART_ID } from "../constanst.js";
 
 const defaultData = {
   products: new Map<string, Product>(),

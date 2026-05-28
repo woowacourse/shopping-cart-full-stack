@@ -1,6 +1,7 @@
 import express from "express";
 import Product from "./models/Product.js";
 import { type Storage } from "./storages/Storage.js";
+import { MY_CART_ID } from "./constanst.js";
 import Cart from "./models/Cart.js";
 
 export function createApp(storage: Storage) {
@@ -27,27 +28,27 @@ export function createApp(storage: Storage) {
   app.delete("/api/products/:id/", (req, res) => {
     const { id } = req.params;
     storage.deleteItem("products", id);
-    const cart = storage.getItem("cart", "my-cart") as Cart;
+    const cart = storage.getItem("cart", MY_CART_ID) as Cart;
     cart.deleteItem(id);
     res.status(204).send();
   });
 
   app.get("/api/cart/", (_req, res) => {
-    const cart = storage.getItem<Cart>("cart", "my-cart") as Cart;
+    const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
     res.send({ items: cart.getAllItems() });
   });
 
   app.patch("/api/cart/items/:id/", (req, res) => {
     const { id } = req.params;
     const { quantity } = req.body;
-    const cart = storage.getItem<Cart>("cart", "my-cart") as Cart;
+    const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
     cart.updateItem(id, quantity);
     res.status(200).send({ product_id: id, quantity: quantity });
   });
 
   app.delete("/api/cart/items/:id/", (req, res) => {
     const { id } = req.params;
-    const cart = storage.getItem<Cart>("cart", "my-cart") as Cart;
+    const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
     cart.deleteItem(id);
     res.status(204).send();
   });
