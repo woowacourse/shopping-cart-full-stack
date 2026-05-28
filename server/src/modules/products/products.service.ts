@@ -1,10 +1,16 @@
 import { validateProductRules } from "./products.validator";
 import {
   addProductQuery,
+  deleteProductQuery,
   getAllProductsQuery,
+  getProductByIdQuery,
   getProductByNameQuery,
 } from "./products.repository";
 import ERROR_CODES from "./products.constants";
+import {
+  deleteCartQuery,
+  getCartItemByProductIdQuery,
+} from "../carts/carts.repository";
 
 export const getAllProducts = () => {
   return getAllProductsQuery();
@@ -19,4 +25,21 @@ export const addProduct = (arg: Parameters<typeof addProductQuery>[0]) => {
   }
 
   return addProductQuery(arg);
+};
+
+export const deleteProduct = (id: number) => {
+  // 존재하지 않는 상품인지 확인
+  const existingProduct = getProductByIdQuery(id);
+  if (!existingProduct) {
+    throw new Error(ERROR_CODES.NOT_EXIST_PRODUCT.code);
+  }
+
+  deleteProductQuery(id);
+
+  const existingCartItemId = getCartItemByProductIdQuery(id);
+  if (existingCartItemId) {
+    deleteCartQuery(existingCartItemId);
+  }
+
+  return id;
 };
