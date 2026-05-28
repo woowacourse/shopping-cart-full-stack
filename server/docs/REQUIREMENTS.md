@@ -46,13 +46,13 @@
 - [x] 전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
 
 ### cart service
-#### getCarts
-- [ ] cartId에 해당하는 장바구니 상품 목록을 반환한다.
-- [ ] 존재하지 않는 cartId로 조회하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
+#### getCartById
+- [x] cartId에 해당하는 장바구니 상품 목록을 반환한다.
+- [x] 존재하지 않는 cartId로 조회하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
 
 #### updateCartProduct
-- [ ] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 장바구니 상품 수량을 변경한다.
-- [ ] quantity가 누락된 경우 ServiceError를 던진다 (MISSING_FIELD)
+- [x] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 장바구니 상품 수량을 변경한다.
+- [x] quantity가 누락된 경우 ServiceError를 던진다 (MISSING_FIELD)
 - [ ] quantity 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)
 - [ ] 도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다 (INVALID)
     - [ ] quantity가 1 이상 99 이하의 정수가 아니면
@@ -60,9 +60,9 @@
 - [ ] 존재하지 않는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
 
 #### deleteCartProduct
-- [ ] cartId와 productId에 해당하는 장바구니 상품을 제거한다.
+- [x] cartId와 productId에 해당하는 장바구니 상품을 제거한다.
 - [ ] cartId 또는 productId 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)
-- [ ] 존재하지 않는 cartId 또는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
+- [x] 존재하지 않는 cartId 또는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
 
 ## API 호출 테스트 케이스
 - [x] products
@@ -81,3 +81,5 @@
     - service에서는 도메인 관련 에러(price유효성, name 유효성 ,...)
 - [ ] last item id + 1 로직의 문제점: 삭제한 아이템과 동일한 id의 아이템이 추가될 수 있음
 - [ ] 상품 삭제 DELETE에 parameter로 받는 id 타입 검사 추가
+- [ ] updateCardProduct에서 CardUpdateOption 인자를 받을 때 확장성을 고려하여 만들었는데 repository에서는 updateProductQuantity라는 단일 함수로 구현됨 -> 동일한 확장성을 고려하여 범용성 있는 함수 설계 필요
+- [ ] /carts/products로 요청 시 404 resource not found 에러가 나고 있음 -> routes not found로 보내는 게 맞는지?
