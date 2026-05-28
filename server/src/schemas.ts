@@ -25,3 +25,15 @@ export const UpdateCartItemRequestBodySchema = z.object({
 });
 
 export const DeleteCartItemRequestParamsSchema = UpdateCartItemRequestParamsSchema;
+
+export const ProductSchema = z.object({
+  name: z.string().min(1).max(100),
+  image: z.string(),
+  price: z.number().int().min(1),
+  stock: z.number().int().min(0).max(99),
+});
+
+export const CartItemSchema = z.object({
+  productId: z.string().min(1),
+  quantity: z.number().int().min(1).max(99),
+});

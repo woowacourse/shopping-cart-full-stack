@@ -2,6 +2,7 @@ import { NotFoundError } from '../errors';
 import ProductsRepository from '../repositories/ProductsRepository';
 import CartItemsRepository from '../repositories/CartItemsRepository';
 import { Product } from '../types';
+import { ProductSchema } from './../schemas';
 
 class ProductsService {
   productsRepository;
@@ -17,8 +18,8 @@ class ProductsService {
   }
 
   async insertProduct(product: Omit<Product, 'productId'>) {
-    // TODO: 도메인 검증
-    return await this.productsRepository.insert(product);
+    const parsedProduct = ProductSchema.parse(product);
+    return await this.productsRepository.insert(parsedProduct);
   }
 
   async deleteProduct(productId: Product['productId']) {
