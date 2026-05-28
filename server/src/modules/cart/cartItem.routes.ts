@@ -13,7 +13,10 @@ cartItemRouter.get('/cart/items', (_req, res, next) => {
 });
 cartItemRouter.post('/cart/items', (req, res, next) => {
   try {
-    const cartItem = cartItemService.addCartItem(req.body.productId);
+    const cartItem = cartItemService.addCartItem(
+      req.body?.productId,
+      req.body?.purchaseQuantity,
+    );
     res.status(201).json(cartItem);
   } catch (error) {
     next(error);
@@ -33,7 +36,7 @@ cartItemRouter.patch('/cart/items/:cartItemId', (req, res, next) => {
   try {
     cartItemService.changePurchaseQuantity(
       req.params.cartItemId,
-      req.body.purchaseQuantity,
+      req.body?.purchaseQuantity,
     );
     res.status(200).send();
   } catch (error) {

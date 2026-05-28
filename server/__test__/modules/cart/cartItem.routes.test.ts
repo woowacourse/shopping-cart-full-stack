@@ -1,12 +1,21 @@
 import express from 'express';
 import request from 'supertest';
 import { cartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
-import { cartItemsDB } from '../../../src/db.js';
+import { cartItemsDB, productsDB } from '../../../src/db.js';
+import { Product } from '../../../src/modules/products/product.model.js';
 
 const mockCartItem = {
   productId: '1',
   purchaseQuantity: 1,
 };
+
+const mockProduct = new Product({
+  productId: mockCartItem.productId,
+  productName: '콜라',
+  productPrice: 1300,
+  remainingQuantity: 25,
+  imageUrl: 'src/assets/coke.png',
+});
 
 const app = express();
 
@@ -16,6 +25,8 @@ app.use(cartItemRouter);
 describe('장바구니 API', () => {
   beforeEach(() => {
     cartItemsDB.clear();
+    productsDB.clear();
+    productsDB.set(mockProduct.productId, mockProduct);
   });
 
   it('장바구니 목록 요청', async () => {
@@ -27,6 +38,7 @@ describe('장바구니 API', () => {
   it('장바구니에 상품 추가', async () => {
     const response = await request(app).post('/cart/items').send({
       productId: mockCartItem.productId,
+      purchaseQuantity: mockCartItem.purchaseQuantity,
     });
 
     expect(response.status).toBe(201);
@@ -36,6 +48,7 @@ describe('장바구니 API', () => {
     // 장바구니에 상품 추가
     const response = await request(app).post('/cart/items').send({
       productId: mockCartItem.productId,
+      purchaseQuantity: mockCartItem.purchaseQuantity,
     });
 
     // 상품 삭제
@@ -48,6 +61,7 @@ describe('장바구니 API', () => {
     // 장바구니에 상품 추가
     const response = await request(app).post('/cart/items').send({
       productId: mockCartItem.productId,
+      purchaseQuantity: mockCartItem.purchaseQuantity,
     });
 
     // 상품 수량 수정
