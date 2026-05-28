@@ -26,3 +26,15 @@ export const updateCartQuantity: RequestHandler = (req, res) => {
     data: result,
   });
 };
+
+export const deleteCartProduct: RequestHandler = (req, res) => {
+  const id = +validateID(req.params.id);
+
+  const result = cartsService.deleteCartsProduct(id);
+
+  res.status(200).json({
+    status: "success",
+    message: "장바구니 상품을 정상적으로 제거하였습니다.",
+    data: { id: result },
+  });
+};
