@@ -1,8 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import ProductsService from '../services/ProductsService';
 import { InsertProductRequestBodySchema, DeleteProductRequestParamsSchema } from './../schemas';
-import { ZodError } from 'zod';
-import { NotFoundError } from './../errors';
 
 class ProductsController {
   service;
@@ -11,77 +9,32 @@ class ProductsController {
     this.service = new ProductsService();
   }
 
-  getProducts = async (_req: Request, res: Response) => {
+  getProducts = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const products = await this.service.getProducts();
-      res.status(200).json({
-        status: 'success',
-        data: products,
-      });
-    } catch {
-      res.status(500).json({
-        status: 'error',
-        data: '상품 목록을 가져오는 중 에러가 발생했습니다.',
-      });
+      res.status(200).json({ status: 'success', data: products });
+    } catch (error) {
+      next(error);
     }
   };
 
-  postProducts = async (req: Request, res: Response) => {
+  postProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsedBody = InsertProductRequestBodySchema.parse(req.body);
-
       const product = await this.service.insertProduct(parsedBody);
-      res.status(201).json({
-        status: 'success',
-        data: product,
-      });
-    } catch (error: unknown) {
-      // TODO: zod 에러 잡기
-      if (error instanceof ZodError) {
-        const { fieldErrors } = error.flatten();
-
-        res.status(400).json({
-          status: 'fail',
-          data: fieldErrors,
-        });
-      }
-      res.status(500).json({
-        status: 'error',
-        data: '상품을 추가하는 중 에러가 발생했습니다.',
-      });
+      res.status(201).json({ status: 'success', data: product });
+    } catch (error) {
+      next(error);
     }
   };
 
-  deleteProducts = async (req: Request, res: Response) => {
+  deleteProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const parsedParams = DeleteProductRequestParamsSchema.parse(req.params);
-
       const productId = await this.service.deleteProduct(parsedParams.productId);
-      res.status(200).json({
-        status: 'success',
-        data: productId,
-      });
-    } catch (error: unknown) {
-      if (error instanceof ZodError) {
-        const { fieldErrors } = error.flatten();
-
-        res.status(400).json({
-          status: 'fail',
-          data: fieldErrors,
-        });
-      }
-
-      if (error instanceof NotFoundError) {
-        res.status(404).json({
-          status: 'fail',
-          data: { [error.resource]: error.message },
-        });
-      }
-
-      res.status(500).json({
-        status: 'error',
-        data: '상품을 지우는 중 에러가 발생했습니다.',
-      });
+      res.status(200).json({ status: 'success', data: productId });
+    } catch (error) {
+      next(error);
     }
   };
 }
