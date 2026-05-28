@@ -10,7 +10,7 @@ import {
   getCartItemByProductIdQuery,
 } from "../carts/carts.repository";
 import { addProduct, deleteProduct, getAllProducts } from "./products.service";
-import ERROR_CODES from "./products.constants";
+import ERROR_CODES from "../../ERROR_CODE";
 
 jest.mock("./products.repository");
 jest.mock("../carts/carts.repository");

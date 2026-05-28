@@ -34,6 +34,21 @@ const ERROR_CODES = {
     message: "유효하지 않은 상품입니다.",
     status: 400,
   },
+  OUT_OF_RANGE_CARTS_QUANTITY: {
+    code: "OUT_OF_RANGE_CARTS_QUANTITY",
+    message: "상품 수량은 1~99까지 가능합니다.",
+    status: 400,
+  },
+  NOT_EXIST_CARTS_ITEM: {
+    code: "NOT_EXIST_CARTS_ITEM",
+    message: "존재하지 않은 장바구니 아이템입니다.",
+    status: 404,
+  },
+  INVALID_CARTS_QUANTITY: {
+    code: "INVALID_CARTS_QUANTITY",
+    message: "유효하지 않은 장바구니 수량입니다.",
+    status: 400,
+  },
 } as const;
 
 export default ERROR_CODES;

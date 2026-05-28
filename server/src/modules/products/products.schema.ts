@@ -1,4 +1,4 @@
-import ERROR_CODES from "./products.constants";
+import ERROR_CODES from "../../ERROR_CODE";
 
 export interface CreateProductRequest {
   name: string;

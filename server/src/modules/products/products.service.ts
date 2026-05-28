@@ -6,7 +6,7 @@ import {
   getProductByIdQuery,
   getProductByNameQuery,
 } from "./products.repository";
-import ERROR_CODES from "./products.constants";
+import ERROR_CODES from "../../ERROR_CODE";
 import {
   deleteCartQuery,
   getCartItemByProductIdQuery,
@@ -36,9 +36,9 @@ export const deleteProduct = (id: number) => {
 
   deleteProductQuery(id);
 
-  const existingCartItemId = getCartItemByProductIdQuery(id);
-  if (existingCartItemId) {
-    deleteCartQuery(existingCartItemId);
+  const existingCartItem = getCartItemByProductIdQuery(id);
+  if (existingCartItem) {
+    deleteCartQuery(id);
   }
 
   return id;

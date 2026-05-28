@@ -1,4 +1,4 @@
-import ERROR_CODES from "./products.constants";
+import ERROR_CODES from "../../ERROR_CODE";
 import { checkIsProduct, CreateProductRequest } from "./products.schema";
 
 // 비즈니스 유효성 검사
