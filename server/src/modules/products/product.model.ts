@@ -26,41 +26,48 @@ export class Product {
   }
 
   validator(product: Type) {
-    if (product.productName.trim() === '') {
-      throw new ModelError(
-        'INVALID_PRODUCT_NAME',
-        '유효하지 않은 상품 이름입니다.',
-      );
-    }
-    if (product.productName.length > 100) {
-      throw new ModelError(
-        'INVALID_PRODUCT_NAME',
-        '유효하지 않은 상품 이름입니다.',
-      );
-    }
-    if (!Number.isFinite(product.productPrice)) {
-      throw new ModelError(
-        'INVALID_PRODUCT_PRICE',
-        '유효하지 않은 상품 가격입니다.',
-      );
-    }
-    if (product.productPrice <= 0) {
-      throw new ModelError(
-        'INVALID_PRODUCT_PRICE',
-        '유효하지 않은 상품 가격입니다.',
-      );
-    }
-    if (!Number.isInteger(product.remainingQuantity)) {
-      throw new ModelError(
-        'INVALID_REMAINING_QUANTITY',
-        '유효하지 않은 상품 수량입니다.',
-      );
-    }
-    if (product.remainingQuantity < 1 || product.remainingQuantity > 99) {
-      throw new ModelError(
-        'INVALID_REMAINING_QUANTITY',
-        '유효하지 않은 상품 수량입니다.',
-      );
-    }
+    validateProductName(product.productName);
+    validateProductPrice(product.productPrice);
+    validateRemainingQuantity(product.remainingQuantity);
   }
 }
+
+const validateProductName = (productName: string) => {
+  if (productName.trim() === '' || productName.length > 100)
+    throwInvalidProductName();
+};
+
+const validateProductPrice = (productPrice: number) => {
+  if (!Number.isFinite(productPrice) || productPrice <= 0)
+    throwInvalidProductPrice();
+};
+
+const validateRemainingQuantity = (remainingQuantity: number) => {
+  if (
+    !Number.isInteger(remainingQuantity) ||
+    remainingQuantity < 1 ||
+    remainingQuantity > 99
+  )
+    throwInvalidRemainingQuantity();
+};
+
+const throwInvalidProductName = () => {
+  throw new ModelError(
+    'INVALID_PRODUCT_NAME',
+    '유효하지 않은 상품 이름입니다.',
+  );
+};
+
+const throwInvalidProductPrice = () => {
+  throw new ModelError(
+    'INVALID_PRODUCT_PRICE',
+    '유효하지 않은 상품 가격입니다.',
+  );
+};
+
+const throwInvalidRemainingQuantity = () => {
+  throw new ModelError(
+    'INVALID_REMAINING_QUANTITY',
+    '유효하지 않은 상품 수량입니다.',
+  );
+};

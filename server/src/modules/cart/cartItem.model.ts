@@ -19,14 +19,12 @@ export class CartItem {
     this.purchaseQuantity = cartItem.purchaseQuantity;
   }
 
-  validator(product: Type) {
-    if (!Number.isInteger(product.purchaseQuantity)) {
-      throw new ModelError(
-        'INVALID_PURCHASE_QUANTITY',
-        '유효하지 않은 구매 수량입니다.',
-      );
-    }
-    if (product.purchaseQuantity < 1 || product.purchaseQuantity > 99) {
+  validator(cartItem: Type) {
+    if (
+      !Number.isInteger(cartItem.purchaseQuantity) ||
+      cartItem.purchaseQuantity < 1 ||
+      cartItem.purchaseQuantity > 99
+    ) {
       throw new ModelError(
         'INVALID_PURCHASE_QUANTITY',
         '유효하지 않은 구매 수량입니다.',
