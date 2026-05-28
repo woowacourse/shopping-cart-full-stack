@@ -18,7 +18,7 @@ export function productBodyValidateMiddelware(
 }
 
 export function cartBodyValidateMiddelware(
-  req: Request,
+  req: Request<{ id: string }>,
   res: Response,
   next: NextFunction,
 ) {
