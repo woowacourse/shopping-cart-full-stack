@@ -78,3 +78,51 @@ describe("product API 통합 테스트", () => {
     expect(cartRepository.getCartProducts()).toHaveLength(0);
   });
 });
+
+describe("product API 예외 상황 통합 테스트", () => {
+  beforeEach(() => {
+    productRepository.clear();
+    cartRepository.clear();
+  });
+
+  it("POST /products : 상품 등록 시 필수 데이터가 누락되거나 조건에 맞지 않으면 400 에러를 반환한다.", async () => {
+    const missingFieldData = {
+      price: 5500,
+      thumbnailUrl: "https://example.com/latte.jpg",
+      totalQuantity: 30,
+    };
+
+    const response1 = await request(app)
+      .post("/products")
+      .send(missingFieldData);
+
+    expect(response1.status).toBe(400);
+
+    const invalidPriceData = {
+      name: "무료커피",
+      price: -1000,
+      thumbnailUrl: "https://example.com/free.jpg",
+      totalQuantity: 30,
+    };
+
+    const response2 = await request(app)
+      .post("/products")
+      .send(invalidPriceData);
+
+    expect(response2.status).toBe(400);
+  });
+
+  it("DELETE /products/:productId : 존재하지 않는 상품을 삭제하려 하면 404 에러를 반환한다.", async () => {
+    const response = await request(app).delete("/products/9999");
+
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("해당 상품이 존재하지 않습니다.");
+  });
+
+  it("DELETE /products/:productId : 유효하지 않은 형태의 상품 ID를 삭제하려 하면 400 에러를 반환한다.", async () => {
+    const response = await request(app).delete("/products/not-a-number");
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("유효하지 않은 상품 ID입니다.");
+  });
+});

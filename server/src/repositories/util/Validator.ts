@@ -9,7 +9,7 @@ export const validateQuantity = (quantity: number): void => {
 
 export const validateProductData = (data: ProductInput): void => {
   validateQuantity(data.totalQuantity);
-  if (data.name.length > 100 || !data.name) throw new InvalidError(ERROR_MESSAGE.INVALID_NAME);
+  if (!data.name || data.name.length > 100) throw new InvalidError(ERROR_MESSAGE.INVALID_NAME);
   if (data.price <= 0) throw new InvalidError(ERROR_MESSAGE.INVALID_PRICE);
   if (!data.thumbnailUrl) throw new InvalidError(ERROR_MESSAGE.INVALID_THUMBNAIL_URL);
 };

@@ -60,3 +60,46 @@ describe("장바구니 API 통합 테스트", () => {
     expect(finalCheckResponse.body).toHaveLength(0);
   });
 });
+
+describe("장바구니 API 예외 상황 통합 테스트", () => {
+  let validProductId: number;
+
+  beforeEach(() => {
+    cartRepository.clear();
+    productRepository.clear();
+
+    const product = productRepository.addProduct({
+      name: "아메리카노",
+      price: 4500,
+      thumbnailUrl: "url",
+      totalQuantity: 50,
+    });
+    validProductId = product.productId;
+  });
+
+  it("POST /cart : 존재하지 않는 상품 ID를 장바구니에 담으려 하면 404 에러를 반환한다.", async () => {
+    const invalidProductId = 9999;
+    
+    const response = await request(app)
+      .post("/cart")
+      .send({ productId: invalidProductId, quantity: 2 });
+
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("해당 상품이 존재하지 않습니다.");
+  });
+
+  it("PATCH /cart/:cartItemId : 존재하지 않는 장바구니 ID의 수량을 수정하려 하면 404 에러를 반환한다.", async () => {
+    const response = await request(app)
+      .patch("/cart/9999")
+      .send({ quantity: 5 });
+
+    expect(response.status).toBe(404);
+  });
+
+  it("DELETE /cart/:cartItemId : 유효하지 않은 형태의 장바구니 ID를 삭제하려 하면 400 에러를 반환한다.", async () => {
+    const response = await request(app).delete("/cart/invalid-id");
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("유효하지 않은 장바구니 ID입니다.");
+  });
+});
