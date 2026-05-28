@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import ProductController from "./controllers/ProductController.js";
 import { DBInterface } from "./db/db.js";
 import CartController from "./controllers/CartController.js";
@@ -8,6 +9,7 @@ export function createApp(db: DBInterface) {
   const cartController = new CartController(db);
 
   const app = express();
+  app.use(cors());
   app.use(express.json());
 
   app.get("/products", (req, res) => {
