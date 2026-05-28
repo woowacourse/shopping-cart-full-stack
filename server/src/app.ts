@@ -1,7 +1,8 @@
 import express from "express";
 import ProductController from "./controllers/productController.js";
+import { DBInterface } from "./db/db.js";
 
-export function createApp(db: unknown) {
+export function createApp(db: DBInterface) {
   const productController = new ProductController(db);
 
   const app = express();
@@ -10,16 +11,15 @@ export function createApp(db: unknown) {
   app.get("/products", (req, res) => {
     productController.getProductAll(req, res);
   });
-  app.get("/products/:id", (req, res) => {
+  app.get("/products/:productId", (req, res) => {
     productController.getProduct(req, res);
   });
-  app.post("/products/:id", (req, res) => {
+  app.post("/products", (req, res) => {
     productController.addProduct(req, res);
   });
-  app.delete("/products/:id", (req, res) => {
+  app.delete("/products/:productId", (req, res) => {
     productController.removeProduct(req, res);
   });
 
-  app.use(errorMiddleware);
   return app;
 }

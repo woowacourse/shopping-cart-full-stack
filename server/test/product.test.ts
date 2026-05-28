@@ -1,10 +1,10 @@
-import Product from "../src/models/product.js";
+import Product from "../src/models/Product.js";
 
 describe("상품 생성 테스트", () => {
   it("상품을 생성할 수 있다", () => {
     const item = {
       name: "상품이름A",
-      img: "https://example.com/image.jpg",
+      imgUrl: "https://example.com/image.jpg",
       price: 35000,
     };
 
@@ -16,7 +16,7 @@ describe("상품 생성 테스트", () => {
   it("네임 필드 비었을 때 생성 실패", () => {
     const item = {
       name: "",
-      img: "https://example.com/image.jpg",
+      imgUrl: "https://example.com/image.jpg",
       price: 35000,
     };
 
@@ -26,7 +26,7 @@ describe("상품 생성 테스트", () => {
   it("이미지 확장자로 끝나지 않을 때", () => {
     const item = {
       name: "테스트2",
-      img: "/movie.mp4",
+      imgUrl: "https://example.com/image.jpg",
       price: -3000,
     };
 
@@ -36,6 +36,7 @@ describe("상품 생성 테스트", () => {
   it("price 값이 음수일 때 생성 실패", () => {
     const item = {
       name: "테스트2",
+      imgUrl: "https://example.com/image.jpg",
       price: -3000,
     };
 

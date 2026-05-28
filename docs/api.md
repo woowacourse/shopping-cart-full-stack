@@ -95,7 +95,7 @@ Success
 
 Success
 
-```js
+````js
 // Request Body
 
 {
@@ -106,7 +106,7 @@ Success
 
 // Response Status: 201
 // No Content
-```
+
 
 400 Error
 
@@ -135,7 +135,7 @@ Success
     }
   ]
 }
-```
+````
 
 </details>
 
