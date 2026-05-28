@@ -1,29 +1,14 @@
-import { InvalidError } from "../../errors/CustomErrorClass";
-import { ERROR_MESSAGE } from "../../errors/ErrorMessage";
 import { ProductInput } from "../Product";
 
 export const validateQuantity = (quantity: number): void => {
-  if (
-    isNaN(quantity) ||
-    !Number.isInteger(quantity) ||
-    quantity < 1 ||
-    quantity > 99
-  )
-    throw new InvalidError(
-      "INVALID_QUANTITY_RANGE",
-      ERROR_MESSAGE.INVALID_QUANTITY_RANGE,
-    );
+  if (quantity < 1 || quantity > 99)
+    throw new Error("quantity는 1~99 사이어야합니다.");
 };
 
 export const validateProductData = (data: ProductInput): void => {
-  if (!data.name || data.name.length > 100)
-    throw new InvalidError("INVALID_NAME", ERROR_MESSAGE.INVALID_NAME);
-  if (isNaN(Number(data.price)) || Number(data.price) <= 0)
-    throw new InvalidError("INVALID_PRICE", ERROR_MESSAGE.INVALID_PRICE);
-  if (!data.thumbnailUrl)
-    throw new InvalidError(
-      "INVALID_THUMBNAIL_URL",
-      ERROR_MESSAGE.INVALID_THUMBNAIL_URL,
-    );
   validateQuantity(data.totalQuantity);
+  if (data.name.length > 100) throw new Error("name은 100자 이내여야합니다.");
+  if (data.price <= 0) throw new Error("price는 0보다 큰 숫자이어야합니다.");
+  if (!data.name) throw new Error("name은 필수 항목입니다.");
+  if (!data.thumbnailUrl) throw new Error("thumbnailUrl은 필수 항목입니다.");
 };

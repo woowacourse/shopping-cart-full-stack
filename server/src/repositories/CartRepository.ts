@@ -1,4 +1,5 @@
-import { CartItemData, validateCartItemData } from "./CartItem";
+import { CartItemData } from "./CartItem";
+import { validateQuantity } from "./util/Validator";
 
 export default class CartRepository {
   #cart: Map<number, CartItemData>;
@@ -21,7 +22,7 @@ export default class CartRepository {
 
   // `addProductToCart()` 장바구니 목록 추가
   addProductToCart(productId: number, quantity: number): CartItemData {
-    validateCartItemData(quantity);
+    validateQuantity(quantity);
     const cartItem = { productId, quantity, cartItemId: this.#nextId };
     this.#cart.set(this.#nextId, cartItem);
     this.#nextId++;
@@ -30,7 +31,7 @@ export default class CartRepository {
 
   // `changeQuantity()` 장바구니 수량 변경
   changeQuantity(cartItemId: number, newQuantity: number): CartItemData | null {
-    validateCartItemData(newQuantity);
+    validateQuantity(newQuantity);
     // cartItemId를 찾아서
     const cartItem = this.#cart.get(cartItemId);
     if (!cartItem) return null;
