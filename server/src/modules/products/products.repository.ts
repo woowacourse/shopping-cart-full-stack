@@ -37,3 +37,15 @@ export const getProductByNameQuery = (name: string) => {
 
   return product;
 };
+
+export const getProductByIdQuery = (id: number) => {
+  const product = [...ProductDB.values()].find((product) => product.id === id);
+
+  return product;
+};
+
+export const deleteProductQuery = (id: number) => {
+  ProductDB.delete(id);
+
+  return id;
+};
