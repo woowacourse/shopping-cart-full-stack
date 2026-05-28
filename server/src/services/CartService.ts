@@ -12,7 +12,7 @@ type UpdateQuantityResult =
       status: 'invalid';
     };
 
-const isValidQuantity = (quantity: unknown) => {
+export const isValidQuantity = (quantity: unknown) => {
   return typeof quantity === 'number' && Number.isInteger(quantity) && quantity >= 1 && quantity <= 99;
 };
 

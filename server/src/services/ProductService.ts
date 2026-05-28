@@ -24,23 +24,23 @@ type DeleteProductResult =
       status: 'notFound';
     };
 
-const isValidProductName = (name: unknown) => {
+export const isValidProductName = (name: unknown) => {
   return typeof name === 'string' && name.length > 0 && name.length <= PRODUCT_NAME_MAX_LENGTH;
 };
 
-const isValidPrice = (price: unknown) => {
+export const isValidPrice = (price: unknown) => {
   return typeof price === 'number' && Number.isFinite(price) && price > 0;
 };
 
-const isValidImageUrl = (imageUrl: unknown) => {
+export const isValidImageUrl = (imageUrl: unknown) => {
   return typeof imageUrl === 'string' && imageUrl.length > 0;
 };
 
-const isCreateProductRequestBody = (body: unknown): body is CreateProductRequestBody => {
+export const isCreateProductRequestBody = (body: unknown): body is CreateProductRequestBody => {
   return typeof body === 'object' && body !== null;
 };
 
-const isValidCreateProductBody = (body: unknown): body is CreateProductRequestBody => {
+export const isValidCreateProductBody = (body: unknown): body is CreateProductRequestBody => {
   if (!isCreateProductRequestBody(body)) {
     return false;
   }
