@@ -2,6 +2,7 @@ import ProductsRepository from '../repositories/ProductsRepository';
 import CartItemsRepository from '../repositories/CartItemsRepository';
 import { CartItem } from '../types';
 import { BadRequestError, NotFoundError } from '../errors';
+import { CartItemSchema } from '../schemas';
 
 class CartItemsService {
   productsRepository;
@@ -13,51 +14,65 @@ class CartItemsService {
   }
 
   async getCartItems() {
+    const products = await this.productsRepository.getAll();
     const cartItems = await this.cartRepository.getAll();
 
-    return cartItems;
+    return cartItems.map((item) => ({
+      ...item,
+      product: products.find((product) => product.productId === item.productId),
+    }));
   }
 
   async insertCartItem(cartItem: {
     productId: CartItem['productId'];
     quantity: CartItem['quantity'];
   }) {
-    const product = await this.productsRepository.getById(cartItem.productId);
+    const parsedCartItem = CartItemSchema.parse(cartItem);
+
+    const product = await this.productsRepository.getById(parsedCartItem.productId);
+
     if (!product)
       throw new NotFoundError({ productId: '장바구니에 담을 상품을 찾을 수 없습니다.' });
 
     const cartItems = await this.cartRepository.getAll();
+
     if (cartItems.find((item) => item.productId === product.productId)) {
       throw new BadRequestError({ productId: '이미 장바구니에 담긴 상품입니다.' });
     }
 
-    return await this.cartRepository.insertByUser({
-      productId: cartItem.productId,
-      quantity: cartItem.quantity,
-    });
+    return await this.cartRepository.insertByUser(parsedCartItem);
   }
 
   async patchCartItem(
     cartItemId: CartItem['cartItemId'],
     cartItemPartial: { quantity: CartItem['quantity'] },
   ) {
-    // 카트 아이템을 가져온다, 없으면 에러를 낸다
-    // 카드 아이템 수량을 수정한다
+    const parsedCartItemPartial = CartItemSchema.pick({ quantity: true }).parse(cartItemPartial);
+
     const cartItem = await this.cartRepository.getById(cartItemId);
+
     if (!cartItem) throw new NotFoundError({ cartItemId: '장바구니 항목을 찾을 수 없습니다.' });
+
     const newCartItem = {
       ...cartItem,
-      quantity: cartItemPartial.quantity,
+      quantity: parsedCartItemPartial.quantity,
     };
+
     return await this.cartRepository.updateById(cartItemId, newCartItem);
   }
 
   async deleteCartItem(cartItemId: CartItem['cartItemId']) {
     const cartItem = await this.cartRepository.getById(cartItemId);
-    // TODO: 상품 삭제시 해당 상품을 담아놓은 장바구니에서 제거해줘야함
+
     if (!cartItem)
       throw new NotFoundError({ cartItemId: '삭제할 장바구니 상품을 찾을 수 없습니다.' });
-    return await this.cartRepository.deleteById(cartItemId);
+
+    const deleted = await this.cartRepository.deleteById(cartItemId);
+
+    if (!deleted)
+      throw new NotFoundError({ cartItemId: '삭제할 장바구니 상품을 찾을 수 없습니다.' });
+
+    return deleted;
   }
 }
 
