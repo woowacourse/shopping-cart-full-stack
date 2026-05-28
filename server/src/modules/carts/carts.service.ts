@@ -1,5 +1,6 @@
 import * as cartsRepository from "./carts.repository.ts";
 import { ServiceError } from "../../common/error.ts";
+import { getMissingFields } from "../../validate/getMissingFields.ts";
 
 export const getCartById = (cartId: number) => {
   const cart = cartsRepository.findById(cartId);
@@ -29,12 +30,29 @@ interface CartUpdateOption {
 export const updateCartProduct = (
   cartId: number,
   productId: number,
-  { quantity }: CartUpdateOption,
+  cartUpdateOption: Partial<CartUpdateOption>,
 ) => {
+  const requiredFields = ["quantity"] as const;
+  const missingFields = getMissingFields(
+    cartUpdateOption,
+    requiredFields as unknown as string[],
+  );
+
+  if (missingFields.length > 0) {
+    throw new ServiceError(
+      "MISSING_FIELD",
+      "필수값이 누락되었습니다.",
+      missingFields.map((field) => ({
+        type: field,
+        errorCode: `MISSING_FIELD_${field.toUpperCase()}`,
+      })),
+    );
+  }
+
   const product = cartsRepository.updateProductQuantity(
     cartId,
     productId,
-    quantity,
+    cartUpdateOption.quantity!,
   );
 
   if (!product) {
