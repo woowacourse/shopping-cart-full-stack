@@ -28,18 +28,9 @@ cartRouter.post('/:id', function (req: Request, res: Response) {
 
 // PUT
 cartRouter.put('/', function (req: Request, res: Response) {
-  const { id } = req.body;
-
   if (!DB.Cart) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
-
-  const toBeUpdatedIndex = DB.Cart.findIndex((product) => product.id === id);
-  if (toBeUpdatedIndex === -1) {
-    return res.status(404).json({ errorMessage: '상품을 찾을 수 없습니다.' });
-  }
-
-  DB.Cart[toBeUpdatedIndex] = req.body;
 
   try {
     Validator.validateRequestBody(req.body);
@@ -49,6 +40,15 @@ cartRouter.put('/', function (req: Request, res: Response) {
       res.status(400).json({ errorMessage: error.message });
     }
   }
+
+  const { id } = req.body;
+
+  const toBeUpdatedIndex = DB.Cart.findIndex((product) => product.id === id);
+  if (toBeUpdatedIndex === -1) {
+    return res.status(404).json({ errorMessage: '상품을 찾을 수 없습니다.' });
+  }
+
+  DB.Cart[toBeUpdatedIndex] = req.body;
 });
 
 // DELETE

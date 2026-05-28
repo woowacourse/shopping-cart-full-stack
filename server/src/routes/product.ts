@@ -20,6 +20,15 @@ productRouter.post('/', (req: Request, res: Response) => {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
 
+  try {
+    Validator.validateRequestBody(req.body);
+    res.status(201).json({ message: '상품이 성공적으로 생성되었습니다.' });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ errorMessage: error.message });
+    }
+  }
+
   const { imageUrl, name, price, quantity } = req.body;
   const newProduct = {
     id: DB.Products.length + 1,
@@ -29,15 +38,6 @@ productRouter.post('/', (req: Request, res: Response) => {
     quantity,
   };
   DB.Products.push(newProduct);
-
-  try {
-    Validator.validateRequestBody(req.body);
-    res.status(201).json({ message: '상품이 성공적으로 생성되었습니다.' });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ errorMessage: error.message });
-    }
-  }
 });
 
 // DELETE
