@@ -1,12 +1,14 @@
 //서비스와 레포지를 이용해서 기능을 도작하게 한다
 
-import { productsDB } from '../../../src/db.js';
-import { productRepository } from '../../../src/modules/products/product.repository.js';
+import { cartItemsDB, productsDB } from '../../../src/db.js';
+import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
+import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
 import { productService } from '../../../src/modules/products/product.service.js';
 
 describe('ProductService', () => {
   beforeEach(() => {
     productsDB.clear();
+    cartItemsDB.clear();
   });
 
   // 상품을 조회하는 기능
@@ -71,6 +73,49 @@ describe('ProductService', () => {
 
       // then
       expect(products).toHaveLength(0);
+    });
+
+    test('상품을 삭제하면 장바구니에 담긴 동일한 상품도 삭제한다.', () => {
+      // given
+      const response = productService.addProduct({
+        productName: '콜라',
+        productPrice: 1300,
+        remainingQuantity: 25,
+        imageUrl: 'src/assets/coke.png',
+      });
+
+      const cartItem = new CartItem({
+        cartItemId: 'cart-item-1',
+        productId: response.productId,
+        purchaseQuantity: 2,
+      });
+
+      cartItemRepository.save(cartItem);
+
+      // when
+      productService.deleteProduct(response.productId);
+
+      // then
+      expect(productService.getProducts()).toHaveLength(0);
+      expect(cartItemRepository.findById(cartItem.cartItemId)).toBeUndefined();
+      expect(cartItemRepository.findAll()).toEqual([]);
+    });
+
+    test('장바구니에 없는 상품을 삭제하더라도 에러를 반환하지 않는다.', () => {
+      // given
+      const response = productService.addProduct({
+        productName: '콜라',
+        productPrice: 1300,
+        remainingQuantity: 25,
+        imageUrl: 'src/assets/coke.png',
+      });
+
+      // when, then
+      expect(() => {
+        productService.deleteProduct(response.productId);
+      }).not.toThrow();
+      expect(productService.getProducts()).toHaveLength(0);
+      expect(cartItemRepository.findAll()).toEqual([]);
     });
 
     test('존재하지 않은 상품 삭제 시 에러를 반환한다.', () => {

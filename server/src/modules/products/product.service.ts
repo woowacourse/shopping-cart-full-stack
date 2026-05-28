@@ -1,3 +1,4 @@
+import { cartItemRepository } from '../cart/cartItem.repository.js';
 import { Product } from './product.model.js';
 import { productRepository } from './product.repository.js';
 
@@ -17,8 +18,11 @@ export const productService = {
     return productRepository.findAll();
   },
   deleteProduct(productId: string) {
-    const isDeleted = productRepository.deleteById(productId);
+    const product = productRepository.findById(productId);
 
-    if (!isDeleted) throw new Error('존재하지 않는 상품입니다.');
+    if (!product) throw new Error('존재하지 않는 상품입니다.');
+
+    cartItemRepository.deleteByProductId(productId);
+    productRepository.deleteById(productId);
   },
 };

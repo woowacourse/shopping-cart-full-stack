@@ -18,4 +18,12 @@ export const cartItemRepository = {
   deleteById(cartItemId: string) {
     return cartItemsDB.delete(cartItemId);
   },
+
+  deleteByProductId(productId: string) {
+    for (const cartItem of cartItemsDB.values()) {
+      if (cartItem.productId === productId) {
+        cartItemsDB.delete(cartItem.cartItemId);
+      }
+    }
+  },
 };
