@@ -96,20 +96,22 @@ Success
 Success
 
 ```js
-// Response Status: 201
-// 요청이 성공했고 그 결과 새로운 리소스(상품 정보)가 생성되었기 때문
+// Request Body
 
 {
   name: "상품이름A",
   img: "/src.com",
   price: 35000,
 }
+
+// Response Status: 201
+// No Content
 ```
 
 400 Error
 
 ```js
-// request status 400,
+// Response status 400,
 // 필수 입력 유효성 검증 실패 시, 필드 에러 메세지를 반환한다.
 
 {
@@ -145,7 +147,7 @@ Success
 Success
 
 ```js
-// request status 204
+// Response status 204
 // 리소스(상품 정보)의 id가 없어서 메세지 body에 전달되지 않았기 때문
 
 // No Contents
@@ -154,7 +156,7 @@ Success
 해당 상품 id를 찾을 수 없을 때
 
 ```js
-// request status 204
+// Response status 204
 // 존재하지 않는 id에도 멱등성을 위해 204를 반환한다.
 
 // No Contents
@@ -228,7 +230,7 @@ Success
 {
   result: "success",
   data: {
-    cartItemId: 1,
+    productId: 1,
     quantity: 3,
   },
 }
