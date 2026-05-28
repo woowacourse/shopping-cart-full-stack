@@ -155,4 +155,16 @@ describe("카트 API 테스트", () => {
   test("장바구니 내 아이템을 삭제한다.", (done) => {
     request(app).delete("/api/cart/items/123").expect(204, {}, done);
   });
+
+  test("0 ~ 100개 사이가 아닌 수량을 수정하려 하면 400 에러가 발생한다.", (done) => {
+    request(app)
+      .patch("/api/cart/items/123/")
+      .send({ quantity: 101 })
+      .set("Accept", "application/json")
+      .expect(
+        400,
+        { errors: { quantity: ["수량은 0 이상 100 이하여야 합니다."] } },
+        done,
+      );
+  });
 });

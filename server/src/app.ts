@@ -2,7 +2,10 @@ import express from "express";
 import Product from "./models/Product.js";
 import { type Storage } from "./storages/Storage.js";
 import { MY_CART_ID } from "./constanst.js";
-import { productBodyValidateMiddelware } from "./middlewares/BodyValiadateMiddleware.js";
+import {
+  productBodyValidateMiddelware,
+  cartBodyValidateMiddelware,
+} from "./middlewares/BodyValiadateMiddleware.js";
 import Cart from "./models/Cart.js";
 
 export function createApp(storage: Storage) {
@@ -39,7 +42,7 @@ export function createApp(storage: Storage) {
     res.send({ items: cart.getAllItems() });
   });
 
-  app.patch("/api/cart/items/:id/", (req, res) => {
+  app.patch("/api/cart/items/:id/", cartBodyValidateMiddelware, (req, res) => {
     const { id } = req.params;
     const { quantity } = req.body;
     const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;

@@ -5,6 +5,10 @@ export const ProductFieldValidators: ValidatorMap = {
   price: [validateIsNotEmpty("가격"), validateMinNumber("가격", 0)],
 };
 
+export const CartFieldValidators: ValidatorMap = {
+  quantity: [validateNumberRange("수량", 0, 100)],
+};
+
 export function validateIsNotEmpty(label: string) {
   return function validate(value: string) {
     if (value === "") throw new Error(`${label} 필드가 누락되었습니다.`);
