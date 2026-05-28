@@ -39,10 +39,9 @@ cartRouter.put('/', function (req: Request, res: Response) {
     return res.status(404).json({ errorMessage: '상품을 찾을 수 없습니다.' });
   }
 
-  DB.Cart[toBeUpdatedIndex] = req.body;
-
   try {
     Validator.validateRequestBody(req.body);
+    DB.Cart[toBeUpdatedIndex] = req.body;
     res.status(204).send();
   } catch (error) {
     if (error instanceof Error) {
