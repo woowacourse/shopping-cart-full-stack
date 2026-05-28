@@ -20,8 +20,9 @@ cartItemRouter.post('/cart/items', (req, res, next) => {
 
     const responseBody = { cartItemId: cartItem.cartItemId };
 
-    if (cartItem.isNew) res.status(201).json(responseBody);
-    else res.status(200).json(responseBody);
+    if (cartItem.isNew) return res.status(201).json(responseBody);
+
+    return res.status(200).json(responseBody);
   } catch (error) {
     next(error);
   }
