@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import { createApp } from "../app.js";
 import InMemoryStorage from "../storages/InMemoryStorage.js";
 import Product from "../models/Product.js";
@@ -127,6 +128,22 @@ describe("프로덕트 API 테스트", () => {
       },
       done,
     );
+  });
+
+  test("스토리지 에러가 발생하면 500 에러가 반환된다.", (done) => {
+    jest.spyOn(storage, "allItems").mockImplementationOnce(() => {
+      throw new Error("Storage error");
+    });
+    request(app)
+      .get("/api/products/")
+      .expect(
+        500,
+        {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "예기치 못한 오류가 발생했습니다.",
+        },
+        done,
+      );
   });
 });
 
