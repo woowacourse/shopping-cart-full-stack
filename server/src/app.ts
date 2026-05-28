@@ -4,7 +4,7 @@ import {
   cartBodyValidateMiddelware,
 } from "./middlewares/BodyValiadateMiddleware.js";
 import { ProductController, CartController } from "./controllers.js";
-import { NotFoundError, InternalServerError } from "./errors.js";
+import { handleErrors } from "./errors.js";
 
 export function createApp({
   productController,
@@ -39,18 +39,7 @@ export function createApp({
       res: express.Response,
       _next: express.NextFunction,
     ) => {
-      if (err instanceof NotFoundError) {
-        res.status(err.statusCode).send({
-          code: err.code,
-          message: err.message,
-        });
-      } else {
-        const err = new InternalServerError();
-        res.status(err.statusCode).send({
-          code: err.code,
-          message: err.message,
-        });
-      }
+      handleErrors(res, err);
     },
   );
 

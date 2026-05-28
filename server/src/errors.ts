@@ -1,3 +1,20 @@
+import express from "express";
+
+export function handleErrors(res: express.Response, err: Error) {
+  if (err instanceof NotFoundError) {
+    res.status(err.statusCode).send({
+      code: err.code,
+      message: err.message,
+    });
+  } else {
+    const err = new InternalServerError();
+    res.status(err.statusCode).send({
+      code: err.code,
+      message: err.message,
+    });
+  }
+}
+
 export class NotFoundError extends Error {
   statusCode: number;
   code: string;
