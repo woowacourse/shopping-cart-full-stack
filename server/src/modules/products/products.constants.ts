@@ -19,6 +19,21 @@ const ERROR_CODES = {
     message: "상품명은 필수입니다.",
     status: 400,
   },
-};
+  NOT_EXIST_PRODUCT: {
+    code: "NOT_EXIST_PRODUCT",
+    message: "존재하지 않는 상품입니다.",
+    status: 404,
+  },
+  INVALID_ID: {
+    code: "INVALID_ID",
+    message: "유효하지 않은 ID입니다.",
+    status: 400,
+  },
+  INVALID_PRODUCT: {
+    code: "INVALID_PRODUCT",
+    message: "유효하지 않은 상품입니다.",
+    status: 400,
+  },
+} as const;
 
 export default ERROR_CODES;
