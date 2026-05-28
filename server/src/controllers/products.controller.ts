@@ -1,4 +1,4 @@
-import { CreateProductDto } from "../../interfaces/product.interface.js";
+import { CreateProductDto } from "../interfaces/product.interface.js";
 import { Request, Response } from "express";
 import {
   addProduct,

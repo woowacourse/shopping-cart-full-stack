@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { createProductRequestSchema } from "../src/schemas/product.schema.js";
+import { createProductRequestSchema } from "../schemas/product.schema.js";
 
 export type CreateProductDto = z.infer<typeof createProductRequestSchema>;
 

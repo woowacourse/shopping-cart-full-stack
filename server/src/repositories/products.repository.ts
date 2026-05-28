@@ -1,4 +1,4 @@
-import { newProduct, Product } from "../../interfaces/product.interface.js";
+import { newProduct, Product } from "../interfaces/product.interface.js";
 
 const products: Product[] = [];
 

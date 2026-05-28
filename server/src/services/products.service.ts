@@ -1,4 +1,4 @@
-import { CreateProductDto } from "../../interfaces/product.interface.js";
+import { CreateProductDto } from "../interfaces/product.interface.js";
 import { save, findAll, deleteById, isAlreadyExist } from "../repositories/products.repository.js";
 import { deleteByProductId } from "../repositories/cart.repository.js";
 

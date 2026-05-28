@@ -1,4 +1,4 @@
-import { UpdateResultKey } from "../../interfaces/cart.interface.js";
+import { UpdateResultKey } from "../interfaces/cart.interface.js";
 import {
   findAll,
   isAlreadyExist,

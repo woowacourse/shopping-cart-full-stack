@@ -1,4 +1,4 @@
-import { CartItem, newCartItem } from "../../interfaces/cart.interface.js";
+import { CartItem, newCartItem } from "../interfaces/cart.interface.js";
 
 const cartItems: CartItem[] = [];
 

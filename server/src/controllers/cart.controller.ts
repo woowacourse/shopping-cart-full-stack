@@ -5,7 +5,7 @@ import {
   deleteCartItem as removeCartItem,
 } from "../services/cart.service.js";
 import { updateCartItemRequestSchema } from "../schemas/cart.schema.js";
-import { UpdateCartItemDto, UpdateResultKey } from "../../interfaces/cart.interface.js";
+import { UpdateCartItemDto, UpdateResultKey } from "../interfaces/cart.interface.js";
 import { ERROR_RESPONSE } from "../constants/error.js";
 
 export async function getCartItems(_request: Request, response: Response): Promise<void> {
