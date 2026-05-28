@@ -1,15 +1,46 @@
 ## 상품
 
-| 기능 | Method | URL | Request | Response |
-|------|------|------|------|------|
-| 상품 목록 조회 | GET | /api/products/ | X | <pre>[<br>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"name": "수건",<br>&nbsp;&nbsp;"thumbnail": "/some_image2",<br>&nbsp;&nbsp;"price": 10000<br>},<br>{<br>&nbsp;&nbsp;"id": 2,<br>&nbsp;&nbsp;"name": "양말",<br>&nbsp;&nbsp;"thumbnail": "/some_image",<br>&nbsp;&nbsp;"price": 3000<br>}<br>]</pre> |
-| 상품 추가 | POST | /api/products/ | <pre>{<br>&nbsp;&nbsp;"name": "치킨",<br>&nbsp;&nbsp;"thumbnail": "chicken.png",<br>&nbsp;&nbsp;"price": 5000<br>}</pre> | <pre>{<br>&nbsp;&nbsp;"id": 3<br>}</pre> |
-| 상품 삭제 | DELETE | /api/products/:id/ | X | X |
+| 기능           | Method | URL                | Request                                                                                                                  | Response                                                                                                                                                                                                                                                                                               |
+| -------------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 상품 목록 조회 | GET    | /api/products/     | X                                                                                                                        | <pre>[<br>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"name": "수건",<br>&nbsp;&nbsp;"thumbnail": "/some_image2",<br>&nbsp;&nbsp;"price": 10000<br>},<br>{<br>&nbsp;&nbsp;"id": 2,<br>&nbsp;&nbsp;"name": "양말",<br>&nbsp;&nbsp;"thumbnail": "/some_image",<br>&nbsp;&nbsp;"price": 3000<br>}<br>]</pre> |
+| 상품 추가      | POST   | /api/products/     | <pre>{<br>&nbsp;&nbsp;"name": "치킨",<br>&nbsp;&nbsp;"thumbnail": "chicken.png",<br>&nbsp;&nbsp;"price": 5000<br>}</pre> | <pre>{<br>&nbsp;&nbsp;"id": 3<br>}</pre>                                                                                                                                                                                                                                                               |
+| 상품 삭제      | DELETE | /api/products/:id/ | X                                                                                                                        | X                                                                                                                                                                                                                                                                                                      |
 
 ## 장바구니
 
-| 기능 | Method | URL | Request | Response |
-|------|------|------|------|------|
-| 목록 조회 | GET | /api/cart/ | X | <pre>[<br>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 20<br>},<br>{<br>&nbsp;&nbsp;"id": 2,<br>&nbsp;&nbsp;"product_id": 5,<br>&nbsp;&nbsp;"quantity": 10<br>}<br>]</pre> |
-| 특정 상품 수량 변경 | PATCH | /api/cart/items/:id/ | <pre>{<br>&nbsp;&nbsp;"quantity": 15<br>}</pre> | <pre>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 15<br>}</pre> |
-| 특정 상품 삭제 | DELETE | /api/cart/items/:id/ | X | X |
+| 기능                | Method | URL                  | Request                                         | Response                                                                                                                                                                                                           |
+| ------------------- | ------ | -------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 목록 조회           | GET    | /api/cart/           | X                                               | <pre>[<br>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 20<br>},<br>{<br>&nbsp;&nbsp;"id": 2,<br>&nbsp;&nbsp;"product_id": 5,<br>&nbsp;&nbsp;"quantity": 10<br>}<br>]</pre> |
+| 특정 상품 수량 변경 | PATCH  | /api/cart/items/:id/ | <pre>{<br>&nbsp;&nbsp;"quantity": 15<br>}</pre> | <pre>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 15<br>}</pre>                                                                                                            |
+| 특정 상품 삭제      | DELETE | /api/cart/items/:id/ | X                                               | X                                                                                                                                                                                                                  |
+
+---
+
+### POST 응답
+
+생성한 객체의 id를 반환합니다.
+상황에 따라 id를 반환하는게 적절하다고 느꼈습니다.
+POST이후 어디로 리다이렉트 되는지에 따라 반환값의 여부가 달라진다고 생각했습니다.
+프론트엔드에서 POST 요청 이후 처리에 따라 응답 형식이 변경될거 같습니다.
+
+### PATCH 응답
+
+변경된 객체 전체를 반환합니다.
+변경 후 다시 api를 요청하지 않고 해당 변경 사항을 바로 렌더링해야 한다고 생각했습니다.
+
+### 200
+
+PATCH 나 GET 처럼 요청이 성공하고 Response Body가 존재하는 경우 200을 반환합니다.
+
+### 400
+
+사용자가 잘못된 형식의 값을 전달했을때 400에러가 발생하도록 합니다.
+필수필드를 전달하지 않았거나 유효하지 않은 값(e.g. 길이제한을 넘긴 필드)을 전달했을때 400코드를 응답합니다.
+
+### 404
+
+유효하지 않는 주소에 접근할때 404 에러가 발생하도록 합니다. 존재하지 않는 상품 id에 접근할 때 404코드를 전달합니다.
+
+### 500
+
+400, 404 예외가 아닌 예외들은 500 에러로 응답합니다.
