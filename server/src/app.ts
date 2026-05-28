@@ -14,22 +14,25 @@ export function createApp({
   cartController: CartController;
 }) {
   const app = express();
-  app.use(express.json());
-  app.get("/api/products/", productController.get);
-  app.post(
-    "/api/products/",
-    productBodyValidateMiddelware,
-    productController.add,
-  );
-  app.delete("/api/products/:id/", productController.delete);
-  app.get("/api/cart/", cartController.get);
-  app.patch(
-    "/api/cart/items/:id/",
-    cartBodyValidateMiddelware,
-    cartController.update,
-  );
-  app.delete("/api/cart/items/:id/", cartController.delete);
-  app.use(
+  const router = app.router;
+
+  router.use(express.json());
+
+  router
+    .route("/api/products/")
+    .get(productController.get)
+    .post(productBodyValidateMiddelware, productController.add);
+
+  router.route("/api/products/:id/").delete(productController.delete);
+
+  router.route("/api/cart/").get(cartController.get);
+
+  router
+    .route("/api/cart/items/:id/")
+    .patch(cartBodyValidateMiddelware, cartController.update)
+    .delete(cartController.delete);
+
+  router.use(
     (
       err: Error,
       _req: express.Request,
