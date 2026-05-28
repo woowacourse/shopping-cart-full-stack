@@ -40,10 +40,10 @@ const findRoute = (path: string) => {
   return routes.find((route) => toRoutePattern(route.path).test(path));
 };
 
-// header 기준으로 검증
 export const validateJsonRequest: RequestHandler = (req, res, next) => {
+  const contentLength = Number(req.headers["content-length"] ?? 0);
   const hasBody =
-    req.headers["content-length"] !== undefined ||
+    contentLength > 0 ||
     req.headers["transfer-encoding"] !== undefined;
   const shouldValidate = ["POST", "PUT", "PATCH"].includes(req.method);
 
@@ -54,7 +54,6 @@ export const validateJsonRequest: RequestHandler = (req, res, next) => {
   return next();
 };
 
-// 실제 값 유효성 검증
 export const handleJsonParseError: ErrorRequestHandler = (
   error,
   _req,
