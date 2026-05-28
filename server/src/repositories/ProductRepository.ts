@@ -1,5 +1,5 @@
 import type { ProductData, ProductInput } from "./Product.ts";
-import { validateProductData } from "./Product.ts";
+import { validateProductData } from "./util/Validator.ts";
 
 export default class ProductRepository {
   // Product의 데이터를 담고 있는 private 변수
