@@ -31,9 +31,9 @@ export const deleteProduct: RequestHandler = (req, res) => {
 
   const product = productsService.deleteProduct(id);
 
-  res.status(201).json({
+  res.status(200).json({
     status: "success",
     message: "상품을 정상적으로 삭제하였습니다.",
-    data: product,
+    data: { id: product },
   });
 };
