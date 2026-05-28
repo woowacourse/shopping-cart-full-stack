@@ -8,7 +8,6 @@ export const getCartById = (cartId: number) => {
     throw new ServiceError(
       "RESOURCE_NOT_FOUND",
       "id에 해당하는 장바구니가 존재하지 않습니다.",
-      404,
     );
 
   return {
