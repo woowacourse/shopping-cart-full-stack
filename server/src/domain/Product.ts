@@ -1,18 +1,12 @@
+import type { ProductData } from '../types/type.ts';
+
 export default class Product {
   private name: string;
   private price: number;
   private image?: string | null;
   private id: string;
 
-  constructor({
-    name,
-    price,
-    image,
-  }: {
-    name: string;
-    price: number;
-    image?: string;
-  }) {
+  constructor({ name, price, image }: ProductData) {
     this.#validatorName(name);
     this.#validatorPrice(price);
     this.name = name;
@@ -33,7 +27,7 @@ export default class Product {
     if (isNaN(price)) throw new Error('가격은 숫자입니다.');
   }
 
-  getProduct() {
+  getProduct(): ProductData & { id: string } {
     return {
       name: this.name,
       price: this.price,
