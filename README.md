@@ -74,6 +74,18 @@ npm run dev
 PORT=4000 npm run dev
 ```
 
+## Railway 배포
+
+Railway에서는 `server` 디렉터리를 하나의 Node.js 서비스로 배포합니다.
+
+서비스 설정:
+- Root Directory: `/server`
+- Config file: `server/railway.json`
+- Build Command: `npm run build`
+- Start Command: `npm run start`
+
+서버는 Railway가 주입하는 `PORT` 환경 변수를 사용합니다.
+
 ## 검증
 
 ```bash
