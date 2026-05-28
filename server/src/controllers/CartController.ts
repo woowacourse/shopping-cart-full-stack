@@ -1,5 +1,5 @@
 import { DBInterface } from "../db/db.js";
-import { type ProductData } from "../models/Product.js";
+import { type ProductData } from "../models/product.js";
 import { Request, Response } from "express";
 
 export interface CartItem {

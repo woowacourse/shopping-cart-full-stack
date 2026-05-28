@@ -1,4 +1,4 @@
-import Product from "../models/Product.js";
+import Product from "../models/product.js";
 import { Request, Response } from "express";
 import type { DBInterface } from "../db/db.js";
 import { ProductValidationError } from "../errors/productError.js";

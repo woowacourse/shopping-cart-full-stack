@@ -1,4 +1,4 @@
-import type { ProductData } from "../models/Product.js";
+import type { ProductData } from "../models/product.js";
 import type { CartItem } from "../controllers/CartController.js";
 export interface DBInterface {
   PRODUCT_TABLE: Map<number, ProductData>;
