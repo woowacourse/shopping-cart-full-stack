@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import ProductController from "./controllers/productController.js";
+import ProductController from "./controllers/ProductController.js";
 import { DBInterface } from "./db/db.js";
 import CartController from "./controllers/CartController.js";
 
