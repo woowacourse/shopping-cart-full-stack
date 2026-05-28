@@ -1,20 +1,32 @@
 import { CartDB } from "@db/inMemoryDB";
 
 export const getCartsQuery = () => {
-  // 장바구니 조회
   const carts = [...CartDB];
 
   return carts;
 };
 
 export const deleteCartQuery = (productId: number) => {
-  CartDB.delete(productId);
+  const cartItem = getCartItemByProductIdQuery(productId);
+  if (cartItem) CartDB.delete(cartItem);
 
   return productId;
 };
 
 export const getCartItemByProductIdQuery = (productId: number) => {
-  const cartItems = [...CartDB.values()].find((item) => item === productId);
+  return [...CartDB.values()].find((item) => item.product.id === productId);
+};
 
-  return cartItems;
+export const updateCartQuantityQuery = (
+  productId: number,
+  quantity: number,
+) => {
+  const cartItem = [...CartDB.values()].find(
+    (item) => item.product.id === productId,
+  );
+
+  if (!cartItem) return undefined;
+
+  cartItem.quantity = quantity;
+  return cartItem;
 };
