@@ -25,3 +25,19 @@ export const createProduct = (req: Request, res: Response) => {
     throw error;
   }
 };
+
+export const deleteProduct = (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  try {
+    productsService.deleteProduct(id);
+
+    return res.status(204).send();
+  } catch (error) {
+    if (error instanceof BadRequestError) {
+      return fail(res, error.errorCode, error.errorMessage, 404, error.data);
+    }
+
+    throw error;
+  }
+};
