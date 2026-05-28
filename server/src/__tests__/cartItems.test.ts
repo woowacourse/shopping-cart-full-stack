@@ -45,6 +45,16 @@ describe('장바구니', () => {
       .expect(201);
   });
 
+  it('없는 상품을 장바구니에 추가 할 수 없다.', async () => {
+    await request(app)
+      .post('/cart')
+      .send({
+        productId: '1',
+        quantity: 1,
+      })
+      .expect(404);
+  });
+
   it('장바구니에 담긴 상품의 수량을 변경할 수 있다.', async () => {
     products.set('1', {
       productId: '1',
