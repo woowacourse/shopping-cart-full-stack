@@ -1,7 +1,7 @@
 import express from "express";
 import ProductController from "./controllers/ProductController.js";
 import { DBInterface } from "./db/db.js";
-import CartController from "./controllers/cartController.js";
+import CartController from "./controllers/CartController.js";
 
 export function createApp(db: DBInterface) {
   const productController = new ProductController(db);

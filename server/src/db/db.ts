@@ -1,5 +1,5 @@
 import type { ProductData } from "../models/Product.js";
-import type { CartItem } from "../controllers/cartController.js";
+import type { CartItem } from "../controllers/CartController.js";
 export interface DBInterface {
   PRODUCT_TABLE: Map<number, ProductData>;
   CART_TABLE: Map<number, CartItem>;
