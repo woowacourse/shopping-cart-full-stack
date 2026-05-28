@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { validateProduct } from "./products.schema";
+import { validateID, validateProduct } from "./products.schema";
 import * as productsService from "./products.service";
 import ERROR_CODES from "./products.constants";
 
@@ -33,6 +33,32 @@ export const addProduct: RequestHandler = (req, res) => {
     const message =
       ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.message ||
       "상품 등록에 실패하였습니다.";
+
+    res.status(statusCode).json({
+      status: "error",
+      message: message,
+    });
+  }
+};
+
+export const deleteProduct: RequestHandler = (req, res) => {
+  try {
+    const id = +validateID(req.params.id);
+
+    const product = productsService.deleteProduct(id);
+
+    res.status(201).json({
+      status: "success",
+      message: "상품을 정상적으로 삭제하였습니다.",
+      data: product,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "";
+    const statusCode =
+      ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.status || 400;
+    const message =
+      ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.message ||
+      "상품 삭제에 실패하였습니다.";
 
     res.status(statusCode).json({
       status: "error",
