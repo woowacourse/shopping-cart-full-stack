@@ -119,16 +119,14 @@ describe("프로덕트 API 테스트", () => {
   });
 
   test("존재하지 않는 상품을 제거하려고 하면 404 에러가 발생한다.", (done) => {
-    request(app)
-      .del(`/api/products/unknown/`)
-      .expect(
-        404,
-        {
-          code: "RESOURCE_NOT_FOUND",
-          message: "요청한 리소스를 찾을 수 없습니다.",
-        },
-        done,
-      );
+    request(app).del(`/api/products/unknown/`).expect(
+      404,
+      {
+        code: "RESOURCE_NOT_FOUND",
+        message: "요청한 리소스를 찾을 수 없습니다.",
+      },
+      done,
+    );
   });
 });
 
@@ -179,5 +177,31 @@ describe("카트 API 테스트", () => {
         { errors: { quantity: ["수량은 0 이상 100 이하여야 합니다."] } },
         done,
       );
+  });
+
+  test("존재하지 않는 장바구니 내 아이템 수량 변경하려고 하면 404에러가 발생한다.", (done) => {
+    request(app)
+      .patch("/api/cart/items/unknown/")
+      .send({ quantity: 5 })
+      .set("Accept", "application/json")
+      .expect(
+        404,
+        {
+          code: "RESOURCE_NOT_FOUND",
+          message: "요청한 리소스를 찾을 수 없습니다.",
+        },
+        done,
+      );
+  });
+
+  test("존재하지 않은 장바구니 내 아이템을 제거하려고 하면 404에러가 발생한다.", (done) => {
+    request(app).del("/api/cart/items/unknown/").expect(
+      404,
+      {
+        code: "RESOURCE_NOT_FOUND",
+        message: "요청한 리소스를 찾을 수 없습니다.",
+      },
+      done,
+    );
   });
 });
