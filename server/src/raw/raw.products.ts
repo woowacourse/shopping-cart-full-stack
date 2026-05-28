@@ -1,6 +1,11 @@
-import { Product } from "../modules/products/products.model.ts";
+interface RawProduct {
+  id: number;
+  price: number;
+  name: string;
+  imgUrl: string;
+}
 
-export const rawProducts: Product[] = [
+export const rawProducts: RawProduct[] = [
   {
     id: 1,
     price: 18000,
