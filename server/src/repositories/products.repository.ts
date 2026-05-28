@@ -2,6 +2,11 @@ import { newProduct, Product } from "../../interfaces/product.interface.js";
 
 const products: Product[] = [];
 
+export function isAlreadyExist(id: number) {
+  if (products.find((product) => product.id === id)) return true;
+  return false;
+}
+
 export function save(product: newProduct) {
   const id = (products.at(-1)?.id ?? 0) + 1;
 
@@ -19,9 +24,6 @@ export function findAll() {
 
 export function deleteById(id: number): boolean {
   const index = products.findIndex((product) => product.id === id);
-  if (index === -1) {
-    return false;
-  }
   products.splice(index, 1);
   return true;
 }
