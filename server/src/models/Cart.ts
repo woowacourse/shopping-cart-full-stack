@@ -5,11 +5,7 @@ class Cart {
   }
 
   updateItem(productId: string, quantity: number) {
-    this.#items.set(productId, quantity);
-  }
-
-  getItem(productId: string) {
-    return this.#items.get(productId);
+    return this.#items.set(productId, quantity);
   }
 
   hasItem(productId: string) {
