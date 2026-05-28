@@ -58,6 +58,11 @@ export const ERROR_RESPONSE = {
     message: "장바구니 상품 수량은 1개 이상이어야 합니다.",
   },
 
+  OUT_OF_STOCK: {
+    code: "OUT_OF_STOCK",
+    message: "요청한 수량이 현재 재고보다 많습니다.",
+  },
+
   INTERNAL_SERVER_ERROR: {
     code: "INTERNAL_SERVER_ERROR",
     message: "서버 내부 오류가 발생했습니다.",
