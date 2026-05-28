@@ -70,3 +70,5 @@ export const updateCartProduct = (
     quantity: product.quantity,
   };
 };
+
+export const deleteCartProduct = (cartId: number, productId: number) => {};

@@ -96,4 +96,25 @@ describe("carts service 테스트", () => {
       });
     });
   });
+
+  describe("deleteCartProduct 테스트", () => {
+    it("cartId와 productId에 해당하는 장바구니 상품을 제거한다.", () => {
+      const cartId = 1;
+      const productId = 3;
+      const cartBeforeDelete = cartsService.getCartById(cartId);
+
+      cartsService.deleteCartProduct(cartId, productId);
+
+      const cartAfterDelete = cartsService.getCartById(cartId);
+
+      expect(cartAfterDelete.products).toHaveLength(
+        cartBeforeDelete.products.length - 1,
+      );
+      expect(cartAfterDelete.products).not.toContainEqual(
+        expect.objectContaining({
+          id: productId,
+        }),
+      );
+    });
+  });
 });
