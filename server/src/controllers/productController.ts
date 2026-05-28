@@ -73,17 +73,15 @@ export default class ProductController {
       });
     }
   };
-  // POST 상품 추가
   addProduct = (req: Request, res: Response) => {
     try {
       const { name, price, imgUrl } = req.body;
-      // 여기서 형식 검사 하고
       if (name === undefined || price === undefined) {
         return res.status(400).json({ message: "형식이 비었습니다" });
       }
-      // 밑에서 도메인 검사
       const product = new Product({ name, price, imgUrl });
       this.#db.PRODUCT_TABLE.set(this.#index, product.getProduct());
+      this.#index += 1;
 
       res.status(201).json();
     } catch (error) {
