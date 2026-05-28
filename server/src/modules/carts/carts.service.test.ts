@@ -95,6 +95,32 @@ describe("carts service 테스트", () => {
         ]),
       });
     });
+
+    it("도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다 - quantity가 1 이상 99 이하의 정수가 아니면.", () => {
+      const cartId = 1;
+      const productId = 1;
+      const invalidQuantities = [0, 100, 1.5];
+
+      invalidQuantities.forEach((quantity) => {
+        let caughtError: unknown;
+        try {
+          cartsService.updateCartProduct(cartId, productId, { quantity });
+        } catch (error) {
+          caughtError = error;
+        }
+
+        expect(caughtError).toBeInstanceOf(ServiceError);
+        expect(caughtError).toMatchObject({
+          errorCode: "INVALID",
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              type: "quantity",
+              errorCode: "INVALID_QUANTITY",
+            }),
+          ]),
+        });
+      });
+    });
   });
 
   describe("deleteCartProduct 테스트", () => {
