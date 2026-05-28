@@ -96,6 +96,26 @@ describe("carts service 테스트", () => {
       });
     });
 
+    it("quantity 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)", () => {
+      const cartId = 1;
+      const productId = 1;
+      const cartUpdateOption = {
+        quantity: "3",
+      } as unknown as Parameters<typeof cartsService.updateCartProduct>[2];
+
+      let caughtError: unknown;
+      try {
+        cartsService.updateCartProduct(cartId, productId, cartUpdateOption);
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).toBeInstanceOf(ServiceError);
+      expect(caughtError).toMatchObject({
+        errorCode: "TYPE_MISMATCH",
+      });
+    });
+
     it("도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다 - quantity가 1 이상 99 이하의 정수가 아니면.", () => {
       const cartId = 1;
       const productId = 1;
