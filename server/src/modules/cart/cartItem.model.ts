@@ -21,5 +21,8 @@ export class CartItem {
     if (!Number.isInteger(product.purchaseQuantity)) {
       throw new Error('수량은 정수여야 합니다.');
     }
+    if (product.purchaseQuantity < 1 || product.purchaseQuantity > 99) {
+      throw new Error('수량은 1이상 99이하여야 합니다.');
+    }
   }
 }
