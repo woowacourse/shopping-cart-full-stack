@@ -18,7 +18,8 @@ class CartItemsService {
     const cartItems = await this.cartRepository.getAll();
 
     return cartItems.map((item) => ({
-      ...item,
+      cartItemId: item.cartItemId,
+      quantity: item.quantity,
       product: products.find((product) => product.productId === item.productId),
     }));
   }
@@ -42,7 +43,8 @@ class CartItemsService {
     const inserted = await this.cartRepository.insertByUser(parsedCartItem);
 
     return {
-      ...inserted,
+      cartItemId: inserted.cartItemId,
+      quantity: inserted.quantity,
       product,
     };
   }
@@ -69,7 +71,8 @@ class CartItemsService {
     await this.cartRepository.updateById(cartItemId, newCartItem);
 
     return {
-      ...newCartItem,
+      cartItemId: newCartItem.cartItemId,
+      quantity: newCartItem.quantity,
       product,
     };
   }

@@ -38,7 +38,7 @@ class ProductsService {
 
     if (!deleted) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
 
-    return deleted;
+    return { productId: deleted.productId };
   }
 }
 
