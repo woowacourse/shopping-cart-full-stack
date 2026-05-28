@@ -7,17 +7,17 @@
 
 ### 상품
 
-- [ ] 상품은 고유 id, 이름, 가격, 이미지를 가진다.
-- [ ] GET 요청의 endpoint는 `/products`이고, 성공 status는 200이다.
-- [ ] POST 요청의 endpoint는 `/products`이고, 성공 status는 201이다.
-- [ ] DELETE 요청의 endpoint는 `/products/:id`이고, 성공 status는 204이다.
+- [x] 상품은 고유 id, 이름, 가격, 이미지를 가진다.
+- [x] GET 요청의 endpoint는 `/products`이고, 성공 status는 200이다.
+- [x] POST 요청의 endpoint는 `/products`이고, 성공 status는 201이다.
+- [x] DELETE 요청의 endpoint는 `/products/:id`이고, 성공 status는 204이다.
 
 ### 장바구니
 
-- [ ] 상품 id, 수량을 가진다.
-- [ ] GET 요청 시, endpoint는 `/carts`이고, 성공 status는 200을 가진다.
-- [ ] PATCH 요청 시, endpoint는 `/carts/:id`이고, 성공 status는 204를 가진다.
-- [ ] DELETE 요청 시, endpoint는 `/carts/:id`이고, 성공 status 204를 가진다.
+- [x] 상품 id, 수량을 가진다.
+- [x] GET 요청 시, endpoint는 `/carts`이고, 성공 status는 200을 가진다.
+- [x] PATCH 요청 시, endpoint는 `/carts/:id`이고, 성공 status는 204를 가진다.
+- [x] DELETE 요청 시, endpoint는 `/carts/:id`이고, 성공 status 204를 가진다.
 
 ## 서버
 
@@ -165,5 +165,5 @@
 
 ## 문서화
 
-- [ ] 요구사항 문서를 docs/REQUIREMENTS.md 에 구체적으로 작성한다.
-- [ ] docs/api.md 에 설계한 API 명세와 설계 결정 이유를 작성한다.
+- [x] 요구사항 문서를 docs/REQUIREMENTS.md 에 구체적으로 작성한다.
+- [x] docs/api.md 에 설계한 API 명세와 설계 결정 이유를 작성한다.
