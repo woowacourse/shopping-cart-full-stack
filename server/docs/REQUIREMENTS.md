@@ -53,25 +53,26 @@
 #### updateCartProduct
 - [x] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 장바구니 상품 수량을 변경한다.
 - [x] quantity가 누락된 경우 ServiceError를 던진다 (MISSING_FIELD)
-- [ ] quantity 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)
-- [ ] 도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다 (INVALID)
-    - [ ] quantity가 1 이상 99 이하의 정수가 아니면
-- [ ] 존재하지 않는 cartId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
-- [ ] 존재하지 않는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
+- [x] quantity 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)
+- [x] 도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다 (INVALID)
+    - [x] quantity가 1 이상 99 이하의 정수가 아니면
+- [x] 존재하지 않는 cartId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
+- [x] 존재하지 않는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
+
 
 #### deleteCartProduct
 - [x] cartId와 productId에 해당하는 장바구니 상품을 제거한다.
-- [ ] cartId 또는 productId 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)
+- [ ] cartId 또는 productId 타입이 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH) -> request 형식 자체는 service의 검증 책임 아님
 - [x] 존재하지 않는 cartId 또는 productId로 요청하는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
 
 ## API 호출 테스트 케이스
 - [x] products
-- [ ] carts
+- [x] carts
 
 ### 공통 에러 케이스
-- [ ] 엔드포인트에 해당하는 라우터가 없는 경우 404 ROUTE_NOT_FOUND 로 간주한다
-- [ ] 엔드포인트에 대한 method 에 해당하는 라우터가 없는 경우 405 METHOD_NOT_ALLOWED 로 간주한다
-- [ ] 요청 body가 json이 아닌 경우 400 NO_JSON으로 간주한다
+- [x] 엔드포인트에 해당하는 라우터가 없는 경우 404 ROUTE_NOT_FOUND 로 간주한다
+- [x] 엔드포인트에 대한 method 에 해당하는 라우터가 없는 경우 405 METHOD_NOT_ALLOWED 로 간주한다
+- [x] 요청 body가 json이 아닌 경우 400 NO_JSON으로 간주한다
 
 ## TODO
 - [ ] errorCode 상수화
