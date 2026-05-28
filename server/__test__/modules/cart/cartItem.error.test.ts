@@ -132,9 +132,9 @@ describe('장바구니 에러 테스트', () => {
         purchaseQuantity: 1,
       });
 
-      const patchRes = await request(app).patch(
-        `/cart/items/${addRes.body.cartItemId}`,
-      );
+      const patchRes = await request(app)
+        .patch(`/cart/items/${addRes.body.cartItemId}`)
+        .send({});
 
       expect(patchRes.status).toBe(400);
       expect(patchRes.body.code).toBe('INVALID_PURCHASE_QUANTITY');

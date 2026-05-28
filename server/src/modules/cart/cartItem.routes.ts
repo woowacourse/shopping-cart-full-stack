@@ -40,7 +40,7 @@ cartItemRouter.patch('/cart/items/:cartItemId', (req, res, next) => {
   try {
     cartItemService.changePurchaseQuantity(
       req.params.cartItemId,
-      req.body?.purchaseQuantity,
+      req.body.purchaseQuantity,
     );
     res.status(200).send();
   } catch (error) {
