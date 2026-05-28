@@ -26,12 +26,12 @@
 
 ### API 호출 테스트
 #### 상품 목록 관련 API 테스트
-- [] GET /products
-- [] POST /products
-- [] DELETE /products/:productId
+- [x] GET /products
+- [x] POST /products
+- [x] DELETE /products/:productId
 
 #### 장바구니 관련 API 테스트
-- [] GET /cart
-- [] POST /cart
-- [] DELETE /cart/:cartId
-- [] PATCH /cart/:cartId
+- [x] GET /cart
+- [x] POST /cart
+- [x] DELETE /cart/:cartItemId
+- [x] PATCH /cart/:cartItemId
