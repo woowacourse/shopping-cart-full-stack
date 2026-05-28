@@ -56,15 +56,25 @@
 
 ### CartItem
 
-| 필드         | 타입     | 필수 | 설명                      | 제약       |
-| ------------ | -------- | ---- | ------------------------- | ---------- |
-| `cartItemId` | `string` | ✓    | 장바구니 항목 고유 식별자 |            |
-| `productId`  | `string` | ✓    | 상품 고유 식별자          |            |
-| `name`       | `string` | ✓    | 상품명                    | 최대 100자 |
-| `price`      | `number` | ✓    | 상품 가격                 | > 0        |
-| `image`      | `string` | ✓    | 상품 이미지 URL           |            |
-| `stock`      | `number` | ✓    | 재고 수량                 | 0 ~ 99     |
-| `quantity`   | `number` | ✓    | 장바구니 수량             | 1 ~ 99     |
+| 필드         | 타입      | 필수 | 설명                      | 제약   |
+| ------------ | --------- | ---- | ------------------------- | ------ |
+| `cartItemId` | `string`  | ✓    | 장바구니 항목 고유 식별자 |        |
+| `quantity`   | `number`  | ✓    | 장바구니 수량             | 1 ~ 99 |
+| `product`    | `Product` | ✓    | 상품 정보                 |        |
+
+```json
+{
+  "cartItemId": "string",
+  "quantity": 1,
+  "product": {
+    "productId": "string",
+    "name": "string",
+    "price": 10000,
+    "image": "string",
+    "stock": 5
+  }
+}
+```
 
 ---
 

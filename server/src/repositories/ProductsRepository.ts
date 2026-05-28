@@ -1,6 +1,7 @@
+import { NotFoundError } from '../errors';
 import { Product } from './../types';
 
-const products = new Map<string, Product>();
+export const products = new Map<string, Product>();
 
 class ProductsRepository {
   store;
@@ -13,10 +14,15 @@ class ProductsRepository {
     return Array.from(this.store.entries()).map((entry) => entry[1]);
   }
 
+  private generateUniqueId(): string {
+    const id = crypto.randomUUID();
+    return this.store.has(id) ? this.generateUniqueId() : id;
+  }
+
   async insert(product: Omit<Product, 'productId' | 'isDeleted'>) {
     const productObj = {
       isDeleted: false,
-      productId: products.size.toString(),
+      productId: this.generateUniqueId(),
       ...product,
     };
 
@@ -27,7 +33,16 @@ class ProductsRepository {
     return this.store.get(productId);
   }
   async deleteById(productId: Product['productId']) {
-    return this.store.delete(productId);
+    const product = this.store.get(productId);
+
+    if (!product) throw new NotFoundError('삭제할 상품');
+
+    this.store.set(productId, {
+      ...product,
+      isDeleted: true,
+    });
+
+    return this.store.get(productId);
   }
 }
 

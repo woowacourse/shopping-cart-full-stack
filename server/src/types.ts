@@ -5,9 +5,9 @@ export interface Product {
   price: number;
   image: string;
   stock: number;
-};
+}
 
-export interface CartItem extends Product{
-  cartItemId : string;
+export interface CartItem extends Pick<Product, 'productId'> {
+  cartItemId: string;
   quantity: number;
 }

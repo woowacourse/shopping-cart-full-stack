@@ -1,5 +1,7 @@
 import request from 'supertest';
 import app from '../app';
+import { cartItems } from '../repositories/CartItemsRepository';
+import { products } from '../repositories/ProductsRepository';
 
 describe('장바구니', () => {
   it('장바구니 목록을 조회할 수 있다.', async () => {
@@ -42,5 +44,26 @@ describe('장바구니', () => {
         quantity: 2,
       })
       .expect(200);
+  });
+
+  it('장바구니에 담긴 상품을 삭제할 수 있다.', async () => {
+    products.clear();
+    products.set('1', {
+      isDeleted: false,
+      productId: '1',
+      name: '상품이름A',
+      price: 35000,
+      image: '이미지',
+      stock: 1,
+    });
+
+    cartItems.clear();
+    cartItems.set('1', {
+      cartItemId: '1',
+      productId: '1',
+      quantity: 1,
+    });
+
+    await request(app).delete('/cart/1').expect(200);
   });
 });

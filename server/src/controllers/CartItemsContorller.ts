@@ -4,6 +4,7 @@ import {
   InsertCartItemBodySchema,
   UpdateCartItemRequestParamsSchema,
   UpdateCartItemRequestBodySchema,
+  DeleteCartItemRequestParamsSchema,
 } from '../schemas';
 import { ZodError } from 'zod';
 import { NotFoundError } from '../errors';
@@ -89,6 +90,40 @@ class CartItemContorller {
       res.status(500).json({
         status: 'error',
         data: '장바구니 목록을 가져오는 중 에러가 발생했습니다.',
+      });
+    }
+  };
+
+  deleteCartItems = async (req: Request, res: Response) => {
+    try {
+      const parsedParams = DeleteCartItemRequestParamsSchema.parse(req.params);
+
+      const cartItemId = await this.service.deleteCartItem(parsedParams.cartItemId);
+      res.status(200).json({
+        status: 'success',
+        data: cartItemId,
+      });
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        const { fieldErrors } = error.flatten();
+
+        console.log(fieldErrors);
+        res.status(400).json({
+          status: 'fail',
+          data: fieldErrors,
+        });
+      }
+
+      if (error instanceof NotFoundError) {
+        res.status(404).json({
+          status: 'fail',
+          data: { [error.resource]: error.message },
+        });
+      }
+
+      res.status(500).json({
+        status: 'error',
+        data: '장바구니에 담긴 상품을 지우는 중 에러가 발생했습니다.',
       });
     }
   };

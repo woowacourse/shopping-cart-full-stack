@@ -15,7 +15,7 @@ class CartItemsService {
   async getCartItems() {
     const cartItems = await this.cartRepository.getAllByUser();
 
-    return cartItems.filter((item) => item.isDeleted === false);
+    return cartItems;
   }
 
   async insertCartItem(cartItem: {
@@ -44,6 +44,13 @@ class CartItemsService {
       quantity: cartItemPartial.quantity,
     };
     return await this.cartRepository.updateById(cartItemId, newCartItem);
+  }
+
+  async deleteCartItem(cartItemId: CartItem['cartItemId']) {
+    const cartItem = await this.cartRepository.getById(cartItemId);
+    // TODO: 상품 삭제시 해당 상품을 담아놓은 장바구니에서 제거해줘야함
+    if (!cartItem) throw new NotFoundError('삭제할 장바구니 상품');
+    return await this.cartRepository.deleteById(cartItemId);
   }
 }
 

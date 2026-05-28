@@ -23,3 +23,5 @@ export const UpdateCartItemRequestParamsSchema = z.object({
 export const UpdateCartItemRequestBodySchema = z.object({
   quantity: z.number(),
 });
+
+export const DeleteCartItemRequestParamsSchema = UpdateCartItemRequestParamsSchema;

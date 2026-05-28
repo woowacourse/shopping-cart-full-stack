@@ -1,6 +1,6 @@
 import { CartItem } from './../types';
 
-const cartItems = new Map<string, CartItem>();
+export const cartItems = new Map<string, CartItem>();
 
 class CartItemsRepository {
   store;
@@ -17,10 +17,15 @@ class CartItemsRepository {
     return this.store.get(cartItemId);
   }
 
+  private generateUniqueId(): string {
+    const id = crypto.randomUUID();
+    return this.store.has(id) ? this.generateUniqueId() : id;
+  }
+
   async insertByUser(cartItem: Omit<CartItem, 'cartItemId' | 'isDeleted'>) {
     const cartItemObj = {
       isDeleted: false,
-      cartItemId: this.store.size.toString(),
+      cartItemId: this.generateUniqueId(),
       ...cartItem,
     };
     this.store.set(cartItemObj.cartItemId, cartItemObj);
@@ -30,6 +35,11 @@ class CartItemsRepository {
   async updateById(cartItemId: CartItem['cartItemId'], cartItem: CartItem) {
     this.store.set(cartItemId, cartItem);
     return this.store.get(cartItemId);
+  }
+
+  async deleteById(cartItemId: CartItem['cartItemId']) {
+    this.store.delete(cartItemId);
+    return {cartItemId: this.store.get(cartItemId)?.cartItemId};
   }
 }
 
