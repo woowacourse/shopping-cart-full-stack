@@ -10,6 +10,15 @@ export const cartItemService = {
     validatePurchaseQuantity(purchaseQuantity);
     validateRemainingQuantity(product, purchaseQuantity);
 
+    // 추가하려는 상품이 장바구니에 이미 존재할 경우
+    const foundCartItem = cartItemRepository.findByProductId(productId);
+    if (foundCartItem) {
+      validateRemainingQuantity(product, purchaseQuantity);
+      foundCartItem.purchaseQuantity++;
+
+      return { cartItemId: foundCartItem.cartItemId };
+    }
+
     const cartItem = new CartItem({
       cartItemId: crypto.randomUUID(),
       productId,

@@ -14,6 +14,14 @@ export const cartItemRepository = {
   findById(cartItemId: string) {
     return cartItemsDB.get(cartItemId);
   },
+  findByProductId(productId: string) {
+    for (const cartItem of cartItemsDB.values()) {
+      if (cartItem.productId === productId) {
+        return cartItem;
+      }
+    }
+    return undefined;
+  },
 
   deleteById(cartItemId: string) {
     return cartItemsDB.delete(cartItemId);

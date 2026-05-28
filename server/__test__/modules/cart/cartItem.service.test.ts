@@ -46,16 +46,32 @@ describe('CartItemService', () => {
   });
 
   // 상품을 추가하는 기능
-  test('상품 추가 기능 테스트', () => {
-    // given
-    const response = cartItemService.addCartItem('1', 1);
+  describe('상품 추가 기능 테스트', () => {
+    test('상품을 추가할 수 있다.', () => {
+      // given
+      const response = cartItemService.addCartItem('1', 1);
 
-    // when
-    const cartItems = cartItemService.getCartItems();
+      // when
+      const cartItems = cartItemService.getCartItems();
 
-    // then
-    expect(cartItems).toHaveLength(1);
-    expect(cartItems[0].cartItemId).toBe(response.cartItemId);
+      // then
+      expect(cartItems).toHaveLength(1);
+      expect(cartItems[0].cartItemId).toBe(response.cartItemId);
+    });
+
+    test('장바구니에 이미 존재하는 상품을 다시 추가할 경우 장바구니에 담긴 수량을 1 증가시킨다.', () => {
+      // given
+      const responseA = cartItemService.addCartItem('1', 1);
+
+      // when
+      const responseB = cartItemService.addCartItem('1', 1);
+
+      const cartItems = cartItemService.getCartItems();
+
+      // then
+      expect(cartItems).toHaveLength(1);
+      expect(cartItems[0].purchaseQuantity).toBe(2);
+    });
   });
 
   // 상품을 삭제하는 기능
