@@ -1,28 +1,39 @@
 import { NotFoundError } from '../errors';
 import ProductsRepository from '../repositories/ProductsRepository';
+import CartItemsRepository from '../repositories/CartItemsRepository';
 import { Product } from '../types';
 
 class ProductsService {
-  repository;
+  productsRepository;
+  cartItemsRepository;
 
   constructor() {
-    this.repository = new ProductsRepository();
+    this.productsRepository = new ProductsRepository();
+    this.cartItemsRepository = new CartItemsRepository();
   }
 
   async getProducts() {
-    return await this.repository.getAll();
+    return await this.productsRepository.getAll();
   }
 
   async insertProduct(product: Omit<Product, 'productId'>) {
     // TODO: 도메인 검증
-    return await this.repository.insert(product);
+    return await this.productsRepository.insert(product);
   }
 
   async deleteProduct(productId: Product['productId']) {
-    const product = await this.repository.getById(productId);
-    // TODO: 상품 삭제시 해당 상품을 담아놓은 장바구니에서 제거해줘야함
+    const product = await this.productsRepository.getById(productId);
     if (!product) throw new NotFoundError('삭제할 상품');
-    return await this.repository.deleteById(productId);
+
+    const cartItems = await this.cartItemsRepository.getAll();
+
+    cartItems.forEach(async (item) => {
+      if (item.productId === productId) {
+        await this.cartItemsRepository.deleteById(item.cartItemId);
+      }
+    });
+
+    return await this.productsRepository.deleteById(productId);
   }
 }
 

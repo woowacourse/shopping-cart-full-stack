@@ -13,7 +13,7 @@ class CartItemsService {
   }
 
   async getCartItems() {
-    const cartItems = await this.cartRepository.getAllByUser();
+    const cartItems = await this.cartRepository.getAll();
 
     return cartItems;
   }

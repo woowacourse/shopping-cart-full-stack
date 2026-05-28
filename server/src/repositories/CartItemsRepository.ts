@@ -9,7 +9,7 @@ class CartItemsRepository {
     this.store = cartItems;
   }
 
-  async getAllByUser() {
+  async getAll() {
     return Array.from(this.store.entries()).map((entry) => entry[1]);
   }
 
