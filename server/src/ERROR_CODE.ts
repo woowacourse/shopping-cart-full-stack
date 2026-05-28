@@ -49,6 +49,11 @@ const ERROR_CODES = {
     message: "유효하지 않은 장바구니 수량입니다.",
     status: 400,
   },
+  NOT_EXIST_CARTS_PRODUCT: {
+    code: "NOT_EXIST_CARTS_PRODUCT",
+    message: "장바구니에 존재하지 않는 상품입니다.",
+    status: 404,
+  },
 } as const;
 
 export default ERROR_CODES;
