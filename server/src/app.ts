@@ -52,6 +52,11 @@ export function createApp(storage: Storage) {
     const { id } = req.params;
     const { quantity } = req.body;
     const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
+    if (!cart.hasItem(id))
+      res.status(404).send({
+        code: "RESOURCE_NOT_FOUND",
+        message: "요청한 리소스를 찾을 수 없습니다.",
+      });
     cart.updateItem(id, quantity);
     res.status(200).send({ product_id: id, quantity: quantity });
   });
@@ -59,6 +64,11 @@ export function createApp(storage: Storage) {
   app.delete("/api/cart/items/:id/", (req, res) => {
     const { id } = req.params;
     const cart = storage.getItem<Cart>("cart", MY_CART_ID) as Cart;
+    if (!cart.hasItem(id))
+      res.status(404).send({
+        code: "RESOURCE_NOT_FOUND",
+        message: "요청한 리소스를 찾을 수 없습니다.",
+      });
     cart.deleteItem(id);
     res.status(204).send();
   });

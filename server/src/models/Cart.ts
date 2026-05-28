@@ -12,6 +12,10 @@ class Cart {
     return this.#items.get(productId);
   }
 
+  hasItem(productId: string) {
+    return this.#items.has(productId);
+  }
+
   deleteItem(productId: string) {
     return this.#items.delete(productId);
   }
