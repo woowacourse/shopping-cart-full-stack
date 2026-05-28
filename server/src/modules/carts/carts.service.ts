@@ -48,6 +48,10 @@ export const updateCartProduct = (
     );
   }
 
+  if (typeof cartUpdateOption.quantity !== "number") {
+    throw new ServiceError("TYPE_MISMATCH", "타입이 일치하지 않습니다.");
+  }
+
   const invalidFields = [
     {
       type: "quantity",
