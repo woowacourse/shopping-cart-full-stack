@@ -1,5 +1,5 @@
-import { ProductInput } from "../../src/repositories/Product.ts";
-import ProductRepository from "../../src/repositories/ProductRepository.ts";
+import { ProductInput } from "../../src/repositories/Product";
+import ProductRepository from "../../src/repositories/ProductRepository";
 
 describe("ProductRepository 단위 테스트", () => {
   let repository: ProductRepository;
