@@ -32,22 +32,22 @@
 
 #### createProduct
 - [x] 필수 필드가 모두 존재하고 도메인 규칙에 맞는 경우 새 상품을 추가한다.
-- [x] 필수값이 누락된 경우 BadRequestError를 던진다 (MISSING_FIELD)
+- [x] 필수값이 누락된 경우 ServiceError를 던진다 (MISSING_FIELD)
     - [x] price
     - [x] name
     - [x] imgUrl
-- [x] 전달받은 값의 타입이 하나라도 불일치하는 경우 BadRequestError를 던진다 (TYPE_MISMATCH)
-- [x] 도메인 규칙에 맞지 않는 값이 포함된 경우 BadRequestError를 던진다 (INVALID)
+- [x] 전달받은 값의 타입이 하나라도 불일치하는 경우 ServiceError를 던진다 (TYPE_MISMATCH)
+- [x] 도메인 규칙에 맞지 않는 값이 포함된 경우 ServiceError를 던진다 (INVALID)
     - [x] price가 0보다 큰 숫자가 아니면
     - [x] name이 100자 초과이면
 
 #### deleteProduct
 - [x] id에 해당하는 상품을 삭제한다
-- [x] 전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 BadRequestError를 던진다 (RESOURCE_NOT_FOUND)
+- [x] 전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 ServiceError를 던진다 (RESOURCE_NOT_FOUND)
 
 ## API 호출 테스트 케이스
 ### product controller
-- [ ] 
+- [x] 
 
 ### 공통 에러 케이스
 - [ ] 엔드포인트에 해당하는 라우터가 없는 경우 404 ROUTE_NOT_FOUND 로 간주한다
@@ -60,3 +60,4 @@
 - [ ] 에러를 모두 service에서 반환하는 방식이 올바른 방식일까? -> service에서 http 관련 내용을 알고 있어야 하게 됨
     - controller에서는 http 관련 에러(타입, json 형태,...)
     - service에서는 도메인 관련 에러(price유효성, name 유효성 ,...)
+- [ ] last item id + 1 로직의 문제점: 삭제한 아이템과 동일한 id의 아이템이 추가될 수 있음
