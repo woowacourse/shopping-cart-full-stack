@@ -4,11 +4,18 @@ import InMemoryStorage from "../storages/InMemoryStorage.js";
 import Product from "../models/Product.js";
 import request from "supertest";
 import Cart from "../models/Cart.js";
+import {
+  createCartController,
+  createProductController,
+} from "../controllers.js";
 import { ProductType } from "../models/Product.js";
 
 describe("프로덕트 API 테스트", () => {
   const storage = new InMemoryStorage();
-  const app = createApp(storage);
+  const cartController = createCartController(storage);
+  const productController = createProductController(storage);
+
+  const app = createApp({ productController, cartController });
   const product1 = new Product("피자", 30000, "pizza.png");
   const product2 = new Product("치킨", 20000, "chicken.png");
 
@@ -134,22 +141,22 @@ describe("프로덕트 API 테스트", () => {
     jest.spyOn(storage, "allItems").mockImplementationOnce(() => {
       throw new Error("Storage error");
     });
-    request(app)
-      .get("/api/products/")
-      .expect(
-        500,
-        {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "예기치 못한 오류가 발생했습니다.",
-        },
-        done,
-      );
+    request(app).get("/api/products/").expect(
+      500,
+      {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "예기치 못한 오류가 발생했습니다.",
+      },
+      done,
+    );
   });
 });
 
 describe("카트 API 테스트", () => {
   const storage = new InMemoryStorage();
-  const app = createApp(storage);
+  const productController = createProductController(storage);
+  const cartController = createCartController(storage);
+  const app = createApp({ productController, cartController });
   const cart = storage.getItem("cart", "my-cart") as Cart;
 
   beforeEach(() => {
