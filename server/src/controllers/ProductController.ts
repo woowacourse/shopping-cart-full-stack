@@ -11,16 +11,19 @@ export const productController = {
   },
 
   createProduct(req: Request<{}, unknown, CreateProductRequestBody>, res: Response) {
-    const {name, price, imageUrl} = req.body;
-    const newId = productService.createProduct({name, price, imageUrl});
+    const result = productService.createProduct(req.body);
 
-    if (newId === null) {
+    if (result.status === 'invalid') {
+      return res.status(400).send();
+    }
+
+    if (result.status === 'duplicated') {
       return res.status(409).send();
     }
 
     res.status(201).json({
       body: {
-        id: newId,
+        id: result.id,
       },
     });
   },
