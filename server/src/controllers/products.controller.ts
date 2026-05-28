@@ -16,11 +16,8 @@ export async function createProduct(request: Request, response: Response): Promi
 
 export async function getProducts(_request: Request, response: Response): Promise<void> {
   const productList = await fetchProducts();
-  if (productList.length) {
-    response.status(200).json(productList);
-    return;
-  }
-  response.status(204).end();
+  response.status(200).json(productList);
+  return;
 }
 
 export async function deleteProduct(request: Request, response: Response): Promise<void> {

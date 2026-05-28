@@ -9,11 +9,11 @@ const validProduct = {
 };
 
 describe("GET /products", () => {
-  it("상품이 없으면 204 No Content와 빈 응답을 반환한다.", async () => {
+  it("상품이 없으면 200 OK와 빈 배열을 반환한다.", async () => {
     const response = await request(app).get("/products");
 
-    expect(response.status).toBe(204);
-    expect(response.text).toBe("");
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual([]);
   });
 
   it("상품이 있으면 200 OK와 전체 상품 목록을 반환한다.", async () => {

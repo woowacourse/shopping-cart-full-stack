@@ -10,11 +10,8 @@ import { ERROR_RESPONSE } from "../constants/error.js";
 
 export async function getCartItems(_request: Request, response: Response): Promise<void> {
   const cartItemList = await fetchCartItems();
-  if (cartItemList.length) {
-    response.status(200).json(cartItemList);
-    return;
-  }
-  response.status(204).end();
+  response.status(200).json(cartItemList);
+  return;
 }
 
 export async function updateCartItemQuantity(request: Request, response: Response) {
