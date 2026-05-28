@@ -1,8 +1,21 @@
 import request from 'supertest';
 import app from '../app';
+import { products } from '../repositories/ProductsRepository';
 
 describe('상품', () => {
+  beforeEach(() => {
+    products.clear();
+  });
+
   it('상품 목록을 조회할 수 있다.', async () => {
+    products.set('1', {
+      productId: '1',
+      name: '상품이름A',
+      price: 35000,
+      image: '이미지',
+      stock: 1,
+    });
+
     await request(app).get('/products').expect(200);
   });
 
@@ -28,14 +41,14 @@ describe('상품', () => {
   });
 
   it('상품을 삭제할 수 있다.', async () => {
-    const createRes = await request(app).post('/products').send({
+    products.set('1', {
+      productId: '1',
       name: '상품이름A',
       price: 35000,
       image: '이미지',
       stock: 1,
     });
 
-    await request(app).delete(`/products/${createRes.body.data.productId}`).expect(200);
+    await request(app).delete('/products/1').expect(200);
   });
-
 });
