@@ -14,18 +14,16 @@ export default class ProductController {
 
   getProductAll = (req: Request, res: Response) => {
     try {
-      const products = Array.from(this.#db.PRODUCT_TABLE.entries()).map(
-        ([id, productData]) => {
-          const product = new Product(productData);
-          const { name, imgUrl, price } = product.getProduct();
-          return {
-            id,
-            name,
-            imgUrl,
-            price,
-          };
-        },
-      );
+      const products = Array.from(this.#db.PRODUCT_TABLE.entries()).map(([id, productData]) => {
+        const product = new Product(productData);
+        const { name, imgUrl, price } = product.getProduct();
+        return {
+          id,
+          name,
+          imgUrl,
+          price,
+        };
+      });
 
       const sorted = products.sort((a, b) => {
         return a.id - b.id;
@@ -84,7 +82,7 @@ export default class ProductController {
       // 밑에서 도메인 검사
       const product = new Product({ name, price, imgUrl });
       this.#db.PRODUCT_TABLE.set(this.#index, product.getProduct());
-
+      this.#index += 1;
       res.status(201).json();
     } catch (error) {
       if (error instanceof ProductValidationError) {
