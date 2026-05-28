@@ -24,20 +24,19 @@ class ProductsService {
 
   async deleteProduct(productId: Product['productId']) {
     const product = await this.productsRepository.getById(productId);
-    if (!product) throw new NotFoundError({ productId: '삭제할 상품을 찾을 수 없습니다.' });
+    if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
 
     const cartItems = await this.cartItemsRepository.getAll();
 
-    cartItems.forEach(async (item) => {
+    for (const item of cartItems) {
       if (item.productId === productId) {
         await this.cartItemsRepository.deleteById(item.cartItemId);
       }
-    });
+    }
 
     const deleted = await this.productsRepository.deleteById(productId);
 
-    if (!deleted)
-      throw new NotFoundError({ productId: '삭제할 상품을 찾을 수 없습니다.' });
+    if (!deleted) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
 
     return deleted;
   }

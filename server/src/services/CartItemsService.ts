@@ -31,8 +31,7 @@ class CartItemsService {
 
     const product = await this.productsRepository.getById(parsedCartItem.productId);
 
-    if (!product)
-      throw new NotFoundError({ productId: '장바구니에 담을 상품을 찾을 수 없습니다.' });
+    if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
 
     const cartItems = await this.cartRepository.getAll();
 
@@ -40,7 +39,12 @@ class CartItemsService {
       throw new BadRequestError({ productId: '이미 장바구니에 담긴 상품입니다.' });
     }
 
-    return await this.cartRepository.insertByUser(parsedCartItem);
+    const inserted = await this.cartRepository.insertByUser(parsedCartItem);
+
+    return {
+      ...inserted,
+      product,
+    };
   }
 
   async patchCartItem(
@@ -51,26 +55,33 @@ class CartItemsService {
 
     const cartItem = await this.cartRepository.getById(cartItemId);
 
-    if (!cartItem) throw new NotFoundError({ cartItemId: '장바구니 항목을 찾을 수 없습니다.' });
+    if (!cartItem) throw new NotFoundError({ cartItemId: '존재하지 않는 장바구니 항목입니다.' });
+
+    const product = await this.productsRepository.getById(cartItem.productId);
+
+    if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
 
     const newCartItem = {
       ...cartItem,
       quantity: parsedCartItemPartial.quantity,
     };
 
-    return await this.cartRepository.updateById(cartItemId, newCartItem);
+    await this.cartRepository.updateById(cartItemId, newCartItem);
+
+    return {
+      ...newCartItem,
+      product,
+    };
   }
 
   async deleteCartItem(cartItemId: CartItem['cartItemId']) {
     const cartItem = await this.cartRepository.getById(cartItemId);
 
-    if (!cartItem)
-      throw new NotFoundError({ cartItemId: '삭제할 장바구니 상품을 찾을 수 없습니다.' });
+    if (!cartItem) throw new NotFoundError({ cartItemId: '존재하지 않는 장바구니 항목입니다.' });
 
     const deleted = await this.cartRepository.deleteById(cartItemId);
 
-    if (!deleted)
-      throw new NotFoundError({ cartItemId: '삭제할 장바구니 상품을 찾을 수 없습니다.' });
+    if (!deleted) throw new NotFoundError({ cartItemId: '존재하지 않는 장바구니 항목입니다.' });
 
     return deleted;
   }
