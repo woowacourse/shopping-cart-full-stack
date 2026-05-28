@@ -1,5 +1,11 @@
 import { UpdateResultKey } from "../../interfaces/cart.interface.js";
-import { findAll, isAlreadyExist, deleteById, findProductIdById } from "../repositories/cart.repository.js";
+import {
+  findAll,
+  isAlreadyExist,
+  deleteById,
+  findProductIdById,
+  updateItemQuantity,
+} from "../repositories/cart.repository.js";
 import { findStockById } from "../repositories/products.repository.js";
 
 export async function getCartItems() {
@@ -13,7 +19,7 @@ export async function updateCartItemQuantity(id: number, quantity: number): Prom
   if (stock === -1) return "PRODUCT_NOT_FOUND";
   if (quantity > stock) return "OUT_OF_STOCK";
 
-  updateCartItemQuantity(id, quantity);
+  updateItemQuantity(id, quantity);
   return "SUCCESS";
 }
 

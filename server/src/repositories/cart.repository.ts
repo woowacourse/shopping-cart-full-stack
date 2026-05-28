@@ -12,10 +12,10 @@ export function saveNewItem(newItem: newCartItem) {
   cartItems.push({ id, ...newItem });
 }
 
-export function updateItemQuantity(cartItem: newCartItem) {
-  const existingCartItem = cartItems.find((item) => item.productId === cartItem.productId);
+export function updateItemQuantity(id: number, quantity: number) {
+  const existingCartItem = cartItems.find((item) => item.id === id);
   if (existingCartItem) {
-    existingCartItem.quantity = existingCartItem.quantity + cartItem.quantity;
+    existingCartItem.quantity = existingCartItem.quantity + quantity;
   }
 }
 
