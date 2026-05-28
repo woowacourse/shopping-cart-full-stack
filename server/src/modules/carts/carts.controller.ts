@@ -34,7 +34,7 @@ export const deleteCartProduct: RequestHandler = (req, res) => {
 
   res.status(200).json({
     status: "success",
-    message: "장바구니 상품을 정상적으로 제거하였습니다.",
+    message: "장바구니에서 상품을 정상적으로 제거하였습니다.",
     data: { id: result },
   });
 };
