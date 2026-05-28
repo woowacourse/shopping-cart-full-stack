@@ -28,13 +28,14 @@ http://localhost:3000
 
 ### 1-5. 상태 코드
 
-| 상태 코드         | 설명                 |
-| ----------------- | -------------------- |
-| `200 OK`          | 조회, 수정 성공      |
-| `201 Created`     | 생성 성공            |
-| `204 No Content`  | 삭제 성공            |
-| `400 Bad Request` | 잘못된 요청          |
-| `404 Not Found`   | 존재하지 않는 리소스 |
+| 상태 코드                   | 설명                 |
+| --------------------------- | -------------------- |
+| `200 OK`                    | 조회, 수정 성공      |
+| `201 Created`               | 생성 성공            |
+| `204 No Content`            | 삭제 성공            |
+| `400 Bad Request`           | 잘못된 요청          |
+| `404 Not Found`             | 존재하지 않는 리소스 |
+| `500 Internal Server Error` | 서버 내부 오류       |
 
 ### 1-6. 에러 응답
 
@@ -44,6 +45,10 @@ http://localhost:3000
   "message": "에러 메시지"
 }
 ```
+
+- `INVALID_*`: 요청 값이 없거나 형식, 범위가 유효하지 않은 경우 사용한다.
+- `*_NOT_FOUND`: 요청 값의 형식은 유효하지만, 해당 리소스가 존재하지 않는 경우 사용한다.
+- `EXCEEDS_*`: 요청 값의 형식은 유효하지만, 비즈니스 규칙을 위반한 경우 사용한다.
 
 ## 2. 상품 API
 
@@ -155,14 +160,14 @@ DELETE /products/:productId
 
 ```json
 {
-  "code": "INVALID_PRODUCT_ID",
+  "code": "PRODUCT_NOT_FOUND",
   "message": "존재하지 않는 상품입니다."
 }
 ```
 
-| 에러 코드            | 설명                                             |
-| -------------------- | ------------------------------------------------ |
-| `INVALID_PRODUCT_ID` | `productId`에 해당하는 상품이 존재하지 않는 경우 |
+| 상태 코드       | 에러 코드           | 설명                                             |
+| --------------- | ------------------- | ------------------------------------------------ |
+| `404 Not Found` | `PRODUCT_NOT_FOUND` | `productId`에 해당하는 상품이 존재하지 않는 경우 |
 
 ## 3. 장바구니 API
 
@@ -201,69 +206,7 @@ GET /cart/items
 
 ---
 
-### 3-2. 장바구니 금액 요약 조회
-
-```http
-GET /cart/summary
-```
-
-#### Request
-
-Query Parameters
-
-| 이름          | 필수 여부 | 설명                                     |
-| ------------- | --------- | ---------------------------------------- |
-| `cartItemIds` | 선택      | 금액 계산에 포함할 장바구니 상품 id 목록 |
-
-예시:
-
-```http
-GET /cart/summary?cartItemIds=10,11
-```
-
-`cartItemIds`를 전달하지 않으면 장바구니에 담긴 전체 상품을 기준으로 금액을 계산한다.
-
-#### Response
-
-`200 OK`
-
-```json
-{
-  "orderAmount": 70000,
-  "deliveryFee": 3000,
-  "totalPaymentAmount": 73000,
-  "freeDeliveryThreshold": 100000
-}
-```
-
-| 이름                    | 설명                                  |
-| ----------------------- | ------------------------------------- |
-| `orderAmount`           | 장바구니 상품 금액 합계               |
-| `deliveryFee`           | 배송비                                |
-| `totalPaymentAmount`    | 상품 금액과 배송비를 합산한 결제 금액 |
-| `freeDeliveryThreshold` | 무료 배송 기준 금액                   |
-
-- `orderAmount`가 `freeDeliveryThreshold` 이상이면 `deliveryFee`는 `0`이다.
-- `orderAmount`가 `0`이면 `deliveryFee`와 `totalPaymentAmount`도 `0`이다.
-
-#### Error
-
-`404 Not Found`
-
-```json
-{
-  "code": "INVALID_CART_ITEM_ID",
-  "message": "존재하지 않는 장바구니 상품입니다."
-}
-```
-
-| 에러 코드              | 설명                                                           |
-| ---------------------- | -------------------------------------------------------------- |
-| `INVALID_CART_ITEM_ID` | `cartItemIds`에 포함된 장바구니 상품이 존재하지 않는 경우      |
-
----
-
-### 3-3. 장바구니에 상품 추가
+### 3-2. 장바구니에 상품 추가
 
 ```http
 POST /cart/items
@@ -299,19 +242,20 @@ POST /cart/items
 ```json
 {
   "code": "INVALID_PRODUCT_ID",
-  "message": "존재하지 않는 상품입니다."
+  "message": "유효하지 않은 상품 id입니다."
 }
 ```
 
-| 에러 코드                    | 설명                                                               |
-| ---------------------------- | ------------------------------------------------------------------ |
-| `INVALID_PRODUCT_ID`         | `productId`가 정의되지 않았거나, 해당 상품이 존재하지 않는 경우    |
-| `INVALID_PURCHASE_QUANTITY`  | `purchaseQuantity`가 정의되지 않았거나, 1 이상 99 이하가 아닌 경우 |
-| `EXCEEDS_REMAINING_QUANTITY` | 장바구니에 담으려는 수량이 상품의 남은 수량보다 많은 경우          |
+| 상태 코드         | 에러 코드                    | 설명                                                               |
+| ----------------- | ---------------------------- | ------------------------------------------------------------------ |
+| `400 Bad Request` | `INVALID_PRODUCT_ID`         | `productId`가 정의되지 않았거나, 형식이 유효하지 않은 경우         |
+| `404 Not Found`   | `PRODUCT_NOT_FOUND`          | `productId`에 해당하는 상품이 존재하지 않는 경우                   |
+| `400 Bad Request` | `INVALID_PURCHASE_QUANTITY`  | `purchaseQuantity`가 정의되지 않았거나, 1 이상 99 이하가 아닌 경우 |
+| `400 Bad Request` | `EXCEEDS_REMAINING_QUANTITY` | 장바구니에 담으려는 수량이 상품의 남은 수량보다 많은 경우          |
 
 ---
 
-### 3-4. 장바구니 상품 수량 변경
+### 3-3. 장바구니 상품 수량 변경
 
 ```http
 PATCH /cart/items/:cartItemId
@@ -346,20 +290,21 @@ PATCH /cart/items/:cartItemId
 
 ```json
 {
-  "code": "INVALID_CART_ITEM_ID",
+  "code": "CART_ITEM_NOT_FOUND",
   "message": "존재하지 않는 장바구니 상품입니다."
 }
 ```
 
-| 에러 코드                    | 설명                                                               |
-| ---------------------------- | ------------------------------------------------------------------ |
-| `INVALID_CART_ITEM_ID`       | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우         |
-| `INVALID_PURCHASE_QUANTITY`  | `purchaseQuantity`가 정의되지 않았거나, 1 이상 99 이하가 아닌 경우 |
-| `EXCEEDS_REMAINING_QUANTITY` | 변경하려는 수량이 상품의 남은 수량보다 많은 경우                   |
+| 상태 코드         | 에러 코드                    | 설명                                                               |
+| ----------------- | ---------------------------- | ------------------------------------------------------------------ |
+| `400 Bad Request` | `INVALID_CART_ITEM_ID`       | `cartItemId` 형식이 유효하지 않은 경우                             |
+| `404 Not Found`   | `CART_ITEM_NOT_FOUND`        | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우         |
+| `400 Bad Request` | `INVALID_PURCHASE_QUANTITY`  | `purchaseQuantity`가 정의되지 않았거나, 1 이상 99 이하가 아닌 경우 |
+| `400 Bad Request` | `EXCEEDS_REMAINING_QUANTITY` | 변경하려는 수량이 상품의 남은 수량보다 많은 경우                   |
 
 ---
 
-### 3-5. 장바구니 상품 제거
+### 3-4. 장바구니 상품 제거
 
 ```http
 DELETE /cart/items/:cartItemId
@@ -379,27 +324,27 @@ DELETE /cart/items/:cartItemId
 
 ```json
 {
-  "code": "INVALID_CART_ITEM_ID",
+  "code": "CART_ITEM_NOT_FOUND",
   "message": "존재하지 않는 장바구니 상품입니다."
 }
 ```
 
-| 에러 코드              | 설명                                                       |
-| ---------------------- | ---------------------------------------------------------- |
-| `INVALID_CART_ITEM_ID` | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우 |
+| 상태 코드       | 에러 코드             | 설명                                                       |
+| --------------- | --------------------- | ---------------------------------------------------------- |
+| `404 Not Found` | `CART_ITEM_NOT_FOUND` | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우 |
 
 ## 4. 엔드포인트
 
-| 기능                    | Method   | Endpoint                                | 설명                                                             |
-| ----------------------- | -------- | --------------------------------------- | ---------------------------------------------------------------- |
-| 상품 목록 조회          | `GET`    | `/products`                             | 저장된 모든 상품을 조회한다.                                     |
-| 상품 추가               | `POST`   | `/products`                             | 새로운 상품을 추가한다.                                          |
-| 상품 삭제               | `DELETE` | `/products/:productId`                  | 상품을 삭제하고, 해당 상품이 장바구니에 있으면 함께 제거한다.    |
-| 장바구니 상품 목록 조회 | `GET`    | `/cart/items`                           | 장바구니에 담긴 상품 목록을 조회한다.                            |
-| 장바구니 금액 요약 조회 | `GET`    | `/cart/summary`                         | 장바구니 상품 금액, 배송비, 총 결제 금액을 조회한다.             |
-| 장바구니에 상품 추가    | `POST`   | `/cart/items`                           | 장바구니에 상품을 추가한다.                                      |
-| 장바구니 상품 수량 변경 | `PATCH`  | `/cart/items/:cartItemId`               | 특정 장바구니 상품의 수량을 변경한다.                            |
-| 장바구니 상품 제거      | `DELETE` | `/cart/items/:cartItemId`               | 특정 장바구니 상품을 제거한다.                                   |
+| 기능                    | Method   | Endpoint                  | 설명                                                          |
+| ----------------------- | -------- | ------------------------- | ------------------------------------------------------------- |
+| 상품 목록 조회          | `GET`    | `/products`               | 저장된 모든 상품을 조회한다.                                  |
+| 상품 추가               | `POST`   | `/products`               | 새로운 상품을 추가한다.                                       |
+| 상품 삭제               | `DELETE` | `/products/:productId`    | 상품을 삭제하고, 해당 상품이 장바구니에 있으면 함께 제거한다. |
+| 장바구니 상품 목록 조회 | `GET`    | `/cart/items`             | 장바구니에 담긴 상품 목록을 조회한다.                         |
+| 장바구니 금액 요약 조회 | `GET`    | `/cart/summary`           | 장바구니 상품 금액, 배송비, 총 결제 금액을 조회한다.          |
+| 장바구니에 상품 추가    | `POST`   | `/cart/items`             | 장바구니에 상품을 추가한다.                                   |
+| 장바구니 상품 수량 변경 | `PATCH`  | `/cart/items/:cartItemId` | 특정 장바구니 상품의 수량을 변경한다.                         |
+| 장바구니 상품 제거      | `DELETE` | `/cart/items/:cartItemId` | 특정 장바구니 상품을 제거한다.                                |
 
 ## 5. 설계 결정 이유
 
