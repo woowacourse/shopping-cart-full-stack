@@ -11,7 +11,7 @@ export class Product {
   productName;
   productPrice;
   remainingQuantity;
-  imageUrl;
+  imageUrl?;
 
   constructor(product: Type) {
     this.validator(product);
@@ -20,7 +20,7 @@ export class Product {
     this.productName = product.productName;
     this.productPrice = product.productPrice;
     this.remainingQuantity = product.remainingQuantity;
-    this.imageUrl = product.imageUrl ?? '';
+    this.imageUrl = product.imageUrl;
   }
 
   validator(product: Type) {
