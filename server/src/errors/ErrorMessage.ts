@@ -1,0 +1,7 @@
+export const ERROR_MESSAGE = {
+  NOT_FOUND_PRODUCT: "해당 상품이 존재하지 않습니다.",
+  NOT_FOUND_CART_ITEM: "해당 장바구니 상품이 존재하지 않습니다.",
+  INVALID_CART_ID: "유효하지 않은 장바구니 ID입니다.",
+  INVALID_QUANTITY: "유효하지 않은 수량입니다.",
+  SERVER_ERROR: "네트워크 에러가 발생했습니다!",
+} as const;
