@@ -22,7 +22,7 @@ class Product {
     return this.#id;
   }
 
-  getProduct() {
+  toObject() {
     return {
       id: this.#id,
       name: this.#name,

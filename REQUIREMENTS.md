@@ -35,10 +35,10 @@
 - [x] 커스텀 에러
 - [x] 컨트롤러 분리
 - [] 서비스 분리
-- [] Router 전환
+- [x] Router 전환
 - [] API.md 보충
 - [] 도메인 테스트 보충
 - [] ID 모킹
 - [] getItem -> getItemById 형식으로 전환
-- [] getProduct 네이밍 변화
+- [x] getProduct 네이밍 변화
 - [] 장바구니 목록 응답형태 수정

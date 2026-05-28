@@ -23,7 +23,7 @@ export function createProductController(storage: Storage): ProductController {
       try {
         res.send({
           products: [...storage.allItems<Product>("products")].map((product) =>
-            product.getProduct(),
+            product.toObject(),
           ),
         });
       } catch (err) {
@@ -35,7 +35,7 @@ export function createProductController(storage: Storage): ProductController {
         const { name, price, thumbnail } = req.body;
         const product = new Product(name, price, thumbnail);
         storage.addItem<Product>("products", product.getId(), product);
-        const post = { id: product.getProduct().id };
+        const post = { id: product.toObject().id };
 
         res.status(201).send(post);
       } catch (err) {
