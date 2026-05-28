@@ -69,5 +69,31 @@ describe("carts service 테스트", () => {
       });
       expect(cart.products).toContainEqual(updatedProduct);
     });
+
+    it("quantity가 누락된 경우 ServiceError를 던진다.", () => {
+      const cartId = 1;
+      const productId = 1;
+      const cartUpdateOption = {} as Parameters<
+        typeof cartsService.updateCartProduct
+      >[2];
+
+      let caughtError: unknown;
+      try {
+        cartsService.updateCartProduct(cartId, productId, cartUpdateOption);
+      } catch (error) {
+        caughtError = error;
+      }
+
+      expect(caughtError).toBeInstanceOf(ServiceError);
+      expect(caughtError).toMatchObject({
+        errorCode: "MISSING_FIELD",
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            type: "quantity",
+            errorCode: "MISSING_FIELD_QUANTITY",
+          }),
+        ]),
+      });
+    });
   });
 });
