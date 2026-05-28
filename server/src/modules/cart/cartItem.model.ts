@@ -33,4 +33,8 @@ export class CartItem {
       );
     }
   }
+
+  changeQuantityTo(quantity: number) {
+    this.purchaseQuantity = quantity;
+  }
 }

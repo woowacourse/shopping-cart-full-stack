@@ -18,7 +18,7 @@ export const cartItemService = {
 
       validatePurchaseQuantity(nextPurchaseQuantity);
       validateRemainingQuantity(product, nextPurchaseQuantity);
-      foundCartItem.purchaseQuantity = nextPurchaseQuantity;
+      foundCartItem.changeQuantityTo(nextPurchaseQuantity);
 
       return { cartItemId: foundCartItem.cartItemId, isNew: false };
     }
@@ -58,7 +58,7 @@ export const cartItemService = {
     }
 
     validateRemainingQuantity(product, quantity);
-    cartItem.purchaseQuantity = quantity;
+    cartItem.changeQuantityTo(quantity);
 
     return {
       cartItemId: cartItem.cartItemId,
