@@ -1,12 +1,5 @@
 import AppError from '../errors/AppError.js';
 
-export type Product = {
-  name: string;
-  price: number;
-  quantity: number;
-  imgUrl?: string;
-};
-
 class ProductManager {
   private products: Map<number, Product>;
   private id: number;
