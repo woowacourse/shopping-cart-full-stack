@@ -45,7 +45,10 @@ app.post('/cart/:id', function (req: Request, res: Response) {
   if (!TestDB.Cart) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
-  const pickedProduct = TestDB.Products!.filter((product) => product.id === requestId)[0];
+  const pickedProduct = TestDB.Products!.find((product) => product.id === requestId);
+  if (!pickedProduct) {
+    return res.status(404).json({ errorMessage: '상품을 찾을 수 없습니다.' });
+  }
   TestDB.Cart.push(pickedProduct);
   res.status(201).json({ message: '상품이 장바구니에 추가되었습니다.' });
 });
@@ -64,6 +67,15 @@ describe('POST /cart/:id', function () {
 
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
+  });
+
+  it('존재하지 않는 상품 id로 추가하면 404 에러이며, 장바구니에 추가되지 않는다.', async function () {
+    const beforeLength = TestDB.Cart!.length;
+    const response = await request(app).post('/cart/999').set('Accept', 'application/json');
+
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ errorMessage: '상품을 찾을 수 없습니다.' });
+    expect(TestDB.Cart!.length).toBe(beforeLength);
   });
 });
 
