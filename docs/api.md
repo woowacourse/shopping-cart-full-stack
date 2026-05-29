@@ -134,9 +134,7 @@
         },
         "quantity": "number"
       }
-    ],
-    "totalPrice": 100000,
-    "totalQuantity": 2
+    ]
   }
 }
 ```
