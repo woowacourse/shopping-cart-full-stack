@@ -20,7 +20,7 @@ const createProductViaApi = async (overrides: Partial<Omit<Product, "id">> = {})
 };
 
 const addToCart = (product: Product, quantity: number) => {
-  CartDB.add({ product, quantity });
+  CartDB.set(product.id, { product, quantity });
 };
 
 beforeEach(() => {

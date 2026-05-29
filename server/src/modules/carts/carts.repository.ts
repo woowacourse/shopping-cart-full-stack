@@ -1,29 +1,26 @@
 import { CartDB } from "@db/inMemoryDB";
 
 export const getCartsQuery = () => {
-  const carts = [...CartDB];
+  const carts = [...CartDB.values()];
 
   return carts;
 };
 
 export const deleteCartQuery = (productId: number) => {
-  const cartItem = getCartItemByProductIdQuery(productId);
-  if (cartItem) CartDB.delete(cartItem);
+  CartDB.delete(productId);
 
   return productId;
 };
 
 export const getCartItemByProductIdQuery = (productId: number) => {
-  return [...CartDB.values()].find((item) => item.product.id === productId);
+  return CartDB.get(productId);
 };
 
 export const updateCartQuantityQuery = (
   productId: number,
   quantity: number,
 ) => {
-  const cartItem = [...CartDB.values()].find(
-    (item) => item.product.id === productId,
-  );
+  const cartItem = CartDB.get(productId);
 
   if (!cartItem) return undefined;
 
@@ -32,7 +29,6 @@ export const updateCartQuantityQuery = (
 };
 
 export const deleteCartsProductQuery = (id: number) => {
-  const cartItem = getCartItemByProductIdQuery(id);
-  if (cartItem) CartDB.delete(cartItem);
+  CartDB.delete(id);
   return id;
 };

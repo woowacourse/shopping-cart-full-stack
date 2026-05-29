@@ -1,7 +1,7 @@
 import type { CartItem, Product } from "../type";
 
 export const ProductDB = new Map<number, Product>();
-export const CartDB = new Set<CartItem>();
+export const CartDB = new Map<Product["id"], CartItem>();
 
 const seedProducts: Product[] = [
   {
@@ -32,5 +32,5 @@ const seedProducts: Product[] = [
 
 seedProducts.forEach((product) => ProductDB.set(product.id, product));
 
-CartDB.add({ product: seedProducts[0], quantity: 2 });
-CartDB.add({ product: seedProducts[2], quantity: 1 });
+CartDB.set(seedProducts[0].id, { product: seedProducts[0], quantity: 2 });
+CartDB.set(seedProducts[2].id, { product: seedProducts[2], quantity: 1 });

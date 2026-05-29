@@ -178,9 +178,9 @@ describe("products", () => {
     it("장바구니에 담겨있는 상품을 삭제하면 해당 장바구니 항목도 함께 삭제한다.", () => {
       // given
       const product = { id: 1, name: "상품1", price: 1000, image: "" };
-      const cartItemId = 1;
+      const cartItem = { product, quantity: 1 };
       getProductByIdQueryMock.mockReturnValue(product);
-      getCartItemByProductIdQueryMock.mockReturnValue(cartItemId);
+      getCartItemByProductIdQueryMock.mockReturnValue(cartItem);
 
       // when
       const result = deleteProduct(product.id);
@@ -188,7 +188,7 @@ describe("products", () => {
       // then
       expect(deleteProductQueryMock).toHaveBeenCalledWith(product.id);
       expect(getCartItemByProductIdQueryMock).toHaveBeenCalledWith(product.id);
-      expect(deleteCartQueryMock).toHaveBeenCalledWith(cartItemId);
+      expect(deleteCartQueryMock).toHaveBeenCalledWith(product.id);
       expect(result).toBe(product.id);
     });
   });
