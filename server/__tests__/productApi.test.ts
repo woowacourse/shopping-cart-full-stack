@@ -57,10 +57,10 @@ app.post('/products', (req: Request, res: Response) => {
     price,
     quantity,
   };
-  TestDB.Products.push(newProduct);
 
   try {
     Validator.validateRequestBody(req.body);
+    TestDB.Products.push(newProduct);
     res.status(201).json({ message: '상품이 성공적으로 생성되었습니다.' });
   } catch (error) {
     if (error instanceof Error) {
@@ -92,7 +92,8 @@ describe('POST /products', function () {
     expect(response.body).toEqual({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   });
 
-  it('잘못된 요청이 들어오면 400 에러', async function () {
+  it('잘못된 요청이 들어오면 400 에러이며, 상품이 DB에 추가되지 않는다.', async function () {
+    const beforeLength = TestDB.Products!.length;
     const invalidProduct = { ...newProduct };
     invalidProduct.quantity = 0;
     const response = await request(app)
@@ -102,6 +103,7 @@ describe('POST /products', function () {
 
     expect(response.status).toBe(400);
     expect(response.body).toEqual({ errorMessage: 'quantity는 1 이상 99 이하의 정수여야 합니다.' });
+    expect(TestDB.Products!.length).toBe(beforeLength);
   });
 });
 

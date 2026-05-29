@@ -28,10 +28,10 @@ productRouter.post('/', (req: Request, res: Response) => {
     price,
     quantity,
   };
-  DB.Products.push(newProduct);
 
   try {
     Validator.validateRequestBody(req.body);
+    DB.Products.push(newProduct);
     res.status(201).json({ message: '상품이 성공적으로 생성되었습니다.' });
   } catch (error) {
     if (error instanceof Error) {
