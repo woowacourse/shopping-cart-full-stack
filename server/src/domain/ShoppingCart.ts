@@ -1,4 +1,5 @@
-import type { ProductId, Quantity, ShoppingCartData } from '../types/type.ts';
+import { BadRequestError } from "../error.ts";
+import type { ProductId, Quantity, ShoppingCartData } from "../types/type.ts";
 
 export default class ShoppingCart {
   private items = new Map<ProductId, Quantity>();
@@ -9,8 +10,32 @@ export default class ShoppingCart {
   }
 
   #validateQuantity(quantity: Quantity) {
-    if (quantity < 1) throw new Error('상품 수량이 1 이상이어야 합니다.');
-    if (quantity > 99) throw new Error('상품 수량이 99 이하여야 합니다.');
+    if (typeof quantity !== "number") {
+      throw new BadRequestError({
+        message: "유효하지 않은 수량입니다.",
+        field: "quantity",
+      });
+    }
+
+    if (!Number.isInteger(quantity)) {
+      throw new BadRequestError({
+        message: "유효하지 않은 수량입니다.",
+        field: "quantity",
+      });
+    }
+
+    if (quantity < 1) {
+      throw new BadRequestError({
+        message: "상품 수량이 1 이상이어야 합니다.",
+        field: "quantity",
+      });
+    }
+    if (quantity > 99) {
+      throw new BadRequestError({
+        message: "상품 수량이 99 이하여야 합니다.",
+        field: "quantity",
+      });
+    }
   }
 
   getShoppingCart(): ShoppingCartData[] {

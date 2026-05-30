@@ -1,4 +1,5 @@
-import type { ProductData } from '../types/type.ts';
+import type { ProductData } from "../types/type.ts";
+import { BadRequestError } from "../error.ts";
 
 export default class Product {
   private name: string;
@@ -16,15 +17,40 @@ export default class Product {
   }
 
   #validatorName(name: string) {
-    if (name.length === 0) throw new Error('상품명이 공백입니다.');
+    if (typeof name !== "string") {
+      throw new BadRequestError({
+        message: "유효하지 않은 형식입니다.",
+        field: "productName",
+      });
+    }
 
-    if (name.length > 100) throw new Error('상품명이 100자를 초과합니다.');
+    if (name.length === 0)
+      throw new BadRequestError({
+        message: "상품명이 공백입니다.",
+        field: "productName",
+      });
+
+    if (name.length > 100)
+      throw new BadRequestError({
+        message: "상품명이 100자를 초과합니다.",
+        field: "productName",
+      });
   }
 
   #validatorPrice(price: number) {
-    if (price <= 0) throw new Error('가격은 1원 이상입니다.');
+    if (typeof price !== "number" || Number.isNaN(price)) {
+      throw new BadRequestError({
+        message: "가격은 숫자여야 합니다.",
+        field: "productPrice",
+      });
+    }
 
-    if (isNaN(price)) throw new Error('가격은 숫자입니다.');
+    if (price <= 0) {
+      throw new BadRequestError({
+        message: "가격은 1원 이상입니다.",
+        field: "productPrice",
+      });
+    }
   }
 
   getProduct(): ProductData & { id: string } {

@@ -6,6 +6,7 @@ import {
 } from "./service/shoppingCartService.ts";
 
 import { shoppingCart } from "./database/inMemoryDatabase.ts";
+import { NotFoundError, NotImplementedError } from "./error.ts";
 
 const router = Router();
 
@@ -22,23 +23,10 @@ router.patch("/:id", (req, res, next) => {
     const productId = req.params.id;
     const request = req.body.quantity;
     if (!shoppingCart.hasProductId(productId)) {
-      return res.status(404).send({ message: "유효하지 않은 경로입니다." });
-    }
-
-    if (typeof request !== "number" || !Number.isInteger(request)) {
-      return res.status(400).send({ message: "유효하지 않은 수량입니다." });
-    }
-
-    if (req.body.quantity < 1) {
-      return res
-        .status(400)
-        .send({ message: "상품 수량이 1 이상이어야 합니다." });
-    }
-
-    if (req.body.quantity > 99) {
-      return res
-        .status(400)
-        .send({ message: "상품 수량이 99 이하여야 합니다." });
+      throw new NotFoundError({
+        message: "유효하지 않은 경로입니다.",
+        field: "wrong path",
+      });
     }
 
     patchShoppingCart(productId, request);
@@ -52,7 +40,10 @@ router.delete("/:id", (req, res, next) => {
   try {
     const productId = req.params.id;
     if (!shoppingCart.hasProductId(productId)) {
-      return res.status(404).send({ message: "유효하지 않은 경로입니다." });
+      throw new NotFoundError({
+        message: "유효하지 않은 경로입니다.",
+        field: "wrong path",
+      });
     }
     deleteShoppingCart(productId);
     res.status(204).send();
@@ -62,8 +53,9 @@ router.delete("/:id", (req, res, next) => {
 });
 
 router.post("/", (_req, res) => {
-  res.status(501).send({
+  throw new NotImplementedError({
     message: "Not Implemented",
+    field: "create shopping cart items",
   });
 });
 
