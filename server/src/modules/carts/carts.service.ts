@@ -8,12 +8,12 @@ export const getCartById = (cartId: number) => {
 
     return {
         id: cart.id,
-        products: cart.products.map((product) => ({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            imgUrl: product.imgUrl,
-            quantity: product.quantity,
+        products: cart.products.map((item) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            imgUrl: item.product.imgUrl,
+            quantity: item.quantity,
         })),
     };
 };
@@ -71,10 +71,10 @@ export const updateCartProduct = (cartId: number, productId: number, cartUpdateO
     const product = cartsRepository.findProductInCart(cartId, productId)!;
 
     return {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        imgUrl: product.imgUrl,
+        id: product.product.id,
+        name: product.product.name,
+        price: product.product.price,
+        imgUrl: product.product.imgUrl,
         quantity: product.quantity,
     };
 };

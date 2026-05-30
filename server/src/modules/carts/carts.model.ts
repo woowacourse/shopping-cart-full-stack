@@ -1,22 +1,11 @@
 import { Product } from '../products/products.model.ts';
 
-export class ProductInCart extends Product {
+export class ProductInCart {
+    product: Product;
     quantity: number;
 
-    constructor({
-        id,
-        price,
-        name,
-        imgUrl,
-        quantity,
-    }: {
-        id: number;
-        price: number;
-        name: string;
-        imgUrl: string;
-        quantity: number;
-    }) {
-        super({ id, price, name, imgUrl });
+    constructor({ product, quantity }: { product: Product; quantity: number }) {
+        this.product = product;
         this.quantity = quantity;
     }
 }
