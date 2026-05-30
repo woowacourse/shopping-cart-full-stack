@@ -2,11 +2,13 @@ import { BadRequestError } from "../error.ts";
 import type { ProductId, Quantity, ShoppingCartData } from "../types/type.ts";
 
 export default class ShoppingCart {
-  private items = new Map<ProductId, Quantity>();
+  productId: ProductId;
+  quantity: Quantity;
 
-  add({ productId, quantity }: ShoppingCartData) {
+  constructor(productId: ProductId, quantity: Quantity) {
     this.#validateQuantity(quantity);
-    this.items.set(productId, quantity);
+    this.productId = productId;
+    this.quantity = quantity;
   }
 
   #validateQuantity(quantity: Quantity) {
@@ -40,29 +42,5 @@ export default class ShoppingCart {
         field: "quantity",
       });
     }
-  }
-
-  getShoppingCart(): ShoppingCartData[] {
-    return [...this.items.entries()].map(([productId, quantity]) => ({
-      productId,
-      quantity,
-    }));
-  }
-
-  getQuantity(productId: ProductId): Quantity | undefined {
-    return this.items.get(productId);
-  }
-
-  setQuantity(productId: ProductId, quantity: Quantity) {
-    this.#validateQuantity(quantity);
-    this.items.set(productId, quantity);
-  }
-
-  removeItem(productId: ProductId) {
-    this.items.delete(productId);
-  }
-
-  hasProductId(productId: ProductId): boolean {
-    return this.items.has(productId);
   }
 }

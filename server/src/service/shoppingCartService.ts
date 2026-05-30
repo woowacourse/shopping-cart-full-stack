@@ -1,30 +1,32 @@
-import { shoppingCart } from "../database/inMemoryDatabase.ts";
+import { cartRepository } from "../database/inMemoryDatabase.ts";
 import { products } from "../database/inMemoryDatabase.ts";
 import type { ProductId, Quantity } from "../types/type.ts";
 import Product from "../domain/Product.ts";
+import ShoppingCart from "../domain/ShoppingCart.ts";
 
 export function addItemToCart(productId: ProductId, quantity: Quantity) {
-  shoppingCart.add({ productId, quantity });
+  const item = new ShoppingCart(productId, quantity);
+  cartRepository.save(item);
 }
 
 export function getItemsFromCart(): {
   product: Product | undefined;
   quantity: Quantity;
 }[] {
-  const shoppingCartArray = shoppingCart.getShoppingCart();
+  const shoppingCartArray = cartRepository.getShoppingCart();
   return shoppingCartArray.map(({ productId, quantity }) => {
     return { product: products.get(productId), quantity: quantity };
   });
 }
 
 export function updateQuantityOfItem(productId: ProductId, quantity: Quantity) {
-  shoppingCart.setQuantity(productId, quantity);
+  cartRepository.setQuantity(productId, quantity);
 }
 
 export function removeItemFromCart(productId: ProductId) {
-  shoppingCart.removeItem(productId);
+  cartRepository.removeItem(productId);
 }
 
 export function existsInCart(productId: string): boolean {
-  return shoppingCart.hasProductId(productId);
+  return cartRepository.hasProductId(productId);
 }
