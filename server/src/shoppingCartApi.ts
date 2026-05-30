@@ -1,9 +1,8 @@
 import { Router } from 'express';
-
-import { deleteProduct } from './service/productService.ts';
 import {
   getShoppingCart,
   patchShoppingCart,
+  deleteShoppingCart,
 } from './service/shoppingCartService.ts';
 
 import { shoppingCart } from './database/inMemoryDatabase.ts';
@@ -51,7 +50,7 @@ router.delete('/:id', (req, res, next) => {
     if (!shoppingCart.hasProductId(productId)) {
       return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
     }
-    deleteProduct(productId);
+    deleteShoppingCart(productId);
     res.status(204).send();
   } catch (error) {
     next(error);
