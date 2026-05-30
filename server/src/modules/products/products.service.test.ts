@@ -141,7 +141,7 @@ describe("products", () => {
 
       // when & then
       expect(() => deleteProduct(1)).toThrow(
-        ERROR_CODES.NOT_EXIST_PRODUCT.code,
+        ERROR_CODES.NOT_EXIST_PRODUCT.message,
       );
       expect(deleteProductQueryMock).not.toHaveBeenCalled();
       expect(deleteCartQueryMock).not.toHaveBeenCalled();

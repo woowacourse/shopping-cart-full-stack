@@ -1,4 +1,5 @@
 import ERROR_CODES from "@/ERROR_CODE";
+import createAppError from "@/errors/AppError";
 import { getProductByIdQuery } from "../products/products.repository";
 import {
   deleteCartsProductQuery,
@@ -16,13 +17,13 @@ export const changeCartQuantity = (id: number, quantity: number) => {
   validateCartQuantity(quantity);
 
   const existingCartItem = getCartItemByProductIdQuery(id);
-  if (!existingCartItem) throw new Error(ERROR_CODES.NOT_EXIST_CARTS_ITEM.code);
+  if (!existingCartItem) throw createAppError(ERROR_CODES.NOT_EXIST_CARTS_ITEM);
 
   const updatedCartItem = updateCartQuantityQuery(id, quantity);
-  if (!updatedCartItem) throw new Error(ERROR_CODES.NOT_EXIST_CARTS_ITEM.code);
+  if (!updatedCartItem) throw createAppError(ERROR_CODES.NOT_EXIST_CARTS_ITEM);
 
   const product = getProductByIdQuery(id);
-  if (!product) throw new Error(ERROR_CODES.NOT_EXIST_PRODUCT.code);
+  if (!product) throw createAppError(ERROR_CODES.NOT_EXIST_PRODUCT);
 
   return {
     product,
@@ -35,7 +36,7 @@ export const deleteCartsProduct = (id: number) => {
   const existingCartsProduct = getCartItemByProductIdQuery(id);
 
   if (!existingCartsProduct) {
-    throw new Error(ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.code);
+    throw createAppError(ERROR_CODES.NOT_EXIST_CARTS_PRODUCT);
   }
 
   return deleteCartsProductQuery(id);

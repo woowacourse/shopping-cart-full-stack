@@ -1,4 +1,5 @@
 import ERROR_CODES from "@/ERROR_CODE";
+import { isAppError } from "@/errors/AppError";
 import { Request, Response, NextFunction } from "express";
 
 const errorHandler = (
@@ -7,16 +8,16 @@ const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  const errorMessage = err instanceof Error ? err.message : "";
-  const statusCode =
-    ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.status || 400;
-  const message =
-    ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.message ||
-    "상품 등록에 실패하였습니다.";
+  if (isAppError(err)) {
+    return res.status(err.status).json({
+      status: "error",
+      message: err.message,
+    });
+  }
 
-  return res.status(statusCode).json({
+  return res.status(ERROR_CODES.INTERNAL_SERVER_ERROR.status).json({
     status: "error",
-    message: message,
+    message: ERROR_CODES.INTERNAL_SERVER_ERROR.message,
   });
 };
 

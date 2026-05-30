@@ -66,7 +66,7 @@ describe("carts.service", () => {
     it("수량이 0 이하이면 OUT_OF_RANGE_CARTS_QUANTITY 에러를 던지고 update 쿼리는 호출하지 않는다.", () => {
       // when & then
       expect(() => changeCartQuantity(1, 0)).toThrow(
-        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.code,
+        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.message,
       );
       expect(updateCartQuantityQueryMock).not.toHaveBeenCalled();
     });
@@ -74,7 +74,7 @@ describe("carts.service", () => {
     it("수량이 99를 초과하면 OUT_OF_RANGE_CARTS_QUANTITY 에러를 던지고 update 쿼리는 호출하지 않는다.", () => {
       // when & then
       expect(() => changeCartQuantity(1, 100)).toThrow(
-        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.code,
+        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.message,
       );
       expect(updateCartQuantityQueryMock).not.toHaveBeenCalled();
     });
@@ -85,7 +85,7 @@ describe("carts.service", () => {
 
       // when & then
       expect(() => changeCartQuantity(1, 5)).toThrow(
-        ERROR_CODES.NOT_EXIST_CARTS_ITEM.code,
+        ERROR_CODES.NOT_EXIST_CARTS_ITEM.message,
       );
       expect(updateCartQuantityQueryMock).not.toHaveBeenCalled();
     });
@@ -97,7 +97,7 @@ describe("carts.service", () => {
 
       // when & then
       expect(() => changeCartQuantity(1, 5)).toThrow(
-        ERROR_CODES.NOT_EXIST_CARTS_ITEM.code,
+        ERROR_CODES.NOT_EXIST_CARTS_ITEM.message,
       );
     });
 
@@ -109,7 +109,7 @@ describe("carts.service", () => {
 
       // when & then
       expect(() => changeCartQuantity(1, 5)).toThrow(
-        ERROR_CODES.NOT_EXIST_PRODUCT.code,
+        ERROR_CODES.NOT_EXIST_PRODUCT.message,
       );
     });
   });
@@ -137,7 +137,7 @@ describe("carts.service", () => {
 
       // when & then
       expect(() => deleteCartsProduct(1)).toThrow(
-        ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.code,
+        ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.message,
       );
       expect(deleteCartsProductQueryMock).not.toHaveBeenCalled();
     });

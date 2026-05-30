@@ -54,6 +54,11 @@ const ERROR_CODES = {
     message: "장바구니에 존재하지 않는 상품입니다.",
     status: 404,
   },
+  INTERNAL_SERVER_ERROR: {
+    code: "INTERNAL_SERVER_ERROR",
+    message: "서버 내부 오류입니다.",
+    status: 500,
+  },
 } as const;
 
 export default ERROR_CODES;

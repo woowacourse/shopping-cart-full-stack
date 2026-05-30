@@ -7,6 +7,7 @@ import {
   getProductByNameQuery,
 } from "./products.repository";
 import ERROR_CODES from "../../ERROR_CODE";
+import createAppError from "@/errors/AppError";
 import {
   deleteCartQuery,
   getCartItemByProductIdQuery,
@@ -21,7 +22,7 @@ export const addProduct = (arg: Parameters<typeof addProductQuery>[0]) => {
 
   const existingProduct = getProductByNameQuery(arg.name);
   if (existingProduct) {
-    throw new Error(ERROR_CODES.DUPLICATE_PRODUCT_NAME.code);
+    throw createAppError(ERROR_CODES.DUPLICATE_PRODUCT_NAME);
   }
 
   return addProductQuery(arg);
@@ -31,7 +32,7 @@ export const deleteProduct = (id: number) => {
   // 존재하지 않는 상품인지 확인
   const existingProduct = getProductByIdQuery(id);
   if (!existingProduct) {
-    throw new Error(ERROR_CODES.NOT_EXIST_PRODUCT.code);
+    throw createAppError(ERROR_CODES.NOT_EXIST_PRODUCT);
   }
 
   deleteProductQuery(id);
