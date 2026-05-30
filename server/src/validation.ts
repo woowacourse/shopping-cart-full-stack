@@ -39,9 +39,9 @@ export const Validator = {
   },
 
   validateRequestBody(requestBody: RequestBody): void {
-    this.validateRequiredFields(requestBody) &&
-      this.validateQuantity(requestBody) &&
-      this.validatePrice(requestBody) &&
-      this.validateName(requestBody);
+    this.validateRequiredFields(requestBody)
+    && this.validateQuantity(requestBody)
+    && this.validatePrice(requestBody)
+    && this.validateName(requestBody);
   },
 };
