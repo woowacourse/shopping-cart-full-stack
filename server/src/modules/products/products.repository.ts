@@ -32,7 +32,7 @@ export const getProductByNameQuery = (name: string) => {
 };
 
 export const getProductByIdQuery = (id: number) => {
-  const product = [...ProductDB.values()].find((product) => product.id === id);
+  const product = ProductDB.get(id);
 
   return product;
 };
