@@ -15,7 +15,11 @@ interface FailResponse<T> {
 }
 
 export const success = <T>(res: Response, data: T, status = 200) => {
-  const response: SuccessResponse<T> = {
+	if (data === null && status === 204) {
+		return res.status(status).send();
+	}
+
+	const response: SuccessResponse<T> = {
     status,
     data,
   };

@@ -32,7 +32,7 @@ export const deleteProduct = (req: Request, res: Response) => {
   try {
     productsService.deleteProduct(id);
 
-    return res.status(204).send();
+    return success(res, null, 204);
   } catch (error) {
     if (error instanceof ServiceError) {
       return fail(res, error.errorCode, error.errorMessage, 404, error.data);

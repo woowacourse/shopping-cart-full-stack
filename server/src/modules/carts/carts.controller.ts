@@ -56,7 +56,7 @@ export const deleteCartProduct = (req: Request, res: Response) => {
   try {
     cartsService.deleteCartProduct(cartId, productId);
 
-    return res.status(204).send();
+    return success(res, null, 204);
   } catch (error) {
     if (error instanceof ServiceError) {
       return fail(res, error.errorCode, error.errorMessage, 404, error.data);
