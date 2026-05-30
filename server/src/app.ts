@@ -32,10 +32,10 @@ app.get("/slow", async (_req, res, next) => {
   }
 });
 
-app.use((_req, res) => {
+app.use(() => {
   throw new NotFoundError({
     code: "INVALID_PATH",
-    message: "유효하지 않은 경로입니다.",
+    message: "요청하신 경로를 찾을 수 없습니다.",
     field: "wrong path",
   });
 });

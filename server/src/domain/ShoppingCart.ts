@@ -58,7 +58,7 @@ export default class ShoppingCart {
     this.items.set(productId, quantity);
   }
 
-  deleteProduct(productId: ProductId) {
+  removeItem(productId: ProductId) {
     this.items.delete(productId);
   }
 

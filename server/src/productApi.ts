@@ -1,12 +1,12 @@
 import { Router } from "express";
 import {
   getAllProducts,
-  createProduct,
-  createAllProducts,
-  deleteProduct,
-  existProductId,
+  addProductToList,
+  removeProductFromList,
+  existsProductId,
 } from "./service/productService.ts";
 import { BadRequestError, NotFoundError } from "./error.ts";
+import { removeItemFromCart } from "./service/shoppingCartService.ts";
 
 const router = Router();
 
@@ -32,8 +32,8 @@ router.post("/", (req, res, next) => {
         field: "productName",
       });
     }
-    createProduct(request);
-    res.status(201).send(createAllProducts());
+    addProductToList(request);
+    res.status(201).send(getAllProducts());
   } catch (error) {
     next(error);
   }
@@ -43,14 +43,15 @@ router.delete("/:id", (req, res, next) => {
   try {
     const productId = req.params.id;
 
-    if (!existProductId(productId)) {
+    if (!existsProductId(productId)) {
       throw new NotFoundError({
         code: "INVALID_PATH",
         message: "해당 상품을 찾을 수 없습니다.",
         field: "productId",
       });
     }
-    deleteProduct(productId);
+    removeProductFromList(productId);
+    removeItemFromCart(productId);
     res.status(204).send();
   } catch (error) {
     next(error);

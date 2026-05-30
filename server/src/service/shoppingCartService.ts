@@ -3,11 +3,11 @@ import { products } from "../database/inMemoryDatabase.ts";
 import type { ProductId, Quantity } from "../types/type.ts";
 import Product from "../domain/Product.ts";
 
-export function createShoppingCart(productId: ProductId, quantity: Quantity) {
+export function addItemToCart(productId: ProductId, quantity: Quantity) {
   shoppingCart.add({ productId, quantity });
 }
 
-export function getShoppingCart(): {
+export function getItemsFromCart(): {
   product: Product | undefined;
   quantity: Quantity;
 }[] {
@@ -17,14 +17,14 @@ export function getShoppingCart(): {
   });
 }
 
-export function patchShoppingCart(productId: ProductId, quantity: Quantity) {
+export function updateQuantityOfItem(productId: ProductId, quantity: Quantity) {
   shoppingCart.setQuantity(productId, quantity);
 }
 
-export function deleteShoppingCart(productId: ProductId) {
-  shoppingCart.deleteProduct(productId);
+export function removeItemFromCart(productId: ProductId) {
+  shoppingCart.removeItem(productId);
 }
 
-export function existShoppingCartProductId(productId: string): boolean {
+export function existsInCart(productId: string): boolean {
   return shoppingCart.hasProductId(productId);
 }
