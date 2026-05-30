@@ -31,8 +31,8 @@ export const updateCartQuantityQuery = (
   return cartItem;
 };
 
-export const deleteCartsProductQuery = (id: number) => {
-  const cartItem = getCartItemByProductIdQuery(id);
+export const deleteCartsProductQuery = (productId: number) => {
+  const cartItem = getCartItemByProductIdQuery(productId);
   if (cartItem) CartDB.delete(cartItem);
-  return id;
+  return productId;
 };

@@ -8,5 +8,5 @@ import {
 export const cartsRouter = express.Router();
 
 cartsRouter.get("/", getCarts);
-cartsRouter.patch("/:id", updateCartQuantity);
-cartsRouter.delete("/:id", deleteCartProduct);
+cartsRouter.patch("/:productId", updateCartQuantity);
+cartsRouter.delete("/:productId", deleteCartProduct);

@@ -14,11 +14,11 @@ export const getCarts: RequestHandler = (_, res) => {
 };
 
 export const updateCartQuantity: RequestHandler = (req, res) => {
-  const id = +validateID(req.params.id);
+  const productId = +validateID(req.params.productId);
 
   const { quantity } = validateQuantity(req.body);
 
-  const result = cartsService.changeCartQuantity(id, quantity);
+  const result = cartsService.changeCartQuantity(productId, quantity);
 
   res.status(200).json({
     status: "success",
@@ -28,9 +28,9 @@ export const updateCartQuantity: RequestHandler = (req, res) => {
 };
 
 export const deleteCartProduct: RequestHandler = (req, res) => {
-  const id = +validateID(req.params.id);
+  const productId = +validateID(req.params.productId);
 
-  const result = cartsService.deleteCartsProduct(id);
+  const result = cartsService.deleteCartsProduct(productId);
 
   res.status(200).json({
     status: "success",
