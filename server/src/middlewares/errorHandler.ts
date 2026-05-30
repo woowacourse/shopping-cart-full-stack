@@ -9,10 +9,10 @@ const errorHandler = (
 ) => {
   const errorMessage = err instanceof Error ? err.message : "";
   const statusCode =
-    ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.status || 400;
+    ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.status || 500;
   const message =
     ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.message ||
-    "상품 등록에 실패하였습니다.";
+    "서버 내부 오류가 발생하였습니다.";
 
   return res.status(statusCode).json({
     status: "error",
