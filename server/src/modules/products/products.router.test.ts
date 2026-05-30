@@ -1,6 +1,7 @@
 import express from 'express';
 import request from 'supertest';
 
+import { handleServiceError } from '../../middleware/error.middleware.ts';
 import { rawProducts } from '../../raw/raw.products.ts';
 import productsRouter from './products.router.ts';
 
@@ -28,6 +29,7 @@ const initialProducts = [
 const app = express();
 app.use(express.json());
 app.use('/products', productsRouter);
+app.use(handleServiceError);
 
 describe('product router 테스트', () => {
     beforeEach(() => {

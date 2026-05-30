@@ -1,6 +1,7 @@
 import express from 'express';
 import request from 'supertest';
 
+import { handleServiceError } from '../../middleware/error.middleware.ts';
 import { rawCarts } from '../../raw/raw.carts.ts';
 import cartsRouter from './carts.router.ts';
 
@@ -52,6 +53,7 @@ const cartResponse = {
 const app = express();
 app.use(express.json());
 app.use('/carts', cartsRouter);
+app.use(handleServiceError);
 
 describe('carts router 테스트', () => {
     beforeEach(() => {
