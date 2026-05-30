@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getAllProducts,
   createProduct,
+  createAllProducts,
   deleteProduct,
   existProductId,
 } from "./service/productService.ts";
@@ -31,7 +32,8 @@ router.post("/", (req, res, next) => {
         field: "productName",
       });
     }
-    res.status(201).send(createProduct(request));
+    createProduct(request);
+    res.status(201).send(createAllProducts());
   } catch (error) {
     next(error);
   }
@@ -44,7 +46,7 @@ router.delete("/:id", (req, res, next) => {
     if (!existProductId(productId)) {
       throw new NotFoundError({
         code: "INVALID_PATH",
-        message: "유효하지 않은 경로입니다.",
+        message: "해당 상품을 찾을 수 없습니다.",
         field: "productId",
       });
     }

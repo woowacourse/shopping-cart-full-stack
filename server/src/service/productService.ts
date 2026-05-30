@@ -3,9 +3,12 @@ import Product from "../domain/Product.ts";
 import { deleteShoppingCart } from "./shoppingCartService.ts";
 import type { ProductData, ProductId } from "../types/type.ts";
 
-export function createProduct({ name, price, image }: ProductData): Product[] {
+export function createProduct({ name, price, image }: ProductData) {
   const product = new Product({ name, price, image });
   products.set(product.getProduct().id, product);
+}
+
+export function createAllProducts(): Product[] {
   return [...products.values()];
 }
 
