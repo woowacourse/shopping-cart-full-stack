@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler, RequestHandler } from 'express';
 
+import { ServiceError, getStatusCode } from '../common/error.ts';
 import { fail } from '../common/response.ts';
 
 interface RouteDefinition {
@@ -73,4 +74,12 @@ export const handleMethodNotAllowed: RequestHandler = (req, res, next) => {
 
 export const handleRouteNotFound: RequestHandler = (_req, res) => {
     return fail(res, 'ROUTE_NOT_FOUND', '엔드포인트에 해당하는 라우터가 없습니다.', 404);
+};
+
+export const handleServiceError: ErrorRequestHandler = (error, _req, res, next) => {
+    if (error instanceof ServiceError) {
+        return fail(res, error.errorCode, error.errorMessage, getStatusCode(error), error.data);
+    }
+
+    return next(error);
 };

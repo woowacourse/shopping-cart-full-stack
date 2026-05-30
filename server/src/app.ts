@@ -5,6 +5,7 @@ import {
     handleJsonParseError,
     handleMethodNotAllowed,
     handleRouteNotFound,
+    handleServiceError,
     validateJsonRequest,
 } from './middleware/error.middleware.ts';
 import router from './router/index.ts';
@@ -22,6 +23,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use(router);
+app.use(handleServiceError);
 app.use(handleMethodNotAllowed);
 app.use(handleRouteNotFound);
 
