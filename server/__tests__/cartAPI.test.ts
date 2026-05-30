@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import request from 'supertest';
 import { BodyForTest, TestDB } from './testDB';
-import { Validator } from '../src/validation';
+import { validateRequestBody, Validator } from '../src/validation';
 
 const app = express();
 app.use(express.json());
@@ -83,7 +83,7 @@ app.put('/cart', function (req: Request, res: Response) {
   TestDB.Cart[toBeUpdatedIndex] = req.body;
 
   try {
-    Validator.validateRequestBody(req.body);
+    validateRequestBody(req.body);
     res.status(204).send();
   } catch (error) {
     if (error instanceof Error) {

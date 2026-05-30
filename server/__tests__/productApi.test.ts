@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import request from 'supertest';
 import { BodyForTest, TestDB } from './testDB';
-import { Validator } from '../src/validation';
+import { validateRequestBody, Validator } from '../src/validation';
 
 const app = express();
 app.use(express.json());
@@ -60,7 +60,7 @@ app.post('/products', (req: Request, res: Response) => {
   TestDB.Products.push(newProduct);
 
   try {
-    Validator.validateRequestBody(req.body);
+    validateRequestBody(req.body);
     res.status(201).json({ message: '상품이 성공적으로 생성되었습니다.' });
   } catch (error) {
     if (error instanceof Error) {

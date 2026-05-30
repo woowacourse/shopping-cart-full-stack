@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { DB } from '../database';
-import { Validator } from '../validation';
+import { Validator, validateRequestBody } from '../validation';
 
 const cartRouter = express.Router();
 cartRouter.use(express.json());
@@ -39,7 +39,7 @@ cartRouter.put('/', function (req: Request, res: Response) {
   }
 
   try {
-    Validator.validateRequestBody(req.body);
+    validateRequestBody(req.body);
     const { id } = req.body;
 
     const toBeUpdatedIndex = DB.Cart.findIndex((product) => product.id === id);

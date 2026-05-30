@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { DB } from '../database';
-import { Validator } from '../validation';
+import { validateRequestBody } from '../validation';
 
 const productRouter = express.Router();
 productRouter.use(express.json());
@@ -21,7 +21,7 @@ productRouter.post('/', (req: Request, res: Response) => {
   }
 
   try {
-    Validator.validateRequestBody(req.body);
+    validateRequestBody(req.body);
     const { imageUrl, name, price, quantity } = req.body;
     const newProduct = {
       id: DB.Products.length + 1,

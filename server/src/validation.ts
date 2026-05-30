@@ -37,11 +37,11 @@ export const Validator = {
     }
     return true;
   },
+};
 
-  validateRequestBody(requestBody: RequestBody): void {
-    this.validateRequiredFields(requestBody) &&
-      this.validateQuantity(requestBody) &&
-      this.validatePrice(requestBody) &&
-      this.validateName(requestBody);
-  },
+export const validateRequestBody = (requestBody: RequestBody): void => {
+  Validator.validateRequiredFields(requestBody) &&
+    Validator.validateQuantity(requestBody) &&
+    Validator.validatePrice(requestBody) &&
+    Validator.validateName(requestBody);
 };
