@@ -6,12 +6,12 @@ export interface Product {
   quantity: number;
 }
 
-export interface DB {
-  Products: Product[];
-  Cart: Product[];
+export interface Database {
+  Products: Product[] | undefined;
+  Cart: Product[] | undefined;
 }
 
-export const DB: DB = {
+export const DB: Database = {
   Products: [],
   Cart: [],
 };
