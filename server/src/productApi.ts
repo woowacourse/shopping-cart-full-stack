@@ -3,9 +3,9 @@ import {
   getAllProducts,
   createProduct,
   deleteProduct,
+  existProductId,
 } from "./service/productService.ts";
 import { BadRequestError, NotFoundError } from "./error.ts";
-import { products } from "./database/inMemoryDatabase.ts";
 
 const router = Router();
 
@@ -26,6 +26,7 @@ router.post("/", (req, res, next) => {
 
     if (isDuplicateName) {
       throw new BadRequestError({
+        code: "INVALID_NAME",
         message: "중복된 상품명입니다.",
         field: "productName",
       });
@@ -40,8 +41,9 @@ router.delete("/:id", (req, res, next) => {
   try {
     const productId = req.params.id;
 
-    if (!products.has(productId)) {
+    if (!existProductId(productId)) {
       throw new NotFoundError({
+        code: "INVALID_PATH",
         message: "유효하지 않은 경로입니다.",
         field: "productId",
       });

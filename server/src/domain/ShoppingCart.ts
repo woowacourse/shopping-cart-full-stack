@@ -12,6 +12,7 @@ export default class ShoppingCart {
   #validateQuantity(quantity: Quantity) {
     if (typeof quantity !== "number") {
       throw new BadRequestError({
+        code: "INVALID_TYPE",
         message: "유효하지 않은 수량입니다.",
         field: "quantity",
       });
@@ -19,6 +20,7 @@ export default class ShoppingCart {
 
     if (!Number.isInteger(quantity)) {
       throw new BadRequestError({
+        code: "INVALID_QUANTITY",
         message: "유효하지 않은 수량입니다.",
         field: "quantity",
       });
@@ -26,12 +28,14 @@ export default class ShoppingCart {
 
     if (quantity < 1) {
       throw new BadRequestError({
+        code: "INVALID_QUANTITY",
         message: "상품 수량이 1 이상이어야 합니다.",
         field: "quantity",
       });
     }
     if (quantity > 99) {
       throw new BadRequestError({
+        code: "INVALID_QUANTITY",
         message: "상품 수량이 99 이하여야 합니다.",
         field: "quantity",
       });

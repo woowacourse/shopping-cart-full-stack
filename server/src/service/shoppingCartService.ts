@@ -1,7 +1,7 @@
-import { shoppingCart } from '../database/inMemoryDatabase.ts';
-import { products } from '../database/inMemoryDatabase.ts';
-import type { ProductId, Quantity } from '../types/type.ts';
-import Product from '../domain/Product.ts';
+import { shoppingCart } from "../database/inMemoryDatabase.ts";
+import { products } from "../database/inMemoryDatabase.ts";
+import type { ProductId, Quantity } from "../types/type.ts";
+import Product from "../domain/Product.ts";
 
 export function createShoppingCart(productId: ProductId, quantity: Quantity) {
   shoppingCart.add({ productId, quantity });

@@ -22,6 +22,7 @@ app.get("/slow", async (_req, res, next) => {
 
     if (!res.headersSent) {
       throw new RequestTimeoutError({
+        code: "TIME_OUT",
         message: "요청 시간이 초과되었습니다.",
         field: "time out",
       });
@@ -33,8 +34,9 @@ app.get("/slow", async (_req, res, next) => {
 
 app.use((_req, res) => {
   throw new NotFoundError({
+    code: "INVALID_PATH",
     message: "유효하지 않은 경로입니다.",
-    field: "wrong url",
+    field: "wrong path",
   });
 });
 
@@ -42,6 +44,7 @@ app.use((_req, res, next) => {
   const timeout = setTimeout(() => {
     if (!res.headersSent) {
       throw new RequestTimeoutError({
+        code: "TIME_OUT",
         message: "요청 시간이 초과되었습니다.",
         field: "time out",
       });
