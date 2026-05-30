@@ -1,5 +1,5 @@
-import AppError from './AppError.js';
-import { ERROR_CODE } from './errorCode.js';
+import AppError from "./AppError.js";
+import { ERROR_CODE } from "./errorCode.js";
 
 export const errorHandler = (error: unknown) => {
   if (error instanceof AppError) {
@@ -10,6 +10,5 @@ export const errorHandler = (error: unknown) => {
     };
   }
 
-  console.error(error);
-  return ERROR_CODE['INTERNAL_SERVER_ERROR'];
+  return ERROR_CODE["INTERNAL_SERVER_ERROR"];
 };
