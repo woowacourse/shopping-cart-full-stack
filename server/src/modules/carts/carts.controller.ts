@@ -1,55 +1,28 @@
 import type { Request, Response } from 'express';
 
-import { ServiceError, getStatusCode } from '../../common/error.ts';
-import { fail, success } from '../../common/response.ts';
+import { wrap } from '../../common/wrap.ts';
+import { success } from '../../common/response.ts';
 import * as cartsService from './carts.service.ts';
 
-export const getCartById = (req: Request, res: Response) => {
+export const getCartById = wrap((req: Request, res: Response) => {
     const cartId = Number(req.params.cartId);
+    const cart = cartsService.getCartById(cartId);
 
-    try {
-        const cart = cartsService.getCartById(cartId);
+    return success(res, cart);
+});
 
-        return success(res, cart);
-    } catch (error) {
-        if (error instanceof ServiceError) {
-            return fail(res, error.errorCode, error.errorMessage, getStatusCode(error), error.data);
-        }
-
-        throw error;
-    }
-};
-
-export const updateCartProduct = (req: Request, res: Response) => {
+export const updateCartProduct = wrap((req: Request, res: Response) => {
     const cartId = Number(req.params.cartId);
     const productId = Number(req.params.productId);
+    const product = cartsService.updateCartProduct(cartId, productId, req.body);
 
-    try {
-        const product = cartsService.updateCartProduct(cartId, productId, req.body);
+    return success(res, product);
+});
 
-        return success(res, product);
-    } catch (error) {
-        if (error instanceof ServiceError) {
-            return fail(res, error.errorCode, error.errorMessage, getStatusCode(error), error.data);
-        }
-
-        throw error;
-    }
-};
-
-export const deleteCartProduct = (req: Request, res: Response) => {
+export const deleteCartProduct = wrap((req: Request, res: Response) => {
     const cartId = Number(req.params.cartId);
     const productId = Number(req.params.productId);
+    cartsService.deleteCartProduct(cartId, productId);
 
-    try {
-        cartsService.deleteCartProduct(cartId, productId);
-
-        return res.status(204).send();
-    } catch (error) {
-        if (error instanceof ServiceError) {
-            return fail(res, error.errorCode, error.errorMessage, getStatusCode(error), error.data);
-        }
-
-        throw error;
-    }
-};
+    return res.status(204).send();
+});

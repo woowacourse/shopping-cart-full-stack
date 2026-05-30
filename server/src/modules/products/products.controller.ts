@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 
-import { ServiceError, getStatusCode } from '../../common/error.ts';
-import { fail, success } from '../../common/response.ts';
+import { wrap } from '../../common/wrap.ts';
+import { success } from '../../common/response.ts';
 import * as productsService from './products.service.ts';
 
 export const getProducts = (_req: Request, res: Response) => {
@@ -10,34 +10,15 @@ export const getProducts = (_req: Request, res: Response) => {
     return success(res, products);
 };
 
-export const createProduct = (req: Request, res: Response) => {
-    const newProduct = req.body;
+export const createProduct = wrap((req: Request, res: Response) => {
+    const product = productsService.createProduct(req.body);
 
-    try {
-        const product = productsService.createProduct(newProduct);
+    return success(res, product);
+});
 
-        return success(res, product);
-    } catch (error) {
-        if (error instanceof ServiceError) {
-            return fail(res, error.errorCode, error.errorMessage, getStatusCode(error), error.data);
-        }
-
-        throw error;
-    }
-};
-
-export const deleteProduct = (req: Request, res: Response) => {
+export const deleteProduct = wrap((req: Request, res: Response) => {
     const id = Number(req.params.id);
+    productsService.deleteProduct(id);
 
-    try {
-        productsService.deleteProduct(id);
-
-        return res.status(204).send();
-    } catch (error) {
-        if (error instanceof ServiceError) {
-            return fail(res, error.errorCode, error.errorMessage, getStatusCode(error), error.data);
-        }
-
-        throw error;
-    }
-};
+    return res.status(204).send();
+});
