@@ -1,4 +1,4 @@
-import Product, { ProductType } from "../../src/models/Product.js";
+import Product, { ProductType } from "../../src/models/product.js";
 
 describe("상품 생성 테스트", () => {
   const validField: ProductType = {

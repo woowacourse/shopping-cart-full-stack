@@ -1,4 +1,4 @@
-import { FieldError, productErrors, ValidationError } from "../errors/ProductErrors.js";
+import { FieldError, productErrors, ValidationError } from "../errors/productErrors.js";
 import { isImgUrl } from "../utils/validator.js";
 
 export interface ProductType {

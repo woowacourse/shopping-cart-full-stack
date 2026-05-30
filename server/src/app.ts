@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import ProductController from "./controllers/ProductController.js";
+import ProductController from "./controllers/product.controller.js";
 import { DBInterface } from "./db/db.js";
-import CartController from "./controllers/CartController.js";
+import CartController from "./controllers/cart.controller.js";
 
 export function createApp(db: DBInterface) {
   const productController = new ProductController(db);

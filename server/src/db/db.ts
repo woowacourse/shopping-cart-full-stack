@@ -1,11 +1,11 @@
-import type { ProductData } from "../models/product.js";
-import type { CartItem } from "../controllers/CartController.js";
+import type { ProductType } from "../models/product.js";
+import type { CartItem } from "../controllers/cart.controller.js";
 export interface DBInterface {
-  PRODUCT_TABLE: Map<number, ProductData>;
+  PRODUCT_TABLE: Map<number, ProductType>;
   CART_TABLE: Map<number, CartItem>;
 }
 
 export const DB = {
-  PRODUCT_TABLE: new Map<number, ProductData>(),
+  PRODUCT_TABLE: new Map<number, ProductType>(),
   CART_TABLE: new Map<number, CartItem>(),
 };

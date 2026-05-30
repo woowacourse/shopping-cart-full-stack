@@ -1,9 +1,9 @@
 import { DBInterface } from "../db/db.js";
-import { type ProductData } from "../models/product.js";
+import { type ProductType } from "../models/product.js";
 import { Request, Response } from "express";
 
 export interface CartItem {
-  productData: ProductData;
+  productData: ProductType;
   quantity: number;
 }
 
@@ -16,20 +16,18 @@ export default class CartController {
 
   getAllItems = (req: Request, res: Response) => {
     try {
-      const cartItems = Array.from(this.#db.CART_TABLE.entries()).map(
-        ([productId, cartItem]) => {
-          const { productData, quantity } = cartItem;
-          const { name, price, imgUrl } = productData;
+      const cartItems = Array.from(this.#db.CART_TABLE.entries()).map(([productId, cartItem]) => {
+        const { productData, quantity } = cartItem;
+        const { name, price, imgUrl } = productData;
 
-          return {
-            productId,
-            productName: name,
-            productImg: imgUrl,
-            productPrice: price,
-            quantity: quantity,
-          };
-        },
-      );
+        return {
+          productId,
+          productName: name,
+          productImg: imgUrl,
+          productPrice: price,
+          quantity: quantity,
+        };
+      });
 
       res.status(200).json({
         result: "success",
