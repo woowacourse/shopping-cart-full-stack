@@ -1,20 +1,36 @@
-import { products } from "../database/inMemoryDatabase.ts";
+import { productRepository } from "../database/inMemoryDatabase.ts";
 import Product from "../domain/Product.ts";
 import type { ProductData, ProductId } from "../types/type.ts";
+import { BadRequestError } from "../error.ts";
+
+function isDuplicateName(name: string) {
+  return getAllProducts().some((product) => {
+    return product.getProduct() === name;
+  });
+}
 
 export function addProductToList({ name, price, image }: ProductData) {
-  const product = new Product({ name, price, image });
-  products.set(product.getProduct().id, product);
+  if (isDuplicateName(name)) {
+    throw new BadRequestError({
+      code: "INVALID_NAME",
+      message: "중복된 상품명입니다.",
+      field: "productName",
+    });
+  }
+
+  const productId = crypto.randomUUID();
+  const product = new Product({ name, price, image, productId });
+  productRepository.save(productId, product);
 }
 
 export function getAllProducts(): Product[] {
-  return [...products.values()];
+  return productRepository.getAllProducts();
 }
 
-export function removeProductFromList(id: ProductId) {
-  products.delete(id);
+export function removeProductFromList(productId: ProductId) {
+  productRepository.remove(productId);
 }
 
 export function existsProductId(productId: string): boolean {
-  return products.has(productId);
+  return productRepository.hasId(productId);
 }

@@ -10,7 +10,7 @@ import { removeItemFromCart } from "./service/shoppingCartService.ts";
 
 const router = Router();
 
-router.get("/", (req, res, next) => {
+router.get("/", (_req, res, next) => {
   try {
     res.status(200).send(getAllProducts());
   } catch (error) {
@@ -21,17 +21,6 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res, next) => {
   try {
     const request = req.body;
-    const isDuplicateName = getAllProducts().some((product) => {
-      return product.getProduct().name === request.name;
-    });
-
-    if (isDuplicateName) {
-      throw new BadRequestError({
-        code: "INVALID_NAME",
-        message: "중복된 상품명입니다.",
-        field: "productName",
-      });
-    }
     addProductToList(request);
     res.status(201).send(getAllProducts());
   } catch (error) {

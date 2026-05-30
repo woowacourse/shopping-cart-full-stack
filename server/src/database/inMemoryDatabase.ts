@@ -1,6 +1,5 @@
-import Product from "../domain/Product.ts";
-import type { ProductId } from "../types/type.ts";
+import { ProductRepository } from "./ProductRepository.ts";
 import { CartRepository } from "./CartRepository.ts";
 
-export const products = new Map<ProductId, Product>();
+export const productRepository = new ProductRepository();
 export const cartRepository = new CartRepository();

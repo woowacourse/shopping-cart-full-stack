@@ -7,13 +7,13 @@ export default class Product {
   private image?: string | null;
   private id: string;
 
-  constructor({ name, price, image }: ProductData) {
+  constructor({ name, price, image, productId }: ProductData) {
     this.#validatorName(name);
     this.#validatorPrice(price);
     this.name = name;
     this.price = price;
     this.image = image;
-    this.id = crypto.randomUUID();
+    this.id = productId;
   }
 
   #validatorName(name: string) {
@@ -58,12 +58,7 @@ export default class Product {
     }
   }
 
-  getProduct(): ProductData & { id: string } {
-    return {
-      name: this.name,
-      price: this.price,
-      image: this.image,
-      id: this.id,
-    };
+  getProduct() {
+    return this.name;
   }
 }
