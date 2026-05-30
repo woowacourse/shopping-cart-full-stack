@@ -18,16 +18,15 @@ export const findById = (id: number) => {
     });
 };
 
-export const updateProductQuantity = (cartId: number, productId: number, quantity: number) => {
+export const updateProductQuantity = (cartId: number, productId: number, quantity: number): boolean => {
     const cart = rawCarts.find((cart) => cart.id === cartId);
-    if (!cart) return undefined;
+    const product = cart?.products.find((product) => product.id === productId);
 
-    const product = cart.products.find((product) => product.id === productId);
-    if (!product) return undefined;
+    if (!product) return false;
 
     product.quantity = quantity;
 
-    return findById(cartId)?.products.find((product) => product.id === productId);
+    return true;
 };
 
 export const deleteProductInCart = (cartId: number, productId: number) => {

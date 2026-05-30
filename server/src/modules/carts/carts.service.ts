@@ -62,11 +62,13 @@ export const updateCartProduct = (cartId: number, productId: number, cartUpdateO
         );
     }
 
-    const product = cartsRepository.updateProductQuantity(cartId, productId, cartUpdateOption.quantity!);
+    const updated = cartsRepository.updateProductQuantity(cartId, productId, cartUpdateOption.quantity!);
 
-    if (!product) {
+    if (!updated) {
         throw new ServiceError('RESOURCE_NOT_FOUND', 'id에 해당하는 장바구니 상품이 존재하지 않습니다.');
     }
+
+    const product = cartsRepository.findProductInCart(cartId, productId)!;
 
     return {
         id: product.id,
