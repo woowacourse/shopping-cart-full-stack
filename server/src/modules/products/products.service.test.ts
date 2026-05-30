@@ -5,25 +5,19 @@ import {
   getProductByIdQuery,
   getProductByNameQuery,
 } from "./products.repository";
-import {
-  deleteCartQuery,
-  getCartItemByProductIdQuery,
-} from "../carts/carts.repository";
+import { removeCartItemByProductId } from "../carts/carts.service";
 import { addProduct, deleteProduct, getAllProducts } from "./products.service";
 import ERROR_CODES from "../../ERROR_CODE";
 
 jest.mock("./products.repository");
-jest.mock("../carts/carts.repository");
+jest.mock("../carts/carts.service");
 
 const getAllProductsQueryMock = jest.mocked(getAllProductsQuery);
 const addProductQueryMock = jest.mocked(addProductQuery);
 const getProductByNameQueryMock = jest.mocked(getProductByNameQuery);
 const getProductByIdQueryMock = jest.mocked(getProductByIdQuery);
 const deleteProductQueryMock = jest.mocked(deleteProductQuery);
-const getCartItemByProductIdQueryMock = jest.mocked(
-  getCartItemByProductIdQuery,
-);
-const deleteCartQueryMock = jest.mocked(deleteCartQuery);
+const removeCartItemByProductIdMock = jest.mocked(removeCartItemByProductId);
 
 describe("products", () => {
   beforeEach(() => {
@@ -144,14 +138,13 @@ describe("products", () => {
         ERROR_CODES.NOT_EXIST_PRODUCT.message,
       );
       expect(deleteProductQueryMock).not.toHaveBeenCalled();
-      expect(deleteCartQueryMock).not.toHaveBeenCalled();
+      expect(removeCartItemByProductIdMock).not.toHaveBeenCalled();
     });
 
     it("존재하는 상품을 삭제하면 해당 id를 반환한다.", () => {
       // given
       const product = { id: 1, name: "상품1", price: 1000, image: "" };
       getProductByIdQueryMock.mockReturnValue(product);
-      getCartItemByProductIdQueryMock.mockReturnValue(undefined);
 
       // when
       const result = deleteProduct(product.id);
@@ -161,35 +154,16 @@ describe("products", () => {
       expect(result).toBe(product.id);
     });
 
-    it("장바구니에 담겨있지 않은 상품을 삭제하면 장바구니 삭제 쿼리는 호출하지 않는다.", () => {
+    it("존재하는 상품을 삭제하면 연관 장바구니 항목 제거를 carts 서비스에 위임한다.", () => {
       // given
       const product = { id: 1, name: "상품1", price: 1000, image: "" };
       getProductByIdQueryMock.mockReturnValue(product);
-      getCartItemByProductIdQueryMock.mockReturnValue(undefined);
 
       // when
       deleteProduct(product.id);
 
       // then
-      expect(getCartItemByProductIdQueryMock).toHaveBeenCalledWith(product.id);
-      expect(deleteCartQueryMock).not.toHaveBeenCalled();
-    });
-
-    it("장바구니에 담겨있는 상품을 삭제하면 해당 장바구니 항목도 함께 삭제한다.", () => {
-      // given
-      const product = { id: 1, name: "상품1", price: 1000, image: "" };
-      const cartItem = { product, quantity: 1 };
-      getProductByIdQueryMock.mockReturnValue(product);
-      getCartItemByProductIdQueryMock.mockReturnValue(cartItem);
-
-      // when
-      const result = deleteProduct(product.id);
-
-      // then
-      expect(deleteProductQueryMock).toHaveBeenCalledWith(product.id);
-      expect(getCartItemByProductIdQueryMock).toHaveBeenCalledWith(product.id);
-      expect(deleteCartQueryMock).toHaveBeenCalledWith(product.id);
-      expect(result).toBe(product.id);
+      expect(removeCartItemByProductIdMock).toHaveBeenCalledWith(product.id);
     });
   });
 });

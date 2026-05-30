@@ -8,10 +8,7 @@ import {
 } from "./products.repository";
 import ERROR_CODES from "../../ERROR_CODE";
 import createAppError from "@/errors/AppError";
-import {
-  deleteCartQuery,
-  getCartItemByProductIdQuery,
-} from "../carts/carts.repository";
+import { removeCartItemByProductId } from "../carts/carts.service";
 
 export const getAllProducts = () => {
   return getAllProductsQuery();
@@ -37,10 +34,8 @@ export const deleteProduct = (id: number) => {
 
   deleteProductQuery(id);
 
-  const existingCartItem = getCartItemByProductIdQuery(id);
-  if (existingCartItem) {
-    deleteCartQuery(id);
-  }
+  // 연관 장바구니 항목 정리는 carts 모듈의 공개 API(service)에 위임한다.
+  removeCartItemByProductId(id);
 
   return id;
 };

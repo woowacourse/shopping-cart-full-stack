@@ -3,6 +3,7 @@ import {
   changeCartQuantity,
   deleteCartsProduct,
   getCarts,
+  removeCartItemByProductId,
 } from "./carts.service";
 import {
   deleteCartQuery,
@@ -138,6 +139,31 @@ describe("carts.service", () => {
       expect(() => deleteCartsProduct(1)).toThrow(
         ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.message,
       );
+      expect(deleteCartQueryMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("removeCartItemByProductId", () => {
+    const product = { id: 1, name: "상품1", price: 1000, image: "" };
+    const existingCartItem = { product, quantity: 1 };
+
+    it("장바구니에 존재하는 상품이면 삭제 쿼리를 호출한다.", () => {
+      // given
+      getCartItemByProductIdQueryMock.mockReturnValue(existingCartItem);
+
+      // when
+      removeCartItemByProductId(1);
+
+      // then
+      expect(deleteCartQueryMock).toHaveBeenCalledWith(1);
+    });
+
+    it("장바구니에 존재하지 않는 상품이면 에러 없이 삭제 쿼리도 호출하지 않는다.", () => {
+      // given
+      getCartItemByProductIdQueryMock.mockReturnValue(undefined);
+
+      // when & then
+      expect(() => removeCartItemByProductId(1)).not.toThrow();
       expect(deleteCartQueryMock).not.toHaveBeenCalled();
     });
   });

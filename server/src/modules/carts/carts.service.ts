@@ -37,3 +37,10 @@ export const deleteCartsProduct = (id: number) => {
 
   return deleteCartQuery(id);
 };
+
+export const removeCartItemByProductId = (productId: number) => {
+  const existingCartItem = getCartItemByProductIdQuery(productId);
+  if (!existingCartItem) return;
+
+  deleteCartQuery(productId);
+};
