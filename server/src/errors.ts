@@ -42,3 +42,12 @@ export class InternalServerError extends Error {
     this.code = code;
   }
 }
+
+export class FieldError extends Error {
+  code: string;
+
+  constructor({ code, message }: { code: string; message: string }) {
+    super(message);
+    this.code = code;
+  }
+}

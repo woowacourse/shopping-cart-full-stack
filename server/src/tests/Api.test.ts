@@ -61,9 +61,17 @@ describe("프로덕트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
+      code: "INVALID_BODY",
+      message: "요청 데이터가 유효하지 않습니다.",
       errors: {
-        name: ["상품명 필드가 누락되었습니다."],
-        price: ["가격 필드가 누락되었습니다."],
+        name: {
+          code: "REQUIRED_FIELD",
+          message: "상품명 필드가 누락되었습니다.",
+        },
+        price: {
+          code: "REQUIRED_FIELD",
+          message: "가격 필드가 누락되었습니다.",
+        },
       },
     });
   });
@@ -76,9 +84,13 @@ describe("프로덕트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
+      code: "INVALID_BODY",
+      message: "요청 데이터가 유효하지 않습니다.",
       errors: {
-        name: ["상품명은 0 이상 100 이하여야 합니다."],
-        price: [],
+        name: {
+          code: "INVALID_LENGTH_RANGE",
+          message: "상품명은 0 이상 100 이하여야 합니다.",
+        },
       },
     });
   });
@@ -90,9 +102,13 @@ describe("프로덕트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
+      code: "INVALID_BODY",
+      message: "요청 데이터가 유효하지 않습니다.",
       errors: {
-        name: [],
-        price: ["가격은 0 보다 큰 숫자여야 합니다."],
+        price: {
+          code: "INVALID_MIN_NUMBER",
+          message: "가격은 0 보다 큰 숫자여야 합니다.",
+        },
       },
     });
   });
@@ -163,7 +179,14 @@ describe("카트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      errors: { quantity: ["수량은 0 이상 100 이하여야 합니다."] },
+      code: "INVALID_BODY",
+      message: "요청 데이터가 유효하지 않습니다.",
+      errors: {
+        quantity: {
+          code: "INVALID_NUMBER_RANGE",
+          message: "수량은 0 이상 100 이하여야 합니다.",
+        },
+      },
     });
   });
 

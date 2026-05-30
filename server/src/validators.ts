@@ -1,4 +1,5 @@
 import { ValidatorMap } from "./utils.js";
+import { FieldError } from "./errors.js";
 
 export const ProductFieldValidators: ValidatorMap = {
   name: [validateIsNotEmpty("상품명"), validateLengthRange("상품명", 0, 100)],
@@ -11,14 +12,21 @@ export const CartFieldValidators: ValidatorMap = {
 
 export function validateIsNotEmpty(label: string) {
   return function validate(value: string) {
-    if (value === "") throw new Error(`${label} 필드가 누락되었습니다.`);
+    if (value === "")
+      throw new FieldError({
+        code: "REQUIRED_FIELD",
+        message: `${label} 필드가 누락되었습니다.`,
+      });
   };
 }
 
 export function validateLengthRange(label: string, min: number, max: number) {
   return function validate(value: string) {
     if (min > value.length || value.length > max) {
-      throw new Error(`${label}은 ${min} 이상 ${max} 이하여야 합니다.`);
+      throw new FieldError({
+        code: "INVALID_LENGTH_RANGE",
+        message: `${label}은 ${min} 이상 ${max} 이하여야 합니다.`,
+      });
     }
   };
 }
@@ -26,7 +34,10 @@ export function validateLengthRange(label: string, min: number, max: number) {
 export function validateMinNumber(label: string, min: number) {
   return function validate(value: number) {
     if (value <= min) {
-      throw new Error(`${label}은 ${min} 보다 큰 숫자여야 합니다.`);
+      throw new FieldError({
+        code: "INVALID_MIN_NUMBER",
+        message: `${label}은 ${min} 보다 큰 숫자여야 합니다.`,
+      });
     }
   };
 }
@@ -34,7 +45,10 @@ export function validateMinNumber(label: string, min: number) {
 export function validateNumberRange(label: string, min: number, max: number) {
   return function validate(value: number) {
     if (min > value || value > max) {
-      throw new Error(`${label}은 ${min} 이상 ${max} 이하여야 합니다.`);
+      throw new FieldError({
+        code: "INVALID_NUMBER_RANGE",
+        message: `${label}은 ${min} 이상 ${max} 이하여야 합니다.`,
+      });
     }
   };
 }
