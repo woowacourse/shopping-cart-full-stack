@@ -42,6 +42,10 @@ productRouter.post('/', (req: Request, res: Response) => {
 // DELETE
 productRouter.delete('/:id', (req: Request, res: Response) => {
   const requestedId = Number(req.params.id);
+
+  if (Number.isNaN(requestedId)) {
+    return res.status(400).json({ errorMessage: '상품 id는 숫자여야 합니다.' });
+  }
   if (!DB.Products) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
