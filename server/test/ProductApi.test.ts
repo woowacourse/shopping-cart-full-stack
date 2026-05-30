@@ -65,8 +65,13 @@ describe('Product API', () => {
 
   test('POST /products는 유효하지 않은 요청이면 400을 응답한다', async () => {
     const app = await loadApp();
+    const response = await request(app).post('/products').send({name: '', price: 1000, imageUrl: '/new.png'}).expect(400);
 
-    await request(app).post('/products').send({name: '', price: 1000, imageUrl: '/new.png'}).expect(400);
+    expect(response.body).toEqual({
+      body: {
+        message: '상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요.',
+      },
+    });
   });
 
   test('POST /products는 중복 상품명이면 409를 응답한다', async () => {

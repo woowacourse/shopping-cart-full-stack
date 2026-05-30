@@ -65,8 +65,13 @@ describe('Cart API', () => {
 
   test('PATCH /carts/:id는 유효하지 않은 수량이면 400을 응답한다', async () => {
     const app = await loadApp();
+    const response = await request(app).patch('/carts/1').send({quantity: 0}).expect(400);
 
-    await request(app).patch('/carts/1').send({quantity: 0}).expect(400);
+    expect(response.body).toEqual({
+      body: {
+        message: '수량은 1 이상 99 이하의 정수여야 합니다.',
+      },
+    });
   });
 
   test('PATCH /carts/:id는 없는 장바구니 항목이면 404를 응답한다', async () => {

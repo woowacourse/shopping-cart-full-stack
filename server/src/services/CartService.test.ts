@@ -44,6 +44,7 @@ describe('cartService', () => {
 
     expect(cartService.updateQuantity('1', 0)).toEqual({
       status: 'invalid',
+      message: '수량은 1 이상 99 이하의 정수여야 합니다.',
     });
   });
 

@@ -14,7 +14,11 @@ export const productController = {
     const result = productService.createProduct(req.body);
 
     if (result.status === 'invalid') {
-      return res.status(400).send();
+      return res.status(400).json({
+        body: {
+          message: result.message,
+        },
+      });
     }
 
     if (result.status === 'duplicated') {

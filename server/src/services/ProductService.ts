@@ -14,6 +14,7 @@ type CreateProductResult =
     }
   | {
       status: 'invalid';
+      message: string;
     };
 
 type DeleteProductResult =
@@ -59,6 +60,7 @@ export const productService = {
     if (!isValidCreateProductBody(body)) {
       return {
         status: 'invalid',
+        message: '상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요.',
       };
     }
 

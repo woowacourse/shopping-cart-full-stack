@@ -16,7 +16,11 @@ export const cartController = {
     const result = cartService.updateQuantity(cartItemId, quantity);
 
     if (result.status === 'invalid') {
-      return res.status(400).send();
+      return res.status(400).json({
+        body: {
+          message: result.message,
+        },
+      });
     }
 
     if (result.status === 'notFound') {

@@ -85,6 +85,15 @@ Responses
 - `409`: 중복 상품
 - `500`: 서버 오류
 
+Error Response `400`
+```json
+{
+  "body": {
+    "message": "상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요."
+  }
+}
+```
+
 ### `DELETE /products/:productId`
 
 상품을 삭제합니다.
@@ -173,6 +182,15 @@ Responses
 - `400`: 필수 필드 누락 또는 유효하지 않은 수량
 - `404`: 장바구니 항목 없음
 - `500`: 서버 오류
+
+Error Response `400`
+```json
+{
+  "body": {
+    "message": "수량은 1 이상 99 이하의 정수여야 합니다."
+  }
+}
+```
 
 ### `DELETE /carts/:cartItemId`
 
