@@ -16,7 +16,7 @@ export const createProduct = (req: Request, res: Response) => {
   try {
     const product = productsService.createProduct(newProduct);
 
-    return success(res, product);
+    return success(res, product, 201);
   } catch (error) {
     if (error instanceof ServiceError) {
       return fail(res, error.errorCode, error.errorMessage, 400, error.data);
