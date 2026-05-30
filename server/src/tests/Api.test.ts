@@ -30,14 +30,12 @@ describe("프로덕트 API 테스트", () => {
 
   test("프로덕트 목록을 반환한다.", async () => {
     const res = await request(app).get("/api/products/");
-    res.body.products.map((product: ProductType) => (product.id = "fixed id"));
+    res.body.map((product: ProductType) => (product.id = "fixed id"));
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({
-      products: [
-        { id: "fixed id", name: "피자", price: 30000, thumbnail: "pizza.png" },
-        { id: "fixed id", name: "치킨", price: 20000, thumbnail: "chicken.png" },
-      ],
-    });
+    expect(res.body).toEqual([
+      { id: "fixed id", name: "피자", price: 30000, thumbnail: "pizza.png" },
+      { id: "fixed id", name: "치킨", price: 20000, thumbnail: "chicken.png" },
+    ]);
   });
 
   test("프로덕트를 추가한다.", async () => {

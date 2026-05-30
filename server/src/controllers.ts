@@ -21,11 +21,11 @@ export function createProductController(storage: Storage): ProductController {
   return {
     get: (_req, res, next) => {
       try {
-        res.send({
-          products: [...storage.allItems<Product>("products")].map((product) =>
+        res.send(
+          [...storage.allItems<Product>("products")].map((product) =>
             product.toObject(),
           ),
-        });
+        );
       } catch (err) {
         next(err);
       }
