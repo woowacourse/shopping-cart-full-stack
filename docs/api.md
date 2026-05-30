@@ -123,19 +123,17 @@
 {
   "status": "success",
   "message": "장바구니를 정상적으로 조회하였습니다.",
-  "data": {
-    "carts": [
-      {
-        "product": {
-          "id": "number",
-          "image": "string",
-          "name": "string",
-          "price": "number"
-        },
-        "quantity": "number"
-      }
-    ]
-  }
+  "data": [
+    {
+      "product": {
+        "id": "number",
+        "image": "string",
+        "name": "string",
+        "price": "number"
+      },
+      "quantity": "number"
+    }
+  ]
 }
 ```
 
@@ -143,7 +141,7 @@
 
 | 항목        | 값          |
 | ----------- | ----------- |
-| URI         | `carts/:id` |
+| URI         | `carts/:productId` |
 | Method      | `PATCH`     |
 | Status Code | `200`       |
 
@@ -177,7 +175,7 @@
 
 | 항목        | 값          |
 | ----------- | ----------- |
-| URI         | `carts/:id` |
+| URI         | `carts/:productId` |
 | Method      | `DELETE`    |
 | Status Code | `200`       |
 
