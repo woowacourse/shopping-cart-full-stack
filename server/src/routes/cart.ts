@@ -21,6 +21,12 @@ cartRouter.post('/:id', function (req: Request, res: Response) {
   if (!DB.Cart) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
   }
+
+  const isProductExist = DB.Products!.find((product) => product.id === requestId);
+  if (!isProductExist) {
+    return res.status(404).json({ errorMessage: '요청한 상품이 존재하지 않습니다.' });
+  }
+
   const pickedProduct = DB.Products!.filter((product) => product.id === requestId)[0];
   DB.Cart.push(pickedProduct);
   res.status(201).json({ message: '상품이 장바구니에 추가되었습니다.' });
