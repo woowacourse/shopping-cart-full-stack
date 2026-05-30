@@ -1,7 +1,7 @@
 import type {Request, Response} from 'express';
 
 import {productService} from '../services/ProductService.js';
-import type {CreateProductRequestBody, IdParams} from '../type.js';
+import type {CreateProductRequestBody, ProductIdParams} from '../type.js';
 
 export const productController = {
   getProducts(_req: Request, res: Response) {
@@ -28,10 +28,10 @@ export const productController = {
     });
   },
 
-  deleteProduct(req: Request<IdParams>, res: Response) {
-    const reqId = req.params.id;
+  deleteProduct(req: Request<ProductIdParams>, res: Response) {
+    const productId = req.params.productId;
 
-    const result = productService.deleteProduct(reqId);
+    const result = productService.deleteProduct(productId);
 
     if (result.status === 'notFound') {
       return res.status(404).send();

@@ -1,5 +1,9 @@
-export interface IdParams {
-  id: string;
+export interface ProductIdParams {
+  productId: string;
+}
+
+export interface CartItemIdParams {
+  cartItemId: string;
 }
 
 export interface CreateProductRequestBody {

@@ -21,11 +21,11 @@ app.use(express.json());
 
 app.get('/products', asyncHandler(productController.getProducts));
 app.post('/products', asyncHandler(productController.createProduct));
-app.delete('/products/:id', asyncHandler(productController.deleteProduct));
+app.delete('/products/:productId', asyncHandler(productController.deleteProduct));
 
 app.get('/carts', asyncHandler(cartController.getCartItems));
-app.patch('/carts/:id', asyncHandler(cartController.updateQuantity));
-app.delete('/carts/:id', asyncHandler(cartController.deleteCartItem));
+app.patch('/carts/:cartItemId', asyncHandler(cartController.updateQuantity));
+app.delete('/carts/:cartItemId', asyncHandler(cartController.deleteCartItem));
 
 app.use(errorHandler);
 

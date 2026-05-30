@@ -85,7 +85,7 @@ Responses
 - `409`: 중복 상품
 - `500`: 서버 오류
 
-### `DELETE /products/:id`
+### `DELETE /products/:productId`
 
 상품을 삭제합니다.
 
@@ -95,7 +95,7 @@ Path parameters
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `id` | `string` | 삭제할 상품 id |
+| `productId` | `string` | 삭제할 상품 id |
 
 Responses
 - `204`: 삭제 성공
@@ -129,7 +129,7 @@ Response `200`
 Responses
 - `500`: 서버 오류
 
-### `PATCH /carts/:id`
+### `PATCH /carts/:cartItemId`
 
 장바구니 항목의 수량을 변경합니다.
 
@@ -137,7 +137,7 @@ Path parameters
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `id` | `string` | 수량을 변경할 장바구니 항목 id |
+| `cartItemId` | `string` | 수량을 변경할 장바구니 항목 id |
 
 Request
 ```json
@@ -174,7 +174,7 @@ Responses
 - `404`: 장바구니 항목 없음
 - `500`: 서버 오류
 
-### `DELETE /carts/:id`
+### `DELETE /carts/:cartItemId`
 
 장바구니 항목을 삭제합니다.
 
@@ -182,7 +182,7 @@ Path parameters
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `id` | `string` | 삭제할 장바구니 항목 id |
+| `cartItemId` | `string` | 삭제할 장바구니 항목 id |
 
 Responses
 - `204`: 삭제 성공
