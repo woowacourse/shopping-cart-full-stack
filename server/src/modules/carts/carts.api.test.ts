@@ -37,7 +37,7 @@ describe("GET /carts", () => {
     expect(res.body.data).toEqual([]);
   });
 
-  it("장바구니에 담긴 항목을 200으로 반환한다", async () => {
+  it("장바구니에 담긴 항목 목록을 200으로 반환한다", async () => {
     const product = await createProductViaApi({ name: "아메리카노", price: 4500 });
     addToCart(product, 2);
 

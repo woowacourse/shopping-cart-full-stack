@@ -10,16 +10,13 @@ import {
   getCartsQuery,
   updateCartQuantityQuery,
 } from "./carts.repository";
-import { getProductByIdQuery } from "../products/products.repository";
 
 jest.mock("./carts.repository");
-jest.mock("../products/products.repository");
 
 const getCartsQueryMock = jest.mocked(getCartsQuery);
 const getCartItemByProductIdQueryMock = jest.mocked(getCartItemByProductIdQuery);
 const updateCartQuantityQueryMock = jest.mocked(updateCartQuantityQuery);
 const deleteCartQueryMock = jest.mocked(deleteCartQuery);
-const getProductByIdQueryMock = jest.mocked(getProductByIdQuery);
 
 describe("carts.service", () => {
   beforeEach(() => {
@@ -34,6 +31,10 @@ describe("carts.service", () => {
           product: { id: 1, name: "상품1", price: 1000, image: "" },
           quantity: 2,
         },
+        {
+          product: { id: 2, name: "상품2", price: 1500, image: "" },
+          quantity: 3,
+        },
       ];
       getCartsQueryMock.mockReturnValue(mockCarts);
 
@@ -42,6 +43,17 @@ describe("carts.service", () => {
 
       // then
       expect(result).toEqual(mockCarts);
+    });
+
+    it("장바구니가 비어 있으면 빈 목록을 반환한다.", () => {
+      // given
+      getCartsQueryMock.mockReturnValue([]);
+
+      // when
+      const result = getCarts();
+
+      // then
+      expect(result).toEqual([]);
     });
   });
 
@@ -53,7 +65,6 @@ describe("carts.service", () => {
       // given
       getCartItemByProductIdQueryMock.mockReturnValue(existingCartItem);
       updateCartQuantityQueryMock.mockReturnValue({ product, quantity: 5 });
-      getProductByIdQueryMock.mockReturnValue(product);
 
       // when
       const result = changeCartQuantity(1, 5);
@@ -98,18 +109,6 @@ describe("carts.service", () => {
       // when & then
       expect(() => changeCartQuantity(1, 5)).toThrow(
         ERROR_CODES.NOT_EXIST_CARTS_ITEM.message,
-      );
-    });
-
-    it("상품이 존재하지 않으면 NOT_EXIST_PRODUCT 에러를 던진다.", () => {
-      // given
-      getCartItemByProductIdQueryMock.mockReturnValue(existingCartItem);
-      updateCartQuantityQueryMock.mockReturnValue({ product, quantity: 5 });
-      getProductByIdQueryMock.mockReturnValue(undefined);
-
-      // when & then
-      expect(() => changeCartQuantity(1, 5)).toThrow(
-        ERROR_CODES.NOT_EXIST_PRODUCT.message,
       );
     });
   });
