@@ -1,4 +1,4 @@
-interface RequestBody {
+export interface Product {
   id?: number;
   imageUrl: string;
   name: string;
@@ -6,9 +6,9 @@ interface RequestBody {
   quantity: number;
 }
 
-interface DB {
-  Products: RequestBody[];
-  Cart: RequestBody[];
+export interface DB {
+  Products: Product[];
+  Cart: Product[];
 }
 
 export const DB: DB = {
