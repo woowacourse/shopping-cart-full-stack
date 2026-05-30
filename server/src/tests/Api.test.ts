@@ -61,7 +61,7 @@ describe("프로덕트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      code: "INVALID_BODY",
+      code: "BAD_REQUEST",
       message: "요청 데이터가 유효하지 않습니다.",
       errors: {
         name: {
@@ -84,7 +84,7 @@ describe("프로덕트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      code: "INVALID_BODY",
+      code: "BAD_REQUEST",
       message: "요청 데이터가 유효하지 않습니다.",
       errors: {
         name: {
@@ -102,7 +102,7 @@ describe("프로덕트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      code: "INVALID_BODY",
+      code: "BAD_REQUEST",
       message: "요청 데이터가 유효하지 않습니다.",
       errors: {
         price: {
@@ -179,7 +179,7 @@ describe("카트 API 테스트", () => {
       .set("Accept", "application/json");
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      code: "INVALID_BODY",
+      code: "BAD_REQUEST",
       message: "요청 데이터가 유효하지 않습니다.",
       errors: {
         quantity: {

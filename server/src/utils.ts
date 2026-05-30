@@ -1,11 +1,7 @@
 import { FieldError } from "./errors.js";
+import { type ErrorResponse } from "./errors.js";
 
 export type ValidatorMap = Record<string, ((value: any) => void)[]>;
-
-interface ErrorResponse {
-  message: string;
-  code: string;
-}
 
 export function runValidate(
   validatorMap: ValidatorMap,

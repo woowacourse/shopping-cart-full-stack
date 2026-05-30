@@ -1,6 +1,18 @@
 import express from "express";
 
+export interface ErrorResponse {
+  message: string;
+  code: string;
+}
+
 export function handleErrors(res: express.Response, err: Error) {
+  if (err instanceof BadRequestError) {
+    res.status(err.statusCode).send({
+      code: err.code,
+      message: err.message,
+      errors: err.errors,
+    });
+  }
   if (err instanceof NotFoundError) {
     res.status(err.statusCode).send({
       code: err.code,
@@ -40,6 +52,27 @@ export class InternalServerError extends Error {
     super(message);
     this.statusCode = 500;
     this.code = code;
+  }
+}
+
+export class BadRequestError extends Error {
+  statusCode: number;
+  code: string;
+  errors: Record<string, ErrorResponse>;
+
+  constructor({
+    code = "BAD_REQUEST",
+    message = "요청 데이터가 유효하지 않습니다.",
+    errors,
+  }: {
+    code?: string;
+    message?: string;
+    errors: Record<string, ErrorResponse>;
+  }) {
+    super(message);
+    this.statusCode = 400;
+    this.code = code;
+    this.errors = errors;
   }
 }
 
