@@ -18,7 +18,7 @@ export const Validator = {
   },
 
   validateQuantity(requestBody: RequestBody): boolean {
-    if (requestBody.quantity <= 0 || requestBody.quantity >= 100) {
+    if (!Number.isInteger(requestBody.quantity) || requestBody.quantity <= 0 || requestBody.quantity >= 100) {
       throw new Error('quantity는 1 이상 99 이하의 정수여야 합니다.');
     }
     return true;

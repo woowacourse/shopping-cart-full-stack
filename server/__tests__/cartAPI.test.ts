@@ -151,7 +151,6 @@ describe('PUT /cart', function () {
     expect(response.status).toBe(404);
     expect(response.body).toEqual({ errorMessage: '상품을 찾을 수 없습니다.' });
   });
-
   it('잘못된 요청이 들어오면 400 에러', async function () {
     const invalidProduct = { ...productToBeUpdated };
     invalidProduct.quantity = 0;
