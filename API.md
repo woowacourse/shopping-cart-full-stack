@@ -8,11 +8,11 @@
 
 ## 장바구니
 
-| 기능                | Method | URL                  | Request                                         | Response                                                                                                                                                                                                           |
-| ------------------- | ------ | -------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 목록 조회           | GET    | /api/cart/           | X                                               | <pre>[<br>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 20<br>},<br>{<br>&nbsp;&nbsp;"id": 2,<br>&nbsp;&nbsp;"product_id": 5,<br>&nbsp;&nbsp;"quantity": 10<br>}<br>]</pre> |
-| 특정 상품 수량 변경 | PATCH  | /api/cart/items/:id/ | <pre>{<br>&nbsp;&nbsp;"quantity": 15<br>}</pre> | <pre>{<br>&nbsp;&nbsp;"id": 1,<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 15<br>}</pre>                                                                                                            |
-| 특정 상품 삭제      | DELETE | /api/cart/items/:id/ | X                                               | X                                                                                                                                                                                                                  |
+| 기능                | Method | URL                  | Request                                         | Response                                                                                                                                                           |
+| ------------------- | ------ | -------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 목록 조회           | GET    | /api/cart/           | X                                               | <pre>[<br>{<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 20<br>},<br>{<br>&nbsp;&nbsp;"product_id": 5,<br>&nbsp;&nbsp;"quantity": 10<br>}<br>]</pre> |
+| 특정 상품 수량 변경 | PATCH  | /api/cart/items/:id/ | <pre>{<br>&nbsp;&nbsp;"quantity": 15<br>}</pre> | <pre>{<br>&nbsp;&nbsp;"product_id": 1,<br>&nbsp;&nbsp;"quantity": 15<br>}</pre>                                                                                    |
+| 특정 상품 삭제      | DELETE | /api/cart/items/:id/ | X                                               | X                                                                                                                                                                  |
 
 ---
 
