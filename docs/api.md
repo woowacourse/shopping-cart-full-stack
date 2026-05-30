@@ -123,21 +123,17 @@
 {
   "status": "success",
   "message": "장바구니를 정상적으로 조회하였습니다.",
-  "data": {
-    "carts": [
-      {
-        "product": {
-          "id": "number",
-          "image": "string",
-          "name": "string",
-          "price": "number"
-        },
-        "quantity": "number"
-      }
-    ],
-    "totalPrice": 100000,
-    "totalQuantity": 2
-  }
+  "data": [
+    {
+      "product": {
+        "id": "number",
+        "image": "string",
+        "name": "string",
+        "price": "number"
+      },
+      "quantity": "number"
+    }
+  ]
 }
 ```
 
