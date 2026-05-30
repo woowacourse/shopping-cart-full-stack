@@ -10,3 +10,9 @@ export class ServiceError<T> extends Error {
         this.data = data;
     }
 }
+
+export const getStatusCode = (error: ServiceError<unknown>): number => {
+    if (error.errorCode === 'RESOURCE_NOT_FOUND') return 404;
+
+    return 400;
+};
