@@ -1,26 +1,31 @@
-export interface ProductError {
+export interface FieldError {
   field: string;
   code: string;
   message: string;
 }
 
-export interface ProductErrors {
-  name: ProductError;
-  price: ProductError;
-  imgUrl: ProductError;
-}
-
-export class ProductValidationError extends Error {
-  status = 400;
-  message = "요청 값이 올바르지 않습니다.";
-  errors: ProductError[];
-
-  constructor(errors: ProductError[]) {
+export class ValidationError extends Error {
+  errors: FieldError[];
+  constructor(errors: FieldError[]) {
     super("요청 값이 올바르지 않습니다.");
     this.errors = errors;
   }
 }
-export const productErrors: ProductErrors = {
+
+export class ProductNotFoundError extends Error {
+  status = 404;
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+export class InvalidProductIdError extends Error {
+  constructor() {
+    super("해당하는 상품의 id 형식이 유효하지 않습니다.");
+  }
+}
+
+export const productErrors = {
   name: {
     field: "name",
     code: "INVALID_PRODUCT_NAME",
@@ -32,7 +37,7 @@ export const productErrors: ProductErrors = {
     message: "상품 가격이 유효하지 않습니다.",
   },
   imgUrl: {
-    field: "imgUrl",
+    field: "imageUrl",
     code: "PRODUCT_IMAGE_URL_INVALID",
     message: "유효한 이미지 URL 형식이 아닙니다.",
   },
