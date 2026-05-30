@@ -5,7 +5,7 @@ import {
   getCarts,
 } from "./carts.service";
 import {
-  deleteCartsProductQuery,
+  deleteCartQuery,
   getCartItemByProductIdQuery,
   getCartsQuery,
   updateCartQuantityQuery,
@@ -18,7 +18,7 @@ jest.mock("../products/products.repository");
 const getCartsQueryMock = jest.mocked(getCartsQuery);
 const getCartItemByProductIdQueryMock = jest.mocked(getCartItemByProductIdQuery);
 const updateCartQuantityQueryMock = jest.mocked(updateCartQuantityQuery);
-const deleteCartsProductQueryMock = jest.mocked(deleteCartsProductQuery);
+const deleteCartQueryMock = jest.mocked(deleteCartQuery);
 const getProductByIdQueryMock = jest.mocked(getProductByIdQuery);
 
 describe("carts.service", () => {
@@ -121,13 +121,13 @@ describe("carts.service", () => {
     it("장바구니에 존재하는 상품이면 삭제 쿼리를 호출하고 결과를 반환한다.", () => {
       // given
       getCartItemByProductIdQueryMock.mockReturnValue(existingCartItem);
-      deleteCartsProductQueryMock.mockReturnValue(1);
+      deleteCartQueryMock.mockReturnValue(1);
 
       // when
       const result = deleteCartsProduct(1);
 
       // then
-      expect(deleteCartsProductQueryMock).toHaveBeenCalledWith(1);
+      expect(deleteCartQueryMock).toHaveBeenCalledWith(1);
       expect(result).toBe(1);
     });
 
@@ -139,7 +139,7 @@ describe("carts.service", () => {
       expect(() => deleteCartsProduct(1)).toThrow(
         ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.message,
       );
-      expect(deleteCartsProductQueryMock).not.toHaveBeenCalled();
+      expect(deleteCartQueryMock).not.toHaveBeenCalled();
     });
   });
 });

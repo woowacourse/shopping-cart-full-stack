@@ -2,7 +2,7 @@ import ERROR_CODES from "@/ERROR_CODE";
 import createAppError from "@/errors/AppError";
 import { getProductByIdQuery } from "../products/products.repository";
 import {
-  deleteCartsProductQuery,
+  deleteCartQuery,
   getCartItemByProductIdQuery,
   getCartsQuery,
   updateCartQuantityQuery,
@@ -39,5 +39,5 @@ export const deleteCartsProduct = (id: number) => {
     throw createAppError(ERROR_CODES.NOT_EXIST_CARTS_PRODUCT);
   }
 
-  return deleteCartsProductQuery(id);
+  return deleteCartQuery(id);
 };
