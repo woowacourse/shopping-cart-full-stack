@@ -40,7 +40,6 @@ describe('product router 테스트', () => {
 
             expect(response.status).toBe(200);
             expect(response.body).toEqual({
-                status: 200,
                 data: initialProducts,
             });
         });
@@ -58,7 +57,6 @@ describe('product router 테스트', () => {
 
             expect(response.status).toBe(200);
             expect(response.body).toEqual({
-                status: 200,
                 data: {
                     id: 4,
                     ...product,
