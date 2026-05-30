@@ -42,7 +42,7 @@ const findRoute = (path: string) => {
 
 // header 기준으로 검증
 export const validateJsonRequest: RequestHandler = (req, res, next) => {
-    const hasBody = req.headers['content-length'] !== undefined || req.headers['transfer-encoding'] !== undefined;
+    const hasBody = parseInt(req.headers['content-length'] ?? '0') > 0 || req.headers['transfer-encoding'] !== undefined;
     const shouldValidate = ['POST', 'PUT', 'PATCH'].includes(req.method);
 
     if (shouldValidate && hasBody && !req.is('application/json')) {
