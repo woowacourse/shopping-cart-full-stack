@@ -192,9 +192,6 @@ GET /cart/items
   {
     "cartItemId": "10",
     "productId": "3",
-    "productName": "콜라",
-    "productPrice": 1300,
-    "imageUrl": "src/assets/coke.png",
     "purchaseQuantity": 2
   }
 ]

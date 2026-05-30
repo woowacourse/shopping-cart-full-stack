@@ -5,8 +5,8 @@ export const cartItemRouter = Router();
 
 cartItemRouter.get('/cart/items', (_req, res, next) => {
   try {
-    const product = cartItemService.getCartItems();
-    res.status(200).json(product);
+    const cartItems = cartItemService.getCartItems();
+    res.status(200).json(cartItems);
   } catch (error) {
     next(error);
   }
@@ -39,11 +39,17 @@ cartItemRouter.delete('/cart/items/:cartItemId', (req, res, next) => {
 
 cartItemRouter.patch('/cart/items/:cartItemId', (req, res, next) => {
   try {
-    cartItemService.changePurchaseQuantity(
+    const cartItem = cartItemService.changePurchaseQuantity(
       req.params.cartItemId,
       req.body.purchaseQuantity,
     );
-    res.status(200).send();
+
+    const responseBody = {
+      cartItemId: cartItem.cartItemId,
+      purchaseQuantity: cartItem.purchaseQuantity,
+    };
+
+    res.status(200).send(responseBody);
   } catch (error) {
     next(error);
   }

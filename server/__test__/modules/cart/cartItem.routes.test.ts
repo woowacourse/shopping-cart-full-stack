@@ -55,8 +55,8 @@ describe('장바구니 API', () => {
     });
 
     expect(responseA.status).toBe(201);
-    expect(responseB.status).toBe(200);
     expect(responseA.body).toEqual({ cartItemId: expect.any(String) });
+    expect(responseB.status).toBe(200);
     expect(responseB.body).toEqual({ cartItemId: expect.any(String) });
   });
   it('상품 삭제', async () => {
@@ -71,6 +71,7 @@ describe('장바구니 API', () => {
       `/cart/items/${response.body.cartItemId}`,
     );
     expect(deleteRes.status).toBe(204);
+    expect(deleteRes.body).toEqual({});
   });
   it('상품 수량 업데이트', async () => {
     // 장바구니에 상품 추가
@@ -84,5 +85,9 @@ describe('장바구니 API', () => {
       .patch(`/cart/items/${response.body.cartItemId}`)
       .send({ purchaseQuantity: 2 });
     expect(patchRes.status).toBe(200);
+    expect(patchRes.body).toEqual({
+      cartItemId: response.body.cartItemId,
+      purchaseQuantity: 2,
+    });
   });
 });
