@@ -6,12 +6,14 @@ export interface RequestBody {
   quantity: number;
 }
 
+export class ValidationError extends Error {}
+
 export const Validator = {
   validateRequiredFields(requestBody: RequestBody): boolean {
     const requiredFields = ['imageUrl', 'name', 'price', 'quantity'];
     requiredFields.forEach((field) => {
       if (!requestBody.hasOwnProperty(field)) {
-        throw new Error('필수 필드가 누락되었습니다.');
+        throw new ValidationError('필수 필드가 누락되었습니다.');
       }
     });
     return true;
@@ -19,21 +21,21 @@ export const Validator = {
 
   validateQuantity(requestBody: RequestBody): boolean {
     if (requestBody.quantity <= 0 || requestBody.quantity >= 100) {
-      throw new Error('quantity는 1 이상 99 이하의 정수여야 합니다.');
+      throw new ValidationError('quantity는 1 이상 99 이하의 정수여야 합니다.');
     }
     return true;
   },
 
   validatePrice(requestBody: RequestBody): boolean {
     if (requestBody.price <= 0) {
-      throw new Error('price는 0보다 큰 숫자여야 합니다.');
+      throw new ValidationError('price는 0보다 큰 숫자여야 합니다.');
     }
     return true;
   },
 
   validateName(requestBody: RequestBody): boolean {
     if (requestBody.name.length > 100) {
-      throw new Error('상품명은 100자 이하여야합니다.');
+      throw new ValidationError('상품명은 100자 이하여야합니다.');
     }
     return true;
   },

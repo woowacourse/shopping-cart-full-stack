@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { DB } from '../database';
-import { Validator, validateRequestBody } from '../validation';
+import { ValidationError, validateRequestBody } from '../validation';
 
 const cartRouter = express.Router();
 cartRouter.use(express.json());
@@ -50,8 +50,10 @@ cartRouter.put('/', function (req: Request, res: Response) {
     DB.Cart[toBeUpdatedIndex] = req.body;
     res.status(204).send();
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof ValidationError) {
       res.status(400).json({ errorMessage: error.message });
+    } else {
+      res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
     }
   }
 });

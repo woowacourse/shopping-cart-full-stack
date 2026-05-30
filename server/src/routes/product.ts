@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { DB } from '../database';
-import { validateRequestBody } from '../validation';
+import { validateRequestBody, ValidationError } from '../validation';
 
 const productRouter = express.Router();
 productRouter.use(express.json());
@@ -33,8 +33,10 @@ productRouter.post('/', (req: Request, res: Response) => {
     DB.Products.push(newProduct);
     res.status(201).json({ message: '상품이 성공적으로 생성되었습니다.' });
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof ValidationError) {
       res.status(400).json({ errorMessage: error.message });
+    } else {
+      res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
     }
   }
 });
