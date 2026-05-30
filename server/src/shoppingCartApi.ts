@@ -25,6 +25,10 @@ router.patch("/:id", (req, res, next) => {
       return res.status(404).send({ message: "유효하지 않은 경로입니다." });
     }
 
+    if (typeof request !== "number" || !Number.isInteger(request)) {
+      return res.status(400).send({ message: "유효하지 않은 수량입니다." });
+    }
+
     if (req.body.quantity < 1) {
       return res
         .status(400)
