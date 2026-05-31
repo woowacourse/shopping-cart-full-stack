@@ -9,6 +9,10 @@ export default class ShoppingCart {
   }
 
   #validateQuantity(quantity: Quantity) {
+    if (isNaN(quantity)) {
+      throw new Error('상품 수량은 정수여야 합니다.');
+    }
+
     if (quantity < 1) throw new Error('상품 수량이 1 이상이어야 합니다.');
     if (quantity > 99) throw new Error('상품 수량이 99 이하여야 합니다.');
   }

@@ -3,9 +3,8 @@ import {
   getShoppingCart,
   patchShoppingCart,
   deleteShoppingCart,
+  hasShoppingCartProduct,
 } from './service/shoppingCartService.ts';
-
-import { shoppingCart } from './database/inMemoryDatabase.ts';
 
 const router = Router();
 
@@ -22,29 +21,17 @@ router.patch('/:id', (req, res, next) => {
     const productId = req.params.id;
     const quantity = req.body.quantity;
 
-    if (!shoppingCart.hasProductId(productId)) {
+    if (!hasShoppingCartProduct(productId)) {
       return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
-    }
-
-    if (isNaN(quantity)) {
-      return res.status(400).send({ message: '상품 수량은 정수여야 합니다.' });
-    }
-
-    if (quantity < 1) {
-      return res
-        .status(400)
-        .send({ message: '상품 수량이 1 이상이어야 합니다.' });
-    }
-
-    if (quantity > 99) {
-      return res
-        .status(400)
-        .send({ message: '상품 수량이 99 이하여야 합니다.' });
     }
 
     patchShoppingCart(productId, quantity);
     res.status(204).send();
   } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).send({ message: error.message });
+    }
+
     next(error);
   }
 });
@@ -52,7 +39,7 @@ router.patch('/:id', (req, res, next) => {
 router.delete('/:id', (req, res, next) => {
   try {
     const productId = req.params.id;
-    if (!shoppingCart.hasProductId(productId)) {
+    if (!hasShoppingCartProduct(productId)) {
       return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
     }
     deleteShoppingCart(productId);

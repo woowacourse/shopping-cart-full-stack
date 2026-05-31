@@ -24,3 +24,7 @@ export function patchShoppingCart(productId: ProductId, quantity: Quantity) {
 export function deleteShoppingCart(productId: ProductId) {
   shoppingCart.deleteProduct(productId);
 }
+
+export function hasShoppingCartProduct(productId: ProductId): boolean {
+  return shoppingCart.hasProductId(productId);
+}
