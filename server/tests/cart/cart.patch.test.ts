@@ -22,9 +22,14 @@ describe("PATCH /cart/:id", () => {
     const { body: cartItems } = await request(app).get("/cart").expect(200);
     const id = cartItems[0].id;
 
+    // 업데이트 요청 검증
     const response = await request(app).patch(`/cart/${id}`).send({ quantity: 2 });
     expect(response.status).toBe(204);
     expect(response.text).toBe("");
+
+    // 실제 데이터 검증
+    const { body: updatedCartItems } = await request(app).get("/cart").expect(200);
+    expect(updatedCartItems[0].quantity).toBe(2);
   });
 
   it("수량이 현재 재고보다 많으면 409 Conflict를 반환한다.", async () => {

@@ -12,10 +12,14 @@ describe("DELETE /cart/:id", () => {
     const { body: cartItems } = await request(app).get("/cart").expect(200);
     const id = cartItems[0].id;
 
+    // 삭제 요청 검증
     const response = await request(app).delete(`/cart/${id}`);
-
     expect(response.status).toBe(204);
     expect(response.text).toBe("");
+
+    // 실제 데이터 검증
+    const { body: updatedCartItems } = await request(app).get("/cart").expect(200);
+    expect(updatedCartItems).toEqual([]);
   });
 
   it("존재하지 않는 장바구니 상품을 삭제하면 404 Not Found를 반환한다.", async () => {

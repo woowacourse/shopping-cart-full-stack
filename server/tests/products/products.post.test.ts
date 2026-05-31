@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../../src/app.js";
-
+import { reset } from "../../src/repositories/products.repository.js";
 const validProduct = {
   name: "콜라",
   stock: 10,
@@ -9,11 +9,23 @@ const validProduct = {
 };
 
 describe("POST /products", () => {
+  beforeEach(() => {
+    reset();
+  });
   it("상품 추가 요청이 유효하면 201 Created와 빈 응답을 반환한다.", async () => {
+    // 추가 요청 검증
     const response = await request(app).post("/products").send(validProduct);
-
     expect(response.status).toBe(201);
     expect(response.text).toBe("");
+
+    // 실제 테스트 검증
+    const { body: updatedProductsList } = await request(app).get("/products").expect(200);
+    expect(updatedProductsList).toEqual([
+      {
+        id: expect.any(Number),
+        ...validProduct,
+      },
+    ]);
   });
 
   it.each([
@@ -32,13 +44,16 @@ describe("POST /products", () => {
       ...validProduct,
       ...invalidField,
     };
-
+    // 추가 요청 검증
     const response = await request(app).post("/products").send(invalidProduct);
-
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
       code: expect.any(String),
       message: expect.any(String),
     });
+
+    // 실제 데이터 검증
+    const { body: updatedProductsList } = await request(app).get("/products").expect(200);
+    expect(updatedProductsList).toEqual([]);
   });
 });

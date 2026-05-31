@@ -21,10 +21,14 @@ describe("DELETE /products/:id", () => {
     const { body: products } = await request(app).get("/products").expect(200);
     const id = products[0].id;
 
+    // 삭제 요청 검증
     const response = await request(app).delete(`/products/${id}`);
-
     expect(response.status).toBe(204);
     expect(response.text).toBe("");
+
+    // 실제 데이터 검증
+    const { body: updatedProductsList } = await request(app).get("/products").expect(200);
+    expect(updatedProductsList).toEqual([]);
   });
 
   it("상품을 삭제하면 장바구니에 있는 해당 상품도 함께 삭제된다.", async () => {
