@@ -6,12 +6,12 @@ export default class ShoppingCart {
   quantity: Quantity;
 
   constructor(productId: ProductId, quantity: Quantity) {
-    this.#validateQuantity(quantity);
+    ShoppingCart.validateQuantity(quantity);
     this.productId = productId;
     this.quantity = quantity;
   }
 
-  #validateQuantity(quantity: Quantity) {
+  static validateQuantity(quantity: Quantity) {
     if (typeof quantity !== "number") {
       throw new BadRequestError({
         code: "INVALID_TYPE",

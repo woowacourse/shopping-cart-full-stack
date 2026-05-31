@@ -34,6 +34,7 @@ export function getItemsFromCart(): {
 }
 
 export function updateQuantityOfItem(productId: ProductId, quantity: Quantity) {
+  ShoppingCart.validateQuantity(quantity);
   cartRepository.setQuantity(productId, quantity);
 }
 

@@ -1,5 +1,6 @@
 import { ShoppingCartData, ProductId, Quantity } from "../types/type.ts";
 import ShoppingCart from "../domain/ShoppingCart.ts";
+import { BadRequestError } from "../error.ts";
 
 export class CartRepository {
   private items = new Map<ProductId, Quantity>();
