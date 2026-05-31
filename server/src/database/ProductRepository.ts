@@ -23,4 +23,8 @@ export class ProductRepository {
   hasId(productId: string) {
     return this.products.has(productId);
   }
+
+  clear() {
+    this.products.clear();
+  }
 }

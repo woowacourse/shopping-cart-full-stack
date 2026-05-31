@@ -1,29 +1,35 @@
-import request from 'supertest';
-import app from '../../src/app';
-import { describe, expect, test } from '@jest/globals';
+import request from "supertest";
+import app from "../../src/app";
+import { describe, expect, test } from "@jest/globals";
 
 import {
   getAllProducts,
   createProduct,
-} from '../../src/service/productService';
+} from "../../src/service/productService";
 import {
   createShoppingCart,
   patchShoppingCart,
   getShoppingCart,
-} from '../../src/service/shoppingCartService';
+} from "../../src/service/shoppingCartService";
+import { beforeEach } from "node:test";
+import { cartRepository } from "../../src/database/inMemoryDatabase";
 
-describe('장바구니 상품 API 테스트', () => {
-  test('클라이언트가 GET 요청 시 장바구니 상품 목록을 받아온다.', async () => {
+beforeEach(() => {
+  cartRepository.clear();
+});
+
+describe("장바구니 상품 API 테스트", () => {
+  test("클라이언트가 GET 요청 시 장바구니 상품 목록을 받아온다.", async () => {
     const productData = {
-      name: 'test',
+      name: "test",
       price: 1000,
-      image: 'example/com',
+      image: "example/com",
     };
     const product = createProduct(productData);
 
     createShoppingCart(product[0].getProduct().id, 3);
 
-    const response = await request(app).get('/carts');
+    const response = await request(app).get("/carts");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
@@ -34,7 +40,7 @@ describe('장바구니 상품 API 테스트', () => {
     ]);
   });
 
-  test('클라이언트가 PATCH 요청 시 상품 수량을 변경한다', async () => {
+  test("클라이언트가 PATCH 요청 시 상품 수량을 변경한다", async () => {
     const id = getAllProducts()[0].getProduct().id;
 
     patchShoppingCart(id, 4);
@@ -47,7 +53,7 @@ describe('장바구니 상품 API 테스트', () => {
     expect(getShoppingCart()[0].quantity).toBe(4);
   });
 
-  test('클라이언트가 DELETE 요청 시 해당 상품을 삭제한다.', async () => {
+  test("클라이언트가 DELETE 요청 시 해당 상품을 삭제한다.", async () => {
     const id = getAllProducts()[0].getProduct().id;
 
     const response = await request(app).delete(`/carts/${id}`);

@@ -30,4 +30,8 @@ export class CartRepository {
   hasProductId(productId: ProductId): boolean {
     return this.items.has(productId);
   }
+
+  clear() {
+    this.items.clear();
+  }
 }
