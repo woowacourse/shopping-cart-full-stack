@@ -25,7 +25,7 @@ export function validateLengthRange(label: string, min: number, max: number) {
     if (min > value.length || value.length > max) {
       throw new FieldError({
         code: "INVALID_LENGTH_RANGE",
-        message: `${label}은 ${min} 이상 ${max} 이하여야 합니다.`,
+        message: `${label}은 ${min}자 이상 ${max}자 이하 문자여야 합니다.`,
       });
     }
   };

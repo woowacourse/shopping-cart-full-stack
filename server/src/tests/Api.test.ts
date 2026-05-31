@@ -101,7 +101,7 @@ describe("프로덕트 API 테스트", () => {
       errors: {
         name: {
           code: "INVALID_LENGTH_RANGE",
-          message: "상품명은 0 이상 100 이하여야 합니다.",
+          message: "상품명은 0자 이상 100자 이하 문자여야 합니다.",
         },
       },
     });
