@@ -7,6 +7,7 @@ import type { Product } from '../products/product.model.js';
 import { CartItem } from './cartItem.model.js';
 import { productRepository } from '../products/product.repository.js';
 import { cartItemRepository } from './cartItem.repository.js';
+import { ModelError } from '../../errors/ModelError.js';
 
 export const createCartItemService = ({
   productRepository,
@@ -17,34 +18,49 @@ export const createCartItemService = ({
 }) => ({
   addCartItem(productId: string, purchaseQuantity: number) {
     validateProductId(productId);
-    validatePurchaseQuantity(purchaseQuantity);
 
     const product = findProductOrThrow(productId, productRepository);
 
+    // 담는 수량이 남아있는 수량보다 초과하는지 검증
     validateRemainingQuantity(product, purchaseQuantity);
 
     // 추가하려는 상품이 장바구니에 이미 존재할 경우
     const foundCartItem = cartItemRepository.findByProductId(productId);
     if (foundCartItem) {
-      const nextPurchaseQuantity =
-        foundCartItem.purchaseQuantity + purchaseQuantity;
+      try {
+        const nextPurchaseQuantity =
+          foundCartItem.purchaseQuantity + purchaseQuantity;
 
-      validatePurchaseQuantity(nextPurchaseQuantity);
-      validateRemainingQuantity(product, nextPurchaseQuantity);
-      foundCartItem.changeQuantityTo(nextPurchaseQuantity);
+        validateRemainingQuantity(product, nextPurchaseQuantity);
+        foundCartItem.changeQuantityTo(nextPurchaseQuantity);
 
-      return { cartItemId: foundCartItem.cartItemId, isNew: false };
+        return { cartItemId: foundCartItem.cartItemId, isNew: false };
+      } catch (error) {
+        if (error instanceof ModelError) {
+          throw new AppError(400, error.code, error.message);
+        }
+
+        throw error;
+      }
     }
 
     // 추가하려는 상품이 장바구니에 존재하지 않는 경우
-    const cartItem = new CartItem({
-      cartItemId: crypto.randomUUID(),
-      productId,
-      purchaseQuantity,
-    });
+    try {
+      const cartItem = new CartItem({
+        cartItemId: crypto.randomUUID(),
+        productId,
+        purchaseQuantity,
+      });
 
-    cartItemRepository.save(cartItem);
-    return { cartItemId: cartItem.cartItemId, isNew: true };
+      cartItemRepository.save(cartItem);
+      return { cartItemId: cartItem.cartItemId, isNew: true };
+    } catch (error) {
+      if (error instanceof ModelError) {
+        throw new AppError(400, error.code, error.message);
+      }
+
+      throw error;
+    }
   },
 
   getCartItems() {
@@ -67,19 +83,25 @@ export const createCartItemService = ({
 
   changePurchaseQuantity(cartItemId: string, quantity: number) {
     validateCartItemId(cartItemId);
-    validatePurchaseQuantity(quantity);
 
     const cartItem = findCartItemOrThrow(cartItemId, cartItemRepository);
-
     const product = findProductOrThrow(cartItem.productId, productRepository);
 
-    validateRemainingQuantity(product, quantity);
-    cartItem.changeQuantityTo(quantity);
+    try {
+      validateRemainingQuantity(product, quantity);
+      cartItem.changeQuantityTo(quantity);
 
-    return {
-      cartItemId: cartItem.cartItemId,
-      purchaseQuantity: cartItem.purchaseQuantity,
-    };
+      return {
+        cartItemId: cartItem.cartItemId,
+        purchaseQuantity: cartItem.purchaseQuantity,
+      };
+    } catch (error) {
+      if (error instanceof ModelError) {
+        throw new AppError(400, error.code, error.message);
+      }
+
+      throw error;
+    }
   },
 });
 
@@ -104,21 +126,6 @@ const validateProductId = (productId: string) => {
       400,
       'INVALID_PRODUCT_ID',
       '유효하지 않은 상품 id입니다.',
-    );
-  }
-};
-
-const validatePurchaseQuantity = (purchaseQuantity: number) => {
-  if (
-    typeof purchaseQuantity !== 'number' ||
-    !Number.isInteger(purchaseQuantity) ||
-    purchaseQuantity < 1 ||
-    purchaseQuantity > 99
-  ) {
-    throw new AppError(
-      400,
-      'INVALID_PURCHASE_QUANTITY',
-      '유효하지 않은 구매 수량입니다.',
     );
   }
 };
