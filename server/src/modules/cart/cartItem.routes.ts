@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import { cartItemService } from './cartItem.service.js';
+import {
+  parseAddCartItemRequest,
+  parseChangePurchaseQuantityRequest,
+} from './cartItem.request.js';
 
 export const cartItemRouter = Router();
 
@@ -13,7 +17,8 @@ cartItemRouter.get('/cart/items', (_req, res, next) => {
 });
 cartItemRouter.post('/cart/items', (req, res, next) => {
   try {
-    const cartItem = cartItemService.addCartItem(req.body ?? {});
+    const cartItemRequest = parseAddCartItemRequest(req.body ?? {});
+    const cartItem = cartItemService.addCartItem(cartItemRequest);
 
     const responseBody = { cartItemId: cartItem.cartItemId };
 
@@ -36,7 +41,9 @@ cartItemRouter.delete('/cart/items/:cartItemId', (req, res, next) => {
 
 cartItemRouter.patch('/cart/items/:cartItemId', (req, res, next) => {
   try {
-    const { purchaseQuantity } = req.body ?? {};
+    const { purchaseQuantity } = parseChangePurchaseQuantityRequest(
+      req.body ?? {},
+    );
 
     const cartItem = cartItemService.changePurchaseQuantity(
       req.params.cartItemId,

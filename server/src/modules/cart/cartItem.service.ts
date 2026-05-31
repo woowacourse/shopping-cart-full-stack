@@ -8,11 +8,7 @@ import { CartItem } from './cartItem.model.js';
 import { productRepository } from '../products/product.repository.js';
 import { cartItemRepository } from './cartItem.repository.js';
 import { ModelError } from '../../errors/ModelError.js';
-
-type CartItemParams = {
-  productId: string;
-  purchaseQuantity: number;
-};
+import type { AddCartItemRequest } from './cartItem.request.js';
 
 export const createCartItemService = ({
   productRepository,
@@ -21,11 +17,8 @@ export const createCartItemService = ({
   productRepository: ProductRepository;
   cartItemRepository: CartItemRepository;
 }) => ({
-  addCartItem(params: CartItemParams) {
+  addCartItem(params: AddCartItemRequest) {
     const { productId, purchaseQuantity } = params;
-
-    validateProductId(productId);
-    validatePurchaseQuantity(purchaseQuantity);
 
     const product = findProductOrThrow(productId, productRepository);
 
@@ -124,26 +117,6 @@ const validateCartItemId = (cartItemId: string) => {
       400,
       'INVALID_CART_ITEM_ID',
       '유효하지 않은 장바구니 상품 id입니다.',
-    );
-  }
-};
-
-const validateProductId = (productId: string) => {
-  if (typeof productId !== 'string' || productId.trim() === '') {
-    throw new AppError(
-      400,
-      'INVALID_PRODUCT_ID',
-      '유효하지 않은 상품 id입니다.',
-    );
-  }
-};
-
-const validatePurchaseQuantity = (purchaseQuantity: number) => {
-  if (typeof purchaseQuantity !== 'number') {
-    throw new AppError(
-      400,
-      'INVALID_PURCHASE_QUANTITY',
-      '유효하지 않은 구매 수량입니다.',
     );
   }
 };
