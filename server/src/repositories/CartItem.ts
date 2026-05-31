@@ -1,5 +1,18 @@
+export interface StoredCartItem {
+  cartItemId: number;
+  productId: number;
+  quantity: number;
+}
+
 export interface CartItemData {
-    cartItemId: number;
+  cartItemId: number;
+  quantity: number;
+  productId: number;
+  productData: {
     productId: number;
-    quantity: number;
+    name: string;
+    price: number;
+    thumbnailUrl: string;
+    totalQuantity: number;
+  };
 }

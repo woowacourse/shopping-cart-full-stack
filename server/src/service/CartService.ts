@@ -1,14 +1,25 @@
-import type { CartItemData } from "../repositories/CartItem";
+import type { StoredCartItem, CartItemData } from "../repositories/CartItem";
 import { productRepository } from "../repositories/ProductRepository";
 import { cartRepository } from "../repositories/CartRepository";
 import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 
 export const getCartItemsService = (): CartItemData[] => {
-  return cartRepository.getCartProducts();
+  return cartRepository.getCartProducts().map((cartItem) => {
+    const product = productRepository.findById(cartItem.productId);
+    return {
+      cartItemId: cartItem.cartItemId,
+      quantity: cartItem.quantity,
+      productId: cartItem.productId,
+      productData: product!,
+    };
+  });
 };
 
-export const postCartItemService = (productId: number, quantity: number): CartItemData => {
+export const postCartItemService = (
+  productId: number,
+  quantity: number,
+): StoredCartItem => {
   const product = productRepository.findById(Number(productId));
   if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
 
@@ -24,12 +35,19 @@ export const deleteCartItemService = (cartItemId: number): void => {
   cartRepository.deleteByCartId(cartItemId);
 };
 
-export const patchCartItemService = (cartItemId: number, newQuantity: number): CartItemData => {
+export const patchCartItemService = (
+  cartItemId: number,
+  newQuantity: number,
+): StoredCartItem => {
   if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
   if (!newQuantity) throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY);
 
-  const updatedQuantity = cartRepository.changeQuantity(cartItemId, newQuantity);
-  if (!updatedQuantity) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
+  const updatedQuantity = cartRepository.changeQuantity(
+    cartItemId,
+    newQuantity,
+  );
+  if (!updatedQuantity)
+    throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
 
   return updatedQuantity;
 };
