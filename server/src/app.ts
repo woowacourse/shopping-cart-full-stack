@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import {
   productBodyValidateMiddleware,
   cartBodyValidateMiddelware,
@@ -18,6 +19,12 @@ export function createApp({
   const router = app.router;
 
   router.use(express.json());
+
+  router.use(
+    cors({
+      origin: ['http://localhost:3000', 'http://localhost:5173'],
+    }),
+  );
 
   router
     .route('/api/products/')
