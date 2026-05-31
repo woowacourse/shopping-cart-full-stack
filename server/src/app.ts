@@ -36,7 +36,7 @@ export function createApp({
   router.route('/api/cart/').get(cartController.get);
 
   router
-    .route('/api/cart/items/:id/')
+    .route('/api/cart/items/:productId/')
     .patch(cartBodyValidateMiddelware, cartController.update)
     .delete(cartController.delete);
 

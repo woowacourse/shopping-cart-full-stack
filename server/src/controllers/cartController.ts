@@ -7,8 +7,8 @@ import { Storage } from '../storages/Storage.js';
 
 export interface CartController {
   get: express.RequestHandler;
-  update: express.RequestHandler<{ id: string }>;
-  delete: express.RequestHandler<{ id: string }>;
+  update: express.RequestHandler<{ productId: string }>;
+  delete: express.RequestHandler<{ productId: string }>;
 }
 
 export function createCartController(storage: Storage): CartController {
@@ -38,7 +38,7 @@ export function createCartController(storage: Storage): CartController {
     },
     update: (req, res, next) => {
       try {
-        const id = req.params.id;
+        const id = req.params.productId;
         const { quantity } = req.body;
         const cart = storage.getItemById<Cart>('cart', MY_CART_ID) as Cart;
 
@@ -55,7 +55,7 @@ export function createCartController(storage: Storage): CartController {
     },
     delete: (req, res, next) => {
       try {
-        const id = req.params.id;
+        const id = req.params.productId;
         const cart = storage.getItemById<Cart>('cart', MY_CART_ID) as Cart;
 
         if (!cart.hasItemByProductId(id)) {
