@@ -10,11 +10,11 @@ class CartItem {
     private productId: number,
     private itemCount: number,
   ) {
-    this.validateItemCount(itemCount);
+    CartItem.validateItemCount(itemCount);
   }
 
   updateItemCount(itemCount: number) {
-    this.validateItemCount(itemCount);
+    CartItem.validateItemCount(itemCount);
     this.itemCount = itemCount;
   }
 
@@ -29,7 +29,7 @@ class CartItem {
     };
   }
 
-  private validateItemCount(itemCount: number) {
+  static validateItemCount(itemCount: number) {
     if (!itemCount && itemCount !== 0) {
       throw new AppError("EMPTY_PRODUCT_ORDER_COUNT");
     }

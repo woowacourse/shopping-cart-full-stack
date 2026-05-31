@@ -1,4 +1,5 @@
 import AppError from "../../errors/AppError.js";
+import CartItem from "./CartItem.js";
 import { ProductRepository } from "../product/product.repository.js";
 import { CartRepository } from "./cart.repository.js";
 
@@ -50,6 +51,8 @@ class CartService {
     if (!cartItem) {
       throw new AppError("PRODUCT_NOT_EXIST_IN_CART");
     }
+
+    CartItem.validateItemCount(itemCount);
 
     const product = this.productRepository.findById(
       cartItem.toJson().productId,
