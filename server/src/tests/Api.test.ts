@@ -175,14 +175,14 @@ describe('카트 API 테스트', () => {
     expect(res.status).toBe(204);
   });
 
-  test('0 ~ 100개 사이가 아닌 수량을 수정하려 하면 400 에러가 발생한다.', async () => {
+  test('1 ~ 99개 사이가 아닌 수량을 수정하려 하면 400 에러가 발생한다.', async () => {
     const res = await request(app)
       .patch('/api/cart/items/123/')
       .send({ quantity: 101 })
       .set('Accept', 'application/json');
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      errors: { quantity: ['수량은 0 이상 100 이하여야 합니다.'] },
+      errors: { quantity: ['수량은 1 이상 99 이하여야 합니다.'] },
     });
   });
 

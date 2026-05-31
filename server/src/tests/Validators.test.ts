@@ -28,9 +28,21 @@ describe("validators 테스트", () => {
   });
 
   test("숫자범위 내의 숫자가 아니면 에러가 반환된다.", () => {
-    const validator = validateNumberRange("수량", 0, 100);
+    const validator = validateNumberRange("수량", 1, 99);
     expect(() => {
-      validator(101);
-    }).toThrow("수량은 0 이상 100 이하여야 합니다.");
+      validator(0);
+    }).toThrow("수량은 1 이상 99 이하여야 합니다.");
+
+    expect(() => {
+      validator(100);
+    }).toThrow("수량은 1 이상 99 이하여야 합니다.");
+
+    expect(() => {
+      validator(1);
+    }).not.toThrow();
+
+    expect(() => {
+      validator(99);
+    }).not.toThrow();
   });
 });
