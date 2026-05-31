@@ -8,15 +8,16 @@ const errorHandler = (
   _next: NextFunction,
 ) => {
   const errorMessage = err instanceof Error ? err.message : "";
-  const statusCode =
-    ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.status || 500;
-  const message =
-    ERROR_CODES[errorMessage as keyof typeof ERROR_CODES]?.message ||
-    "서버 내부 오류가 발생하였습니다.";
+  const matchedError = ERROR_CODES[errorMessage as keyof typeof ERROR_CODES];
+  const statusCode = matchedError?.status || 500;
+  const code = matchedError?.code || "INTERNAL_SERVER_ERROR";
+  const message = matchedError?.message || "서버 내부 오류가 발생하였습니다.";
 
   return res.status(statusCode).json({
     status: "error",
-    message: message,
+    statusCode: statusCode,
+    code,
+    message,
   });
 };
 
