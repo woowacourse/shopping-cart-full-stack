@@ -1,8 +1,8 @@
-import { CartItemData } from "./CartItem";
+import { StoredCartItem } from "./CartItem";
 import { validateQuantity } from "./util/Validator";
 
 export default class CartRepository {
-  #cart: Map<number, CartItemData>;
+  #cart: Map<number, StoredCartItem>;
   #nextId: number;
 
   constructor() {
@@ -10,27 +10,31 @@ export default class CartRepository {
     this.#nextId = 1;
   }
 
-  // cartItemId를 기반으로 장바구니의 목록 1개 집어오기
-  findById(cartItemId: number): CartItemData | null {
+  findById(cartItemId: number): StoredCartItem | null {
     return this.#cart.get(cartItemId) ?? null;
   }
 
-  // `getCartProducts()` 장바구니 목록 조회
-  getCartProducts(): CartItemData[] {
+  getCartProducts(): StoredCartItem[] {
     return [...this.#cart.values()];
   }
 
-  // `addProductToCart()` 장바구니 목록 추가
-  addProductToCart(productId: number, quantity: number): CartItemData {
+  addProductToCart(productId: number, quantity: number): StoredCartItem {
     validateQuantity(quantity);
-    const cartItem = { productId, quantity, cartItemId: this.#nextId };
+    const cartItem = {
+      cartItemId: this.#nextId,
+      quantity,
+      productId,
+    };
     this.#cart.set(this.#nextId, cartItem);
     this.#nextId++;
     return cartItem;
   }
 
   // `changeQuantity()` 장바구니 수량 변경
-  changeQuantity(cartItemId: number, newQuantity: number): CartItemData | null {
+  changeQuantity(
+    cartItemId: number,
+    newQuantity: number,
+  ): StoredCartItem | null {
     validateQuantity(newQuantity);
     // cartItemId를 찾아서
     const cartItem = this.#cart.get(cartItemId);
@@ -50,7 +54,7 @@ export default class CartRepository {
   // ` deleteByProductId()` cascading 제거
   deleteByProductId(productId: number): void {
     [...this.#cart.entries()]
-      .filter(([_, cartItemData]) => cartItemData.productId === productId)
+      .filter(([_, StoredCartItem]) => StoredCartItem.productId === productId)
       .forEach(([cartItemId]) => this.#cart.delete(cartItemId));
   }
 
