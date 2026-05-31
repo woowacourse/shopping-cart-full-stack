@@ -21,8 +21,13 @@ router.patch('/:id', (req, res, next) => {
   try {
     const productId = req.params.id;
     const quantity = req.body.quantity;
+
     if (!shoppingCart.hasProductId(productId)) {
       return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
+    }
+
+    if (isNaN(quantity)) {
+      return res.status(400).send({ message: '상품 수량은 정수여야 합니다.' });
     }
 
     if (quantity < 1) {
