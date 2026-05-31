@@ -65,7 +65,22 @@ export function createCartController(storage: Storage): CartController {
     get: (_req, res, next) => {
       try {
         const cart = storage.getItemById<Cart>('cart', MY_CART_ID) as Cart;
-        res.send({ items: cart.getAllItems() });
+        const cartItems = cart.getAllItems();
+
+        const items = cartItems.map(({ product_id, quantity }) => {
+          const product = storage.getItemById<Product>('products', product_id);
+
+          if (!product) {
+            throw new NotFoundError();
+          }
+
+          return {
+            product: product.toObject(),
+            quantity,
+          };
+        });
+
+        res.send({ items });
       } catch (err) {
         next(err);
       }
