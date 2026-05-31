@@ -32,3 +32,13 @@ export const rawCarts: RawCart[] = [
     ],
   },
 ];
+
+let snapshot: RawCart[] = [];
+
+export const transaction = () => {
+	snapshot = JSON.parse(JSON.stringify(rawCarts));
+};
+
+export const rollback = () => {
+	rawCarts.splice(0, rawCarts.length, ...snapshot);
+};

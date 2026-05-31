@@ -25,3 +25,15 @@ export const rawProducts: RawProduct[] = [
     imgUrl: "https://example.com/images/reusable-cup.png",
   },
 ];
+
+let snapshot: RawProduct[] = [];
+
+export const transaction = () => {
+	// 깊은 복사
+	snapshot = JSON.parse(JSON.stringify(rawProducts));
+};
+
+export const rollback = () => {
+	// 메모리 주소 유지
+	rawProducts.splice(0, rawProducts.length, ...snapshot);
+};

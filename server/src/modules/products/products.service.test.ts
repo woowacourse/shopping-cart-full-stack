@@ -2,8 +2,26 @@ import { ServiceError } from "../../common/error.ts";
 import * as productsService from "./products.service.ts";
 import * as cartsService from "../carts/carts.service.ts";
 import type { ProductRequest } from "./products.dto.ts";
+import {
+  transaction as productTransaction,
+  rollback as productRollback,
+} from "../../raw/raw.products.ts";
+import {
+  transaction as cartTransaction,
+  rollback as cartRollback,
+} from "../../raw/raw.carts.ts";
 
 describe("product service 테스트", () => {
+  beforeEach(() => {
+    productTransaction();
+    cartTransaction();
+  });
+
+  afterEach(() => {
+    productRollback();
+    cartRollback();
+  });
+
   describe("getProducts 테스트", () => {
     it("상품 리스트를 반환한다.", () => {
       const products = productsService.getProducts();
