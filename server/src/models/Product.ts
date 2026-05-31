@@ -11,7 +11,15 @@ class Product {
   #price: number;
   #thumbnail: string;
 
-  constructor(name: string, price: number, thumbnail: string) {
+  constructor({
+    name,
+    price,
+    thumbnail,
+  }: {
+    name: string;
+    price: number;
+    thumbnail: string;
+  }) {
     this.#id = crypto.randomUUID();
     this.#name = name;
     this.#price = price;

@@ -32,8 +32,7 @@ export function createProductController(storage: Storage): ProductController {
     },
     add: (req, res, next) => {
       try {
-        const { name, price, thumbnail } = req.body;
-        const product = new Product(name, price, thumbnail);
+        const product = new Product(req.body);
         storage.addItemById<Product>("products", product.getId(), product);
         const post = { id: product.toObject().id };
 

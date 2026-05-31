@@ -22,8 +22,16 @@ describe("프로덕트 API 테스트", () => {
   const storage = new InMemoryStorage(initialData);
   const cartController = createCartController(storage);
   const productController = createProductController(storage);
-  const product1 = new Product("피자", 30000, "pizza.png");
-  const product2 = new Product("치킨", 20000, "chicken.png");
+  const product1 = new Product({
+    name: "피자",
+    price: 30000,
+    thumbnail: "pizza.png",
+  });
+  const product2 = new Product({
+    name: "치킨",
+    price: 20000,
+    thumbnail: "chicken.png",
+  });
 
   const app = createApp({ productController, cartController });
 
