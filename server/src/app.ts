@@ -1,10 +1,20 @@
-import express from "express";
+import express, { Request, Response } from 'express';
+import productRouter from './routes/product';
+import cartRouter from './routes/cart';
 
 const app = express();
-app.use(express.json());
 
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+app.use((req: Request, res: Response, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
 });
+
+app.use('/product', productRouter);
+app.use('/cart', cartRouter);
 
 export default app;
