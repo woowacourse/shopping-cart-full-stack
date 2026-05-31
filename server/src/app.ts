@@ -37,22 +37,6 @@ app.use((_req, res, next) => {
 app.use("/products", productRouter);
 app.use("/carts", shoppingCartRouter);
 
-app.get("/slow", async (_req, res, next) => {
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 3001));
-    if (res.locals.timeout) return;
-    if (!res.headersSent) {
-      throw new RequestTimeoutError({
-        code: "TIME_OUT",
-        message: "요청 시간이 초과되었습니다.",
-        field: "time out",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
-
 app.use(() => {
   throw new NotFoundError({
     code: "INVALID_PATH",
