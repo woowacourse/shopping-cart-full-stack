@@ -17,3 +17,13 @@ export function deleteProduct(id: ProductId) {
   products.delete(id);
   deleteShoppingCart(id);
 }
+
+export function hasProduct(id: ProductId): boolean {
+  return products.has(id);
+}
+
+export function isDuplicateProductName(name: string): boolean {
+  return getAllProducts().some((product) => {
+    return product.getProduct().name === name;
+  });
+}
