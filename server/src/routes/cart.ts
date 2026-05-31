@@ -26,18 +26,19 @@ export function createCartRouter(db: Database) {
     res.status(201).json({ message: '상품이 장바구니에 추가되었습니다.' });
   });
 
-  cartRouter.put('/', function (req: Request, res: Response) {
-    const { id } = req.body;
+  cartRouter.patch('/:id', function (req: Request, res: Response) {
+    const requestId = Number(req.params.id);
+    const { quantity } = req.body;
     if (!db.Cart) {
       return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
     }
-    const toBeUpdatedIndex = db.Cart.findIndex((product) => product.id === id);
+    const toBeUpdatedIndex = db.Cart.findIndex((product) => product.id === requestId);
     if (toBeUpdatedIndex === -1) {
       return res.status(404).json({ errorMessage: '상품을 찾을 수 없습니다.' });
     }
     try {
-      Validator.validateRequestBody(req.body);
-      db.Cart[toBeUpdatedIndex] = req.body;
+      Validator.validateQuantity({ quantity });
+      db.Cart[toBeUpdatedIndex].quantity = quantity;
       res.status(204).send();
     } catch (error) {
       if (error instanceof Error) {

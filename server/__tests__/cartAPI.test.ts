@@ -1,6 +1,6 @@
 import express from "express";
 import request from "supertest";
-import { BodyForTest, TestDB } from "./testDB";
+import { TestDB } from "./testDB";
 import { createCartRouter } from "../src/routes/cart";
 
 const app = express();
@@ -57,48 +57,41 @@ describe("POST /cart/:id", function () {
   });
 });
 
-const productInCart: BodyForTest = {
-  id: 1,
-  imageUrl: "https://example.com/nike.jpg",
-  name: "Nike Air Max",
-  price: 1200000,
-  quantity: 2,
-};
-
-const productToBeUpdated: BodyForTest = {
-  id: productInCart.id,
-  imageUrl: productInCart.imageUrl,
-  name: productInCart.name,
-  price: productInCart.price,
-  quantity: 4,
-};
-
-describe("PUT /cart", function () {
+describe("PATCH /cart/:id", function () {
   it("상품의 수량이 변경되고, 응답 코드는 204 OK 이다.", async function () {
-    const response = await request(app).put("/cart").send(productToBeUpdated).set("Accept", "application/json");
+    const response = await request(app).patch("/cart/1").send({ quantity: 4 }).set("Accept", "application/json");
 
     expect(response.status).toBe(204);
+  });
+  it("수량만 변경되고 나머지 필드는 그대로 유지된다.", async function () {
+    await request(app).patch("/cart/1").send({ quantity: 4 }).set("Accept", "application/json");
+
+    const updated = TestDB.Cart!.find((product) => product.id === 1);
+    expect(updated).toEqual({
+      id: 1,
+      imageUrl: "https://example.com/nike.jpg",
+      name: "Nike Air Max",
+      price: 1200000,
+      quantity: 4,
+    });
   });
   it("CART 테이블에 존재하지 않으면 500 에러", async function () {
     TestDB.Cart = undefined;
 
-    const response = await request(app).put("/cart").send(productToBeUpdated).set("Accept", "application/json");
+    const response = await request(app).patch("/cart/1").send({ quantity: 4 }).set("Accept", "application/json");
 
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ errorMessage: "서버에 일시적인 오류가 발생했습니다." });
   });
   it("해당 id가 DB에 존재하지 않는다면 404 에러", async function () {
-    const idChangedProduct = { ...productToBeUpdated };
-    idChangedProduct.id = 2;
-    const response = await request(app).put("/cart").send(idChangedProduct).set("Accept", "application/json");
+    const response = await request(app).patch("/cart/2").send({ quantity: 4 }).set("Accept", "application/json");
 
     expect(response.status).toBe(404);
     expect(response.body).toEqual({ errorMessage: "상품을 찾을 수 없습니다." });
   });
   it("잘못된 요청이 들어오면 400 에러", async function () {
-    const invalidProduct = { ...productToBeUpdated };
-    invalidProduct.quantity = 0;
-    const response = await request(app).put("/cart").send(invalidProduct).set("Accept", "application/json");
+    const response = await request(app).patch("/cart/1").send({ quantity: 0 }).set("Accept", "application/json");
+
     expect(response.status).toBe(400);
     expect(response.body).toEqual({ errorMessage: "quantity는 1 이상 99 이하의 정수여야 합니다." });
   });

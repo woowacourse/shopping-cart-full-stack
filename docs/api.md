@@ -7,7 +7,7 @@ CORS 설정:
 - Access-Control-Allow-Origin
   - http://localhost:3000
 - Access-Control-Allow-Methods
-  - GET, POST, PUT, DELETE (옵션 없이)
+  - GET, POST, PATCH, DELETE (옵션 없이)
 - Access-Control-Allow-Headers
   - Origin, X-Requested-With, Content-Type, Accept
 
@@ -129,17 +129,17 @@ CORS 설정:
 
 - 상품 수량 변경
 
-  | 메서드 | 요청 URL |
-  | ------ | -------- |
-  | PUT    | /cart    |
+  | 메서드 | 요청 URL  |
+  | ------ | --------- |
+  | PATCH  | /cart/:id |
+  - Request Parameter
+    | 파라미터 | 설명 |
+    | ------ | -------- |
+    | id | 장바구니 상품 id |
   - Request Syntax
 
     ```
     {
-      "id": 3
-      "imageUrl": "https://example.com/product3-image.jpg",
-      "name": "상품명3",
-      "price": 10000,
       "quantity": 6,
     }
     ```
