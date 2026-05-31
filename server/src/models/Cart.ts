@@ -4,6 +4,10 @@ class Cart {
     this.#items = new Map();
   }
 
+  getItemById(productId: string) {
+    return this.#items.get(productId);
+  }
+
   updateItemByProductId(productId: string, quantity: number) {
     return this.#items.set(productId, quantity);
   }
