@@ -1,6 +1,4 @@
 import { StoredCartItem } from "./CartItem";
-import { validateQuantity } from "./util/Validator";
-
 export default class CartRepository {
   #cart: Map<number, StoredCartItem>;
   #nextId: number;
