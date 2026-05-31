@@ -338,7 +338,6 @@ DELETE /cart/items/:cartItemId
 | 상품 추가               | `POST`   | `/products`               | 새로운 상품을 추가한다.                                       |
 | 상품 삭제               | `DELETE` | `/products/:productId`    | 상품을 삭제하고, 해당 상품이 장바구니에 있으면 함께 제거한다. |
 | 장바구니 상품 목록 조회 | `GET`    | `/cart/items`             | 장바구니에 담긴 상품 목록을 조회한다.                         |
-| 장바구니 금액 요약 조회 | `GET`    | `/cart/summary`           | 장바구니 상품 금액, 배송비, 총 결제 금액을 조회한다.          |
 | 장바구니에 상품 추가    | `POST`   | `/cart/items`             | 장바구니에 상품을 추가한다.                                   |
 | 장바구니 상품 수량 변경 | `PATCH`  | `/cart/items/:cartItemId` | 특정 장바구니 상품의 수량을 변경한다.                         |
 | 장바구니 상품 제거      | `DELETE` | `/cart/items/:cartItemId` | 특정 장바구니 상품을 제거한다.                                |
