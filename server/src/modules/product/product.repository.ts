@@ -1,4 +1,4 @@
-import Product from "../../model/Product.js";
+import Product from "./Product.js";
 
 export interface ProductRepository {
   add: (product: Product) => void;

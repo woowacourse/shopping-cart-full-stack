@@ -1,12 +1,12 @@
 import express from "express";
-import ProductService from "./domain/product/product.service.js";
-import { InMemoryProductRepository } from "./domain/product/product.repository.js";
-import { InMemoryCartRepository } from "./domain/cart/cart.repository.js";
-import CartService from "./domain/cart/cart.service.js";
-import ProductController from "./controllers/product.controller.js";
-import CartController from "./controllers/cart.controller.js";
-import createProductRouter from "./routes/product.routes.js";
-import createCartRouter from "./routes/cart.routes.js";
+import ProductService from "./modules/product/product.service.js";
+import { InMemoryProductRepository } from "./modules/product/product.repository.js";
+import { InMemoryCartRepository } from "./modules/cart/cart.repository.js";
+import CartService from "./modules/cart/cart.service.js";
+import ProductController from "./modules/product/product.controller.js";
+import CartController from "./modules/cart/cart.controller.js";
+import createProductRouter from "./modules/product/product.routes.js";
+import createCartRouter from "./modules/cart/cart.routes.js";
 
 const inMemoryProductRepository = new InMemoryProductRepository();
 const inMemoryCartRepository = new InMemoryCartRepository();

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import CartService from "../domain/cart/cart.service.js";
-import { errorHandler } from "../errors/errorHandler.js";
+import CartService from "./cart.service.js";
+import { errorHandler } from "../../errors/errorHandler.js";
 
 class CartController {
   constructor(private cartService: CartService) {}

@@ -1,5 +1,5 @@
 import AppError from "../../errors/AppError.js";
-import Product, { ProductType } from "../../model/Product.js";
+import Product, { ProductType } from "./Product.js";
 import { CartRepository } from "../cart/cart.repository.js";
 import { ProductRepository } from "./product.repository.js";
 

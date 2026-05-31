@@ -1,4 +1,4 @@
-import CartItem from "../../model/CartItem.js";
+import CartItem from "./CartItem.js";
 
 export interface CartRepository {
   add: (productId: number, itemCount: number) => void;

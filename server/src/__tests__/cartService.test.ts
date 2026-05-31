@@ -1,8 +1,8 @@
 import AppError from "../errors/AppError.js";
-import CartService from "../domain/cart/cart.service.js";
-import ProductService from "../domain/product/product.service.js";
-import { InMemoryCartRepository } from "../domain/cart/cart.repository.js";
-import { InMemoryProductRepository } from "../domain/product/product.repository.js";
+import CartService from "../modules/cart/cart.service.js";
+import ProductService from "../modules/product/product.service.js";
+import { InMemoryCartRepository } from "../modules/cart/cart.repository.js";
+import { InMemoryProductRepository } from "../modules/product/product.repository.js";
 
 const mockProduct = {
   name: "아디다스 양말",

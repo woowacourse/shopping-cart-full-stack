@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import ProductService from "../domain/product/product.service.js";
-import { errorHandler } from "../errors/errorHandler.js";
+import ProductService from "./product.service.js";
+import { errorHandler } from "../../errors/errorHandler.js";
 
 class ProductController {
   constructor(private productService: ProductService) {}
