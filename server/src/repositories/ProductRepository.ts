@@ -7,24 +7,19 @@ export default class ProductRepository {
   #products: Map<number, ProductData>;
   #nextId: number;
 
-  // 생성자
-  // 생성자는  productId를 만들고, Product 데이터를 담은 Map을 생성한다.
   constructor() {
     this.#products = new Map();
     this.#nextId = 1;
   }
 
-  // `getProducts()` 메서드를 통해 전체 목록을 조회가능.
   getProducts(): ProductData[] {
     return [...this.#products.values()];
   }
 
-  // `findById()` 메서드를 통해 상품 ID로 단건 조회가능.
   findById(productId: number): ProductData | null {
     return this.#products.get(productId) ?? null;
   }
 
-  // `addProduct()` 메서드를 통해 상품 목록을 추가가능.
   addProduct(data: ProductInput): ProductData {
     validateProductData(data);
     const product = { ...data, productId: this.#nextId };
@@ -33,12 +28,11 @@ export default class ProductRepository {
     return product;
   }
 
-  // `deleteById()` 메서드를 통해 상품 목록에서 제거가능.
   deleteById(productId: number): void {
     this.#products.delete(productId);
   }
 
-    clear(): void {
+  clear(): void {
     this.#products.clear();
     this.#nextId = 1;
   }
