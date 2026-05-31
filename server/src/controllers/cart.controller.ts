@@ -6,7 +6,7 @@ import {
 } from "../services/cart.service.js";
 import { updateCartItemRequestSchema } from "../schemas/cart.schema.js";
 import { UpdateCartItemDto, UpdateResultKey } from "../interfaces/cart.interface.js";
-import { ERROR_RESPONSE } from "../constants/error.js";
+import { CART_ERROR_RESPONSE, PRODUCT_ERROR_RESPONSE } from "../constants/error.js";
 
 export async function getCartItems(_request: Request, response: Response): Promise<void> {
   const cartItemList = await fetchCartItems();
@@ -20,12 +20,18 @@ const ERROR_BY_RESULT: Record<UpdateResultKey, number> = {
   OUT_OF_STOCK: 409,
 };
 
+const ERROR_RESPONSE_BY_RESULT = {
+  CART_ITEM_NOT_FOUND: CART_ERROR_RESPONSE.CART_ITEM_NOT_FOUND,
+  PRODUCT_NOT_FOUND: PRODUCT_ERROR_RESPONSE.PRODUCT_NOT_FOUND,
+  OUT_OF_STOCK: CART_ERROR_RESPONSE.OUT_OF_STOCK,
+};
+
 export async function updateCartItemQuantity(request: Request, response: Response) {
   const id = Number(request.params.id);
   const { quantity }: UpdateCartItemDto = updateCartItemRequestSchema.parse(request.body);
   const result = await modifyCartItemQuantity(id, quantity);
   if (result !== "SUCCESS") {
-    response.status(ERROR_BY_RESULT[result]).json(ERROR_RESPONSE[result]);
+    response.status(ERROR_BY_RESULT[result]).json(ERROR_RESPONSE_BY_RESULT[result]);
     return;
   }
   response.status(204).end();
@@ -38,5 +44,5 @@ export async function deleteCartItem(request: Request, response: Response): Prom
     response.status(204).end();
     return;
   }
-  response.status(404).json(ERROR_RESPONSE.CART_ITEM_NOT_FOUND);
+  response.status(404).json(CART_ERROR_RESPONSE.CART_ITEM_NOT_FOUND);
 }

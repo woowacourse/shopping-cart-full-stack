@@ -1,4 +1,4 @@
-export const ERROR_RESPONSE = {
+export const PRODUCT_ERROR_RESPONSE = {
   REQUIRED_PRODUCT_NAME: {
     code: "REQUIRED_PRODUCT_NAME",
     message: "상품 이름은 필수입니다.",
@@ -33,16 +33,13 @@ export const ERROR_RESPONSE = {
     message: "상품 이미지는 필수입니다.",
   },
 
-  INVALID_REQUEST_BODY: {
-    code: "INVALID_REQUEST_BODY",
-    message: "요청 데이터가 올바르지 않습니다.",
-  },
-
   PRODUCT_NOT_FOUND: {
     code: "PRODUCT_NOT_FOUND",
     message: "요청한 상품을 찾을 수 없습니다.",
   },
+} as const;
 
+export const CART_ERROR_RESPONSE = {
   CART_ITEM_NOT_FOUND: {
     code: "CART_ITEM_NOT_FOUND",
     message: "장바구니 상품을 찾을 수 없습니다.",
@@ -62,9 +59,21 @@ export const ERROR_RESPONSE = {
     code: "OUT_OF_STOCK",
     message: "요청한 수량이 현재 재고보다 많습니다.",
   },
+} as const;
 
+export const COMMON_ERROR_RESPONSE = {
+  INVALID_REQUEST_BODY: {
+    code: "INVALID_REQUEST_BODY",
+    message: "요청 데이터가 올바르지 않습니다.",
+  },
   INTERNAL_SERVER_ERROR: {
     code: "INTERNAL_SERVER_ERROR",
     message: "서버 내부 오류가 발생했습니다.",
   },
+} as const;
+
+export const ERROR_RESPONSE = {
+  ...PRODUCT_ERROR_RESPONSE,
+  ...CART_ERROR_RESPONSE,
+  ...COMMON_ERROR_RESPONSE,
 } as const;

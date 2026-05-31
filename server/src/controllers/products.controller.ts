@@ -6,7 +6,7 @@ import {
   deleteProduct as removeProduct,
 } from "../services/products.service.js";
 import { createProductRequestSchema } from "../schemas/product.schema.js";
-import { ERROR_RESPONSE } from "../constants/error.js";
+import { PRODUCT_ERROR_RESPONSE } from "../constants/error.js";
 
 export async function createProduct(request: Request, response: Response): Promise<void> {
   const dto: CreateProductDto = createProductRequestSchema.parse(request.body);
@@ -27,5 +27,5 @@ export async function deleteProduct(request: Request, response: Response): Promi
     response.status(204).end();
     return;
   }
-  response.status(404).json(ERROR_RESPONSE.PRODUCT_NOT_FOUND);
+  response.status(404).json(PRODUCT_ERROR_RESPONSE.PRODUCT_NOT_FOUND);
 }
