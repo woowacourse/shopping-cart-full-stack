@@ -1,31 +1,24 @@
+import { BadRequestError, NotFoundError } from "../../errors/http.error.js";
+
 export interface FieldError {
   field: string;
   code: string;
   message: string;
 }
 
-export class ValidationError extends Error {
-  errors: FieldError[];
-  constructor(errors: FieldError[]) {
+export class ProductValidationError extends BadRequestError {
+  constructor(public errors: FieldError[]) {
     super("요청 값이 올바르지 않습니다.");
-    this.errors = errors;
   }
 }
 
-export class ProductNotFoundError extends Error {
-  status = 404;
-  constructor(message: string) {
-    super(message);
-  }
-}
-
-export class InvalidProductIdError extends Error {
+export class ProductNotFoundError extends NotFoundError {
   constructor() {
-    super("해당하는 상품의 id 형식이 유효하지 않습니다.");
+    super("해당하는 상품이 없습니다.");
   }
 }
 
-export const productErrors = {
+export const PRODUCT_VALIDATION_ERRORS = {
   name: {
     field: "name",
     code: "INVALID_PRODUCT_NAME",
@@ -37,8 +30,8 @@ export const productErrors = {
     message: "상품 가격이 유효하지 않습니다.",
   },
   imgUrl: {
-    field: "imageUrl",
-    code: "PRODUCT_IMAGE_URL_INVALID",
+    field: "imgUrl",
+    code: "INVALID_PRODUCT_IMAGE_URL",
     message: "유효한 이미지 URL 형식이 아닙니다.",
   },
 };
