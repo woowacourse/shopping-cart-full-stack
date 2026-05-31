@@ -30,12 +30,20 @@ export const changeCartQuantity = (productId: number, quantity: number) => {
   };
 };
 
-export const deleteCartsProduct = (productId: number) => {
-  const existingCartsProduct = getCartItemByProductIdQuery(productId);
+export const deleteCartsProduct = (id: number) => {
+  // 카트 안에 상품이 있는지 확인
+  const existingCartsProduct = getCartItemByProductIdQuery(id);
 
   if (!existingCartsProduct) {
     throw new Error(ERROR_CODES.NOT_EXIST_CARTS_PRODUCT.code);
   }
 
-  return deleteCartsProductQuery(productId);
+  return deleteCartsProductQuery(id);
+};
+
+export const removeByProductId = (productId: number) => {
+  const existingCartItem = getCartItemByProductIdQuery(productId);
+  if (!existingCartItem) return;
+
+  deleteCartsProductQuery(productId);
 };
