@@ -13,7 +13,7 @@ productRouter.get('/products', (_req, res, next) => {
 });
 productRouter.post('/products', (req, res, next) => {
   try {
-    const product = productService.addProduct(req.body);
+    const product = productService.addProduct(req.body ?? {});
     res.status(201).json(product);
   } catch (error) {
     next(error);

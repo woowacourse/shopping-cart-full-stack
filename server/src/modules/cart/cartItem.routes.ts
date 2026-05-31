@@ -13,10 +13,7 @@ cartItemRouter.get('/cart/items', (_req, res, next) => {
 });
 cartItemRouter.post('/cart/items', (req, res, next) => {
   try {
-    const cartItem = cartItemService.addCartItem(
-      req.body?.productId,
-      req.body?.purchaseQuantity,
-    );
+    const cartItem = cartItemService.addCartItem(req.body ?? {});
 
     const responseBody = { cartItemId: cartItem.cartItemId };
 

@@ -25,9 +25,15 @@ describe('CartItemService', () => {
   describe('상품 조회 기능 테스트', () => {
     test('', () => {
       // given
-      const cartItemA = cartItemService.addCartItem('1', 1);
+      const cartItemA = cartItemService.addCartItem({
+        productId: '1',
+        purchaseQuantity: 1,
+      });
 
-      const cartItemB = cartItemService.addCartItem('2', 1);
+      const cartItemB = cartItemService.addCartItem({
+        productId: '2',
+        purchaseQuantity: 1,
+      });
 
       // when
       const cartItems = cartItemService.getCartItems();
@@ -49,7 +55,10 @@ describe('CartItemService', () => {
   describe('상품 추가 기능 테스트', () => {
     test('상품을 추가할 수 있다.', () => {
       // given
-      const response = cartItemService.addCartItem('1', 1);
+      const response = cartItemService.addCartItem({
+        productId: '1',
+        purchaseQuantity: 1,
+      });
 
       // when
       const cartItems = cartItemService.getCartItems();
@@ -61,10 +70,16 @@ describe('CartItemService', () => {
 
     test('장바구니에 이미 존재하는 상품을 다시 추가할 경우 장바구니에 담긴 수량을 1 증가시킨다.', () => {
       // given
-      const responseA = cartItemService.addCartItem('1', 1);
+      const responseA = cartItemService.addCartItem({
+        productId: '1',
+        purchaseQuantity: 1,
+      });
 
       // when
-      const responseB = cartItemService.addCartItem('1', 1);
+      const responseB = cartItemService.addCartItem({
+        productId: '1',
+        purchaseQuantity: 1,
+      });
 
       const cartItems = cartItemService.getCartItems();
 
@@ -78,7 +93,10 @@ describe('CartItemService', () => {
   describe('상품 삭제 기능 테스트', () => {
     test('상품을 삭제할 수 있다.', () => {
       // given
-      const response = cartItemService.addCartItem('1', 1);
+      const response = cartItemService.addCartItem({
+        productId: '1',
+        purchaseQuantity: 1,
+      });
 
       cartItemService.deleteCartItem(response.cartItemId);
 
@@ -99,7 +117,10 @@ describe('CartItemService', () => {
   // 상품의 개수를 수정하는 기능
   describe('상품 개수 수정 기능 테스트', () => {
     test('수량 변경한다', () => {
-      const response = cartItemService.addCartItem('1', 1);
+      const response = cartItemService.addCartItem({
+        productId: '1',
+        purchaseQuantity: 1,
+      });
 
       cartItemService.changePurchaseQuantity(response.cartItemId, 2);
 

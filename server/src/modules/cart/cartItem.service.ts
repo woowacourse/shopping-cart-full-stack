@@ -9,6 +9,11 @@ import { productRepository } from '../products/product.repository.js';
 import { cartItemRepository } from './cartItem.repository.js';
 import { ModelError } from '../../errors/ModelError.js';
 
+type CartItemParams = {
+  productId: string;
+  purchaseQuantity: number;
+};
+
 export const createCartItemService = ({
   productRepository,
   cartItemRepository,
@@ -16,8 +21,11 @@ export const createCartItemService = ({
   productRepository: ProductRepository;
   cartItemRepository: CartItemRepository;
 }) => ({
-  addCartItem(productId: string, purchaseQuantity: number) {
+  addCartItem(params: CartItemParams) {
+    const { productId, purchaseQuantity } = params;
+
     validateProductId(productId);
+    validatePurchaseQuantity(purchaseQuantity);
 
     const product = findProductOrThrow(productId, productRepository);
 
@@ -126,6 +134,16 @@ const validateProductId = (productId: string) => {
       400,
       'INVALID_PRODUCT_ID',
       '유효하지 않은 상품 id입니다.',
+    );
+  }
+};
+
+const validatePurchaseQuantity = (purchaseQuantity: number) => {
+  if (typeof purchaseQuantity !== 'number') {
+    throw new AppError(
+      400,
+      'INVALID_PURCHASE_QUANTITY',
+      '유효하지 않은 구매 수량입니다.',
     );
   }
 };
