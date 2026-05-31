@@ -4,8 +4,8 @@ import { describe, expect, test } from "@jest/globals";
 
 import { getAllProducts } from "../../src/service/productService";
 import {
-  createShoppingCart,
-  getShoppingCart,
+  addItemToCart,
+  getItemsFromCart,
 } from "../../src/service/shoppingCartService";
 import { beforeEach } from "node:test";
 import { productRepository } from "../../src/database/inMemoryDatabase";
@@ -27,7 +27,7 @@ describe("상품 API 테스트", () => {
     expect(response.status).toBe(201);
     expect(response.body).toEqual([
       {
-        id: getAllProducts()[0].getProduct().id,
+        id: getAllProducts()[0].id,
         ...data,
       },
     ]);
@@ -45,7 +45,7 @@ describe("상품 API 테스트", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
       {
-        id: getAllProducts()[0].getProduct().id,
+        id: getAllProducts()[0].id,
         ...data,
       },
     ]);
@@ -54,14 +54,14 @@ describe("상품 API 테스트", () => {
   test("클라이언트가 DELETE 요청 시 상품을 삭제한다.", async () => {
     const product = getAllProducts();
 
-    createShoppingCart(product[0].getProduct().id, 3);
+    addItemToCart(product[0].id, 3);
 
     const response = await request(app).delete(
-      `/products/${getAllProducts()[0].getProduct().id}`,
+      `/products/${getItemsFromCart()[0].product.id}`,
     );
 
     expect(response.status).toBe(204);
     expect(getAllProducts()).toEqual([]);
-    expect(getShoppingCart()).toEqual([]);
+    expect(getItemsFromCart()).toEqual([]);
   });
 });
