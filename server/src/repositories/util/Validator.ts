@@ -3,7 +3,12 @@ import { ERROR_MESSAGE } from "../../errors/ErrorMessage";
 import { ProductInput } from "../Product";
 
 export const validateQuantity = (quantity: number): void => {
-  if (isNaN(quantity) || quantity < 1 || quantity > 99)
+  if (
+    isNaN(quantity) ||
+    !Number.isInteger(quantity) ||
+    quantity < 1 ||
+    quantity > 99
+  )
     throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY_RANGE);
 };
 
