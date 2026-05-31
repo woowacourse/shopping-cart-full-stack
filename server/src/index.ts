@@ -1,5 +1,6 @@
 import InMemoryStorage from "./storages/InMemoryStorage.js";
 import { createApp } from "./app.js";
+import { createInitialData } from "./data.js";
 import {
   createCartController,
   createProductController,
@@ -7,7 +8,7 @@ import {
 
 const PORT = process.env.PORT ?? 3000;
 
-const storage = new InMemoryStorage();
+const storage = new InMemoryStorage(createInitialData);
 const productController = createProductController(storage);
 const cartController = createCartController(storage);
 const app = createApp({ productController, cartController });

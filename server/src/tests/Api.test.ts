@@ -9,15 +9,23 @@ import {
   createProductController,
 } from "../controllers.js";
 import { ProductType } from "../models/Product.js";
+import { MY_CART_ID } from "../constanst.js";
+
+function initialData() {
+  return {
+    products: new Map(),
+    cart: new Map([[MY_CART_ID, new Cart()]]),
+  };
+}
 
 describe("프로덕트 API 테스트", () => {
-  const storage = new InMemoryStorage();
+  const storage = new InMemoryStorage(initialData);
   const cartController = createCartController(storage);
   const productController = createProductController(storage);
-
-  const app = createApp({ productController, cartController });
   const product1 = new Product("피자", 30000, "pizza.png");
   const product2 = new Product("치킨", 20000, "chicken.png");
+
+  const app = createApp({ productController, cartController });
 
   beforeEach(() => {
     storage.addItemById("products", product1.getId(), product1);
@@ -136,11 +144,11 @@ describe("프로덕트 API 테스트", () => {
 });
 
 describe("카트 API 테스트", () => {
-  const storage = new InMemoryStorage();
+  const storage = new InMemoryStorage(initialData);
   const productController = createProductController(storage);
   const cartController = createCartController(storage);
   const app = createApp({ productController, cartController });
-  const cart = storage.getItemById("cart", "my-cart") as Cart;
+  const cart = storage.getItemById("cart", MY_CART_ID) as Cart;
 
   beforeEach(() => {
     cart.updateItemByProductId("123", 10);

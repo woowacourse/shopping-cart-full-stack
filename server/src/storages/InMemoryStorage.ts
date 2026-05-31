@@ -1,11 +1,10 @@
 import { Storage } from "./Storage.js";
-import { INITIAL_DATA } from "../data.js";
 
 class InMemoryStorage implements Storage {
   #data: Record<string, any>;
 
-  constructor() {
-    this.#data = INITIAL_DATA;
+  constructor(initialData: () => Record<string, Map<string, unknown>>) {
+    this.#data = initialData();
   }
 
   getItemById(table: string, id: string) {
