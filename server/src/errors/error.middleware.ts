@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError } from "./http.error.js";
+import { HttpError } from "./http-error.js";
 
 export function globalErrorHandler(error: Error, req: Request, res: Response, next: NextFunction) {
   if (error instanceof HttpError) {

@@ -1,4 +1,4 @@
-import { BadRequestError, NotFoundError } from "../../errors/http.error.js";
+import { BadRequestError, NotFoundError } from "../../errors/http-error.js";
 
 export interface FieldError {
   field: string;
