@@ -1,11 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import CartService from "./cart.service.js";
-import { errorHandler } from "../../errors/errorHandler.js";
 
 class CartController {
   constructor(private cartService: CartService) {}
 
-  addCartItem = (req: Request, res: Response) => {
+  addCartItem = (req: Request, res: Response, next: NextFunction) => {
     try {
       const { productId, itemCount } = req.body;
       this.cartService.addCartItem(productId, itemCount);
@@ -15,12 +14,11 @@ class CartController {
         result: { productId },
       });
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 
-  getCartItems = (_req: Request, res: Response) => {
+  getCartItems = (_req: Request, res: Response, next: NextFunction) => {
     try {
       const cartItems = this.cartService.getCartItems();
 
@@ -30,12 +28,11 @@ class CartController {
         result: { cartItems },
       });
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 
-  deleteCartItem = (req: Request, res: Response) => {
+  deleteCartItem = (req: Request, res: Response, next: NextFunction) => {
     try {
       const productId = req.params.id;
 
@@ -43,12 +40,11 @@ class CartController {
 
       res.status(204).json();
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 
-  updateItemCount = (req: Request, res: Response) => {
+  updateItemCount = (req: Request, res: Response, next: NextFunction) => {
     try {
       const productId = Number(req.params.id);
       const { itemCount } = req.body;
@@ -64,8 +60,7 @@ class CartController {
         },
       });
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 }

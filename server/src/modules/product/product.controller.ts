@@ -1,11 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import ProductService from "./product.service.js";
-import { errorHandler } from "../../errors/errorHandler.js";
 
 class ProductController {
   constructor(private productService: ProductService) {}
 
-  addProduct = (req: Request, res: Response) => {
+  addProduct = (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, price, imgUrl, quantity } = req.body;
 
@@ -21,12 +20,11 @@ class ProductController {
         result: { id },
       });
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 
-  deleteProduct = (req: Request, res: Response) => {
+  deleteProduct = (req: Request, res: Response, next: NextFunction) => {
     try {
       const productId = req.params.id;
 
@@ -34,12 +32,11 @@ class ProductController {
 
       res.status(204).json();
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 
-  getProducts = (_req: Request, res: Response) => {
+  getProducts = (_req: Request, res: Response, next: NextFunction) => {
     try {
       const products = this.productService.getProducts();
 
@@ -49,8 +46,7 @@ class ProductController {
         result: { products },
       });
     } catch (error) {
-      const { status, code, message } = errorHandler(error);
-      res.status(status).json({ code, message });
+      next(error);
     }
   };
 }

@@ -7,6 +7,7 @@ import ProductController from "./modules/product/product.controller.js";
 import CartController from "./modules/cart/cart.controller.js";
 import createProductRouter from "./modules/product/product.routes.js";
 import createCartRouter from "./modules/cart/cart.routes.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 const inMemoryProductRepository = new InMemoryProductRepository();
 const inMemoryCartRepository = new InMemoryCartRepository();
@@ -34,6 +35,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/products", productRouter);
 app.use("/carts", cartRouter);
+app.use(errorMiddleware);
 
 export default app;
 
