@@ -10,7 +10,8 @@ export const validateQuantity = (quantity: number): void => {
 export const validateProductData = (data: ProductInput): void => {
   if (!data.name || data.name.length > 100)
     throw new InvalidError(ERROR_MESSAGE.INVALID_NAME);
-  if (data.price <= 0) throw new InvalidError(ERROR_MESSAGE.INVALID_PRICE);
+  if (isNaN(Number(data.price)) || Number(data.price) <= 0)
+    throw new InvalidError(ERROR_MESSAGE.INVALID_PRICE);
   if (!data.thumbnailUrl)
     throw new InvalidError(ERROR_MESSAGE.INVALID_THUMBNAIL_URL);
   validateQuantity(data.totalQuantity);
