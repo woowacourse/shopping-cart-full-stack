@@ -1,8 +1,6 @@
 import request from "supertest";
 import app, { resetApp } from "../app.js";
 
-//TODO: imMemory 가지고 테스트 진행해보기?
-
 describe("POST /products API 테스트", () => {
   beforeEach(() => {
     resetApp();
@@ -232,9 +230,10 @@ describe("GET /carts API 테스트", () => {
     const productResponse = await request(app)
       .post("/products")
       .send(newProduct);
+    const productId = productResponse.body.result.id;
 
     const newCartItem = {
-      productId: productResponse.body.result.id,
+      productId,
       itemCount: 10,
     };
     await request(app).post("/carts").send(newCartItem);
@@ -250,7 +249,7 @@ describe("GET /carts API 테스트", () => {
       result: {
         cartItems: [
           {
-            id: 1,
+            id: productId,
             name: "아디다스 양말",
             price: 13000,
             imgUrl: "https://image-url.com",
@@ -275,14 +274,15 @@ describe("DELETE /carts/:id API 테스트", () => {
     const productResponse = await request(app)
       .post("/products")
       .send(newProduct);
+    const productId = productResponse.body.result.id;
 
     const newCartItem = {
-      productId: 1,
+      productId,
       itemCount: 10,
     };
     await request(app).post("/carts").send(newCartItem);
 
-    deleteId = productResponse.body.result.id;
+    deleteId = productId;
   });
 
   test("장바구니 상품 삭제 시 204를 응답한다.", async () => {
@@ -308,7 +308,7 @@ describe("DELETE /carts/:id API 테스트", () => {
 });
 
 describe("PATCH /carts/:id API 테스트", () => {
-  let updateId = 1;
+  let updateId = 0;
   beforeEach(async () => {
     resetApp();
 
@@ -321,14 +321,15 @@ describe("PATCH /carts/:id API 테스트", () => {
     const productResponse = await request(app)
       .post("/products")
       .send(newProduct);
+    const productId = productResponse.body.result.id;
 
     const newCartItem = {
-      productId: 1,
+      productId,
       itemCount: 10,
     };
     await request(app).post("/carts").send(newCartItem);
 
-    updateId = productResponse.body.result.id;
+    updateId = productId;
   });
 
   test("장바구니 상품 수량 변경 성공 시 200과 id, itemCount를 응답한다.", async () => {
