@@ -36,9 +36,11 @@ cartItemRouter.delete('/cart/items/:cartItemId', (req, res, next) => {
 
 cartItemRouter.patch('/cart/items/:cartItemId', (req, res, next) => {
   try {
+    const { purchaseQuantity } = req.body ?? {};
+
     const cartItem = cartItemService.changePurchaseQuantity(
       req.params.cartItemId,
-      req.body.purchaseQuantity,
+      purchaseQuantity,
     );
 
     const responseBody = {
