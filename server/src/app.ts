@@ -3,7 +3,8 @@ import {
   productBodyValidateMiddleware,
   cartBodyValidateMiddelware,
 } from './middlewares/BodyValidateMiddleware.js';
-import { ProductController, CartController } from './controllers.js';
+import { ProductController } from './controllers/productController.js';
+import { CartController } from './controllers/cartController.js';
 import { handleErrors } from './errors.js';
 
 export function createApp({

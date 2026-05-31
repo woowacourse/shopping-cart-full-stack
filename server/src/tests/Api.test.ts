@@ -4,10 +4,8 @@ import InMemoryStorage from '../storages/InMemoryStorage.js';
 import Product from '../models/Product.js';
 import request from 'supertest';
 import Cart from '../models/Cart.js';
-import {
-  createCartController,
-  createProductController,
-} from '../controllers.js';
+import { createCartController } from '../controllers/cartController.js';
+import { createProductController } from '../controllers/productController.js';
 import { ProductType } from '../models/Product.js';
 
 describe('프로덕트 API 테스트', () => {
