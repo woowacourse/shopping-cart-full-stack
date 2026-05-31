@@ -6,7 +6,7 @@ import {
   findProductIdById,
   updateItemQuantity,
 } from "../repositories/cart.repository.js";
-import { findStockById } from "../repositories/products.repository.js";
+import { getStockByID } from "./products.service.js";
 
 export async function getCartItems() {
   return await findAll();
@@ -14,10 +14,10 @@ export async function getCartItems() {
 
 export async function updateCartItemQuantity(id: number, quantity: number) {
   const productId = findProductIdById(id);
-  if (productId === -1) throw new Error(CART_ERROR_RESPONSE.CART_ITEM_NOT_FOUND.code);
+  if (productId === null) throw new Error(CART_ERROR_RESPONSE.CART_ITEM_NOT_FOUND.code);
 
-  const stock = findStockById(productId);
-  if (stock === -1) throw new Error(PRODUCT_ERROR_RESPONSE.PRODUCT_NOT_FOUND.code);
+  const stock = await getStockByID(productId);
+  if (stock === null) throw new Error(PRODUCT_ERROR_RESPONSE.PRODUCT_NOT_FOUND.code);
   if (quantity > stock) throw new Error(CART_ERROR_RESPONSE.OUT_OF_STOCK.code);
 
   updateItemQuantity(id, quantity);

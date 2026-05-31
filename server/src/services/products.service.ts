@@ -1,5 +1,5 @@
 import { CreateProductDto } from "../interfaces/product.interface.js";
-import { save, findAll, deleteById, isAlreadyExist } from "../repositories/products.repository.js";
+import { save, findAll, deleteById, isAlreadyExist, findStockById } from "../repositories/products.repository.js";
 import { deleteByProductId } from "../repositories/cart.repository.js";
 import { PRODUCT_ERROR_RESPONSE } from "../constants/error.js";
 
@@ -9,6 +9,10 @@ export async function addProduct(product: CreateProductDto) {
 
 export async function getProducts() {
   return await findAll();
+}
+
+export async function getStockByID(id: number) {
+  return await findStockById(id);
 }
 
 export async function deleteProduct(id: number) {

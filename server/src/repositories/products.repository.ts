@@ -26,7 +26,7 @@ export function findStockById(id: number) {
   if (product) {
     return product.stock;
   }
-  return -1;
+  return null;
 }
 
 export function deleteById(id: number) {

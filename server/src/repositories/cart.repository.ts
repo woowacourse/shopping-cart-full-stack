@@ -12,15 +12,17 @@ export function saveNewItem(newItem: newCartItem) {
 }
 
 export function updateItemQuantity(id: number, quantity: number) {
-  const existingCartItem = cartItems.find((item) => item.id === id);
-  if (existingCartItem) {
-    existingCartItem.quantity = existingCartItem.quantity + quantity;
+  const item = cartItems.find((item) => item.id === id);
+  if (item) {
+    item.quantity = quantity;
   }
 }
 
 export function deleteById(id: number) {
   const index = cartItems.findIndex((item) => item.id === id);
-  cartItems.splice(index, 1);
+  if (index !== -1) {
+    cartItems.splice(index, 1);
+  }
 }
 
 export function deleteByProductId(productId: number) {
@@ -39,7 +41,7 @@ export function findProductIdById(id: number) {
   if (index) {
     return index.productId;
   }
-  return -1;
+  return null;
 }
 
 export function reset() {
