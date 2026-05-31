@@ -1,10 +1,20 @@
 import { AppError } from '../../errors/AppError.js';
+import {
+  CartItemRepository,
+  ProductRepository,
+} from '../../interfaces/repository.interface.js';
 import type { Product } from '../products/product.model.js';
-import { productRepository } from '../products/product.repository.js';
 import { CartItem } from './cartItem.model.js';
+import { productRepository } from '../products/product.repository.js';
 import { cartItemRepository } from './cartItem.repository.js';
 
-export const cartItemService = {
+export const createCartItemService = ({
+  productRepository,
+  cartItemRepository,
+}: {
+  productRepository: ProductRepository;
+  cartItemRepository: CartItemRepository;
+}) => ({
   addCartItem(productId: string, purchaseQuantity: number) {
     const product = validateProductId(productId);
     validatePurchaseQuantity(purchaseQuantity);
@@ -65,7 +75,12 @@ export const cartItemService = {
       purchaseQuantity: cartItem.purchaseQuantity,
     };
   },
-};
+});
+
+export const cartItemService = createCartItemService({
+  productRepository,
+  cartItemRepository,
+});
 
 const validateCartItemId = (cartItemId: string) => {
   if (typeof cartItemId !== 'string' || cartItemId.trim() === '') {

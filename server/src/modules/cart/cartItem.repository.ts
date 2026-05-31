@@ -1,7 +1,8 @@
 import { cartItemsDB } from '../../db.js';
+import { CartItemRepository } from '../../interfaces/repository.interface.js';
 import { CartItem } from './cartItem.model.js';
 
-export const cartItemRepository = {
+export const cartItemRepository: CartItemRepository = {
   save(cartItem: CartItem) {
     cartItemsDB.set(cartItem.cartItemId, cartItem);
     return cartItem;

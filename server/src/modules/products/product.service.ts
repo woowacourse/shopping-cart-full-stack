@@ -1,8 +1,12 @@
 import { AppError } from '../../errors/AppError.js';
 import { ModelError } from '../../errors/ModelError.js';
+import type {
+  CartItemRepository,
+  ProductRepository,
+} from '../../interfaces/repository.interface.js';
 import { cartItemRepository } from '../cart/cartItem.repository.js';
-import { Product } from './product.model.js';
 import { productRepository } from './product.repository.js';
+import { Product } from './product.model.js';
 
 type ProductParams = {
   productName: string;
@@ -11,7 +15,13 @@ type ProductParams = {
   imageUrl?: string;
 };
 
-export const productService = {
+export const createProductService = ({
+  productRepository,
+  cartItemRepository,
+}: {
+  productRepository: ProductRepository;
+  cartItemRepository: CartItemRepository;
+}) => ({
   addProduct(params: ProductParams) {
     // 필드 검사
     validateProductFields(params);
@@ -31,7 +41,6 @@ export const productService = {
       throw error;
     }
   },
-
   getProducts() {
     return productRepository.findAll();
   },
@@ -44,7 +53,12 @@ export const productService = {
     cartItemRepository.deleteByProductId(productId);
     productRepository.deleteById(productId);
   },
-};
+});
+
+export const productService = createProductService({
+  productRepository,
+  cartItemRepository,
+});
 
 const validateProductFields = (params: ProductParams) => {
   if (typeof params.productName !== 'string') {
