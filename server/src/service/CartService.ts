@@ -43,7 +43,6 @@ export const patchCartItemService = (
   if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
   if (!newQuantity) throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY);
   validateQuantity(newQuantity);
-
   const updatedQuantity = cartRepository.changeQuantity(
     cartItemId,
     newQuantity,
