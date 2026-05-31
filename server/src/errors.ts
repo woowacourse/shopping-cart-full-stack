@@ -27,39 +27,45 @@ export function handleErrors(res: express.Response, err: Error) {
   }
 }
 
-export class NotFoundError extends Error {
+export class APIError extends Error {
   statusCode: number;
   code: string;
 
-  constructor(
+  constructor({
+    statusCode,
+    code,
+    message,
+  }: {
+    statusCode: number;
+    code: string;
+    message: string;
+  }) {
+    super(message);
+    this.statusCode = statusCode;
+    this.code = code;
+  }
+}
+
+export class NotFoundError extends APIError {
+  constructor({
     code = "RESOURCE_NOT_FOUND",
     message = "요청한 리소스를 찾을 수 없습니다.",
-  ) {
-    super(message);
-    this.statusCode = 404;
-    this.code = code;
+  } = {}) {
+    super({ statusCode: 404, code: code, message: message });
   }
 }
 
-export class InternalServerError extends Error {
-  statusCode: number;
-  code: string;
-
-  constructor(
+export class InternalServerError extends APIError {
+  constructor({
     code = "INTERNAL_SERVER_ERROR",
     message = "예기치 못한 오류가 발생했습니다.",
-  ) {
-    super(message);
-    this.statusCode = 500;
-    this.code = code;
+  } = {}) {
+    super({ statusCode: 500, code: code, message: message });
   }
 }
 
-export class BadRequestError extends Error {
-  statusCode: number;
-  code: string;
+export class BadRequestError extends APIError {
   errors: Record<string, ErrorResponse>;
-
   constructor({
     code = "BAD_REQUEST",
     message = "요청 데이터가 유효하지 않습니다.",
@@ -69,9 +75,7 @@ export class BadRequestError extends Error {
     message?: string;
     errors: Record<string, ErrorResponse>;
   }) {
-    super(message);
-    this.statusCode = 400;
-    this.code = code;
+    super({ statusCode: 400, code: code, message: message });
     this.errors = errors;
   }
 }
