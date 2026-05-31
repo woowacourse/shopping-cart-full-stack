@@ -1,5 +1,6 @@
 import { ServiceError } from "../../common/error.ts";
 import * as productsService from "./products.service.ts";
+import * as cartsService from "../carts/carts.service.ts";
 import type { ProductRequest } from "./products.dto.ts";
 
 describe("product service 테스트", () => {
@@ -166,6 +167,22 @@ describe("product service 테스트", () => {
 
       expect(productsAfterDelete).toHaveLength(productsBeforeDelete.length - 1);
       expect(productsAfterDelete).not.toContainEqual(product);
+    });
+
+    it("상품을 삭제하면 장바구니에서도 해당 상품이 삭제된다.", () => {
+      const productIdToDelete = 1;
+      const cartId = 1;
+      const cartBeforeDelete = cartsService.getCartById(cartId);
+      expect(
+        cartBeforeDelete.products.some((p) => p.id === productIdToDelete),
+      ).toBe(true);
+
+      productsService.deleteProduct(productIdToDelete);
+
+      const cartAfterDelete = cartsService.getCartById(cartId);
+      expect(
+        cartAfterDelete.products.some((p) => p.id === productIdToDelete),
+      ).toBe(false);
     });
 
     it("전달받은 id와 같은 항목이 DB에 존재하지 않는 경우 ServiceError를 던진다.", () => {
