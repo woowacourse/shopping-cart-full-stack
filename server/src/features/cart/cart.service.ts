@@ -1,5 +1,6 @@
 import { type CartRepository } from "./cart.repository.js";
 import { CartNotFoundError } from "./cart.error.js";
+import Cart from "./cart.js";
 
 export default class CartService {
   constructor(private cartRepository: CartRepository) {}
@@ -14,8 +15,9 @@ export default class CartService {
       throw new CartNotFoundError();
     }
 
-    cart.quantity = quantity;
-    await this.cartRepository.save(cart);
+    const cartDomain = new Cart({ productId, quantity });
+    await this.cartRepository.save(cartDomain.toEntity());
+
     return {
       productId,
       quantity,

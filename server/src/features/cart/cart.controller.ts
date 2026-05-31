@@ -35,12 +35,16 @@ export default class CartController {
     const { productId } = req.params;
     const { quantity } = req.body;
     const id = Number(productId);
+    const qty = Number(quantity);
 
-    if (Number.isNaN(id) || Number.isNaN(Number(quantity)) || quantity < 1 || quantity > 99) {
+    if (Number.isNaN(id)) {
+      throw new BadRequestError("상품 id 형식이 올바르지 않습니다.");
+    }
+    if (Number.isNaN(qty)) {
       throw new BadRequestError("수량이 유효하지 않습니다.");
     }
 
-    const data = await this.cartService.updateQuantity(id, quantity);
+    const data = await this.cartService.updateQuantity(id, qty);
     res.status(200).json({
       result: "success",
       data,
