@@ -9,7 +9,7 @@ export default class ShoppingCart {
   }
 
   #validateQuantity(quantity: Quantity) {
-    if (isNaN(quantity)) {
+    if (!Number.isInteger(quantity)) {
       throw new Error('상품 수량은 정수여야 합니다.');
     }
 
