@@ -3,8 +3,7 @@ import { newProduct, Product } from "../interfaces/product.interface.js";
 const products: Product[] = [];
 
 export function isAlreadyExist(id: number) {
-  if (products.find((product) => product.id === id)) return true;
-  return false;
+  return products.some((product) => product.id === id);
 }
 
 export function save(product: newProduct) {
@@ -30,10 +29,9 @@ export function findStockById(id: number) {
   return -1;
 }
 
-export function deleteById(id: number): boolean {
+export function deleteById(id: number) {
   const index = products.findIndex((product) => product.id === id);
   products.splice(index, 1);
-  return true;
 }
 
 export function reset() {

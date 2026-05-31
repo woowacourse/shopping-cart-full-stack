@@ -6,7 +6,7 @@ import {
   deleteProduct as removeProduct,
 } from "../services/products.service.js";
 import { createProductRequestSchema } from "../schemas/product.schema.js";
-import { PRODUCT_ERROR_RESPONSE } from "../constants/error.js";
+import { COMMON_ERROR_RESPONSE } from "../constants/error.js";
 
 export async function createProduct(request: Request, response: Response): Promise<void> {
   const dto: CreateProductDto = createProductRequestSchema.parse(request.body);
@@ -17,15 +17,13 @@ export async function createProduct(request: Request, response: Response): Promi
 export async function getProducts(_request: Request, response: Response): Promise<void> {
   const productList = await fetchProducts();
   response.status(200).json(productList);
-  return;
 }
 
 export async function deleteProduct(request: Request, response: Response): Promise<void> {
   const id = Number(request.params.id);
-  const deleted = await removeProduct(id);
-  if (deleted) {
-    response.status(204).end();
-    return;
+  if (Number.isNaN(id)) {
+    throw new Error(COMMON_ERROR_RESPONSE.INVALID_ID.code);
   }
-  response.status(404).json(PRODUCT_ERROR_RESPONSE.PRODUCT_NOT_FOUND);
+  await removeProduct(id);
+  response.status(204).end();
 }

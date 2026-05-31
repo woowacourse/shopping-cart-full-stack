@@ -9,5 +9,3 @@ export interface CartItem {
   productId: number;
   quantity: number;
 }
-
-export type UpdateResultKey = "CART_ITEM_NOT_FOUND" | "PRODUCT_NOT_FOUND" | "OUT_OF_STOCK";

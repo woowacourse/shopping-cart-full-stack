@@ -1,4 +1,4 @@
-import { UpdateResultKey } from "../interfaces/cart.interface.js";
+import { CART_ERROR_RESPONSE, PRODUCT_ERROR_RESPONSE } from "../constants/error.js";
 import {
   findAll,
   isAlreadyExist,
@@ -12,21 +12,20 @@ export async function getCartItems() {
   return await findAll();
 }
 
-export async function updateCartItemQuantity(id: number, quantity: number): Promise<UpdateResultKey | "SUCCESS"> {
+export async function updateCartItemQuantity(id: number, quantity: number) {
   const productId = findProductIdById(id);
-  if (productId === -1) return "CART_ITEM_NOT_FOUND";
+  if (productId === -1) throw new Error(CART_ERROR_RESPONSE.CART_ITEM_NOT_FOUND.code);
+
   const stock = findStockById(productId);
-  if (stock === -1) return "PRODUCT_NOT_FOUND";
-  if (quantity > stock) return "OUT_OF_STOCK";
+  if (stock === -1) throw new Error(PRODUCT_ERROR_RESPONSE.PRODUCT_NOT_FOUND.code);
+  if (quantity > stock) throw new Error(CART_ERROR_RESPONSE.OUT_OF_STOCK.code);
 
   updateItemQuantity(id, quantity);
-  return "SUCCESS";
 }
 
 export async function deleteCartItem(id: number) {
   if (!isAlreadyExist(id)) {
-    return false;
+    throw new Error(CART_ERROR_RESPONSE.CART_ITEM_NOT_FOUND.code);
   }
   await deleteById(id);
-  return true;
 }
