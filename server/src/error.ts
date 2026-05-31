@@ -40,6 +40,18 @@ export class RequestTimeoutError extends Error {
   }
 }
 
+export class InternalServerError extends Error {
+  code: string;
+  field: string;
+
+  constructor({ code, message, field }: ErrorParams) {
+    super(message);
+    this.code = code;
+    this.message = message;
+    this.field = field;
+  }
+}
+
 export class NotImplementedError extends Error {
   code: string;
   field: string;

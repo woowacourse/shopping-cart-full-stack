@@ -7,6 +7,7 @@ import {
   NotFoundError,
   RequestTimeoutError,
   NotImplementedError,
+  InternalServerError,
 } from "./error.ts";
 
 const app = express();
@@ -78,6 +79,13 @@ const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
     });
   }
   if (error instanceof NotImplementedError) {
+    return res.status(501).send({
+      message: error.message,
+      field: error.field,
+    });
+  }
+
+  if (error instanceof InternalServerError) {
     return res.status(501).send({
       message: error.message,
       field: error.field,
