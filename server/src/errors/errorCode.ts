@@ -49,11 +49,6 @@ export const ERROR_CODE = {
     status: 400,
     message: "주문 수량 필드가 누락되었습니다.",
   },
-  PRODUCT_NOT_EXIST_FOR_ORDER: {
-    code: "PRODUCT_NOT_EXIST",
-    status: 404,
-    message: "수량을 변경하려는 상품이 존재하지 않습니다.",
-  },
   PRODUCT_NOT_EXIST_IN_CART: {
     code: "PRODUCT_NOT_EXIST_IN_CART",
     status: 404,
