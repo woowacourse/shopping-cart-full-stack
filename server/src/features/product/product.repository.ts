@@ -21,9 +21,9 @@ export default class InMemoryProductRepository implements ProductRepository {
   }
 
   async findAll() {
-    const products = Array.from(this.db.PRODUCT_TABLE.entries()).map(([id, productData]) => {
+    const products = this.db.PRODUCT_TABLE.map((productData) => {
       return {
-        id,
+        id: productData.id,
         name: productData.name,
         price: productData.price,
         imgUrl: productData.imgUrl,
