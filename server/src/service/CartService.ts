@@ -3,6 +3,7 @@ import { productRepository } from "../repositories/ProductRepository";
 import { cartRepository } from "../repositories/CartRepository";
 import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
+import { validateQuantity } from "../repositories/util/Validator";
 
 export const getCartItemsService = (): CartItemData[] => {
   return cartRepository.getCartProducts().map((cartItem) => {
@@ -22,7 +23,7 @@ export const postCartItemService = (
 ): StoredCartItem => {
   const product = productRepository.findById(Number(productId));
   if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
-
+  validateQuantity(quantity);
   return cartRepository.addProductToCart(productId, quantity);
 };
 
@@ -41,6 +42,7 @@ export const patchCartItemService = (
 ): StoredCartItem => {
   if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
   if (!newQuantity) throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY);
+  validateQuantity(newQuantity);
 
   const updatedQuantity = cartRepository.changeQuantity(
     cartItemId,
