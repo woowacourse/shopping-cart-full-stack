@@ -15,6 +15,7 @@ export const checkIsProduct = (arg: unknown): arg is CreateProductRequest => {
     "image" in arg &&
     typeof arg.name === "string" &&
     typeof arg.price === "number" &&
+    Number.isInteger(arg.price) &&
     typeof arg.image === "string"
   ) {
     return true;
