@@ -9,15 +9,21 @@ export const validateQuantity = (quantity: number): void => {
     quantity < 1 ||
     quantity > 99
   )
-    throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY_RANGE);
+    throw new InvalidError(
+      "INVALID_QUANTITY_RANGE",
+      ERROR_MESSAGE.INVALID_QUANTITY_RANGE,
+    );
 };
 
 export const validateProductData = (data: ProductInput): void => {
   if (!data.name || data.name.length > 100)
-    throw new InvalidError(ERROR_MESSAGE.INVALID_NAME);
+    throw new InvalidError("INVALID_NAME", ERROR_MESSAGE.INVALID_NAME);
   if (isNaN(Number(data.price)) || Number(data.price) <= 0)
-    throw new InvalidError(ERROR_MESSAGE.INVALID_PRICE);
+    throw new InvalidError("INVALID_PRICE", ERROR_MESSAGE.INVALID_PRICE);
   if (!data.thumbnailUrl)
-    throw new InvalidError(ERROR_MESSAGE.INVALID_THUMBNAIL_URL);
+    throw new InvalidError(
+      "INVALID_THUMBNAIL_URL",
+      ERROR_MESSAGE.INVALID_THUMBNAIL_URL,
+    );
   validateQuantity(data.totalQuantity);
 };

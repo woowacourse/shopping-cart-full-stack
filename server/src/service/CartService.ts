@@ -22,17 +22,25 @@ export const postCartItemService = (
   quantity: number,
 ): StoredCartItem => {
   const product = productRepository.findById(productId);
-  if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
+  if (!product)
+    throw new NotFoundError(
+      "NOT_FOUND_PRODUCT",
+      ERROR_MESSAGE.NOT_FOUND_PRODUCT,
+    );
   validateQuantity(quantity);
   return cartRepository.addProductToCart(productId, quantity);
 };
 
 export const deleteCartItemService = (cartItemId: number): void => {
   if (isNaN(cartItemId) || cartItemId <= 0)
-    throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
+    throw new InvalidError("INVALID_CART_ID", ERROR_MESSAGE.INVALID_CART_ID);
 
   const cartItem = cartRepository.findById(cartItemId);
-  if (!cartItem) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
+  if (!cartItem)
+    throw new NotFoundError(
+      "NOT_FOUND_CART_ITEM",
+      ERROR_MESSAGE.NOT_FOUND_CART_ITEM,
+    );
 
   cartRepository.deleteByCartId(cartItemId);
 };
@@ -42,7 +50,7 @@ export const patchCartItemService = (
   newQuantity: number,
 ): StoredCartItem => {
   if (isNaN(cartItemId) || cartItemId <= 0)
-    throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
+    throw new InvalidError("INVALID_CART_ID", ERROR_MESSAGE.INVALID_CART_ID);
   validateQuantity(newQuantity);
 
   const updatedQuantity = cartRepository.changeQuantity(
@@ -51,7 +59,10 @@ export const patchCartItemService = (
   );
 
   if (!updatedQuantity)
-    throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
+    throw new NotFoundError(
+      "NOT_FOUND_CART_ITEM",
+      ERROR_MESSAGE.NOT_FOUND_CART_ITEM,
+    );
 
   return updatedQuantity;
 };
