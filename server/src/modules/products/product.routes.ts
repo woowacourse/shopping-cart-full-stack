@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { productService } from './product.service.js';
+import { parseProductRequest } from './product.request.js';
 
 export const productRouter = Router();
 
@@ -13,7 +14,8 @@ productRouter.get('/products', (_req, res, next) => {
 });
 productRouter.post('/products', (req, res, next) => {
   try {
-    const product = productService.addProduct(req.body ?? {});
+    const productRequest = parseProductRequest(req.body ?? {});
+    const product = productService.addProduct(productRequest);
     res.status(201).json(product);
   } catch (error) {
     next(error);

@@ -7,13 +7,7 @@ import type {
 import { cartItemRepository } from '../cart/cartItem.repository.js';
 import { productRepository } from './product.repository.js';
 import { Product } from './product.model.js';
-
-type ProductParams = {
-  productName: string;
-  productPrice: number;
-  remainingQuantity: number;
-  imageUrl?: string;
-};
+import type { ProductRequest } from './product.request.js';
 
 export const createProductService = ({
   productRepository,
@@ -22,10 +16,7 @@ export const createProductService = ({
   productRepository: ProductRepository;
   cartItemRepository: CartItemRepository;
 }) => ({
-  addProduct(params: ProductParams) {
-    // 필드 검사
-    validateProductFields(params);
-
+  addProduct(params: ProductRequest) {
     try {
       const product = new Product({
         productId: crypto.randomUUID(),
@@ -59,40 +50,3 @@ export const productService = createProductService({
   productRepository,
   cartItemRepository,
 });
-
-const validateProductFields = (params: ProductParams) => {
-  if (typeof params.productName !== 'string') {
-    throw new AppError(
-      400,
-      'INVALID_PRODUCT_NAME',
-      '유효하지 않은 상품 이름입니다.',
-    );
-  }
-
-  if (typeof params.productPrice !== 'number') {
-    throw new AppError(
-      400,
-      'INVALID_PRODUCT_PRICE',
-      '유효하지 않은 상품 가격입니다.',
-    );
-  }
-
-  if (typeof params.remainingQuantity !== 'number') {
-    throw new AppError(
-      400,
-      'INVALID_REMAINING_QUANTITY',
-      '유효하지 않은 상품 수량입니다.',
-    );
-  }
-
-  if (
-    params.imageUrl !== undefined &&
-    (typeof params.imageUrl !== 'string' || params.imageUrl.trim() === '')
-  ) {
-    throw new AppError(
-      400,
-      'INVALID_IMAGE_URL',
-      '유효하지 않은 이미지 경로입니다.',
-    );
-  }
-};
