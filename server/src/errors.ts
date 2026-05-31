@@ -12,19 +12,20 @@ export function handleErrors(res: express.Response, err: Error) {
       message: err.message,
       errors: err.errors,
     });
+    return;
   }
   if (err instanceof NotFoundError) {
     res.status(err.statusCode).send({
       code: err.code,
       message: err.message,
     });
-  } else {
-    const err = new InternalServerError();
-    res.status(err.statusCode).send({
-      code: err.code,
-      message: err.message,
-    });
+    return;
   }
+  const internalErr = new InternalServerError();
+  res.status(internalErr.statusCode).send({
+    code: internalErr.code,
+    message: internalErr.message,
+  });
 }
 
 export class APIError extends Error {
