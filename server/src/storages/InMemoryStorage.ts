@@ -1,5 +1,5 @@
-import { Storage } from "./Storage.js";
-import { INITIAL_DATA } from "../data.js";
+import { Storage } from './Storage.js';
+import { INITIAL_DATA } from '../data.js';
 
 class InMemoryStorage implements Storage {
   #data: Record<string, any>;
@@ -13,7 +13,7 @@ class InMemoryStorage implements Storage {
   }
 
   addItemById<T>(table: string, id: string, obj: T) {
-    return this.#data[table].set(id, obj);
+    this.#data[table].set(id, obj);
   }
 
   hasItemById(table: string, id: string): boolean {
@@ -21,7 +21,7 @@ class InMemoryStorage implements Storage {
   }
 
   updateItemById<T>(table: string, id: string, obj: T) {
-    return this.#data[table].set(id, obj);
+    this.#data[table].set(id, obj);
   }
 
   deleteItemById(table: string, id: string) {
@@ -29,7 +29,7 @@ class InMemoryStorage implements Storage {
   }
 
   allItems(table: string) {
-    return this.#data[table].values();
+    return [...this.#data[table].values()];
   }
 
   clearAllItems(table: string) {
