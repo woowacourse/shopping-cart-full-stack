@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import type CartService from "./cart.service.js";
 import { BadRequestError } from "../../errors/http-error.js";
 
-export interface CartItemResponse {
+export interface CartResponse {
   productId: number;
   productName: string;
   productImg: string;
@@ -15,7 +15,7 @@ export default class CartController {
 
   getAllItems = async (req: Request, res: Response) => {
     const dbItems = await this.cartService.getAll();
-    const cartItems: CartItemResponse[] = dbItems.map((item) => ({
+    const cartItems: CartResponse[] = dbItems.map((item) => ({
       productId: item.product.id,
       productName: item.product.name,
       productImg: item.product.imgUrl,
