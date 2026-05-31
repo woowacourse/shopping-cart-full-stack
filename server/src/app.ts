@@ -17,6 +17,7 @@ app.use(express.json());
 app.use((_req, res, next) => {
   const timeout = setTimeout(() => {
     if (!res.headersSent) {
+      res.locals.timeout = true;
       next(
         new RequestTimeoutError({
           code: "TIME_OUT",
@@ -27,9 +28,8 @@ app.use((_req, res, next) => {
     }
   }, 3000);
 
-  res.on("finish", () => {
-    clearTimeout(timeout);
-  });
+  res.on("finish", () => clearTimeout(timeout));
+  res.on("close", () => clearTimeout(timeout));
 
   next();
 });
@@ -40,7 +40,7 @@ app.use("/carts", shoppingCartRouter);
 app.get("/slow", async (_req, res, next) => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 3001));
-
+    if (res.locals.timeout) return;
     if (!res.headersSent) {
       throw new RequestTimeoutError({
         code: "TIME_OUT",
