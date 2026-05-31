@@ -1,9 +1,10 @@
 import express from "express";
-import { errorHandler } from "./errors/errorHandler.js";
 import ProductService from "./domain/product/product.service.js";
 import { InMemoryProductRepository } from "./domain/product/product.repository.js";
 import { InMemoryCartRepository } from "./domain/cart/cart.repository.js";
 import CartService from "./domain/cart/cart.service.js";
+import ProductController from "./controllers/product.controller.js";
+import CartController from "./controllers/cart.controller.js";
 
 const inMemoryProductRepository = new InMemoryProductRepository();
 const inMemoryCartRepository = new InMemoryCartRepository();
@@ -16,6 +17,8 @@ const cartService = new CartService(
   inMemoryCartRepository,
   inMemoryProductRepository,
 );
+const productController = new ProductController(productService);
+const cartController = new CartController(cartService);
 
 const app = express();
 
@@ -26,119 +29,25 @@ app.get("/health", (_req, res) => {
 });
 
 // 상품 추가
-app.post("/products", (req, res) => {
-  try {
-    const { name, price, imgUrl, quantity } = req.body;
-
-    const id = productService.addProduct({ name, price, imgUrl, quantity });
-
-    res.status(201).json({
-      message: "성공적으로 생성되었습니다.",
-      result: { id },
-    });
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.post("/products", productController.addProduct);
 
 // 상품 삭제
-app.delete("/products/:id", (req, res) => {
-  try {
-    const productId = req.params.id;
-
-    productService.deleteProduct(Number(productId));
-
-    res.status(204).json();
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.delete("/products/:id", productController.deleteProduct);
 
 // 상품 조회
-app.get("/products", (_, res) => {
-  try {
-    const products = productService.getProducts();
-
-    res.status(200).json({
-      code: 200,
-      message: "요청에 성공했습니다.",
-      result: { products },
-    });
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.get("/products", productController.getProducts);
 
 // 장바구니에 상품 추가
-app.post("/carts", (req, res) => {
-  try {
-    const { productId, itemCount } = req.body;
-    cartService.addCartItem(productId, itemCount);
-
-    res.status(201).json({
-      message: "성공적으로 생성되었습니다.",
-      result: { productId },
-    });
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.post("/carts", cartController.addCartItem);
 
 // 장바구니 상품 조회
-app.get("/carts", (_, res) => {
-  try {
-    const cartItems = cartService.getCartItems();
-
-    res.status(200).json({
-      code: 200,
-      message: "요청에 성공했습니다.",
-      result: { cartItems },
-    });
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.get("/carts", cartController.getCartItems);
 
 // 장바구니 상품 삭제
-app.delete("/carts/:id", (req, res) => {
-  try {
-    const productId = req.params.id;
-
-    cartService.deleteCartItem(Number(productId));
-
-    res.status(204).json();
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.delete("/carts/:id", cartController.deleteCartItem);
 
 // 장바구니 상품 수량 변경
-app.patch("/carts/:id", (req, res) => {
-  try {
-    const productId = Number(req.params.id);
-    const { itemCount } = req.body;
-
-    cartService.updateItemCount(productId, itemCount);
-
-    res.status(200).json({
-      code: 200,
-      message: "성공적으로 수량이 변경되었습니다.",
-      result: {
-        id: productId,
-        itemCount: itemCount,
-      },
-    });
-  } catch (error) {
-    const { status, code, message } = errorHandler(error);
-    res.status(status).json({ code, message });
-  }
-});
+app.patch("/carts/:id", cartController.updateItemCount);
 
 export default app;
 
