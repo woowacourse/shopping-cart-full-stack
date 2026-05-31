@@ -6,7 +6,7 @@ export interface InMemoryDB {
   CART_TABLE: CartEntity[];
 }
 
-export const db: InMemoryDB = {
+export const DB: InMemoryDB = {
   PRODUCT_TABLE: [],
   CART_TABLE: [],
 };

@@ -1,3 +1,3 @@
-export const isImgUrl = (imgUrl: string) => {
-  return !imgUrl.match(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/);
+export const isImgUrl = (imgUrl: string): boolean => {
+  return /^https:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/.test(imgUrl);
 };
