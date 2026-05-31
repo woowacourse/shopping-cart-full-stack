@@ -12,7 +12,7 @@ export const CartFieldValidators: ValidatorMap = {
 
 export function validateIsNotEmpty(label: string) {
   return function validate(value: string) {
-    if (value === "")
+    if (!!value === false)
       throw new FieldError({
         code: "REQUIRED_FIELD",
         message: `${label} 필드가 누락되었습니다.`,

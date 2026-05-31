@@ -6,31 +6,71 @@ import {
 } from "../validators.js";
 
 describe("validators 테스트", () => {
-  test("필수 필드를 누락되었을때 에러가 반환된다.", () => {
+  describe("빈문자 검증 테스트", () => {
     const validator = validateIsNotEmpty("상품명");
-    expect(() => {
-      validator("");
-    }).toThrow("상품명 필드가 누락되었습니다.");
+    test.each(["", null, undefined])(
+      "필수 필드를 누락했을때 에러가 반환된다.",
+      (value: any) => {
+        expect(() => validator(value)).toThrow("상품명 필드가 누락되었습니다.");
+      },
+    );
+
+    test.each(["치킨", "햄버123거", "00000", "!{}{<>>"])(
+      "필수 필드에 값이 전달되면 에러가 발생하지 않는다.",
+      (value) => {
+        expect(() => validator(value)).not.toThrow();
+      },
+    );
   });
 
-  test("범위내 길이를 만족하지 않으면 에러가 반환된다.", () => {
-    const validator = validateLengthRange("상품명", 0, 5);
-    expect(() => {
-      validator("helloworld");
-    }).toThrow("상품명은 0 이상 5 이하여야 합니다.");
+  describe("범위내 길이를 만족하지 않는 값 검증 테스트", () => {
+    const validator = validateLengthRange("상품명", 1, 5);
+    test.each(["", "민트초코치킨"])(
+      "문자의 길이가 범위내를 벗어나면 에러가 반환된다.",
+      (value) => {
+        expect(() => validator(value)).toThrow(
+          "상품명은 1 이상 5 이하여야 합니다.",
+        );
+      },
+    );
+
+    test("문자의 길이가 범위내를 만족하면 에러가 발생하지 않는다", () => {
+      expect(() => validator("민트초코")).not.toThrow();
+    });
   });
 
-  test("최소숫자보다 낮으면 에러가 반환된다.", () => {
+  describe("지정된 최소값보다 큰 값인지 검증 테스트", () => {
     const validator = validateMinNumber("가격", 20000);
-    expect(() => {
-      validator(10000);
-    }).toThrow("가격은 20000 보다 큰 숫자여야 합니다.");
+    test.each([19999, 20000])(
+      "최솟값 이하의 값이면 에러가 반환된다.",
+      (value) => {
+        expect(() => validator(value)).toThrow(
+          "가격은 20000 보다 큰 숫자여야 합니다.",
+        );
+      },
+    );
+
+    test("최솟값보다 큰 값이면 에러가 발생하지 않는다.", () => {
+      expect(() => validator(20001)).not.toThrow();
+    });
   });
 
-  test("숫자범위 내의 숫자가 아니면 에러가 반환된다.", () => {
+  describe("숫자 범위 검증 테스트", () => {
     const validator = validateNumberRange("수량", 0, 100);
-    expect(() => {
-      validator(101);
-    }).toThrow("수량은 0 이상 100 이하여야 합니다.");
+    test.each([-1, 101])(
+      "범위를 벗어난 값이면 에러가 반환된다.",
+      (value) => {
+        expect(() => validator(value)).toThrow(
+          "수량은 0 이상 100 이하여야 합니다.",
+        );
+      },
+    );
+
+    test.each([0, 100])(
+      "범위의 경계값이면 에러가 발생하지 않는다.",
+      (value) => {
+        expect(() => validator(value)).not.toThrow();
+      },
+    );
   });
 });
