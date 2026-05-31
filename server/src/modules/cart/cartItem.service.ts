@@ -1,5 +1,5 @@
 import { AppError } from '../../errors/AppError.js';
-import {
+import type {
   CartItemRepository,
   ProductRepository,
 } from '../../interfaces/repository.interface.js';
@@ -16,8 +16,11 @@ export const createCartItemService = ({
   cartItemRepository: CartItemRepository;
 }) => ({
   addCartItem(productId: string, purchaseQuantity: number) {
-    const product = validateProductId(productId);
+    validateProductId(productId);
     validatePurchaseQuantity(purchaseQuantity);
+
+    const product = findProduct(productId, productRepository);
+
     validateRemainingQuantity(product, purchaseQuantity);
 
     // 추가하려는 상품이 장바구니에 이미 존재할 경우
@@ -49,23 +52,26 @@ export const createCartItemService = ({
   },
 
   getCartItemById(cartItemId: string) {
-    return validateCartItemId(cartItemId);
+    validateCartItemId(cartItemId);
+
+    return findCartItem(cartItemId, cartItemRepository);
   },
 
   deleteCartItem(cartItemId: string) {
-    const cartItem = validateCartItemId(cartItemId);
+    validateCartItemId(cartItemId);
+
+    const cartItem = findCartItem(cartItemId, cartItemRepository);
+
     cartItemRepository.deleteById(cartItem.cartItemId);
   },
 
   changePurchaseQuantity(cartItemId: string, quantity: number) {
-    const cartItem = validateCartItemId(cartItemId);
+    validateCartItemId(cartItemId);
     validatePurchaseQuantity(quantity);
 
-    // 이중 검증
-    const product = productRepository.findById(cartItem.productId);
-    if (!product) {
-      throw new AppError(404, 'PRODUCT_NOT_FOUND', '존재하지 않는 상품입니다.');
-    }
+    const cartItem = findCartItem(cartItemId, cartItemRepository);
+
+    const product = findProduct(cartItem.productId, productRepository);
 
     validateRemainingQuantity(product, quantity);
     cartItem.changeQuantityTo(quantity);
@@ -90,18 +96,6 @@ const validateCartItemId = (cartItemId: string) => {
       '유효하지 않은 장바구니 상품 id입니다.',
     );
   }
-
-  const cartItem = cartItemRepository.findById(cartItemId);
-
-  if (!cartItem) {
-    throw new AppError(
-      404,
-      'CART_ITEM_NOT_FOUND',
-      '존재하지 않는 장바구니 상품입니다.',
-    );
-  }
-
-  return cartItem;
 };
 
 const validateProductId = (productId: string) => {
@@ -112,14 +106,6 @@ const validateProductId = (productId: string) => {
       '유효하지 않은 상품 id입니다.',
     );
   }
-
-  const product = productRepository.findById(productId);
-
-  if (!product) {
-    throw new AppError(404, 'PRODUCT_NOT_FOUND', '존재하지 않는 상품입니다.');
-  }
-
-  return product;
 };
 
 const validatePurchaseQuantity = (purchaseQuantity: number) => {
@@ -148,4 +134,37 @@ const validateRemainingQuantity = (
       '상품의 남은 수량을 초과했습니다.',
     );
   }
+};
+
+const findCartItem = (
+  cartItemId: string,
+  cartItemRepository: CartItemRepository,
+) => {
+  validateCartItemId(cartItemId);
+
+  const cartItem = cartItemRepository.findById(cartItemId);
+
+  if (!cartItem) {
+    throw new AppError(
+      404,
+      'CART_ITEM_NOT_FOUND',
+      '존재하지 않는 장바구니 상품입니다.',
+    );
+  }
+
+  return cartItem;
+};
+const findProduct = (
+  productId: string,
+  productRepository: ProductRepository,
+) => {
+  validateProductId(productId);
+
+  const product = productRepository.findById(productId);
+
+  if (!product) {
+    throw new AppError(404, 'PRODUCT_NOT_FOUND', '존재하지 않는 상품입니다.');
+  }
+
+  return product;
 };
