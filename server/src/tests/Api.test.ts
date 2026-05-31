@@ -55,7 +55,7 @@ describe("프로덕트 API 테스트", () => {
     expect(res.status).toBe(201);
     expect(res.body).toEqual({ id: "fixed id" });
     const products = storage.allItems("products");
-    expect([...products].length).toBe(3);
+    expect(products.length).toBe(3);
   });
 
   test("프로덕트를 삭제한다.", async () => {
@@ -63,7 +63,7 @@ describe("프로덕트 API 테스트", () => {
     const res = await request(app).del(`/api/products/${id}/`);
     expect(res.status).toBe(204);
     const products = storage.allItems("products");
-    expect([...products].length).toBe(1);
+    expect(products.length).toBe(1);
   });
 
   test("필수필드를 전달하지 않으면 400 에러가 발생한다.", async () => {
@@ -185,7 +185,7 @@ describe("카트 API 테스트", () => {
     const res = await request(app).delete("/api/cart/items/123");
     expect(res.status).toBe(204);
     const cart = storage.getItemById("cart", MY_CART_ID);
-    expect([...cart.getAllItems()].length).toBe(1);
+    expect(cart.getAllItems().length).toBe(1);
   });
 
   test("0 ~ 100개 사이가 아닌 수량을 수정하려 하면 400 에러가 발생한다.", async () => {

@@ -28,7 +28,7 @@ class InMemoryStorage implements Storage {
   }
 
   allItems(table: string) {
-    return this.#data[table].values();
+    return [...this.#data[table].values()];
   }
 
   clearAllItems(table: string) {

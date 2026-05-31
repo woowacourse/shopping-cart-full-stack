@@ -22,9 +22,9 @@ export function createProductController(storage: Storage): ProductController {
     get: (_req, res, next) => {
       try {
         res.send(
-          [...storage.allItems<Product>("products")].map((product) =>
-            product.toObject(),
-          ),
+          storage
+            .allItems<Product>("products")
+            .map((product) => product.toObject()),
         );
       } catch (err) {
         next(err);
