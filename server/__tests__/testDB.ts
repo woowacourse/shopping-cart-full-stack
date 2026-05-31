@@ -1,17 +1,8 @@
-export interface BodyForTest {
-  id?: number;
-  imageUrl: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { Database, Product } from '../src/database';
 
-interface TestDB {
-  Products: BodyForTest[] | undefined;
-  Cart: BodyForTest[] | undefined;
-}
+export type BodyForTest = Product;
 
-export const TestDB: TestDB = {
+export const TestDB: Database = {
   Products: [
     {
       id: 1,

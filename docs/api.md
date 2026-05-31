@@ -19,7 +19,7 @@ CORS 설정:
 
   | 메서드 | 요청 URL |
   | ------ | -------- |
-  | GET    | /product |
+  | GET    | /products |
   - Response Syntax
 
     ```
@@ -49,7 +49,7 @@ CORS 설정:
 
   | 메서드 | 요청 URL |
   | ------ | -------- |
-  | POST   | /product |
+  | POST   | /products |
   - Request Syntax
 
     ```
@@ -69,7 +69,7 @@ CORS 설정:
 - 상품 삭제
   | 메서드 | 요청 URL |
   | --- | --- |
-  | DELETE | /product/:id |
+  | DELETE | /products/:id |
   - Request Parameter
     | 파라미터 | 설명 |
     | ------ | -------- |
