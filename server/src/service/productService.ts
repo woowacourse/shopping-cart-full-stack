@@ -5,7 +5,7 @@ import { BadRequestError } from "../error.ts";
 
 function isDuplicateName(name: string) {
   return getAllProducts().some((product) => {
-    return product.getProduct() === name;
+    return product.name === name;
   });
 }
 
@@ -19,7 +19,7 @@ export function addProductToList({ name, price, image }: ProductData) {
   }
 
   const productId = crypto.randomUUID();
-  const product = new Product({ name, price, image, productId });
+  const product = new Product(productId, { name, price, image });
   productRepository.save(productId, product);
 }
 

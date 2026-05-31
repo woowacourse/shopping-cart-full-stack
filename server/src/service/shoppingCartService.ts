@@ -1,5 +1,5 @@
 import { cartRepository } from "../database/inMemoryDatabase.ts";
-import { products } from "../database/inMemoryDatabase.ts";
+import { productRepository } from "../database/inMemoryDatabase.ts";
 import type { ProductId, Quantity } from "../types/type.ts";
 import Product from "../domain/Product.ts";
 import ShoppingCart from "../domain/ShoppingCart.ts";
@@ -15,7 +15,10 @@ export function getItemsFromCart(): {
 }[] {
   const shoppingCartArray = cartRepository.getShoppingCart();
   return shoppingCartArray.map(({ productId, quantity }) => {
-    return { product: products.get(productId), quantity: quantity };
+    return {
+      product: productRepository.getProduct(productId),
+      quantity: quantity,
+    };
   });
 }
 

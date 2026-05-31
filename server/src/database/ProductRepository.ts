@@ -8,6 +8,10 @@ export class ProductRepository {
     this.products.set(productId, product);
   }
 
+  getProduct(productId: ProductId) {
+    return this.products.get(productId);
+  }
+
   getAllProducts() {
     return [...this.products.values()];
   }

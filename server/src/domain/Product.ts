@@ -1,13 +1,13 @@
-import type { ProductData } from "../types/type.ts";
+import type { ProductData, ProductId } from "../types/type.ts";
 import { BadRequestError } from "../error.ts";
 
 export default class Product {
-  private name: string;
-  private price: number;
-  private image?: string | null;
-  private id: string;
+  public readonly name: string;
+  public readonly price: number;
+  public readonly image?: string | null;
+  public readonly id: string;
 
-  constructor({ name, price, image, productId }: ProductData) {
+  constructor(productId: ProductId, { name, price, image }: ProductData) {
     this.#validatorName(name);
     this.#validatorPrice(price);
     this.name = name;
@@ -56,9 +56,5 @@ export default class Product {
         field: "productPrice",
       });
     }
-  }
-
-  getProduct() {
-    return this.name;
   }
 }
