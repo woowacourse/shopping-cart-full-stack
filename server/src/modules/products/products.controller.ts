@@ -27,7 +27,7 @@ export const addProduct: RequestHandler = (req, res) => {
 };
 
 export const deleteProduct: RequestHandler = (req, res) => {
-  const id = +validateID(req.params.id);
+  const id = validateID(req.params.id);
 
   const product = productsService.deleteProduct(id);
 

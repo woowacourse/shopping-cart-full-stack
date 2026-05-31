@@ -5,15 +5,15 @@ interface UpdateCartQuantity {
 }
 
 export const checkIsID = (arg: unknown): arg is string => {
-  if (!!arg && typeof arg === "string") return true;
+  if (!!arg && typeof arg === "string" && /^\d+$/.test(arg)) return true;
 
   return false;
 };
 
-export const validateID = (arg: unknown) => {
+export const validateID = (arg: unknown): number => {
   if (!checkIsID(arg)) throw new Error(ERROR_CODES.INVALID_ID.code);
 
-  return arg;
+  return Number(arg);
 };
 
 export const checkIsCartQuantity = (

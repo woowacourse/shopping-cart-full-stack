@@ -14,7 +14,7 @@ export const getCarts: RequestHandler = (_, res) => {
 };
 
 export const updateCartQuantity: RequestHandler = (req, res) => {
-  const productId = +validateID(req.params.productId);
+  const productId = validateID(req.params.productId);
 
   const { quantity } = validateQuantity(req.body);
 
@@ -28,7 +28,7 @@ export const updateCartQuantity: RequestHandler = (req, res) => {
 };
 
 export const deleteCartProduct: RequestHandler = (req, res) => {
-  const productId = +validateID(req.params.productId);
+  const productId = validateID(req.params.productId);
 
   const result = cartsService.deleteCartsProduct(productId);
 
