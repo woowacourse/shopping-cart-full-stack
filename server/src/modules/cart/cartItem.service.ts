@@ -19,7 +19,7 @@ export const createCartItemService = ({
     validateProductId(productId);
     validatePurchaseQuantity(purchaseQuantity);
 
-    const product = findProduct(productId, productRepository);
+    const product = findProductOrThrow(productId, productRepository);
 
     validateRemainingQuantity(product, purchaseQuantity);
 
@@ -54,13 +54,13 @@ export const createCartItemService = ({
   getCartItemById(cartItemId: string) {
     validateCartItemId(cartItemId);
 
-    return findCartItem(cartItemId, cartItemRepository);
+    return findCartItemOrThrow(cartItemId, cartItemRepository);
   },
 
   deleteCartItem(cartItemId: string) {
     validateCartItemId(cartItemId);
 
-    const cartItem = findCartItem(cartItemId, cartItemRepository);
+    const cartItem = findCartItemOrThrow(cartItemId, cartItemRepository);
 
     cartItemRepository.deleteById(cartItem.cartItemId);
   },
@@ -69,9 +69,9 @@ export const createCartItemService = ({
     validateCartItemId(cartItemId);
     validatePurchaseQuantity(quantity);
 
-    const cartItem = findCartItem(cartItemId, cartItemRepository);
+    const cartItem = findCartItemOrThrow(cartItemId, cartItemRepository);
 
-    const product = findProduct(cartItem.productId, productRepository);
+    const product = findProductOrThrow(cartItem.productId, productRepository);
 
     validateRemainingQuantity(product, quantity);
     cartItem.changeQuantityTo(quantity);
@@ -136,12 +136,10 @@ const validateRemainingQuantity = (
   }
 };
 
-const findCartItem = (
+const findCartItemOrThrow = (
   cartItemId: string,
   cartItemRepository: CartItemRepository,
 ) => {
-  validateCartItemId(cartItemId);
-
   const cartItem = cartItemRepository.findById(cartItemId);
 
   if (!cartItem) {
@@ -154,12 +152,10 @@ const findCartItem = (
 
   return cartItem;
 };
-const findProduct = (
+const findProductOrThrow = (
   productId: string,
   productRepository: ProductRepository,
 ) => {
-  validateProductId(productId);
-
   const product = productRepository.findById(productId);
 
   if (!product) {
