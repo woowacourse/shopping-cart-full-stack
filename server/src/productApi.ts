@@ -26,6 +26,10 @@ router.post('/', (req, res, next) => {
       return res.status(400).send({ message: '중복된 상품명입니다.' });
     }
 
+    if (!request.name || !request.price) {
+      return res.status(400).send({ message: '유효하지 않은 형식입니다.' });
+    }
+
     res.status(201).send(createProduct(request));
   } catch (error) {
     if (error instanceof Error) {
