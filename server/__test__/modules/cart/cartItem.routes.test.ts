@@ -1,8 +1,8 @@
 import express from 'express';
 import request from 'supertest';
 import { cartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
-import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { Product } from '../../../src/modules/products/product.model.js';
+import { resetTestDatabase, seedProduct } from '../../helpers/testDatabase.js';
 
 const mockCartItem = {
   productId: '1',
@@ -24,9 +24,8 @@ app.use(cartItemRouter);
 
 describe('장바구니 API', () => {
   beforeEach(() => {
-    cartItemsDB.clear();
-    productsDB.clear();
-    productsDB.set(mockProduct.productId, mockProduct);
+    resetTestDatabase();
+    seedProduct(mockProduct.productId, mockProduct);
   });
 
   it('장바구니 목록 요청', async () => {
