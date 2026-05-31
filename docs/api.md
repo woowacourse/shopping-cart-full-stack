@@ -317,7 +317,7 @@ DELETE /cart/items/:cartItemId
 
 #### Error
 
-`404 Not Found`
+`400 Bad Request` 또는 `404 Not Found`
 
 ```json
 {
@@ -326,9 +326,10 @@ DELETE /cart/items/:cartItemId
 }
 ```
 
-| 상태 코드       | 에러 코드             | 설명                                                       |
-| --------------- | --------------------- | ---------------------------------------------------------- |
-| `404 Not Found` | `CART_ITEM_NOT_FOUND` | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우 |
+| 상태 코드         | 에러 코드              | 설명                                                       |
+| ----------------- | ---------------------- | ---------------------------------------------------------- |
+| `400 Bad Request` | `INVALID_CART_ITEM_ID` | `cartItemId` 형식이 유효하지 않은 경우                     |
+| `404 Not Found`   | `CART_ITEM_NOT_FOUND`  | `cartItemId`에 해당하는 장바구니 상품이 존재하지 않는 경우 |
 
 ## 4. 엔드포인트
 
