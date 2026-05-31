@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { ProductFieldValidators, CartFieldValidators } from "../validators.js";
-import { runValidate } from "../utils.js";
+import { Request, Response, NextFunction } from 'express';
+import { ProductFieldValidators, CartFieldValidators } from '../validators.js';
+import { runValidate } from '../utils.js';
 
-export function productBodyValidateMiddelware(
+export function productBodyValidateMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,

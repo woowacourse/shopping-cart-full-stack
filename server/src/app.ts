@@ -1,10 +1,10 @@
-import express from "express";
+import express from 'express';
 import {
-  productBodyValidateMiddelware,
+  productBodyValidateMiddleware,
   cartBodyValidateMiddelware,
-} from "./middlewares/BodyValiadateMiddleware.js";
-import { ProductController, CartController } from "./controllers.js";
-import { handleErrors } from "./errors.js";
+} from './middlewares/BodyValidateMiddleware.js';
+import { ProductController, CartController } from './controllers.js';
+import { handleErrors } from './errors.js';
 
 export function createApp({
   productController,
@@ -19,16 +19,16 @@ export function createApp({
   router.use(express.json());
 
   router
-    .route("/api/products/")
+    .route('/api/products/')
     .get(productController.get)
-    .post(productBodyValidateMiddelware, productController.add);
+    .post(productBodyValidateMiddleware, productController.add);
 
-  router.route("/api/products/:id/").delete(productController.delete);
+  router.route('/api/products/:id/').delete(productController.delete);
 
-  router.route("/api/cart/").get(cartController.get);
+  router.route('/api/cart/').get(cartController.get);
 
   router
-    .route("/api/cart/items/:id/")
+    .route('/api/cart/items/:id/')
     .patch(cartBodyValidateMiddelware, cartController.update)
     .delete(cartController.delete);
 
