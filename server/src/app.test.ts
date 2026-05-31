@@ -15,7 +15,7 @@ describe("common error middleware 테스트", () => {
   });
 
   it("엔드포인트에 대한 method에 해당하는 라우터가 없는 경우 405 METHOD_NOT_ALLOWED를 반환한다.", async () => {
-    const response = await request(app).post("/products/1");
+    const response = await request(app).delete("/products");
 
     expect(response.status).toBe(405);
     expect(response.body).toEqual({
