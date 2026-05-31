@@ -1,4 +1,4 @@
-import ERROR_CODES from "../../ERROR_CODE";
+import { AppError } from "@/errors/AppError";
 
 export interface CreateProductRequest {
   name: string;
@@ -25,7 +25,7 @@ export const checkIsProduct = (arg: unknown): arg is CreateProductRequest => {
 };
 
 export const validateProduct = (arg: unknown) => {
-  if (!checkIsProduct(arg)) throw new Error(ERROR_CODES.INVALID_PRODUCT.code);
+  if (!checkIsProduct(arg)) throw new AppError("INVALID_PRODUCT");
 
   return arg;
 };
@@ -37,7 +37,7 @@ export const checkIsID = (arg: unknown): arg is string => {
 };
 
 export const validateID = (arg: unknown): number => {
-  if (!checkIsID(arg)) throw new Error(ERROR_CODES.INVALID_ID.code);
+  if (!checkIsID(arg)) throw new AppError("INVALID_ID");
 
   return Number(arg);
 };

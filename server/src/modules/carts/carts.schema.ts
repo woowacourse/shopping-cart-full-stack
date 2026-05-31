@@ -1,4 +1,4 @@
-import ERROR_CODES from "@/ERROR_CODE";
+import { AppError } from "@/errors/AppError";
 
 interface UpdateCartQuantity {
   quantity: number;
@@ -11,7 +11,7 @@ export const checkIsID = (arg: unknown): arg is string => {
 };
 
 export const validateID = (arg: unknown): number => {
-  if (!checkIsID(arg)) throw new Error(ERROR_CODES.INVALID_ID.code);
+  if (!checkIsID(arg)) throw new AppError("INVALID_ID");
 
   return Number(arg);
 };
@@ -33,7 +33,7 @@ export const checkIsCartQuantity = (
 
 export const validateQuantity = (arg: unknown) => {
   if (!checkIsCartQuantity(arg))
-    throw new Error(ERROR_CODES.INVALID_CARTS_QUANTITY.code);
+    throw new AppError("INVALID_CARTS_QUANTITY");
 
   return arg;
 };

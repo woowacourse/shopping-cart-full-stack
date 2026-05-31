@@ -1,4 +1,5 @@
 import ERROR_CODES from "@/ERROR_CODE";
+import { AppError } from "@/errors/AppError";
 import { Request, Response, NextFunction } from "express";
 
 const errorHandler = (
@@ -7,17 +8,21 @@ const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  const errorMessage = err instanceof Error ? err.message : "";
-  const matchedError = ERROR_CODES[errorMessage as keyof typeof ERROR_CODES];
-  const statusCode = matchedError?.status || 500;
-  const code = matchedError?.code || "INTERNAL_SERVER_ERROR";
-  const message = matchedError?.message || "서버 내부 오류가 발생하였습니다.";
+  if (err instanceof AppError) {
+    const { status, code, message } = ERROR_CODES[err.code];
 
-  return res.status(statusCode).json({
+    return res.status(status).json({
+      status: "error",
+      statusCode: status,
+      code,
+      message,
+    });
+  }
+
+  return res.status(500).json({
     status: "error",
-    statusCode: statusCode,
-    code,
-    message,
+    code: "INTERNAL_SERVER_ERROR",
+    message: "서버 내부 오류가 발생하였습니다.",
   });
 };
 

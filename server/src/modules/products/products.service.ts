@@ -6,7 +6,7 @@ import {
   getProductByIdQuery,
   getProductByNameQuery,
 } from "./products.repository";
-import ERROR_CODES from "../../ERROR_CODE";
+import { AppError } from "@/errors/AppError";
 import { removeByProductId } from "../carts/carts.service";
 
 export const getAllProducts = () => {
@@ -18,7 +18,7 @@ export const addProduct = (arg: Parameters<typeof addProductQuery>[0]) => {
 
   const existingProduct = getProductByNameQuery(arg.name);
   if (existingProduct) {
-    throw new Error(ERROR_CODES.DUPLICATE_PRODUCT_NAME.code);
+    throw new AppError("DUPLICATE_PRODUCT_NAME");
   }
 
   return addProductQuery(arg);
@@ -27,7 +27,7 @@ export const addProduct = (arg: Parameters<typeof addProductQuery>[0]) => {
 export const deleteProduct = (id: number) => {
   const existingProduct = getProductByIdQuery(id);
   if (!existingProduct) {
-    throw new Error(ERROR_CODES.NOT_EXIST_PRODUCT.code);
+    throw new AppError("NOT_EXIST_PRODUCT");
   }
 
   removeByProductId(id);
