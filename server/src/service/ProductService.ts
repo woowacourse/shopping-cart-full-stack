@@ -10,12 +10,6 @@ export const getProductsService = (): ProductData[] => {
 
 export const postProductsService = (newProducts: ProductData): ProductData => {
   const addedProduct = productRepository.addProduct(newProducts);
-  if (!addedProduct)
-    throw new NotFoundError(
-      "NOT_FOUND_PRODUCT",
-      ERROR_MESSAGE.NOT_FOUND_PRODUCT,
-    );
-
   return addedProduct;
 };
 
