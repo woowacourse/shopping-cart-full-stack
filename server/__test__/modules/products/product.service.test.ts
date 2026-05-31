@@ -4,11 +4,11 @@ import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
 import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
 import { productService } from '../../../src/modules/products/product.service.js';
+import { resetTestDatabase } from '../../helpers/testDatabase.js';
 
 describe('ProductService', () => {
   beforeEach(() => {
-    productsDB.clear();
-    cartItemsDB.clear();
+    resetTestDatabase();
   });
 
   // 상품을 조회하는 기능
