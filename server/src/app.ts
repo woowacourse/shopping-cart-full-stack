@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import {
   productBodyValidateMiddelware,
   cartBodyValidateMiddelware,
@@ -17,6 +18,7 @@ export function createApp({
   const router = app.router;
 
   router.use(express.json());
+  router.use(cors());
 
   router
     .route("/api/products/")
