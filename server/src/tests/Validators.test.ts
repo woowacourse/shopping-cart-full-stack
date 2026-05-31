@@ -56,21 +56,15 @@ describe("validators 테스트", () => {
   });
 
   describe("숫자 범위 검증 테스트", () => {
-    const validator = validateNumberRange("수량", 0, 100);
-    test.each([-1, 101])(
-      "범위를 벗어난 값이면 에러가 반환된다.",
-      (value) => {
-        expect(() => validator(value)).toThrow(
-          "수량은 0 이상 100 이하여야 합니다.",
-        );
-      },
-    );
+    const validator = validateNumberRange("수량", 1, 99);
+    test.each([0, 100])("범위를 벗어난 값이면 에러가 반환된다.", (value) => {
+      expect(() => validator(value)).toThrow(
+        "수량은 1 이상 99 이하여야 합니다.",
+      );
+    });
 
-    test.each([0, 100])(
-      "범위의 경계값이면 에러가 발생하지 않는다.",
-      (value) => {
-        expect(() => validator(value)).not.toThrow();
-      },
-    );
+    test.each([1, 99])("범위의 경계값이면 에러가 발생하지 않는다.", (value) => {
+      expect(() => validator(value)).not.toThrow();
+    });
   });
 });

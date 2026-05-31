@@ -7,7 +7,7 @@ export const ProductFieldValidators: ValidatorMap = {
 };
 
 export const CartFieldValidators: ValidatorMap = {
-  quantity: [validateNumberRange("수량", 0, 100)],
+  quantity: [validateNumberRange("수량", 1, 99)],
 };
 
 export function validateIsNotEmpty(label: string) {
