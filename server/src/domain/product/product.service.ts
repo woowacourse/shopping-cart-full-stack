@@ -1,3 +1,4 @@
+import AppError from '../../errors/AppError.js';
 import Product, { ProductType } from '../../model/Product.js';
 
 class ProductService {
@@ -19,6 +20,9 @@ class ProductService {
   }
 
   deleteProduct(id: number) {
+    const exists = this.productRepository.get().some((p: Product) => p.toJson().id === id);
+    if (!exists) throw new AppError('PRODUCT_NOT_EXIST');
+
     this.productRepository.delete(id);
   }
 }

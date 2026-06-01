@@ -1,5 +1,4 @@
 import express from 'express';
-import ProductManager from './model/ProductManager.js';
 import Cart from './model/Cart.js';
 import AppService from './service/AppService.js';
 import { errorHandler } from './errors/errorHandler.js';
@@ -16,8 +15,20 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' });
+// 상품 조회
+app.get('/products', (_, res) => {
+  try {
+    const products = appService.getProducts();
+
+    res.status(200).json({
+      code: 200,
+      message: '요청에 성공했습니다.',
+      result: { products },
+    });
+  } catch (error) {
+    const { status, code, message } = errorHandler(error);
+    res.status(status).json({ code, message });
+  }
 });
 
 // 상품 추가
@@ -38,35 +49,19 @@ app.post('/products', (req, res) => {
   }
 });
 
-// // 상품 삭제
-// app.delete('/products/:id', (req, res) => {
-//   try {
-//     const productId = req.params.id;
+// 상품 삭제
+app.delete('/products/:id', (req, res) => {
+  try {
+    const productId = req.params.id;
 
-//     appService.deleteProductWithCascade(Number(productId));
+    appService.deleteProduct(Number(productId));
 
-//     res.status(204).json();
-//   } catch (error) {
-//     const { status, code, message } = errorHandler(error);
-//     res.status(status).json({ code, message });
-//   }
-// });
-
-// // 상품 조회
-// app.get('/products', (_, res) => {
-//   try {
-//     const products = productManager.getProducts();
-
-//     res.status(200).json({
-//       code: 200,
-//       message: '요청에 성공했습니다.',
-//       result: { products },
-//     });
-//   } catch (error) {
-//     const { status, code, message } = errorHandler(error);
-//     res.status(status).json({ code, message });
-//   }
-// });
+    res.status(204).json();
+  } catch (error) {
+    const { status, code, message } = errorHandler(error);
+    res.status(status).json({ code, message });
+  }
+});
 
 // // 장바구니 상품 조회
 // app.get('/carts', (_, res) => {

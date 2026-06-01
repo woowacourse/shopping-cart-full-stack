@@ -12,7 +12,7 @@ export default class AppSerivce {
   }
 
   addProduct({ name, price, quantity, imgUrl }: Omit<ProductType, 'id'>) {
-    this.productService.addProduct({ name, price, quantity, imgUrl });
+    return this.productService.addProduct({ name, price, quantity, imgUrl });
   }
 
   deleteProduct(id: number) {

@@ -1,9 +1,64 @@
 import request from 'supertest';
-import app, { cart, productManager } from '../app.js';
+import app from '../app.js';
+import { products } from '../db/inMemoryDb.js';
+
+const mockProduct = {
+  name: '아디다스 양말',
+  price: 13000,
+  imgUrl: 'https://image-url.com',
+  quantity: 2,
+};
+
+describe('GET /products API 테스트', () => {
+  beforeEach(() => {
+    products.length = 0;
+  });
+
+  test('상품이 없을 때 빈 배열을 응답한다.', async () => {
+    // when
+    const response = await request(app).get('/products');
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      code: 200,
+      message: '요청에 성공했습니다.',
+      result: { products: [] },
+    });
+  });
+
+  test('상품 추가 후 조회 시 추가된 상품이 목록에 포함된다.', async () => {
+    // given
+    const postResponse = await request(app).post('/products').send(mockProduct);
+    const { id } = postResponse.body.result;
+
+    // when
+    const response = await request(app).get('/products');
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body.result.products).toContainEqual(
+      expect.objectContaining({ id, name: mockProduct.name }),
+    );
+  });
+
+  test('상품 2개 추가 후 조회 시 2개가 목록에 포함된다.', async () => {
+    // given
+    await request(app).post('/products').send(mockProduct);
+    await request(app).post('/products').send({ ...mockProduct, name: '나이키 양말' });
+
+    // when
+    const response = await request(app).get('/products');
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body.result.products).toHaveLength(2);
+  });
+});
 
 describe('POST /products API 테스트', () => {
   beforeEach(() => {
-    productManager.reset();
+    products.length = 0;
   });
 
   test('정상적인 상품 정보로 요청 시 201과 생성된 id를 응답한다.', async () => {
@@ -105,154 +160,90 @@ describe('POST /products API 테스트', () => {
       message: '상품명 필드가 누락되었습니다.',
     });
   });
-});
 
-describe('DELETE /products API 테스트', () => {
-  beforeEach(() => {
-    productManager.reset();
-  });
-
-  test('정상적인 상품 삭제 시 204를 응답한다.', async () => {
+  test('가격 필드가 누락되면 400과 EMPTY_PRODUCT_PRICE 코드를 응답한다.', async () => {
     // given
-    const newProduct = {
+    const invalidProduct = {
       name: '아디다스 양말',
-      price: 13000,
       imgUrl: 'https://image-url.com',
       quantity: 2,
     };
-    await request(app).post('/products').send(newProduct);
-
-    const deleteId = 1;
 
     // when
-    const response = await request(app).delete(`/products/${deleteId}`);
+    const response = await request(app).post('/products').send(invalidProduct);
+
+    // then
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      code: 'EMPTY_PRODUCT_PRICE',
+      message: '가격 필드가 누락되었습니다.',
+    });
+  });
+
+  test('재고 필드가 누락되면 400과 EMPTY_PRODUCT_QUANTITY 코드를 응답한다.', async () => {
+    // given
+    const invalidProduct = {
+      name: '아디다스 양말',
+      price: 13000,
+      imgUrl: 'https://image-url.com',
+    };
+
+    // when
+    const response = await request(app).post('/products').send(invalidProduct);
+
+    // then
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      code: 'EMPTY_PRODUCT_QUANTITY',
+      message: '상품 재고 필드가 누락되었습니다.',
+    });
+  });
+});
+
+describe('DELETE /products/:id API 테스트', () => {
+  beforeEach(() => {
+    products.length = 0;
+  });
+
+  test('존재하는 상품 삭제 시 204를 응답한다.', async () => {
+    // given
+    const postResponse = await request(app).post('/products').send(mockProduct);
+    const { id } = postResponse.body.result;
+
+    // when
+    const response = await request(app).delete(`/products/${id}`);
 
     // then
     expect(response.status).toBe(204);
   });
-});
 
-describe('GET /products API 테스트', () => {
-  beforeEach(() => {
-    productManager.reset();
-  });
-
-  test('상품 조회 시 200과 상품 목록을 응답한다.', async () => {
+  test('상품 삭제 후 조회 시 해당 상품이 목록에서 제거된다.', async () => {
     // given
-    const newProduct = {
-      name: '아디다스 양말',
-      price: 13000,
-      imgUrl: 'https://image-url.com',
-      quantity: 2,
-    };
+    const postResponse = await request(app).post('/products').send(mockProduct);
+    const { id } = postResponse.body.result;
 
     // when
-    await request(app).post('/products').send(newProduct);
-    const response = await request(app).get(`/products`);
+    await request(app).delete(`/products/${id}`);
+    const response = await request(app).get('/products');
 
     // then
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      code: 200,
-      message: '요청에 성공했습니다.',
-      result: { products: [{ id: 1, ...newProduct }] },
-    });
+    expect(response.body.result.products).not.toContainEqual(
+      expect.objectContaining({ id }),
+    );
   });
-});
 
-describe('GET /carts API 테스트', () => {
-  test('장바구니 상품 조회 시 200과 상품 목록을 응답한다.', async () => {
+  test('존재하지 않는 상품 삭제 시 404와 PRODUCT_NOT_EXIST 코드를 응답한다.', async () => {
     // given
-    const newProduct = {
-      name: '아디다스 양말',
-      price: 13000,
-      imgUrl: 'https://image-url.com',
-      quantity: 2,
-    };
+    const nonExistentId = 9999;
 
     // when
-    await request(app).post('/products').send(newProduct);
-
-    // 장바구니에 담는 API는 존재하지 않기때문에 App.ts에서 생성한 Cart 인스턴스를 직접 사용한다.
-    cart.addCartItem(1, 10);
-    const response = await request(app).get(`/carts`);
+    const response = await request(app).delete(`/products/${nonExistentId}`);
 
     // then
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(404);
     expect(response.body).toEqual({
-      code: 200,
-      message: '요청에 성공했습니다.',
-      result: {
-        cartItems: [
-          {
-            id: 1,
-            name: '아디다스 양말',
-            price: 13000,
-            imgUrl: 'https://image-url.com',
-            orderCount: 10,
-          },
-        ],
-      },
-    });
-  });
-});
-
-describe('DELETE /carts/:id API 테스트', () => {
-  beforeEach(() => {
-    productManager.reset();
-  });
-
-  test('장바구니 상품 삭제 시 204를 응답한다.', async () => {
-    // given
-
-    // 장바구니에 담는 API는 존재하지 않기때문에 App.ts에서 생성한 Cart 인스턴스를 직접 사용한다.
-    cart.addCartItem(1, 10);
-
-    const deleteId = 1;
-
-    // when
-    const response = await request(app).delete(`/carts/${deleteId}`);
-
-    // then
-    expect(response.status).toBe(204);
-  });
-});
-
-describe('PATCH /carts/:id API 테스트', () => {
-  beforeEach(() => {
-    productManager.reset();
-  });
-
-  test('장바구니 상품 수량 변경 성공 시 200과 id, orderCount를 응답한다.', async () => {
-    //given
-    const newProduct = {
-      name: '아디다스 양말',
-      price: 13000,
-      imgUrl: 'https://image-url.com',
-      quantity: 50,
-    };
-    await request(app).post('/products').send(newProduct);
-
-    // 장바구니에 담는 API는 존재하지 않기때문에 App.ts에서 생성한 Cart 인스턴스를 직접 사용한다.
-    const updateId = 1;
-
-    cart.addCartItem(updateId, 10);
-    const updateOrderCount = 5;
-
-    // when
-    const response = await request(app).patch(`/carts/${updateId}`).send({
-      orderCount: updateOrderCount,
-    });
-
-    // then
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      code: 200,
-      message: '성공적으로 수량이 변경되었습니다.',
-      result: {
-        id: updateId,
-        orderCount: updateOrderCount,
-      },
+      code: 'PRODUCT_NOT_EXIST',
+      message: '삭제하려는 상품이 존재하지 않습니다.',
     });
   });
 });
