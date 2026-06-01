@@ -2,6 +2,11 @@ import { Product } from "./products.model.ts";
 import { productStore } from "../../raw/raw.products.ts";
 import type { ProductRequest } from "./products.dto.ts";
 
+const getNextProductId = () =>
+  Math.max(...productStore.products.map((product) => product.id), 0) + 1;
+
+let nextProductId = getNextProductId();
+
 export const findAll = () => {
   return productStore.products.map((product) => new Product(product));
 };
@@ -13,10 +18,9 @@ export const findById = (id: number) => {
 };
 
 export const create = (product: ProductRequest) => {
-  const id = (productStore.products.at(-1)?.id ?? 0) + 1;
   const newProduct = {
     ...product,
-    id,
+    id: nextProductId++,
   };
 
   productStore.products.push(newProduct);
