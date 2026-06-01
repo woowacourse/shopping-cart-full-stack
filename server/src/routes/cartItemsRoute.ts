@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import CartItemsContorller from '../controllers/CartItemsContorller';
+import CartItemsController from '../controllers/CartItemsController';
 
-export const createCartItemsRouter = (cartItemsController: CartItemsContorller) => {
+export const createCartItemsRouter = (cartItemsController: CartItemsController) => {
   const cartItemsRouter = Router();
 
   cartItemsRouter.get('/', cartItemsController.getCartItems);

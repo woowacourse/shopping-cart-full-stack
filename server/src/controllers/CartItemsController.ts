@@ -7,7 +7,7 @@ import {
   DeleteCartItemRequestParamsSchema,
 } from '../schemas';
 
-class CartItemContorller {
+class CartItemsController {
   private readonly service;
 
   constructor({ service }: { service: CartItemsServicePort }) {
@@ -62,4 +62,4 @@ class CartItemContorller {
   };
 }
 
-export default CartItemContorller;
+export default CartItemsController;

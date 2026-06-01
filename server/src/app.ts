@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import ProductsController from './controllers/ProductsController';
-import CartItemsContorller from './controllers/CartItemsContorller';
+import CartItemsController from './controllers/CartItemsController';
 import InMemoryProductsRepository from './repositories/InMemoryProductsRepository';
 import InMemoryCartItemsRepository from './repositories/InMemoryCartItemsRepository';
 import ProductsService from './services/ProductsService';
@@ -26,7 +26,7 @@ const cartItemsService = new CartItemsService({
   cartItemsRepository: inMemoryCartItemsRepository,
 });
 const productsController = new ProductsController({ service: productsService });
-const cartItemsController = new CartItemsContorller({ service: cartItemsService });
+const cartItemsController = new CartItemsController({ service: cartItemsService });
 
 app.use('/products', createProductsRouter(productsController));
 app.use('/cart', createCartItemsRouter(cartItemsController));
