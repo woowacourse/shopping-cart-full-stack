@@ -83,6 +83,7 @@ describe('장바구니 API', () => {
     const patchRes = await request(app)
       .patch(`/cart/items/${response.body.cartItemId}`)
       .send({ purchaseQuantity: 2 });
-    expect(patchRes.status).toBe(200);
+    expect(patchRes.status).toBe(204);
+    expect(patchRes.body).toEqual({});
   });
 });

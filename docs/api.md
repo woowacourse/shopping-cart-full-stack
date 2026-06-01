@@ -275,14 +275,9 @@ PATCH /cart/items/:cartItemId
 
 #### Response
 
-`200 OK`
+`204 No Content`
 
-```json
-{
-  "cartItemId": "10",
-  "purchaseQuantity": 3
-}
-```
+응답 본문은 비워 둔다. 변경할 `purchaseQuantity`는 클라이언트가 요청에 담아 보낸 값이므로, 별도로 다시 반환하지 않는다.
 
 #### Error
 

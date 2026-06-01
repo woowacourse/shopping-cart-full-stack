@@ -43,7 +43,7 @@ cartItemRouter.patch('/cart/items/:cartItemId', (req, res, next) => {
       req.params.cartItemId,
       req.body.purchaseQuantity,
     );
-    res.status(200).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
