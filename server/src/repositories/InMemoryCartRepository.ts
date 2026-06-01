@@ -1,6 +1,5 @@
 import { CartItemData } from "./CartItem";
 import { CartRepositoryInterface } from "./interfaces/CartRepositoryInterface";
-import { validateQuantity } from "./util/Validator";
 
 export default class InMemoryCartRepository implements CartRepositoryInterface {
   #cart: Map<number, CartItemData>;
@@ -20,7 +19,6 @@ export default class InMemoryCartRepository implements CartRepositoryInterface {
   }
 
   addProductToCart(productId: number, quantity: number): CartItemData {
-    validateQuantity(quantity);
     const cartItem = { productId, quantity, cartItemId: this.#nextId };
     this.#cart.set(this.#nextId, cartItem);
     this.#nextId++;
@@ -28,7 +26,6 @@ export default class InMemoryCartRepository implements CartRepositoryInterface {
   }
 
   changeQuantity(cartItemId: number, newQuantity: number): CartItemData | null {
-    validateQuantity(newQuantity);
     const cartItem = this.#cart.get(cartItemId);
     if (!cartItem) return null;
 

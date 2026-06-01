@@ -1,6 +1,5 @@
 import { ProductRepositoryInterface } from "./interfaces/ProductRepositoryInterface";
 import type { ProductData, ProductInput } from "./Product";
-import { validateProductData } from "./util/Validator";
 
 export default class InMemoryProductRepository implements ProductRepositoryInterface {
   #products: Map<number, ProductData>;
@@ -20,7 +19,6 @@ export default class InMemoryProductRepository implements ProductRepositoryInter
   }
 
   addProduct(data: ProductInput): ProductData {
-    validateProductData(data);
     const product = { ...data, productId: this.#nextId };
     this.#products.set(this.#nextId, product);
     this.#nextId++;
