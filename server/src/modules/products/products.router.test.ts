@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 
-import { rawProducts } from "../../raw/raw.products.ts";
+import { productStore } from "../../raw/raw.products.ts";
 import productsRouter from "./products.router.ts";
 
 const initialProducts = [
@@ -31,9 +31,9 @@ app.use("/products", productsRouter);
 
 describe("product router 테스트", () => {
   beforeEach(() => {
-    rawProducts.splice(
+    productStore.products.splice(
       0,
-      rawProducts.length,
+      productStore.products.length,
       ...initialProducts.map((product) => ({ ...product })),
     );
   });
@@ -106,11 +106,13 @@ describe("product router 테스트", () => {
     });
 
     it("도메인 규칙에 맞지 않는 경우 실패 응답을 반환한다.", async () => {
-      const response = await request(app).post("/products").send({
-        price: 0,
-        name: "a".repeat(101),
-        imgUrl: "https://example.com/images/eco-bag.png",
-      });
+      const response = await request(app)
+        .post("/products")
+        .send({
+          price: 0,
+          name: "a".repeat(101),
+          imgUrl: "https://example.com/images/eco-bag.png",
+        });
 
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
@@ -137,7 +139,7 @@ describe("product router 테스트", () => {
 
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
-      expect(rawProducts).not.toContainEqual(initialProducts[0]);
+      expect(productStore.products).not.toContainEqual(initialProducts[0]);
     });
 
     it("id에 해당하는 상품이 없으면 실패 응답을 반환한다.", async () => {

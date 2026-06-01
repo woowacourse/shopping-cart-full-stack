@@ -8,27 +8,38 @@ interface RawProductInCart {
   quantity: number;
 }
 
-export const rawCarts: RawCart[] = [
-  {
-    id: 1,
-    products: [
-      {
-        id: 1,
-        quantity: 2,
-      },
-      {
-        id: 3,
-        quantity: 1,
-      },
-    ],
+const createInitialRawCarts = () => {
+  const rawCarts: RawCart[] = [
+    {
+      id: 1,
+      products: [
+        {
+          id: 1,
+          quantity: 2,
+        },
+        {
+          id: 3,
+          quantity: 1,
+        },
+      ],
+    },
+    {
+      id: 2,
+      products: [
+        {
+          id: 2,
+          quantity: 1,
+        },
+      ],
+    },
+  ];
+
+  return rawCarts;
+};
+
+export const cartStore = {
+  carts: createInitialRawCarts(),
+  reset() {
+    this.carts = createInitialRawCarts();
   },
-  {
-    id: 2,
-    products: [
-      {
-        id: 2,
-        quantity: 1,
-      },
-    ],
-  },
-];
+};

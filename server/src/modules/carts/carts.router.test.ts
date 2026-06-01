@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 
-import { rawCarts } from "../../raw/raw.carts.ts";
+import { cartStore } from "../../raw/raw.carts.ts";
 import cartsRouter from "./carts.router.ts";
 
 const initialCarts = [
@@ -55,9 +55,9 @@ app.use("/carts", cartsRouter);
 
 describe("carts router 테스트", () => {
   beforeEach(() => {
-    rawCarts.splice(
+    cartStore.carts.splice(
       0,
-      rawCarts.length,
+      cartStore.carts.length,
       ...initialCarts.map((cart) => ({
         ...cart,
         products: cart.products.map((product) => ({ ...product })),
@@ -105,7 +105,7 @@ describe("carts router 테스트", () => {
           quantity: 3,
         },
       });
-      expect(rawCarts[0].products).toContainEqual({
+      expect(cartStore.carts[0].products).toContainEqual({
         id: 1,
         quantity: 3,
       });
@@ -148,7 +148,7 @@ describe("carts router 테스트", () => {
 
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
-      expect(rawCarts[0].products).not.toContainEqual({
+      expect(cartStore.carts[0].products).not.toContainEqual({
         id: 3,
         quantity: 1,
       });
