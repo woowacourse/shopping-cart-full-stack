@@ -67,6 +67,8 @@ describe("POST /products", () => {
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
       status: "error",
+      statusCode: 400,
+      code: "INVALID_PRODUCT",
       message: "유효하지 않은 상품입니다.",
     });
   });
