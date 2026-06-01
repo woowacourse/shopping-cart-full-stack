@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../app.js';
-import { products } from '../db/inMemoryDb.js';
+import { products, cartItems } from '../db/inMemoryDb.js';
 
 const mockProduct = {
   name: '아디다스 양말',
@@ -244,6 +244,192 @@ describe('DELETE /products/:id API 테스트', () => {
     expect(response.body).toEqual({
       code: 'PRODUCT_NOT_EXIST',
       message: '삭제하려는 상품이 존재하지 않습니다.',
+    });
+  });
+});
+
+const mockCartItem = {
+  id: 1,
+  orderCount: 2,
+};
+
+describe('GET /carts API 테스트', () => {
+  beforeEach(() => {
+    cartItems.length = 0;
+  });
+
+  test('장바구니가 비어있을 때 빈 배열과 200을 응답한다.', async () => {
+    // when
+    const response = await request(app).get('/carts');
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      code: 200,
+      message: '요청에 성공했습니다.',
+      result: { cartItems: [] },
+    });
+  });
+
+  test('장바구니에 상품 추가 후 조회 시 해당 상품이 목록에 포함된다.', async () => {
+    // given
+    await request(app).post('/carts').send(mockCartItem);
+
+    // when
+    const response = await request(app).get('/carts');
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body.result.cartItems).toContainEqual(
+      expect.objectContaining({ id: mockCartItem.id, orderCount: mockCartItem.orderCount }),
+    );
+  });
+});
+
+describe('POST /carts API 테스트', () => {
+  beforeEach(() => {
+    cartItems.length = 0;
+  });
+
+  test('정상적인 요청 시 201과 생성된 id를 응답한다.', async () => {
+    // when
+    const response = await request(app).post('/carts').send(mockCartItem);
+
+    // then
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      code: 201,
+      message: '성공적으로 생성되었습니다.',
+      result: { id: expect.any(Number) },
+    });
+  });
+
+  test('orderCount 필드가 누락되면 400과 EMPTY_PRODUCT_ORDER_COUNT 코드를 응답한다.', async () => {
+    // when
+    const response = await request(app).post('/carts').send({ id: 1 });
+
+    // then
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      code: 'EMPTY_PRODUCT_ORDER_COUNT',
+      message: '주문 수량 필드가 누락되었습니다.',
+    });
+  });
+
+  test('orderCount가 0 이하이면 400과 INVALID_PRODUCT_ORDER_COUNT_TYPE 코드를 응답한다.', async () => {
+    // when
+    const response = await request(app).post('/carts').send({ id: 1, orderCount: 0 });
+
+    // then
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      code: 'INVALID_PRODUCT_ORDER_COUNT_TYPE',
+      message: '변경할 수량은 0보다 큰 숫자여야 합니다.',
+    });
+  });
+});
+
+describe('DELETE /carts/:id API 테스트', () => {
+  beforeEach(() => {
+    cartItems.length = 0;
+  });
+
+  test('존재하는 장바구니 상품 삭제 시 204를 응답한다.', async () => {
+    // given
+    await request(app).post('/carts').send(mockCartItem);
+
+    // when
+    const response = await request(app).delete(`/carts/${mockCartItem.id}`);
+
+    // then
+    expect(response.status).toBe(204);
+  });
+
+  test('장바구니 상품 삭제 후 조회 시 해당 상품이 목록에서 제거된다.', async () => {
+    // given
+    await request(app).post('/carts').send(mockCartItem);
+
+    // when
+    await request(app).delete(`/carts/${mockCartItem.id}`);
+    const response = await request(app).get('/carts');
+
+    // then
+    expect(response.body.result.cartItems).not.toContainEqual(
+      expect.objectContaining({ id: mockCartItem.id }),
+    );
+  });
+
+  test('존재하지 않는 장바구니 상품 삭제 시 404와 PRODUCT_NOT_EXIST_IN_CART 코드를 응답한다.', async () => {
+    // given
+    const nonExistentId = 9999;
+
+    // when
+    const response = await request(app).delete(`/carts/${nonExistentId}`);
+
+    // then
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({
+      code: 'PRODUCT_NOT_EXIST_IN_CART',
+      message: '삭제하려는 상품이 장바구니에 존재하지 않습니다.',
+    });
+  });
+});
+
+describe('PATCH /carts/:id API 테스트', () => {
+  beforeEach(() => {
+    cartItems.length = 0;
+  });
+
+  test('정상적인 수량 변경 요청 시 200과 변경된 수량 정보를 응답한다.', async () => {
+    // given
+    await request(app).post('/carts').send(mockCartItem);
+    const newOrderCount = 5;
+
+    // when
+    const response = await request(app)
+      .patch(`/carts/${mockCartItem.id}`)
+      .send({ orderCount: newOrderCount });
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      code: 200,
+      message: '성공적으로 수량이 변경되었습니다.',
+      result: { id: mockCartItem.id, orderCount: newOrderCount },
+    });
+  });
+
+  test('orderCount 필드가 누락되면 400과 EMPTY_PRODUCT_ORDER_COUNT 코드를 응답한다.', async () => {
+    // given
+    await request(app).post('/carts').send(mockCartItem);
+
+    // when
+    const response = await request(app)
+      .patch(`/carts/${mockCartItem.id}`)
+      .send({});
+
+    // then
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      code: 'EMPTY_PRODUCT_ORDER_COUNT',
+      message: '주문 수량 필드가 누락되었습니다.',
+    });
+  });
+
+  test('orderCount가 0 이하이면 400과 INVALID_PRODUCT_ORDER_COUNT_TYPE 코드를 응답한다.', async () => {
+    // given
+    await request(app).post('/carts').send(mockCartItem);
+
+    // when
+    const response = await request(app)
+      .patch(`/carts/${mockCartItem.id}`)
+      .send({ orderCount: 0 });
+
+    // then
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      code: 'INVALID_PRODUCT_ORDER_COUNT_TYPE',
+      message: '변경할 수량은 0보다 큰 숫자여야 합니다.',
     });
   });
 });

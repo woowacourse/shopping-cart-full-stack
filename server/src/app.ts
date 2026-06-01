@@ -1,15 +1,18 @@
 import express from 'express';
-import Cart from './model/Cart.js';
 import AppService from './service/AppService.js';
 import { errorHandler } from './errors/errorHandler.js';
 import ProductService from './domain/product/product.service.js';
 import { InMemoryProductRepository } from './domain/product/product.repository.js';
+import CartService from './domain/cart/cart.service.js';
+import { InMemoryCartRepository } from './domain/cart/cart.repository.js';
 
 // export const cart = new Cart();
 const inMemoryProductRepository = new InMemoryProductRepository();
+const inMemoryCartRepository = new InMemoryCartRepository();
 const productService = new ProductService(inMemoryProductRepository);
+const cartService = new CartService(inMemoryCartRepository);
 
-const appService = new AppService(productService);
+const appService = new AppService(productService, cartService);
 
 const app = express();
 
@@ -63,56 +66,74 @@ app.delete('/products/:id', (req, res) => {
   }
 });
 
-// // 장바구니 상품 조회
-// app.get('/carts', (_, res) => {
-//   try {
-//     const cartItems = appService.getCartItems();
+// 장바구니 상품 조회
+app.get('/carts', (_, res) => {
+  try {
+    const cartItems = appService.getCartItems();
 
-//     res.status(200).json({
-//       code: 200,
-//       message: '요청에 성공했습니다.',
-//       result: { cartItems },
-//     });
-//   } catch (error) {
-//     const { status, code, message } = errorHandler(error);
-//     res.status(status).json({ code, message });
-//   }
-// });
+    res.status(200).json({
+      code: 200,
+      message: '요청에 성공했습니다.',
+      result: { cartItems },
+    });
+  } catch (error) {
+    const { status, code, message } = errorHandler(error);
+    res.status(status).json({ code, message });
+  }
+});
 
-// // 장바구니 상품 삭제
-// app.delete('/carts/:id', (req, res) => {
-//   try {
-//     const productId = req.params.id;
+// 장바구니 상품 추가
+app.post('/carts', (req, res) => {
+  try {
+    const { id, orderCount } = req.body;
 
-//     cart.deleteCartItem(Number(productId));
+    const cartItemId = appService.addCartItem({ id, orderCount });
 
-//     res.status(204).json();
-//   } catch (error) {
-//     const { status, code, message } = errorHandler(error);
-//     res.status(status).json({ code, message });
-//   }
-// });
+    res.status(201).json({
+      code: 201,
+      message: '성공적으로 생성되었습니다.',
+      result: { id: cartItemId },
+    });
+  } catch (error) {
+    const { status, code, message } = errorHandler(error);
+    res.status(status).json({ code, message });
+  }
+});
 
-// // 장바구니 상품 수량 변경
-// app.patch('/carts/:id', (req, res) => {
-//   try {
-//     const productId = Number(req.params.id);
-//     const { orderCount } = req.body;
+// 장바구니 상품 삭제
+app.delete('/carts/:id', (req, res) => {
+  try {
+    const productId = req.params.id;
 
-//     appService.updateCartOrderCount(productId, orderCount);
+    appService.deleteCartItem(Number(productId));
 
-//     res.status(200).json({
-//       code: 200,
-//       message: '성공적으로 수량이 변경되었습니다.',
-//       result: {
-//         id: productId,
-//         orderCount: orderCount,
-//       },
-//     });
-//   } catch (error) {
-//     const { status, code, message } = errorHandler(error);
-//     res.status(status).json({ code, message });
-//   }
-// });
+    res.status(204).json();
+  } catch (error) {
+    const { status, code, message } = errorHandler(error);
+    res.status(status).json({ code, message });
+  }
+});
+
+// 장바구니 상품 수량 변경
+app.patch('/carts/:id', (req, res) => {
+  try {
+    const productId = Number(req.params.id);
+    const { orderCount } = req.body;
+
+    appService.updateCartItem({ id: productId, orderCount });
+
+    res.status(200).json({
+      code: 200,
+      message: '성공적으로 수량이 변경되었습니다.',
+      result: {
+        id: productId,
+        orderCount: orderCount,
+      },
+    });
+  } catch (error) {
+    const { status, code, message } = errorHandler(error);
+    res.status(status).json({ code, message });
+  }
+});
 
 export default app;

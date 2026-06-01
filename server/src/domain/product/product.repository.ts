@@ -1,5 +1,5 @@
 import { products } from '../../db/inMemoryDb.js';
-import Product, { ProductType } from '../../model/Product.js';
+import Product from '../../model/Product.js';
 
 export interface ProductRepository {
   get: () => Product[];
