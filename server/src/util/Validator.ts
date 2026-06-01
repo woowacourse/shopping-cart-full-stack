@@ -14,10 +14,10 @@ export const validateId = (id: number): void => {
 
 export const validateProductData = (data: ProductInput): void => {
   validateQuantity(data.totalQuantity);
-  if (!data.name || data.name.length > 100)
+  if (typeof data.name !== 'string' || !data.name.trim() || data.name.length > 100)
     throw new InvalidError(ERROR_MESSAGE.INVALID_NAME);
-  if (typeof data.price !== "number" || Number.isNaN(data.price) || data.price <= 0)
+  if (typeof data.price !== 'number' || Number.isNaN(data.price) || data.price <= 0)
     throw new InvalidError(ERROR_MESSAGE.INVALID_PRICE);
-  if (!data.thumbnailUrl)
+  if (typeof data.thumbnailUrl !== 'string' || !data.thumbnailUrl.trim())
     throw new InvalidError(ERROR_MESSAGE.INVALID_THUMBNAIL_URL);
 };
