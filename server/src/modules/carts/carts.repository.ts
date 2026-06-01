@@ -61,3 +61,7 @@ export const findProductInCart = (cartId: number, productId: number) => {
 
   return { ...product, ...productData };
 };
+
+export const resetCartRepository = () => {
+  cartStore.reset();
+};

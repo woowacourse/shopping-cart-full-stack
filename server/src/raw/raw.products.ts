@@ -31,6 +31,8 @@ const createInitialRawProducts = () => {
 
 export const productStore = {
   products: createInitialRawProducts(),
+  nextProductId:
+    Math.max(...createInitialRawProducts().map((p) => p.id), 0) + 1,
   reset() {
     this.products = createInitialRawProducts();
   },

@@ -1,10 +1,11 @@
 import { ServiceError } from "../../common/error.ts";
 import { cartStore } from "../../raw/raw.carts.ts";
+import { resetProductRepository } from "../products/products.repository.ts";
 import * as cartsService from "./carts.service.ts";
 
 describe("carts service 테스트", () => {
   beforeEach(() => {
-    cartStore.reset();
+    resetProductRepository();
   });
 
   describe("getCartById 테스트", () => {

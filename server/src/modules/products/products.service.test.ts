@@ -1,11 +1,11 @@
 import { ServiceError } from "../../common/error.ts";
-import { productStore } from "../../raw/raw.products.ts";
 import * as productsService from "./products.service.ts";
 import type { ProductRequest } from "./products.dto.ts";
+import { resetCartRepository } from "../carts/carts.repository.ts";
 
 describe("product service 테스트", () => {
   beforeEach(() => {
-    productStore.reset();
+    resetCartRepository();
   });
 
   describe("getProducts 테스트", () => {

@@ -37,3 +37,8 @@ export const deleteById = (id: number) => {
 
   productStore.products.splice(productIndex, 1);
 };
+
+export const resetProductRepository = () => {
+  nextProductId = getNextProductId();
+  productStore.reset();
+};

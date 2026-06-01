@@ -3,6 +3,7 @@ import request from "supertest";
 
 import { cartStore } from "../../raw/raw.carts.ts";
 import cartsRouter from "./carts.router.ts";
+import { resetCartRepository } from "./carts.repository.ts";
 
 const initialCarts = [
   {
@@ -55,7 +56,7 @@ app.use("/carts", cartsRouter);
 
 describe("carts router 테스트", () => {
   beforeEach(() => {
-    cartStore.reset();
+    resetCartRepository();
   });
 
   describe("GET /carts/:cartId", () => {

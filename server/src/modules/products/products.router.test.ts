@@ -3,6 +3,7 @@ import request from "supertest";
 
 import { productStore } from "../../raw/raw.products.ts";
 import productsRouter from "./products.router.ts";
+import { resetProductRepository } from "./products.repository.ts";
 
 const initialProducts = [
   {
@@ -31,7 +32,7 @@ app.use("/products", productsRouter);
 
 describe("product router 테스트", () => {
   beforeEach(() => {
-    productStore.reset();
+    resetProductRepository();
   });
 
   describe("GET /products", () => {
