@@ -1,8 +1,11 @@
 import express from 'express';
 import request from 'supertest';
-import { cartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
 import { cartItemsDB, productsDB } from '../../../src/db.js';
+import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
+import { createCartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
+import { CartItemService } from '../../../src/modules/cart/cartItem.service.js';
 import { Product } from '../../../src/modules/products/product.model.js';
+import { productRepository } from '../../../src/modules/products/product.repository.js';
 
 const mockCartItem = {
   productId: '1',
@@ -17,10 +20,15 @@ const mockProduct = new Product({
   imageUrl: 'src/assets/coke.png',
 });
 
+const cartItemService = new CartItemService(
+  cartItemRepository,
+  productRepository,
+);
+
 const app = express();
 
 app.use(express.json());
-app.use(cartItemRouter);
+app.use(createCartItemRouter(cartItemService));
 
 describe('장바구니 API', () => {
   beforeEach(() => {

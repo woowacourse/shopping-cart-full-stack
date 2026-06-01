@@ -3,7 +3,10 @@ import request from 'supertest';
 import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
 import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
-import { productRouter } from '../../../src/modules/products/product.routes.js';
+import { CartItemService } from '../../../src/modules/cart/cartItem.service.js';
+import { productRepository } from '../../../src/modules/products/product.repository.js';
+import { createProductRouter } from '../../../src/modules/products/product.routes.js';
+import { ProductService } from '../../../src/modules/products/product.service.js';
 
 const mockProduct = {
   productId: '1',
@@ -13,10 +16,16 @@ const mockProduct = {
   imageUrl: 'src/assets/test.png',
 };
 
+const productService = new ProductService(productRepository);
+const cartItemService = new CartItemService(
+  cartItemRepository,
+  productRepository,
+);
+
 const app = express();
 
 app.use(express.json());
-app.use(productRouter);
+app.use(createProductRouter(productService, cartItemService));
 
 describe('상품 API', () => {
   beforeEach(() => {

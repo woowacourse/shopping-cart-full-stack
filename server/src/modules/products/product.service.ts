@@ -1,7 +1,7 @@
 import { AppError } from '../../errors/AppError.js';
 import { ModelError } from '../../errors/ModelError.js';
 import { Product } from './product.model.js';
-import { productRepository } from './product.repository.js';
+import type { ProductRepository } from './product.repository.js';
 
 type ProductParams = {
   productName: string;
@@ -10,7 +10,9 @@ type ProductParams = {
   imageUrl?: string;
 };
 
-export const productService = {
+export class ProductService {
+  constructor(private readonly productRepository: ProductRepository) {}
+
   addProduct(params: ProductParams) {
     // 필드 검사
     validateProductFields(params);
@@ -20,7 +22,7 @@ export const productService = {
         productId: crypto.randomUUID(),
         ...params,
       });
-      productRepository.save(product);
+      this.productRepository.save(product);
       return { productId: product.productId };
     } catch (error) {
       if (error instanceof ModelError) {
@@ -29,20 +31,21 @@ export const productService = {
 
       throw error;
     }
-  },
+  }
 
   getProducts() {
-    return productRepository.findAll();
-  },
+    return this.productRepository.findAll();
+  }
+
   deleteProduct(productId: string) {
-    const product = productRepository.findById(productId);
+    const product = this.productRepository.findById(productId);
 
     if (!product)
       throw new AppError(404, 'PRODUCT_NOT_FOUND', '존재하지 않는 상품입니다.');
 
-    productRepository.deleteById(productId);
-  },
-};
+    this.productRepository.deleteById(productId);
+  }
+}
 
 const validateProductFields = (params: ProductParams) => {
   if (typeof params.productName !== 'string') {

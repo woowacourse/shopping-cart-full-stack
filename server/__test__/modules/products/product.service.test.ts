@@ -3,7 +3,10 @@
 import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
 import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
-import { productService } from '../../../src/modules/products/product.service.js';
+import { productRepository } from '../../../src/modules/products/product.repository.js';
+import { ProductService } from '../../../src/modules/products/product.service.js';
+
+const productService = new ProductService(productRepository);
 
 describe('ProductService', () => {
   beforeEach(() => {

@@ -1,15 +1,9 @@
 import { AppError } from '../../errors/AppError.js';
 import { ModelError } from '../../errors/ModelError.js';
 import type { Product } from '../products/product.model.js';
-import {
-  productRepository,
-  type ProductRepository,
-} from '../products/product.repository.js';
+import type { ProductRepository } from '../products/product.repository.js';
 import { CartItem } from './cartItem.model.js';
-import {
-  cartItemRepository,
-  type CartItemRepository,
-} from './cartItem.repository.js';
+import type { CartItemRepository } from './cartItem.repository.js';
 
 export class CartItemService {
   constructor(
@@ -159,9 +153,3 @@ export class CartItemService {
     }
   }
 }
-
-// 조립: 기본 인스턴스를 만들어 export (routes는 이 인스턴스를 그대로 사용)
-export const cartItemService = new CartItemService(
-  cartItemRepository,
-  productRepository,
-);

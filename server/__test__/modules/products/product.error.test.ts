@@ -1,12 +1,22 @@
 import express from 'express';
 import request from 'supertest';
-import { productRouter } from '../../../src/modules/products/product.routes.js';
 import { errorHandler } from '../../../src/middlewares/errorHandlers.js';
+import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
+import { CartItemService } from '../../../src/modules/cart/cartItem.service.js';
+import { productRepository } from '../../../src/modules/products/product.repository.js';
+import { createProductRouter } from '../../../src/modules/products/product.routes.js';
+import { ProductService } from '../../../src/modules/products/product.service.js';
+
+const productService = new ProductService(productRepository);
+const cartItemService = new CartItemService(
+  cartItemRepository,
+  productRepository,
+);
 
 const app = express();
 
 app.use(express.json());
-app.use(productRouter);
+app.use(createProductRouter(productService, cartItemService));
 app.use(errorHandler);
 
 describe('상품 에러 테스트', () => {

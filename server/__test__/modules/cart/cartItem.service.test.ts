@@ -2,13 +2,16 @@
 
 import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
-import type { CartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
 import {
-  CartItemService,
-  cartItemService,
-} from '../../../src/modules/cart/cartItem.service.js';
+  cartItemRepository,
+  type CartItemRepository,
+} from '../../../src/modules/cart/cartItem.repository.js';
+import { CartItemService } from '../../../src/modules/cart/cartItem.service.js';
 import { Product } from '../../../src/modules/products/product.model.js';
-import type { ProductRepository } from '../../../src/modules/products/product.repository.js';
+import {
+  productRepository,
+  type ProductRepository,
+} from '../../../src/modules/products/product.repository.js';
 
 const createProduct = (productId: string) =>
   new Product({
@@ -18,6 +21,11 @@ const createProduct = (productId: string) =>
     remainingQuantity: 25,
     imageUrl: 'src/assets/coke.png',
   });
+
+const cartItemService = new CartItemService(
+  cartItemRepository,
+  productRepository,
+);
 
 describe('CartItemService', () => {
   beforeEach(() => {

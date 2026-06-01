@@ -2,13 +2,21 @@ import express from 'express';
 import request from 'supertest';
 import { cartItemsDB, productsDB } from '../../../src/db.js';
 import { errorHandler } from '../../../src/middlewares/errorHandlers.js';
-import { cartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
+import { cartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
+import { createCartItemRouter } from '../../../src/modules/cart/cartItem.routes.js';
+import { CartItemService } from '../../../src/modules/cart/cartItem.service.js';
 import { Product } from '../../../src/modules/products/product.model.js';
+import { productRepository } from '../../../src/modules/products/product.repository.js';
+
+const cartItemService = new CartItemService(
+  cartItemRepository,
+  productRepository,
+);
 
 const app = express();
 
 app.use(express.json());
-app.use(cartItemRouter);
+app.use(createCartItemRouter(cartItemService));
 app.use(errorHandler);
 
 const createProduct = (productId = 'product-1', remainingQuantity = 10) =>
