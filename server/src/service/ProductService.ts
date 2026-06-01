@@ -1,26 +1,33 @@
 import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
-import { cartRepository } from "../repositories/CartRepository";
 import { ProductData } from "../repositories/Product";
-import { productRepository } from "../repositories/ProductRepository";
+import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
+import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
 
-export const getProductsService = (): ProductData[] => {
-  return productRepository.getProducts();
-};
+export default class ProductService {
+  #productRepository: ProductRepositoryInterface;
+  #cartRepository: CartRepositoryInterface;
 
-export const postProductsService = (newProducts: ProductData): ProductData => {
-  const addedProduct = productRepository.addProduct(newProducts);
-  if (!addedProduct) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
+  constructor(productRepository: ProductRepositoryInterface, cartRepository: CartRepositoryInterface) {
+    this.#productRepository = productRepository;
+    this.#cartRepository = cartRepository;
+  }
 
-  return addedProduct;
-};
-
-export const deleteProductsService = (productId: number): void => {
-  if (!productId) throw new InvalidError(ERROR_MESSAGE.INVALID_PRODUCT_ID);
-
-  const product = productRepository.findById(productId);
-  if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
-
-  productRepository.deleteById(productId);
-  cartRepository.deleteByProductId(productId);
-};
+  getProducts(): ProductData[] {
+    return this.#productRepository.getProducts();
+  };
+  
+  postProducts(newProducts: ProductData): ProductData {
+    return this.#productRepository.addProduct(newProducts);
+  };
+  
+  deleteProducts(productId: number): void {
+    if (!productId) throw new InvalidError(ERROR_MESSAGE.INVALID_PRODUCT_ID);
+  
+    const product = this.#productRepository.findById(productId);
+    if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
+  
+    this.#productRepository.deleteById(productId);
+    this.#cartRepository.deleteByProductId(productId);
+  };
+}
