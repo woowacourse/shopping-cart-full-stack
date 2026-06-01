@@ -1,12 +1,17 @@
 import request from "supertest";
-import app from "../../src/app";
-import { productRepository } from "../../src/repositories/ProductRepository";
-import { cartRepository } from "../../src/repositories/CartRepository";
+import { runApp } from "../../src/app";
+import InMemoryProductRepository from "../../src/repositories/InMemoryProductRepository";
+import InMemoryCartRepository from "../../src/repositories/InMemoryCartRepository";
 
 describe("product API 통합 테스트", () => {
+  let app: any;
+  let productRepo: InMemoryProductRepository;
+  let cartRepo: InMemoryCartRepository;
+
   beforeEach(() => {
-    productRepository.clear();
-    cartRepository.clear(); 
+    productRepo = new InMemoryProductRepository();
+    cartRepo = new InMemoryCartRepository();
+    app = runApp({ productRepo, cartRepo });
   });
 
   it("관리자가 새로운 상품을 등록, 전체 목록을 조회, 해당 상품을 삭제", async () => {
@@ -60,29 +65,34 @@ describe("product API 통합 테스트", () => {
 
   it("상품 삭제 시, 연관된 장바구니 아이템도 함께 연쇄 삭제(Cascading) 되어야 한다.", async () => {
     // Given
-    const addedProduct = productRepository.addProduct({
+    const addedProduct = productRepo.addProduct({
       name: "에스프레소", price: 3000, thumbnailUrl: "url", totalQuantity: 50
     });
     const targetProductId = addedProduct.productId;
     
-    cartRepository.addProductToCart(targetProductId, 3); // 장바구니에 담기
+    cartRepo.addProductToCart(targetProductId, 3);
 
-    expect(productRepository.getProducts()).toHaveLength(1);
-    expect(cartRepository.getCartProducts()).toHaveLength(1);
+    expect(productRepo.getProducts()).toHaveLength(1);
+    expect(cartRepo.getCartProducts()).toHaveLength(1);
 
     // When
     const deleteResponse = await request(app).delete(`/products/${targetProductId}`);
     expect(deleteResponse.status).toBe(204);
 
     // Then
-    expect(cartRepository.getCartProducts()).toHaveLength(0);
+    expect(cartRepo.getCartProducts()).toHaveLength(0);
   });
 });
 
 describe("product API 예외 상황 통합 테스트", () => {
+  let app: any;
+  let productRepo: InMemoryProductRepository;
+  let cartRepo: InMemoryCartRepository;
+
   beforeEach(() => {
-    productRepository.clear();
-    cartRepository.clear();
+    productRepo = new InMemoryProductRepository();
+    cartRepo = new InMemoryCartRepository();
+    app = runApp({ productRepo, cartRepo });
   });
 
   it("POST /products : 상품 등록 시 필수 데이터가 누락되거나 조건에 맞지 않으면 400 에러를 반환한다.", async () => {
@@ -123,6 +133,6 @@ describe("product API 예외 상황 통합 테스트", () => {
     const response = await request(app).delete("/products/not-a-number");
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("유효하지 않은 상품 ID입니다.");
+    expect(response.body.message).toBe("유효하지 않은 ID입니다.");
   });
 });

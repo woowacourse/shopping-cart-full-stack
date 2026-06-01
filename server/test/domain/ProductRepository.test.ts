@@ -1,11 +1,11 @@
 import { ProductInput } from "../../src/repositories/Product";
-import ProductRepository from "../../src/repositories/ProductRepository";
+import InMemoryProductRepository from "../../src/repositories/InMemoryProductRepository";
 
 describe("ProductRepository 단위 테스트", () => {
-  let repository: ProductRepository;
+  let repository: InMemoryProductRepository;
 
   beforeEach(() => {
-    repository = new ProductRepository();
+    repository = new InMemoryProductRepository();
   });
 
   it("getProducts() : 저장소에 데이터가 없을 경우 빈 배열 반환", () => {

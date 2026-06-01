@@ -1,10 +1,10 @@
-import CartRepository from "../../src/repositories/CartRepository";
+import InMemoryCartRepository from "../../src/repositories/InMemoryCartRepository";
 
 describe("CartRepository 단위 테스트", () => {
-  let repository: CartRepository;
+  let repository: InMemoryCartRepository;
 
   beforeEach(() => {
-    repository = new CartRepository();
+    repository = new InMemoryCartRepository();
   });
 
   it("getCartProducts() : 저장소에 장바구니 데이터가 없을 경우 빈 배열 반환", () => {
