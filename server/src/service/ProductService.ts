@@ -1,6 +1,6 @@
 import { NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
-import { ProductData } from "../repositories/Product";
+import { ProductData, ProductInput } from "../repositories/Product";
 import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
 import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
 import { validateId, validateProductData } from "../util/Validator";
@@ -18,7 +18,7 @@ export default class ProductService {
     return this.#productRepository.getProducts();
   };
   
-  postProducts(newProducts: ProductData): ProductData {
+  postProducts(newProducts: ProductInput): ProductData {
     validateProductData(newProducts);
     return this.#productRepository.addProduct(newProducts);
   };
