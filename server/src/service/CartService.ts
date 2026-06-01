@@ -1,5 +1,5 @@
 import type { CartItemData } from "../repositories/CartItem";
-import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
+import { NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
 import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
