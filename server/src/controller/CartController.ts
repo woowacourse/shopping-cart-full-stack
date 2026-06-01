@@ -8,6 +8,11 @@ export default class CartController {
   constructor(cartService: CartService) {
     this.#cartService = cartService;
   }
+
+  #runGetCartItems = (_request: Request, response: Response): void => {
+    const cartItems = this.#cartService.getCartItems();
+    response.status(200).json(cartItems);
+  }
   
   #runPostCartItem = (request: Request, response: Response): void => {
     const { productId, quantity } = request.body;
@@ -28,9 +33,12 @@ export default class CartController {
     response.status(200).json(patchedCartItem);
   };
 
-  getCartItems = (_request: Request, response: Response): void => {
-    const cartItems = this.#cartService.getCartItems();
-    response.status(200).json(cartItems);
+  getCartItems = (request: Request, response: Response): void => {
+    try {
+      this.#runGetCartItems(request, response);
+    } catch (error) {
+      handleError(response, error);
+    }
   };
   
   postCartItem = (request: Request, response: Response): void => {

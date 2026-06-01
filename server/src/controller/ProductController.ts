@@ -9,6 +9,11 @@ export default class ProductController {
     this.#productService = productService;
   }
   
+  #runGetProducts = (_request: Request, response: Response): void => {
+    const products = this.#productService.getProducts();
+    response.status(200).json(products);
+  };
+
   #runPostProducts = (request: Request, response: Response): void => {
     const newProducts = request.body;
     const addedProduct = this.#productService.postProducts(newProducts);
@@ -21,9 +26,12 @@ export default class ProductController {
     response.status(204).send();
   };
 
-  getProducts = (_request: Request, response: Response): void => {
-    const products = this.#productService.getProducts();
-    response.status(200).json(products);
+  getProducts = (request: Request, response: Response): void => {
+    try {
+      this.#runGetProducts(request, response);
+    } catch (error) {
+      handleError(response, error);
+    }
   };
   
   postProducts = (request: Request, response: Response): void => {
