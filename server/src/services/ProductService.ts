@@ -50,7 +50,7 @@ export const productService = {
     return products.findAll();
   },
 
-  createProduct(body: unknown): string {
+  createProduct(body: unknown): Product {
     if (!isValidCreateProductBody(body)) {
       throw new InvalidInputError();
     }
@@ -62,10 +62,11 @@ export const productService = {
     }
 
     const newId = products.getNextId();
+    const newProduct = new Product(newId, name, price, imageUrl);
 
-    products.add(new Product(newId, name, price, imageUrl));
+    products.add(newProduct);
 
-    return newId;
+    return newProduct;
   },
 
   deleteProduct(id: string): void {

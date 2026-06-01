@@ -49,32 +49,45 @@ describe("Product API", () => {
     await request(app).get("/products").expect(500);
   });
 
-  test("POST /products는 상품을 생성하고 id를 응답한다", async () => {
+  test("POST /products는 생성된 상품 전체를 응답한다", async () => {
     const app = await loadApp();
     const response = await request(app)
       .post("/products")
       .send({ name: "새 상품", price: 1000, imageUrl: "/new.png" })
       .expect(201);
 
-    expect(response.body).toEqual({ id: "6" });
+    expect(response.body).toEqual({
+      id: "6",
+      name: "새 상품",
+      price: 1000,
+      imageUrl: "/new.png",
+    });
+    expect(response.headers.location).toBe("/products/6");
   });
 
-  test("POST /products는 유효하지 않은 요청이면 400을 응답한다", async () => {
+  test("POST /products는 유효하지 않은 요청이면 400과 에러 정보를 응답한다", async () => {
     const app = await loadApp();
-
-    await request(app)
+    const response = await request(app)
       .post("/products")
       .send({ name: "", price: 1000, imageUrl: "/new.png" })
       .expect(400);
+
+    expect(response.body).toMatchObject({
+      error: "InvalidInputError",
+    });
+    expect(typeof response.body.message).toBe("string");
   });
 
-  test("POST /products는 중복 상품명이면 409를 응답한다", async () => {
+  test("POST /products는 중복 상품명이면 409와 에러 정보를 응답한다", async () => {
     const app = await loadApp();
-
-    await request(app)
+    const response = await request(app)
       .post("/products")
       .send({ name: "EASTER", price: 1000, imageUrl: "/new.png" })
       .expect(409);
+
+    expect(response.body).toMatchObject({
+      error: "DuplicateNameError",
+    });
   });
 
   test("DELETE /products/:id는 상품을 삭제한다", async () => {
@@ -83,9 +96,14 @@ describe("Product API", () => {
     await request(app).delete("/products/1").expect(204);
   });
 
-  test("DELETE /products/:id는 없는 상품이면 404를 응답한다", async () => {
+  test("DELETE /products/:id는 없는 상품이면 404와 에러 정보를 응답한다", async () => {
     const app = await loadApp();
+    const response = await request(app)
+      .delete("/products/999")
+      .expect(404);
 
-    await request(app).delete("/products/999").expect(404);
+    expect(response.body).toMatchObject({
+      error: "NotFoundError",
+    });
   });
 });

@@ -22,12 +22,17 @@ describe('productService', () => {
     expect(productService.getProducts()).toHaveLength(5);
   });
 
-  test('createProduct는 새 상품의 id를 반환한다', async () => {
+  test('createProduct는 생성된 상품 전체를 반환한다', async () => {
     const {productService} = await loadProductService();
 
-    const newId = productService.createProduct({name: '새 상품', price: 1000, imageUrl: '/new.png'});
+    const newProduct = productService.createProduct({name: '새 상품', price: 1000, imageUrl: '/new.png'});
 
-    expect(newId).toBe('6');
+    expect(newProduct).toMatchObject({
+      id: '6',
+      name: '새 상품',
+      price: 1000,
+      imageUrl: '/new.png',
+    });
     expect(productService.getProducts()).toHaveLength(6);
   });
 
