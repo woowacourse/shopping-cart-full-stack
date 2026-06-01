@@ -99,6 +99,12 @@ describe("product router 테스트", () => {
         status: 400,
         errorCode: "TYPE_MISMATCH",
         errorMessage: "타입이 일치하지 않습니다.",
+        data: [
+          {
+            type: "price",
+            errorCode: "TYPE_MISMATCH_PRICE",
+          },
+        ],
       });
     });
 
