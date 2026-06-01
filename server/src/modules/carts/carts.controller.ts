@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import { ServiceError } from "../../common/error.ts";
 import { fail, success } from "../../common/response.ts";
 import * as cartsService from "./carts.service.ts";
+import type { UpdateCartItemQuantityRequest } from "./carts.dto.ts";
 
 const getStatusCode = (error: ServiceError<unknown>) => {
   if (error.errorCode === "RESOURCE_NOT_FOUND") return 404;
@@ -30,8 +31,10 @@ export const updateCartProduct = (req: Request, res: Response) => {
   const cartId = Number(req.params.cartId);
   const productId = Number(req.params.productId);
 
+  const body = req.body as UpdateCartItemQuantityRequest;
+
   try {
-    const product = cartsService.updateCartProduct(cartId, productId, req.body);
+    const product = cartsService.updateCartProduct(cartId, productId, body);
 
     return success(res, product);
   } catch (error) {
