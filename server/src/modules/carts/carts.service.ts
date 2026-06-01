@@ -1,0 +1,90 @@
+import * as cartsRepository from './carts.repository.ts';
+import { ServiceError } from '../../common/error.ts';
+import { getMissingFields } from '../../validate/getMissingFields.ts';
+
+export const getCartById = (cartId: number) => {
+    const cart = cartsRepository.findById(cartId);
+    if (!cart) throw new ServiceError('RESOURCE_NOT_FOUND', 'id에 해당하는 장바구니가 존재하지 않습니다.');
+
+    return {
+        id: cart.id,
+        products: cart.products.map((item) => ({
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            imgUrl: item.product.imgUrl,
+            quantity: item.quantity,
+        })),
+    };
+};
+
+interface CartUpdateOption {
+    quantity: number;
+}
+
+export const updateCartProduct = (cartId: number, productId: number, cartUpdateOption: Partial<CartUpdateOption>) => {
+    const requiredFields = ['quantity'] as const;
+    const missingFields = getMissingFields(cartUpdateOption, requiredFields as unknown as string[]);
+
+    if (missingFields.length > 0) {
+        throw new ServiceError(
+            'MISSING_FIELD',
+            '필수값이 누락되었습니다.',
+            missingFields.map((field) => ({
+                type: field,
+                errorCode: `MISSING_FIELD_${field.toUpperCase()}`,
+            }))
+        );
+    }
+
+    if (typeof cartUpdateOption.quantity !== 'number') {
+        throw new ServiceError('TYPE_MISMATCH', '타입이 일치하지 않습니다.');
+    }
+
+    const invalidFields = [
+        {
+            type: 'quantity',
+            isInvalid:
+                !Number.isInteger(cartUpdateOption.quantity) ||
+                cartUpdateOption.quantity! < 1 ||
+                cartUpdateOption.quantity! > 99,
+        },
+    ].filter(({ isInvalid }) => isInvalid);
+
+    if (invalidFields.length > 0) {
+        throw new ServiceError(
+            'INVALID',
+            '도메인 규칙에 맞지 않는 값입니다.',
+            invalidFields.map(({ type }) => ({
+                type,
+                errorCode: `INVALID_${type.toUpperCase()}`,
+            }))
+        );
+    }
+
+    const updated = cartsRepository.updateProductQuantity(cartId, productId, cartUpdateOption.quantity!);
+
+    if (!updated) {
+        throw new ServiceError('RESOURCE_NOT_FOUND', 'id에 해당하는 장바구니 상품이 존재하지 않습니다.');
+    }
+
+    const product = cartsRepository.findProductInCart(cartId, productId)!;
+
+    return {
+        id: product.product.id,
+        name: product.product.name,
+        price: product.product.price,
+        imgUrl: product.product.imgUrl,
+        quantity: product.quantity,
+    };
+};
+
+export const deleteCartProduct = (cartId: number, productId: number) => {
+    const product = cartsRepository.findProductInCart(cartId, productId);
+
+    if (!product) {
+        throw new ServiceError('RESOURCE_NOT_FOUND', 'id에 해당하는 장바구니 상품이 존재하지 않습니다.');
+    }
+
+    cartsRepository.deleteProductInCart(cartId, productId);
+};
