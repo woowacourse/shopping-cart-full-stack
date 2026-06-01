@@ -1,21 +1,22 @@
-
-
-export class BadRequestError extends Error {
-  data;
-
-  constructor(data: Record<string, string>) {
-    super('Bad Request');
-    this.name = 'BadRequestError';
-    this.data = data;
+export class AppError extends Error {
+  constructor(
+    public statusCode: number,
+    public data: Record<string, string>,
+  ) {
+    super();
   }
 }
 
-export class NotFoundError extends Error {
-  data;
-
+export class BadRequestError extends AppError {
   constructor(data: Record<string, string>) {
-    super('Not Found');
+    super(400, data);
+    this.name = 'BadRequestError';
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(data: Record<string, string>) {
+    super(404, data);
     this.name = 'NotFoundError';
-    this.data = data;
   }
 }

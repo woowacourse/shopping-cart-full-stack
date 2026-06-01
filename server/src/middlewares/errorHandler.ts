@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as z from 'zod';
-import { BadRequestError, NotFoundError } from '../errors';
+import { AppError } from '../errors';
 
 const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof z.ZodError) {
@@ -18,13 +18,8 @@ const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFun
     return;
   }
 
-  if (err instanceof NotFoundError) {
-    res.status(404).json({ status: 'fail', data: err.data });
-    return;
-  }
-
-  if (err instanceof BadRequestError) {
-    res.status(400).json({ status: 'fail', data: err.data });
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({ status: 'fail', data: err.data });
     return;
   }
 
