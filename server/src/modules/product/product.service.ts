@@ -1,5 +1,5 @@
 import AppError from "../../errors/AppError.js";
-import Product, { ProductType } from "./Product.js";
+import { ProductType } from "./Product.js";
 import { CartRepository } from "../cart/cart.repository.js";
 import { ProductRepository } from "./product.repository.js";
 
@@ -30,7 +30,7 @@ class ProductService {
       throw new AppError("PRODUCT_NOT_EXIST");
     }
 
-    this.cartRepository.delete(id);
+    this.cartRepository.removeProductFromAllCarts(id);
     this.productRepository.delete(id);
   }
 }
