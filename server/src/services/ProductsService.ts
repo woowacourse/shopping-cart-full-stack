@@ -1,8 +1,7 @@
-import { NotFoundError } from '../errors';
+import { NotFoundError, BadRequestError } from '../errors';
 import ProductsRepository from '../repositories/ProductsRepository';
 import CartItemsRepository from '../repositories/CartItemsRepository';
 import { Product } from '../types';
-import { ProductSchema } from './../schemas';
 
 class ProductsService {
   productsRepository;
@@ -18,8 +17,16 @@ class ProductsService {
   }
 
   async insertProduct(product: Omit<Product, 'productId'>) {
-    const parsedProduct = ProductSchema.parse(product);
-    return await this.productsRepository.insert(parsedProduct);
+    if (product.name.length < 1 || product.name.length > 100)
+      throw new BadRequestError({ name: '상품명은 1자 이상 100자 이하여야 합니다.' });
+
+    if (product.price <= 0 || !Number.isInteger(product.price))
+      throw new BadRequestError({ price: '가격은 0보다 큰 정수여야 합니다.' });
+
+    if (product.stock < 0 || product.stock > 99 || !Number.isInteger(product.stock))
+      throw new BadRequestError({ stock: '재고는 0 이상 99 이하의 정수여야 합니다.' });
+
+    return await this.productsRepository.insert(product);
   }
 
   async deleteProduct(productId: Product['productId']) {

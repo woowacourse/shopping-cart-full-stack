@@ -1,28 +1,39 @@
 import * as z from 'zod';
 
 export const InsertProductRequestBodySchema = z.object({
-  name: z.string({ error: '상품명은 필수입니다.' }),
+  name: z.string({
+    error: (iss) =>
+      iss.received === 'undefined' ? '상품명은 필수입니다.' : '상품명은 문자열이어야 합니다.',
+  }),
   price: z.number({
     error: (iss) =>
-      iss.code === 'invalid_type' && iss.received === 'undefined'
-        ? '가격은 필수입니다.'
-        : '가격은 0보다 큰 숫자여야 합니다.',
+      iss.received === 'undefined' ? '가격은 필수입니다.' : '가격은 숫자여야 합니다.',
   }),
-  image: z.string({ error: '상품 이미지는 필수입니다.' }),
+  image: z.string({
+    error: (iss) =>
+      iss.received === 'undefined'
+        ? '상품 이미지는 필수입니다.'
+        : '상품 이미지는 문자열이어야 합니다.',
+  }),
+
   stock: z.number({
     error: (iss) =>
-      iss.code === 'invalid_type' && iss.received === 'undefined'
-        ? '재고는 필수입니다.'
-        : '재고는 0 이상 99 이하의 정수여야 합니다.',
+      iss.received === 'undefined' ? '재고는 필수입니다.' : '재고는 숫자여야 합니다.',
   }),
 });
 
 export const DeleteProductRequestParamsSchema = z.object({
-  productId: z.string(),
+  productId: z.string({
+    error: (iss) =>
+      iss.received === 'undefined' ? '상품 ID는 필수입니다.' : '상품 ID는 문자열이어야 합니다.',
+  }),
 });
 
 export const InsertCartItemBodySchema = z.object({
-  productId: z.string({ error: '상품 ID는 필수입니다.' }),
+  productId: z.string({
+    error: (iss) =>
+      iss.received === 'undefined' ? '상품 ID는 필수입니다.' : '상품 ID는 문자열이어야 합니다.',
+  }),
   quantity: z.number({
     error: (iss) =>
       iss.code === 'invalid_type' && iss.received === 'undefined'
@@ -32,7 +43,12 @@ export const InsertCartItemBodySchema = z.object({
 });
 
 export const UpdateCartItemRequestParamsSchema = z.object({
-  cartItemId: z.string(),
+  cartItemId: z.string({
+    error: (iss) =>
+      iss.received === 'undefined'
+        ? '장바구니 상품 ID는 필수입니다.'
+        : '장바구니 상품 ID는 문자열이어야 합니다.',
+  }),
 });
 
 export const UpdateCartItemRequestBodySchema = z.object({
@@ -45,28 +61,6 @@ export const UpdateCartItemRequestBodySchema = z.object({
 });
 
 export const DeleteCartItemRequestParamsSchema = UpdateCartItemRequestParamsSchema;
-
-export const ProductSchema = z.object({
-  name: z
-    .string({ error: '상품명은 필수입니다.' })
-    .min(1, { error: '상품명은 필수입니다.' })
-    .max(100, { error: '상품명은 최대 100자까지 허용됩니다.' }),
-
-  image: z
-    .string({ error: '상품 이미지는 필수입니다.' })
-    .min(1, { error: '상품 이미지는 필수입니다.' }),
-
-  price: z
-    .number({ error: '가격은 0보다 큰 숫자여야 합니다.' })
-    .int({ error: '가격은 0보다 큰 숫자여야 합니다.' })
-    .min(1, { error: '가격은 0보다 큰 숫자여야 합니다.' }),
-
-  stock: z
-    .number({ error: '재고는 0 이상 99 이하의 정수여야 합니다.' })
-    .int({ error: '재고는 0 이상 99 이하의 정수여야 합니다.' })
-    .min(0, { error: '재고는 0 이상 99 이하의 정수여야 합니다.' })
-    .max(99, { error: '재고는 0 이상 99 이하의 정수여야 합니다.' }),
-});
 
 export const CartItemSchema = z.object({
   productId: z
