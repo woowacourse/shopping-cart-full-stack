@@ -1,10 +1,9 @@
 # API 명세서
 
 ## 공통
-- 응답 본문이 있는 경우 최상위 필드는 `body`입니다.
-- 응답 본문에는 `status`, `message`를 포함하지 않습니다.
-- 요청 본문은 JSON 형식입니다.
-- 에러 응답은 별도 본문 없이 상태 코드로만 표현합니다.
+- 요청·응답 본문은 JSON 형식입니다.
+- 성공 응답 본문은 도메인 데이터를 그대로 담습니다 (envelope 래퍼 없음).
+- 에러 응답 본문은 `{ "error": "<에러 이름>", "message": "<설명 메시지>" }` 형태입니다.
 
 ### 상태 코드
 
@@ -18,6 +17,26 @@
 | `409` | 이미 존재하는 리소스와 충돌 |
 | `500` | 서버 오류 |
 
+### 에러 응답 형식
+
+성공이 아닌 응답(`4xx`, `5xx`)은 다음 형식의 본문을 가집니다. 단, `204`는 본문이 없습니다.
+
+```json
+{
+  "error": "string",
+  "message": "string"
+}
+```
+
+| `error` 값 | 발생 상황 | 상태 코드 |
+| --- | --- | --- |
+| `InvalidInputError` | 요청 본문이 누락되거나 유효성 검증에 실패 | `400` |
+| `NotFoundError` | 요청한 리소스가 존재하지 않음 | `404` |
+| `DuplicateNameError` | 이미 같은 이름의 리소스가 존재함 | `409` |
+| `InternalServerError` | 예기치 못한 서버 오류 | `500` |
+
+`message`는 사람이 읽을 수 있는 설명 문자열이며 사용자에게 노출 가능한 정보만 포함합니다.
+
 ## 상품
 
 ### `GET /products`
@@ -26,20 +45,18 @@
 
 Response `200`
 ```json
-{
-  "body": [
-    {
-      "id": "string",
-      "name": "string",
-      "price": number,
-      "imageUrl": "string"
-    }
-  ]
-}
+[
+  {
+    "id": "string",
+    "name": "string",
+    "price": number,
+    "imageUrl": "string"
+  }
+]
 ```
 
 Responses
-- `500`: 서버 오류
+- `500` `InternalServerError`: 서버 오류
 
 ### `POST /products`
 
@@ -60,7 +77,7 @@ Request fields
 | --- | --- | --- | --- |
 | `name` | `string` | 예 | 1자 이상 100자 이하 |
 | `price` | `number` | 예 | 0보다 큰 유한한 숫자 |
-| `imageUrl` | `string` | 예 | 빈 문자열 불가 |
+| `imageUrl` | `string` | 예 | 비어있지 않은 문자열 |
 
 Request example
 ```json
@@ -71,19 +88,20 @@ Request example
 }
 ```
 
-Response `201`
+Response `201` — 생성된 상품 전체를 반환합니다.
 ```json
 {
-  "body": {
-    "id": "string"
-  }
+  "id": "string",
+  "name": "string",
+  "price": number,
+  "imageUrl": "string"
 }
 ```
 
 Responses
-- `400`: 필수 필드 누락 또는 유효하지 않은 값
-- `409`: 중복 상품
-- `500`: 서버 오류
+- `400` `InvalidInputError`: 필수 필드 누락 또는 유효하지 않은 값
+- `409` `DuplicateNameError`: 같은 이름의 상품이 이미 존재
+- `500` `InternalServerError`: 서버 오류
 
 ### `DELETE /products/:id`
 
@@ -98,9 +116,9 @@ Path parameters
 | `id` | `string` | 삭제할 상품 id |
 
 Responses
-- `204`: 삭제 성공
-- `404`: 상품 없음
-- `500`: 서버 오류
+- `204`: 삭제 성공 (본문 없음)
+- `404` `NotFoundError`: 상품 없음
+- `500` `InternalServerError`: 서버 오류
 
 ## 장바구니
 
@@ -110,24 +128,22 @@ Responses
 
 Response `200`
 ```json
-{
-  "body": [
-    {
+[
+  {
+    "id": "string",
+    "product": {
       "id": "string",
-      "productInfo": {
-        "id": "string",
-        "name": "string",
-        "price": number,
-        "imageUrl": "string"
-      },
-      "quantity": number
-    }
-  ]
-}
+      "name": "string",
+      "price": number,
+      "imageUrl": "string"
+    },
+    "quantity": number
+  }
+]
 ```
 
 Responses
-- `500`: 서버 오류
+- `500` `InternalServerError`: 서버 오류
 
 ### `PATCH /carts/:id`
 
@@ -162,17 +178,15 @@ Request example
 Response `200`
 ```json
 {
-  "body": {
-    "id": "string",
-    "quantity": number
-  }
+  "id": "string",
+  "quantity": number
 }
 ```
 
 Responses
-- `400`: 필수 필드 누락 또는 유효하지 않은 수량
-- `404`: 장바구니 항목 없음
-- `500`: 서버 오류
+- `400` `InvalidInputError`: 본문 누락 또는 유효하지 않은 수량
+- `404` `NotFoundError`: 장바구니 항목 없음
+- `500` `InternalServerError`: 서버 오류
 
 ### `DELETE /carts/:id`
 
@@ -185,6 +199,6 @@ Path parameters
 | `id` | `string` | 삭제할 장바구니 항목 id |
 
 Responses
-- `204`: 삭제 성공
-- `404`: 장바구니 항목 없음
-- `500`: 서버 오류
+- `204`: 삭제 성공 (본문 없음)
+- `404` `NotFoundError`: 장바구니 항목 없음
+- `500` `InternalServerError`: 서버 오류
