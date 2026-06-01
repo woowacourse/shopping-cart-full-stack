@@ -1,53 +1,48 @@
-import {cartItems, products} from '../db.js';
-import {Product} from '../models/Product.js';
-import type {CreateProductRequestBody} from '../type.js';
+import { cartItems, products } from "../db.js";
+import {
+  DuplicateNameError,
+  InvalidInputError,
+  NotFoundError,
+} from "../errors/HttpError.js";
+import { Product } from "../models/Product.js";
+import type { CreateProductRequestBody } from "../type.js";
 
 const PRODUCT_NAME_MAX_LENGTH = 100;
 
-type CreateProductResult =
-  | {
-      status: 'created';
-      id: string;
-    }
-  | {
-      status: 'duplicated';
-    }
-  | {
-      status: 'invalid';
-    };
-
-type DeleteProductResult =
-  | {
-      status: 'deleted';
-    }
-  | {
-      status: 'notFound';
-    };
-
-export const isValidProductName = (name: unknown) => {
-  return typeof name === 'string' && name.length > 0 && name.length <= PRODUCT_NAME_MAX_LENGTH;
+const isValidProductName = (name: unknown) => {
+  return (
+    typeof name === "string" &&
+    name.length > 0 &&
+    name.length <= PRODUCT_NAME_MAX_LENGTH
+  );
 };
 
-export const isValidPrice = (price: unknown) => {
-  return typeof price === 'number' && Number.isFinite(price) && price > 0;
+const isValidPrice = (price: unknown) => {
+  return typeof price === "number" && Number.isFinite(price) && price > 0;
 };
 
-export const isValidImageUrl = (imageUrl: unknown) => {
-  return typeof imageUrl === 'string' && imageUrl.length > 0;
+const isValidImageUrl = (imageUrl: unknown) => {
+  return typeof imageUrl === "string" && imageUrl.length > 0;
 };
 
-export const isCreateProductRequestBody = (body: unknown): body is CreateProductRequestBody => {
-  return typeof body === 'object' && body !== null;
+const isCreateProductRequestBody = (
+  body: unknown,
+): body is CreateProductRequestBody => {
+  return typeof body === "object" && body !== null;
 };
 
-export const isValidCreateProductBody = (body: unknown): body is CreateProductRequestBody => {
+const isValidCreateProductBody = (
+  body: unknown,
+): body is CreateProductRequestBody => {
   if (!isCreateProductRequestBody(body)) {
     return false;
   }
 
-  const {name, price, imageUrl} = body;
+  const { name, price, imageUrl } = body;
 
-  return isValidProductName(name) && isValidPrice(price) && isValidImageUrl(imageUrl);
+  return (
+    isValidProductName(name) && isValidPrice(price) && isValidImageUrl(imageUrl)
+  );
 };
 
 export const productService = {
@@ -55,43 +50,29 @@ export const productService = {
     return products.findAll();
   },
 
-  createProduct(body: unknown): CreateProductResult {
+  createProduct(body: unknown): string {
     if (!isValidCreateProductBody(body)) {
-      return {
-        status: 'invalid',
-      };
+      throw new InvalidInputError();
     }
 
-    const {name, price, imageUrl} = body;
+    const { name, price, imageUrl } = body;
 
     if (products.hasName(name)) {
-      return {
-        status: 'duplicated',
-      };
+      throw new DuplicateNameError();
     }
 
     const newId = products.getNextId();
 
     products.add(new Product(newId, name, price, imageUrl));
 
-    return {
-      status: 'created',
-      id: newId,
-    };
+    return newId;
   },
 
-  deleteProduct(id: string): DeleteProductResult {
+  deleteProduct(id: string): void {
     if (!products.findById(id)) {
-      return {
-        status: 'notFound',
-      };
+      throw new NotFoundError();
     }
-
     cartItems.deleteByProductId(id);
     products.deleteById(id);
-
-    return {
-      status: 'deleted',
-    };
   },
 };
