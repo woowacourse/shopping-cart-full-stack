@@ -27,14 +27,22 @@ const createProductValidators = {
   validateTypes(productRequest: Partial<ProductRequest>) {
     // 타입 검증
     const requiredFields = ["price", "name", "imgUrl"] as const;
-    const isTypeMismatch = requiredFields.some((field) => {
-      if (field === "price") return typeof productRequest[field] !== "number";
+    const mismatchFields = requiredFields.filter((field) => {
+      if (field === "price") {
+        return typeof productRequest[field] !== "number";
+      }
 
       return typeof productRequest[field] !== "string";
     });
-
-    if (isTypeMismatch) {
-      throw new ServiceError("TYPE_MISMATCH", "타입이 일치하지 않습니다.");
+    if (mismatchFields.length > 0) {
+      throw new ServiceError(
+        "TYPE_MISMATCH",
+        "타입이 일치하지 않습니다.",
+        mismatchFields.map((field) => ({
+          type: field,
+          errorCode: `TYPE_MISMATCH_${field.toUpperCase()}`,
+        })),
+      );
     }
   },
   validateDomainRules(productRequest: Partial<ProductRequest>) {

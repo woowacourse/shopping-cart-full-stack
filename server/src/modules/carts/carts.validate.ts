@@ -25,7 +25,12 @@ const updateCartProductValidators = {
   },
   validateTypes(cartUpdateOption: Partial<CartUpdateOption>) {
     if (typeof cartUpdateOption.quantity !== "number") {
-      throw new ServiceError("TYPE_MISMATCH", "타입이 일치하지 않습니다.");
+      throw new ServiceError("TYPE_MISMATCH", "타입이 일치하지 않습니다.", [
+        {
+          type: "quantity",
+          errorCode: `TYPE_MISMATCH_${"quantity".toUpperCase()}`,
+        },
+      ]);
     }
   },
   validateDomainRules(cartUpdateOption: Partial<CartUpdateOption>) {
