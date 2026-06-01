@@ -4,6 +4,12 @@ import { ServiceError } from "../../common/error.ts";
 import { fail, success } from "../../common/response.ts";
 import * as productsService from "./products.service.ts";
 
+const getStatusCode = (error: ServiceError<unknown>) => {
+  if (error.errorCode === "RESOURCE_NOT_FOUND") return 404;
+
+  return 400;
+};
+
 export const getProducts = (_req: Request, res: Response) => {
   const products = productsService.getProducts();
 
@@ -19,7 +25,13 @@ export const createProduct = (req: Request, res: Response) => {
     return success(res, product, 201);
   } catch (error) {
     if (error instanceof ServiceError) {
-      return fail(res, error.errorCode, error.errorMessage, 400, error.data);
+      return fail(
+        res,
+        error.errorCode,
+        error.errorMessage,
+        getStatusCode(error),
+        error.data,
+      );
     }
 
     throw error;
@@ -35,7 +47,13 @@ export const deleteProduct = (req: Request, res: Response) => {
     return res.status(204).send();
   } catch (error) {
     if (error instanceof ServiceError) {
-      return fail(res, error.errorCode, error.errorMessage, 404, error.data);
+      return fail(
+        res,
+        error.errorCode,
+        error.errorMessage,
+        getStatusCode(error),
+        error.data,
+      );
     }
 
     throw error;
