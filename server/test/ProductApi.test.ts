@@ -34,8 +34,8 @@ describe('Product API', () => {
     const app = await loadApp();
     const response = await request(app).get('/products').expect(200);
 
-    expect(response.body.body).toHaveLength(5);
-    expect(response.body.body[0]).toMatchObject({
+    expect(response.body).toHaveLength(5);
+    expect(response.body[0]).toMatchObject({
       id: '1',
       name: 'EASTER',
       price: 100000000000,
@@ -56,11 +56,7 @@ describe('Product API', () => {
       .send({name: '새 상품', price: 1000, imageUrl: '/new.png'})
       .expect(201);
 
-    expect(response.body).toEqual({
-      body: {
-        id: '6',
-      },
-    });
+    expect(response.body).toEqual({id: '6'});
   });
 
   test('POST /products는 유효하지 않은 요청이면 400을 응답한다', async () => {
