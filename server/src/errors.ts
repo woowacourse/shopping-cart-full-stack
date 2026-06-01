@@ -1,21 +1,30 @@
-
-
-export class BadRequestError extends Error {
-  data;
-
-  constructor(data: Record<string, string>) {
-    super('Bad Request');
-    this.name = 'BadRequestError';
-    this.data = data;
+export class ProductNotFoundError extends Error {
+  constructor(public readonly productId: string) {
+    super('Product not found');
+    this.name = 'ProductNotFoundError';
   }
 }
 
-export class NotFoundError extends Error {
-  data;
+export class CartItemNotFoundError extends Error {
+  constructor(public readonly cartItemId: string) {
+    super('Cart item not found');
+    this.name = 'CartItemNotFoundError';
+  }
+}
 
-  constructor(data: Record<string, string>) {
-    super('Not Found');
-    this.name = 'NotFoundError';
-    this.data = data;
+export class ProductAlreadyInCartError extends Error {
+  constructor(public readonly productId: string) {
+    super('Product already exists in cart');
+    this.name = 'ProductAlreadyInCartError';
+  }
+}
+
+export class CartItemProductMissingError extends Error {
+  constructor(
+    public readonly cartItemId: string,
+    public readonly productId: string,
+  ) {
+    super('Cart item references a missing product');
+    this.name = 'CartItemProductMissingError';
   }
 }

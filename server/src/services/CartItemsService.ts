@@ -1,7 +1,12 @@
 import ProductsRepository from '../repositories/ProductsRepository';
 import CartItemsRepository from '../repositories/CartItemsRepository';
 import { CartItem } from '../types';
-import { BadRequestError, NotFoundError } from '../errors';
+import {
+  CartItemNotFoundError,
+  CartItemProductMissingError,
+  ProductAlreadyInCartError,
+  ProductNotFoundError,
+} from '../errors';
 import { CartItemSchema } from '../schemas';
 
 class CartItemsService {
@@ -17,11 +22,17 @@ class CartItemsService {
     const products = await this.productsRepository.getAll();
     const cartItems = await this.cartRepository.getAll();
 
-    return cartItems.map((item) => ({
-      cartItemId: item.cartItemId,
-      quantity: item.quantity,
-      product: products.find((product) => product.productId === item.productId),
-    }));
+    return cartItems.map((item) => {
+      const product = products.find((product) => product.productId === item.productId);
+
+      if (!product) throw new CartItemProductMissingError(item.cartItemId, item.productId);
+
+      return {
+        cartItemId: item.cartItemId,
+        quantity: item.quantity,
+        product,
+      };
+    });
   }
 
   async insertCartItem(cartItem: {
@@ -32,12 +43,12 @@ class CartItemsService {
 
     const product = await this.productsRepository.getById(parsedCartItem.productId);
 
-    if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
+    if (!product) throw new ProductNotFoundError(parsedCartItem.productId);
 
     const cartItems = await this.cartRepository.getAll();
 
     if (cartItems.find((item) => item.productId === product.productId)) {
-      throw new BadRequestError({ productId: '이미 장바구니에 담긴 상품입니다.' });
+      throw new ProductAlreadyInCartError(product.productId);
     }
 
     const inserted = await this.cartRepository.insertByUser(parsedCartItem);
@@ -57,11 +68,11 @@ class CartItemsService {
 
     const cartItem = await this.cartRepository.getById(cartItemId);
 
-    if (!cartItem) throw new NotFoundError({ cartItemId: '존재하지 않는 장바구니 항목입니다.' });
+    if (!cartItem) throw new CartItemNotFoundError(cartItemId);
 
     const product = await this.productsRepository.getById(cartItem.productId);
 
-    if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
+    if (!product) throw new CartItemProductMissingError(cartItem.cartItemId, cartItem.productId);
 
     const newCartItem = {
       ...cartItem,
@@ -80,11 +91,11 @@ class CartItemsService {
   async deleteCartItem(cartItemId: CartItem['cartItemId']) {
     const cartItem = await this.cartRepository.getById(cartItemId);
 
-    if (!cartItem) throw new NotFoundError({ cartItemId: '존재하지 않는 장바구니 항목입니다.' });
+    if (!cartItem) throw new CartItemNotFoundError(cartItemId);
 
     const deleted = await this.cartRepository.deleteById(cartItemId);
 
-    if (!deleted) throw new NotFoundError({ cartItemId: '존재하지 않는 장바구니 항목입니다.' });
+    if (!deleted) throw new CartItemNotFoundError(cartItemId);
 
     return deleted;
   }

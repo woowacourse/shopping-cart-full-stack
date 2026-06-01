@@ -1,4 +1,4 @@
-import { NotFoundError } from '../errors';
+import { ProductNotFoundError } from '../errors';
 import ProductsRepository from '../repositories/ProductsRepository';
 import CartItemsRepository from '../repositories/CartItemsRepository';
 import { Product } from '../types';
@@ -24,7 +24,7 @@ class ProductsService {
 
   async deleteProduct(productId: Product['productId']) {
     const product = await this.productsRepository.getById(productId);
-    if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
+    if (!product) throw new ProductNotFoundError(productId);
 
     const cartItems = await this.cartItemsRepository.getAll();
 
@@ -36,7 +36,7 @@ class ProductsService {
 
     const deleted = await this.productsRepository.deleteById(productId);
 
-    if (!deleted) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
+    if (!deleted) throw new ProductNotFoundError(productId);
 
     return { productId: deleted.productId };
   }

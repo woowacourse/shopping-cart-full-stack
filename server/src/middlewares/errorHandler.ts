@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import * as z from 'zod';
-import { BadRequestError, NotFoundError } from '../errors';
+import { CartItemNotFoundError, ProductAlreadyInCartError, ProductNotFoundError } from '../errors';
 
-const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  if (err instanceof z.ZodError) {
-    const data = err.issues.reduce<Record<string, string>>((acc, issue) => {
+const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  if (error instanceof z.ZodError) {
+    const data = error.issues.reduce<Record<string, string>>((acc, issue) => {
       const key = issue.path[0];
 
       if (typeof key === 'string' && acc[key] === undefined) {
@@ -18,13 +18,22 @@ const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFun
     return;
   }
 
-  if (err instanceof NotFoundError) {
-    res.status(404).json({ status: 'fail', data: err.data });
+  if (error instanceof ProductNotFoundError) {
+    res.status(404).json({ status: 'fail', data: { productId: '존재하지 않는 상품입니다.' } });
     return;
   }
 
-  if (err instanceof BadRequestError) {
-    res.status(400).json({ status: 'fail', data: err.data });
+  if (error instanceof CartItemNotFoundError) {
+    res
+      .status(404)
+      .json({ status: 'fail', data: { cartItemId: '존재하지 않는 장바구니 항목입니다.' } });
+    return;
+  }
+
+  if (error instanceof ProductAlreadyInCartError) {
+    res
+      .status(400)
+      .json({ status: 'fail', data: { productId: '이미 장바구니에 담긴 상품입니다.' } });
     return;
   }
 
