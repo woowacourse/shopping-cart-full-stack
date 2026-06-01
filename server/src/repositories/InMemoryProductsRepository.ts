@@ -15,6 +15,7 @@ class InMemoryProductsRepository implements ProductsRepository {
 
   private generateUniqueId(): string {
     const id = crypto.randomUUID();
+
     return this.store.has(id) ? this.generateUniqueId() : id;
   }
 
@@ -25,6 +26,7 @@ class InMemoryProductsRepository implements ProductsRepository {
     };
 
     products.set(productObj.productId, productObj);
+
     return productObj;
   }
 

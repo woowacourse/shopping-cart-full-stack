@@ -19,6 +19,7 @@ class InMemoryCartItemsRepository implements CartItemsRepository {
 
   private generateUniqueId(): string {
     const id = crypto.randomUUID();
+
     return this.store.has(id) ? this.generateUniqueId() : id;
   }
 
@@ -27,12 +28,15 @@ class InMemoryCartItemsRepository implements CartItemsRepository {
       cartItemId: this.generateUniqueId(),
       ...cartItem,
     };
+
     this.store.set(cartItemObj.cartItemId, cartItemObj);
+
     return cartItemObj;
   }
 
   async updateById(cartItemId: CartItem['cartItemId'], cartItem: CartItem) {
     this.store.set(cartItemId, cartItem);
+
     return this.store.get(cartItemId);
   }
 
