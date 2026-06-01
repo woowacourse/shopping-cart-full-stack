@@ -15,9 +15,7 @@ export const getProducts = (): ProductResponse[] => {
 };
 
 export const createProduct = (productRequest: Partial<ProductRequest>) => {
-  validate.createProduct.validateRequiredFields(productRequest);
-  validate.createProduct.validateTypes(productRequest);
-  validate.createProduct.validateDomainRules(productRequest);
+  validate.createProduct(productRequest);
 
   const product = productsRepository.create(productRequest as ProductRequest);
 
