@@ -16,7 +16,7 @@ export const updateCartProduct = wrap((req: Request, res: Response) => {
     const productId = Number(req.params.productId);
     const product = cartsService.updateCartProduct(cartId, productId, req.body);
 
-    return success(res, product);
+    return success(res, product, 201);
 });
 
 export const deleteCartProduct = wrap((req: Request, res: Response) => {

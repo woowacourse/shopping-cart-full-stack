@@ -93,7 +93,7 @@ describe('carts router 테스트', () => {
         it('장바구니 상품 수량을 변경한다.', async () => {
             const response = await request(app).patch('/carts/1/products/1').send({ quantity: 3 });
 
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(201);
             expect(response.body).toEqual({
                 data: {
                     id: 1,
