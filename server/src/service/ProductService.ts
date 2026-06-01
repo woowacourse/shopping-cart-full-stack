@@ -1,9 +1,9 @@
-import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
+import { NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { ProductData } from "../repositories/Product";
 import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
 import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
-import { validateProductData } from "../util/Validator";
+import { validateId, validateProductData } from "../util/Validator";
 
 export default class ProductService {
   #productRepository: ProductRepositoryInterface;
@@ -24,7 +24,7 @@ export default class ProductService {
   };
   
   deleteProducts(productId: number): void {
-    if (!productId) throw new InvalidError(ERROR_MESSAGE.INVALID_PRODUCT_ID);
+    validateId(productId);
   
     const product = this.#productRepository.findById(productId);
     if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);

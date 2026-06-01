@@ -3,8 +3,13 @@ import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { ProductInput } from "../repositories/Product";
 
 export const validateQuantity = (quantity: number): void => {
-  if (Number.isNaN(quantity) || quantity < 1 || quantity > 99)
+  if (Number.isNaN(quantity) || !Number.isInteger(quantity) || quantity < 1 || quantity > 99)
     throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY_RANGE);
+};
+
+export const validateId = (id: number): void => {
+  if (Number.isNaN(id) || !Number.isInteger(id) || id <= 0)
+    throw new InvalidError(ERROR_MESSAGE.INVALID_ID);
 };
 
 export const validateProductData = (data: ProductInput): void => {

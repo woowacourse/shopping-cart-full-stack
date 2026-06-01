@@ -1,8 +1,7 @@
 export const ERROR_MESSAGE = {
   NOT_FOUND_PRODUCT: "해당 상품이 존재하지 않습니다.",
   NOT_FOUND_CART_ITEM: "해당 장바구니 상품이 존재하지 않습니다.",
-  INVALID_CART_ID: "유효하지 않은 장바구니 ID입니다.",
-  INVALID_PRODUCT_ID: "유효하지 않은 상품 ID입니다.",
+  INVALID_ID: "유효하지 않은 ID입니다.",
   INVALID_QUANTITY: "유효하지 않은 수량입니다.",
   INVALID_QUANTITY_RANGE: "quantity는 1~99 사이어야합니다.",
   INVALID_NAME: "name은 100자 이내여야합니다.",

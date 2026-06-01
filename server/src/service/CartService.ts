@@ -4,7 +4,7 @@ import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
 import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
 import { ProductData } from "../repositories/Product";
-import { validateQuantity } from "../util/Validator";
+import { validateId, validateQuantity } from "../util/Validator";
 
 export interface CartResponseData {
   cartItemId: number;
@@ -54,7 +54,8 @@ export default class CartService {
 
   postCartItem(productId: number, quantity: number): CartItemData {
     validateQuantity(quantity);
-    const product = this.#productRepository.findById(Number(productId));
+    validateId(productId);
+    const product = this.#productRepository.findById(productId);
     if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
 
     const mergedItem = this.#mergeIfExisting(productId, quantity);
@@ -64,7 +65,7 @@ export default class CartService {
   }
 
   deleteCartItem(cartItemId: number): void {
-    if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
+    validateId(cartItemId);
 
     const cartItem = this.#cartRepository.findById(cartItemId);
     if (!cartItem) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
@@ -74,8 +75,7 @@ export default class CartService {
 
   patchCartItem(cartItemId: number, newQuantity: number): CartItemData {
     validateQuantity(newQuantity);
-    if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
-    if (!newQuantity) throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY);
+    validateId(cartItemId);
 
     const updatedQuantity = this.#cartRepository.changeQuantity(
       cartItemId,
