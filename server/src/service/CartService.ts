@@ -3,6 +3,13 @@ import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
 import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
+import { ProductData } from "../repositories/Product";
+
+export interface CartResponseData {
+  cartItemId: number;
+  quantity: number;
+  product: ProductData | null;
+}
 
 export default class CartService {
   #productRepository: ProductRepositoryInterface;
@@ -13,8 +20,17 @@ export default class CartService {
     this.#cartRepository = cartRepository;
   }
 
-  getCartItems(): CartItemData[] {
-    return this.#cartRepository.getCartProducts();
+  getCartItems(): CartResponseData[] {
+    const cartItems = this.#cartRepository.getCartProducts();
+
+    return cartItems.map((cartItem) => {
+      const product = this.#productRepository.findById(cartItem.productId);
+      return {
+        cartItemId: cartItem.cartItemId,
+        quantity: cartItem.quantity,
+        product: product
+      };
+    });
   }
 
   postCartItem(productId: number, quantity: number): CartItemData {
