@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 import {
+    handleInternalError,
     handleJsonParseError,
     handleMethodNotAllowed,
     handleRouteNotFound,
@@ -24,6 +25,7 @@ app.get('/health', (_req, res) => {
 
 app.use(router);
 app.use(handleServiceError);
+app.use(handleInternalError);
 app.use(handleMethodNotAllowed);
 app.use(handleRouteNotFound);
 
