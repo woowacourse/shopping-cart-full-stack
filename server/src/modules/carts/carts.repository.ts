@@ -55,11 +55,7 @@ export const findProductInCart = (cartId: number, productId: number) => {
   const product = cart.products.find((product) => product.id === productId);
   if (!product) return undefined;
 
-  const productData = productStore.products.find(
-    (rawProduct) => rawProduct.id === product.id,
-  )!;
-
-  return { ...product, ...productData };
+  return product;
 };
 
 export const deleteByProductId = (productId: number) => {
