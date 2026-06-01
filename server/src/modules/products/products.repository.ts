@@ -1,6 +1,7 @@
 import { Product } from './products.model.ts';
 import { rawProducts } from '../../raw/raw.products.ts';
 import type { ProductRequest } from './products.dto.ts';
+import { rawCarts } from '../../raw/raw.carts.ts';
 
 export interface ProductsRepository {
     findAll(): Product[];
@@ -30,6 +31,10 @@ class InMemoryProductsRepository implements ProductsRepository {
     }
 
     deleteById(id: number) {
+        rawCarts.forEach((cart) => {
+            cart.products = cart.products.filter((product) => product.id !== id);
+            // cart에서 삭제(CASCADE)
+        });
         const productIndex = rawProducts.findIndex((product) => product.id === id);
 
         if (productIndex === -1) return;
