@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import * as z from 'zod';
-import { CartItemNotFoundError, ProductAlreadyInCartError, ProductNotFoundError } from '../errors';
+import {
+  CartItemNotFoundError,
+  ProductAlreadyInCartError,
+  ProductNotFoundError,
+} from '../errors';
 
 const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof z.ZodError) {
@@ -19,21 +23,26 @@ const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextF
   }
 
   if (error instanceof ProductNotFoundError) {
-    res.status(404).json({ status: 'fail', data: { productId: '존재하지 않는 상품입니다.' } });
+    res.status(404).json({
+      status: 'fail',
+      data: { productId: '존재하지 않는 상품입니다.' },
+    });
     return;
   }
 
   if (error instanceof CartItemNotFoundError) {
-    res
-      .status(404)
-      .json({ status: 'fail', data: { cartItemId: '존재하지 않는 장바구니 항목입니다.' } });
+    res.status(404).json({
+      status: 'fail',
+      data: { cartItemId: '존재하지 않는 장바구니 항목입니다.' },
+    });
     return;
   }
 
   if (error instanceof ProductAlreadyInCartError) {
-    res
-      .status(400)
-      .json({ status: 'fail', data: { productId: '이미 장바구니에 담긴 상품입니다.' } });
+    res.status(400).json({
+      status: 'fail',
+      data: { productId: '이미 장바구니에 담긴 상품입니다.' },
+    });
     return;
   }
 

@@ -19,11 +19,13 @@ class ProductsService {
 
   async insertProduct(product: Omit<Product, 'productId'>) {
     const parsedProduct = ProductSchema.parse(product);
+
     return await this.productsRepository.insert(parsedProduct);
   }
 
   async deleteProduct(productId: Product['productId']) {
     const product = await this.productsRepository.getById(productId);
+
     if (!product) throw new ProductNotFoundError(productId);
 
     const cartItems = await this.cartItemsRepository.getAll();

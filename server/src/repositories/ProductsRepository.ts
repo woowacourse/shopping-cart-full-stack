@@ -27,9 +27,11 @@ class ProductsRepository {
     products.set(productObj.productId, productObj);
     return productObj;
   }
+
   async getById(productId: Product['productId']) {
     return this.store.get(productId);
   }
+
   async deleteById(productId: Product['productId']) {
     const product = this.store.get(productId);
 
