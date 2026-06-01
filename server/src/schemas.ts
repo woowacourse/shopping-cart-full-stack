@@ -62,14 +62,3 @@ export const UpdateCartItemRequestBodySchema = z.object({
 
 export const DeleteCartItemRequestParamsSchema = UpdateCartItemRequestParamsSchema;
 
-export const CartItemSchema = z.object({
-  productId: z
-    .string({ error: '상품 ID는 필수입니다.' })
-    .min(1, { error: '상품 ID는 필수입니다.' }),
-
-  quantity: z
-    .number({ error: '수량은 1 이상 99 이하의 정수여야 합니다.' })
-    .int({ error: '수량은 1 이상 99 이하의 정수여야 합니다.' })
-    .min(1, { error: '수량은 1 이상 99 이하의 정수여야 합니다.' })
-    .max(99, { error: '수량은 1 이상 99 이하의 정수여야 합니다.' }),
-});

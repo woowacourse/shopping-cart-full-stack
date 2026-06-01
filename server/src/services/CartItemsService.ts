@@ -2,7 +2,6 @@ import ProductsRepository from '../repositories/ProductsRepository';
 import CartItemsRepository from '../repositories/CartItemsRepository';
 import { CartItem } from '../types';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CartItemSchema } from '../schemas';
 
 class CartItemsService {
   productsRepository;
@@ -28,9 +27,13 @@ class CartItemsService {
     productId: CartItem['productId'];
     quantity: CartItem['quantity'];
   }) {
-    const parsedCartItem = CartItemSchema.parse(cartItem);
+    if (cartItem.productId.length < 1)
+      throw new BadRequestError({ productId: '상품ID는 1자 이상이어야 합니다.' });
 
-    const product = await this.productsRepository.getById(parsedCartItem.productId);
+    if (cartItem.quantity < 1 || cartItem.quantity > 99 || !Number.isInteger(cartItem.quantity))
+      throw new BadRequestError({ quantity: '수량은 1 이상 99 이하의 정수여야 합니다.' });
+
+    const product = await this.productsRepository.getById(cartItem.productId);
 
     if (!product) throw new NotFoundError({ productId: '존재하지 않는 상품입니다.' });
 
@@ -40,7 +43,7 @@ class CartItemsService {
       throw new BadRequestError({ productId: '이미 장바구니에 담긴 상품입니다.' });
     }
 
-    const inserted = await this.cartRepository.insertByUser(parsedCartItem);
+    const inserted = await this.cartRepository.insertByUser(cartItem);
 
     return {
       cartItemId: inserted.cartItemId,
@@ -53,7 +56,12 @@ class CartItemsService {
     cartItemId: CartItem['cartItemId'],
     cartItemPartial: { quantity: CartItem['quantity'] },
   ) {
-    const parsedCartItemPartial = CartItemSchema.pick({ quantity: true }).parse(cartItemPartial);
+    if (
+      cartItemPartial.quantity < 1 ||
+      cartItemPartial.quantity > 99 ||
+      !Number.isInteger(cartItemPartial.quantity)
+    )
+      throw new BadRequestError({ quantity: '수량은 1 이상 99 이하의 정수여야 합니다.' });
 
     const cartItem = await this.cartRepository.getById(cartItemId);
 
@@ -65,7 +73,7 @@ class CartItemsService {
 
     const newCartItem = {
       ...cartItem,
-      quantity: parsedCartItemPartial.quantity,
+      quantity: cartItemPartial.quantity,
     };
 
     await this.cartRepository.updateById(cartItemId, newCartItem);
