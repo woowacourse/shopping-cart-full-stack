@@ -54,9 +54,7 @@ class CartService {
 
     CartItem.validateItemCount(itemCount);
 
-    const product = this.productRepository.findById(
-      cartItem.toJson().productId,
-    );
+    const product = this.productRepository.findById(productId);
 
     if (!product) {
       throw new AppError("PRODUCT_NOT_EXIST");
@@ -66,7 +64,7 @@ class CartService {
       throw new AppError("PRODUCT_ORDER_COUNT_EXCEEDED");
     }
 
-    cartItem.updateItemCount(itemCount);
+    this.cartRepository.updateItemCount(productId, itemCount);
 
     return {
       productId,

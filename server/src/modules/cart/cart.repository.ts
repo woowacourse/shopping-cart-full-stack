@@ -5,7 +5,7 @@ export interface CartRepository {
   delete: (productId: number) => void;
   get: () => CartItem[];
   reset: () => void;
-  updateItemCount: (productId: number, itemCount: number) => boolean;
+  updateItemCount: (productId: number, itemCount: number) => void;
   findByProductId: (productId: number) => CartItem | undefined;
 }
 
@@ -32,13 +32,9 @@ export class InMemoryCartRepository implements CartRepository {
   }
 
   updateItemCount(productId: number, itemCount: number) {
-    this.cart.forEach((cartItem) => {
-      if (cartItem.isSameProductId(productId)) {
-        cartItem.updateItemCount(itemCount);
-      }
-    });
+    const cartItem = this.findByProductId(productId);
 
-    return true;
+    cartItem?.updateItemCount(itemCount);
   }
 
   get() {
