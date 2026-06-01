@@ -6,13 +6,6 @@ export const getCartsQuery = () => {
   return carts;
 };
 
-export const deleteCartQuery = (productId: number) => {
-  const cartItem = getCartItemByProductIdQuery(productId);
-  if (cartItem) CartDB.delete(cartItem);
-
-  return productId;
-};
-
 export const getCartItemByProductIdQuery = (productId: number) => {
   return [...CartDB.values()].find((item) => item.product.id === productId);
 };
