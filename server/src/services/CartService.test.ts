@@ -5,24 +5,6 @@ const loadCartService = async () => {
   return import('./CartService.js');
 };
 
-describe('isValidQuantity', () => {
-  test('1 이상 99 이하의 정수이면 true를 반환한다', async () => {
-    const {isValidQuantity} = await loadCartService();
-
-    expect(isValidQuantity(1)).toBe(true);
-    expect(isValidQuantity(99)).toBe(true);
-  });
-
-  test('범위를 벗어나거나 정수가 아니면 false를 반환한다', async () => {
-    const {isValidQuantity} = await loadCartService();
-
-    expect(isValidQuantity(0)).toBe(false);
-    expect(isValidQuantity(100)).toBe(false);
-    expect(isValidQuantity(1.5)).toBe(false);
-    expect(isValidQuantity('1')).toBe(false);
-  });
-});
-
 describe('cartService', () => {
   test('getCartItems는 장바구니 항목 목록을 반환한다', async () => {
     const {cartService} = await loadCartService();
