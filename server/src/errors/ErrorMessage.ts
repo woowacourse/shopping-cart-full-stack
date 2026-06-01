@@ -4,5 +4,10 @@ export const ERROR_MESSAGE = {
   INVALID_CART_ID: "유효하지 않은 장바구니 ID입니다.",
   INVALID_PRODUCT_ID : "유효하지 않은 상품 ID입니다.",
   INVALID_QUANTITY: "유효하지 않은 수량입니다.",
+  INVALID_QUANTITY_RANGE: "quantity는 1~99 사이어야합니다.",
+  INVALID_NAME: "name은 100자 이내여야합니다.",
+  INVALID_PRICE: "price는 0보다 큰 숫자이어야합니다.",
+  INVALID_THUMBNAIL_URL: "thumbnailUrl은 필수 항목입니다.",
   SERVER_ERROR: "네트워크 에러가 발생했습니다!",
 } as const;
+ 
