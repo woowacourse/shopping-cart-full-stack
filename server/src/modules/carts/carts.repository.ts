@@ -64,11 +64,11 @@ export const findProductInCart = (cartId: number, productId: number) => {
 
 export const deleteByProductId = (productId: number) => {
   cartStore.carts.forEach((cart) => {
-    cart.products.forEach((product, productIndex) => {
-      if (product.id === productId) {
-        cart.products.splice(productIndex, 1);
-      }
+    const filteredProducts = cart.products.filter((product) => {
+      return product.id !== productId;
     });
+
+    cart.products = filteredProducts;
   });
 };
 
