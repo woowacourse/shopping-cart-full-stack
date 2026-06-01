@@ -116,6 +116,18 @@ describe("장바구니 서비스 테스트", () => {
     }).toThrow(new AppError("PRODUCT_ORDER_COUNT_EXCEEDED"));
   });
 
+  test("상품 재고보다 더 많은 수량으로 장바구니에 추가하면 에러를 발생시킨다.", () => {
+    // given
+    const productId = productService.addProduct(mockProduct);
+    cartService.addCartItem(cartId, productId, 2);
+    const overAddItemCount = mockProduct.quantity;
+
+    // when & then
+    expect(() => {
+      cartService.addCartItem(cartId, productId, overAddItemCount);
+    }).toThrow(new AppError("PRODUCT_ORDER_COUNT_EXCEEDED"));
+  });
+
   test("장바구니 상품을 삭제하면 장바구니 목록에서 삭제된다.", () => {
     // given
     const productId = productService.addProduct(mockProduct);

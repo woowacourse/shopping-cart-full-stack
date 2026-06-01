@@ -43,6 +43,10 @@ class Cart {
     return this.cartItems.find((carItem) => carItem.isSameProductId(productId));
   }
 
+  getItemCount(productId: number) {
+    return this.findCartItemByProductId(productId)?.toJson().itemCount ?? 0;
+  }
+
   toJsonCartItems() {
     return this.cartItems.map((cartItem) => cartItem.toJson());
   }

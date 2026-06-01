@@ -26,7 +26,6 @@ class CartService {
       }
 
       const productData = product.toJson();
-      // TODO itemCount update할 때처럼 재고와 값 비교 필요
 
       return {
         id: productData.id,
@@ -40,6 +39,10 @@ class CartService {
 
   addCartItem(cartId: number, productId: number, itemCount: number) {
     const cart = this.getCart(cartId);
+    const nextItemCount = cart.getItemCount(productId) + itemCount;
+
+    CartItem.validateItemCount(itemCount);
+    this.validateProductStock(productId, nextItemCount);
 
     cart.addCartItem(productId, itemCount);
 
@@ -56,16 +59,7 @@ class CartService {
     const cart = this.getCart(cartId);
 
     CartItem.validateItemCount(itemCount);
-
-    const product = this.productRepository.findById(productId);
-
-    if (!product) {
-      throw new AppError("PRODUCT_NOT_EXIST");
-    }
-
-    if (!product.hasEnoughStock(itemCount)) {
-      throw new AppError("PRODUCT_ORDER_COUNT_EXCEEDED");
-    }
+    this.validateProductStock(productId, itemCount);
 
     cart.updateCartItemCount(productId, itemCount);
 
@@ -83,6 +77,18 @@ class CartService {
     }
 
     return cart;
+  }
+
+  private validateProductStock(productId: number, itemCount: number) {
+    const product = this.productRepository.findById(productId);
+
+    if (!product) {
+      throw new AppError("PRODUCT_NOT_EXIST");
+    }
+
+    if (!product.hasEnoughStock(itemCount)) {
+      throw new AppError("PRODUCT_ORDER_COUNT_EXCEEDED");
+    }
   }
 }
 
