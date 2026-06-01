@@ -5,10 +5,24 @@ export class ProductNotFoundError extends Error {
   }
 }
 
+export class ProductDeletionFailedError extends Error {
+  constructor(public readonly productId: string) {
+    super('Failed to delete product');
+    this.name = 'ProductDeletionFailedError';
+  }
+}
+
 export class CartItemNotFoundError extends Error {
   constructor(public readonly cartItemId: string) {
     super('Cart item not found');
     this.name = 'CartItemNotFoundError';
+  }
+}
+
+export class CartItemDeletionFailedError extends Error {
+  constructor(public readonly cartItemId: string) {
+    super('Failed to delete cart item');
+    this.name = 'CartItemDeletionFailedError';
   }
 }
 

@@ -46,6 +46,8 @@ const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextF
     return;
   }
 
+  console.error(error);
+
   res.status(500).json({ status: 'error', message: '서버 에러가 발생했습니다.' });
 };
 

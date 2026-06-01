@@ -1,4 +1,4 @@
-import { ProductNotFoundError } from '../errors';
+import { CartItemDeletionFailedError, ProductDeletionFailedError, ProductNotFoundError } from '../errors';
 import {
   CartItemsRepository,
   ProductsRepository,
@@ -39,15 +39,14 @@ class ProductsService implements ProductsServicePort {
 
     const cartItems = await this.cartItemsRepository.getAll();
 
-    for (const item of cartItems) {
-      if (item.productId === productId) {
-        await this.cartItemsRepository.deleteById(item.cartItemId);
-      }
+    for (const item of cartItems.filter(item => item.productId === productId)) {
+      const deletedItem = await this.cartItemsRepository.deleteById(item.cartItemId);
+      if (!deletedItem) throw new CartItemDeletionFailedError(item.cartItemId);
     }
 
     const deleted = await this.productsRepository.deleteById(productId);
 
-    if (!deleted) throw new ProductNotFoundError(productId);
+    if (!deleted) throw new ProductDeletionFailedError(productId);
 
     return { productId: deleted.productId };
   }

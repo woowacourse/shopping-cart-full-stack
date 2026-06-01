@@ -5,6 +5,7 @@ import {
   ProductsRepository,
 } from '../types';
 import {
+  CartItemDeletionFailedError,
   CartItemNotFoundError,
   CartItemProductMissingError,
   ProductAlreadyInCartError,
@@ -104,7 +105,7 @@ class CartItemsService implements CartItemsServicePort {
 
     const deleted = await this.cartItemsRepository.deleteById(cartItemId);
 
-    if (!deleted) throw new CartItemNotFoundError(cartItemId);
+    if (!deleted) throw new CartItemDeletionFailedError(cartItemId);
 
     return deleted;
   }
