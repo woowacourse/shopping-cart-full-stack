@@ -1,7 +1,8 @@
+import { ProductRepositoryInterface } from "./interfaces/ProductRepositoryInterface";
 import type { ProductData, ProductInput } from "./Product";
 import { validateProductData } from "./util/Validator";
 
-export default class ProductRepository {
+export default class InMemoryProductRepository implements ProductRepositoryInterface {
   #products: Map<number, ProductData>;
   #nextId: number;
 

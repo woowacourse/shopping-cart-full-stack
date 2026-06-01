@@ -1,7 +1,8 @@
 import { CartItemData } from "./CartItem";
+import { CartRepositoryInterface } from "./interfaces/CartRepositoryInterface";
 import { validateQuantity } from "./util/Validator";
 
-export default class CartRepository {
+export default class InMemoryCartRepository implements CartRepositoryInterface {
   #cart: Map<number, CartItemData>;
   #nextId: number;
 
