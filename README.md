@@ -52,7 +52,7 @@ app.ts
 
 - `Product`: 상품 하나의 정보를 표현합니다.
 - `Products`: 상품 목록의 조회, 추가, 삭제, 중복 확인을 담당합니다.
-- `CartItem`: 장바구니 항목 하나와 수량 변경 동작을 표현합니다.
+- `CartItem`: 장바구니 항목 하나와 수량 변경 동작, 수량 검증 규칙을 표현합니다.
 - `CartItems`: 장바구니 항목 목록의 조회, 수량 변경, 삭제를 담당합니다.
 
 ## API
@@ -63,10 +63,10 @@ app.ts
 
 - `GET /products`
 - `POST /products`
-- `DELETE /products/:id`
+- `DELETE /products/:productId`
 - `GET /carts`
-- `PATCH /carts/:id`
-- `DELETE /carts/:id`
+- `PATCH /carts/:cartItemId`
+- `DELETE /carts/:cartItemId`
 
 ## 실행
 
