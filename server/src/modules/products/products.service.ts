@@ -1,5 +1,6 @@
 import type { ProductResponse } from "./products.dto.ts";
 import * as productsRepository from "./products.repository.ts";
+import * as cartsRepository from "../carts/carts.repository.ts";
 import { ServiceError } from "../../common/error.ts";
 import type { ProductRequest } from "./products.dto.ts";
 import { getMissingFields } from "../../validate/getMissingFields.ts";
@@ -82,4 +83,5 @@ export const deleteProduct = (id: number) => {
   }
 
   productsRepository.deleteById(id);
+  cartsRepository.deleteByProductId(id);
 };

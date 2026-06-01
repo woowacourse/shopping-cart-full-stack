@@ -62,6 +62,16 @@ export const findProductInCart = (cartId: number, productId: number) => {
   return { ...product, ...productData };
 };
 
+export const deleteByProductId = (productId: number) => {
+  cartStore.carts.forEach((cart) => {
+    cart.products.forEach((product, productIndex) => {
+      if (product.id === productId) {
+        cart.products.splice(productIndex, 1);
+      }
+    });
+  });
+};
+
 export const resetCartRepository = () => {
   cartStore.reset();
 };
