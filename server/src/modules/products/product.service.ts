@@ -1,6 +1,5 @@
 import { AppError } from '../../errors/AppError.js';
 import { ModelError } from '../../errors/ModelError.js';
-import { cartItemRepository } from '../cart/cartItem.repository.js';
 import { Product } from './product.model.js';
 import { productRepository } from './product.repository.js';
 
@@ -41,7 +40,6 @@ export const productService = {
     if (!product)
       throw new AppError(404, 'PRODUCT_NOT_FOUND', '존재하지 않는 상품입니다.');
 
-    cartItemRepository.deleteByProductId(productId);
     productRepository.deleteById(productId);
   },
 };

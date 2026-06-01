@@ -47,6 +47,10 @@ export const cartItemService = {
     cartItemRepository.deleteById(cartItem.cartItemId);
   },
 
+  deleteByProductId(productId: string) {
+    cartItemRepository.deleteByProductId(productId);
+  },
+
   changePurchaseQuantity(cartItemId: string, quantity: number) {
     const cartItem = validateCartItemId(cartItemId);
     validatePurchaseQuantity(quantity);

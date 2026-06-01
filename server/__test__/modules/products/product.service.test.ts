@@ -75,7 +75,9 @@ describe('ProductService', () => {
       expect(products).toHaveLength(0);
     });
 
-    test('상품을 삭제하면 장바구니에 담긴 동일한 상품도 삭제한다.', () => {
+    // 상품 삭제에 따른 장바구니 정리는 라우터가 두 서비스를 조율하므로
+    // 해당 동작은 product.routes.test.ts에서 검증한다.
+    test('상품만 삭제하며 장바구니 정리는 service의 책임이 아니다.', () => {
       // given
       const response = productService.addProduct({
         productName: '콜라',
@@ -97,8 +99,7 @@ describe('ProductService', () => {
 
       // then
       expect(productService.getProducts()).toHaveLength(0);
-      expect(cartItemRepository.findById(cartItem.cartItemId)).toBeUndefined();
-      expect(cartItemRepository.findAll()).toEqual([]);
+      expect(cartItemRepository.findById(cartItem.cartItemId)).toBe(cartItem);
     });
 
     test('장바구니에 없는 상품을 삭제하더라도 에러를 반환하지 않는다.', () => {
