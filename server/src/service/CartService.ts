@@ -4,6 +4,7 @@ import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { ProductRepositoryInterface } from "../repositories/interfaces/ProductRepositoryInterface";
 import { CartRepositoryInterface } from "../repositories/interfaces/CartRepositoryInterface";
 import { ProductData } from "../repositories/Product";
+import { validateQuantity } from "../util/Validator";
 
 export interface CartResponseData {
   cartItemId: number;
@@ -34,6 +35,7 @@ export default class CartService {
   }
 
   postCartItem(productId: number, quantity: number): CartItemData {
+    validateQuantity(quantity);
     const product = this.#productRepository.findById(Number(productId));
     if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
 
@@ -50,6 +52,7 @@ export default class CartService {
   }
 
   patchCartItem(cartItemId: number, newQuantity: number): CartItemData {
+    validateQuantity(newQuantity);
     if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
     if (!newQuantity) throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY);
 
