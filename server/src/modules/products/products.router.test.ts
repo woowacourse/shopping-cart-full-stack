@@ -31,11 +31,7 @@ app.use("/products", productsRouter);
 
 describe("product router 테스트", () => {
   beforeEach(() => {
-    productStore.products.splice(
-      0,
-      productStore.products.length,
-      ...initialProducts.map((product) => ({ ...product })),
-    );
+    productStore.reset();
   });
 
   describe("GET /products", () => {

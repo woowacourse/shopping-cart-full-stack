@@ -55,14 +55,7 @@ app.use("/carts", cartsRouter);
 
 describe("carts router 테스트", () => {
   beforeEach(() => {
-    cartStore.carts.splice(
-      0,
-      cartStore.carts.length,
-      ...initialCarts.map((cart) => ({
-        ...cart,
-        products: cart.products.map((product) => ({ ...product })),
-      })),
-    );
+    cartStore.reset();
   });
 
   describe("GET /carts/:cartId", () => {

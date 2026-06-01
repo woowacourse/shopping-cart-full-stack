@@ -1,7 +1,12 @@
 import { ServiceError } from "../../common/error.ts";
+import { cartStore } from "../../raw/raw.carts.ts";
 import * as cartsService from "./carts.service.ts";
 
 describe("carts service 테스트", () => {
+  beforeEach(() => {
+    cartStore.reset();
+  });
+
   describe("getCartById 테스트", () => {
     it("cartId에 해당하는 장바구니 상품 목록을 반환한다.", () => {
       const cart = cartsService.getCartById(1);

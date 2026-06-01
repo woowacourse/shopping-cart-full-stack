@@ -1,8 +1,13 @@
 import { ServiceError } from "../../common/error.ts";
+import { productStore } from "../../raw/raw.products.ts";
 import * as productsService from "./products.service.ts";
 import type { ProductRequest } from "./products.dto.ts";
 
 describe("product service 테스트", () => {
+  beforeEach(() => {
+    productStore.reset();
+  });
+
   describe("getProducts 테스트", () => {
     it("상품 리스트를 반환한다.", () => {
       const products = productsService.getProducts();
