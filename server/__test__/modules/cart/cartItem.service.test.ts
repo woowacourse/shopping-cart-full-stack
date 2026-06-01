@@ -1,8 +1,14 @@
 //서비스와 레포지를 이용해서 기능을 도작하게 한다
 
 import { cartItemsDB, productsDB } from '../../../src/db.js';
-import { cartItemService } from '../../../src/modules/cart/cartItem.service.js';
+import { CartItem } from '../../../src/modules/cart/cartItem.model.js';
+import type { CartItemRepository } from '../../../src/modules/cart/cartItem.repository.js';
+import {
+  CartItemService,
+  cartItemService,
+} from '../../../src/modules/cart/cartItem.service.js';
 import { Product } from '../../../src/modules/products/product.model.js';
+import type { ProductRepository } from '../../../src/modules/products/product.repository.js';
 
 const createProduct = (productId: string) =>
   new Product({
@@ -124,6 +130,48 @@ describe('CartItemService', () => {
       const cartItem = cartItemService.getCartItemById(response.cartItemId);
 
       expect(cartItem.purchaseQuantity).toEqual(2);
+    });
+  });
+
+  // 의존성 주입: 실제 저장소 없이 가짜 repository를 주입해 동작을 검증할 수 있다
+  describe('repository 주입 테스트', () => {
+    test('주입한 repository로 장바구니 목록을 조회한다.', () => {
+      const storedCartItem = new CartItem({
+        cartItemId: 'c1',
+        productId: 'p1',
+        purchaseQuantity: 3,
+      });
+
+      const fakeCartItemRepository: CartItemRepository = {
+        findAll: () => [storedCartItem],
+        save: (cartItem) => cartItem,
+        findById: () => undefined,
+        findByProductId: () => undefined,
+        deleteById: () => true,
+        deleteByProductId: () => {},
+      };
+      const fakeProductRepository: ProductRepository = {
+        findById: () => createProduct('p1'),
+        findAll: () => [],
+        save: (product) => product,
+        deleteById: () => true,
+      };
+
+      const service = new CartItemService(
+        fakeCartItemRepository,
+        fakeProductRepository,
+      );
+
+      expect(service.getCartItems()).toEqual([
+        {
+          cartItemId: 'c1',
+          productId: 'p1',
+          productName: '콜라',
+          productPrice: 1300,
+          imageUrl: 'src/assets/coke.png',
+          purchaseQuantity: 3,
+        },
+      ]);
     });
   });
 });

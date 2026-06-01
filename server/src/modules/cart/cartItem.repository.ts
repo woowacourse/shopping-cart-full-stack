@@ -36,3 +36,5 @@ export const cartItemRepository = {
     if (cartItem) cartItemsDB.delete(cartItem.cartItemId);
   },
 };
+
+export type CartItemRepository = typeof cartItemRepository;

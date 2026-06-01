@@ -19,3 +19,5 @@ export const productRepository = {
     return productsDB.delete(productId);
   },
 };
+
+export type ProductRepository = typeof productRepository;
