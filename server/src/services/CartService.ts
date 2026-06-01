@@ -1,19 +1,33 @@
-import {cartItems} from '../db.js';
+import { cartItems } from "../db.js";
+import { InvalidInputError, NotFoundError } from "../errors/HttpError.js";
+import type { UpdateCartQuantityRequestBody } from "../type.js";
 
-type UpdateQuantityResult =
-  | {
-      status: 'updated';
-      quantity: number;
-    }
-  | {
-      status: 'notFound';
-    }
-  | {
-      status: 'invalid';
-    };
+const MIN_QUANTITY = 1;
+const MAX_QUANTITY = 99;
 
-export const isValidQuantity = (quantity: unknown) => {
-  return typeof quantity === 'number' && Number.isInteger(quantity) && quantity >= 1 && quantity <= 99;
+const isValidQuantity = (quantity: unknown) => {
+  return (
+    typeof quantity === "number" &&
+    Number.isInteger(quantity) &&
+    quantity >= MIN_QUANTITY &&
+    quantity <= MAX_QUANTITY
+  );
+};
+
+const isUpdateCartQuantityRequestBody = (
+  body: unknown,
+): body is UpdateCartQuantityRequestBody => {
+  return typeof body === "object" && body !== null;
+};
+
+const isValidUpdateCartQuantityBody = (
+  body: unknown,
+): body is UpdateCartQuantityRequestBody => {
+  if (!isUpdateCartQuantityRequestBody(body)) {
+    return false;
+  }
+
+  return isValidQuantity(body.quantity);
 };
 
 export const cartService = {
@@ -21,28 +35,25 @@ export const cartService = {
     return cartItems.findAll();
   },
 
-  updateQuantity(id: string, quantity: number): UpdateQuantityResult {
-    if (!isValidQuantity(quantity)) {
-      return {
-        status: 'invalid',
-      };
+  updateQuantity(id: string, body: unknown): number {
+    if (!isValidUpdateCartQuantityBody(body)) {
+      throw new InvalidInputError();
     }
 
-    const updatedCartItem = cartItems.updateQuantity(id, quantity);
+    const updatedCartItem = cartItems.updateQuantity(id, body.quantity);
 
     if (!updatedCartItem) {
-      return {
-        status: 'notFound',
-      };
+      throw new NotFoundError();
     }
 
-    return {
-      status: 'updated',
-      quantity: updatedCartItem.getQuantity(),
-    };
+    return updatedCartItem.getQuantity();
   },
 
-  deleteCartItem(id: string) {
-    return cartItems.deleteById(id);
+  deleteCartItem(id: string): void {
+    const isDeleted = cartItems.deleteById(id);
+
+    if (!isDeleted) {
+      throw new NotFoundError();
+    }
   },
 };

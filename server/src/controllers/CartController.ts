@@ -1,44 +1,22 @@
-import type {Request, Response} from 'express';
+import type { Request, Response } from "express";
 
-import {cartService} from '../services/CartService.js';
-import type {IdParams, UpdateCartQuantityRequestBody} from '../type.js';
+import { cartService } from "../services/CartService.js";
+import type { IdParams } from "../type.js";
 
 export const cartController = {
   getCartItems(_req: Request, res: Response) {
-    res.status(200).json({
-      body: cartService.getCartItems(),
-    });
+    res.status(200).json(cartService.getCartItems());
   },
 
-  updateQuantity(req: Request<IdParams, unknown, UpdateCartQuantityRequestBody>, res: Response) {
-    const targetId = req.params.id;
-    const {quantity} = req.body;
-    const result = cartService.updateQuantity(targetId, quantity);
+  updateQuantity(req: Request<IdParams>, res: Response) {
+    const id = req.params.id;
+    const quantity = cartService.updateQuantity(id, req.body);
 
-    if (result.status === 'invalid') {
-      return res.status(400).send();
-    }
-
-    if (result.status === 'notFound') {
-      return res.status(404).send();
-    }
-
-    res.status(200).json({
-      body: {
-        id: targetId,
-        quantity: result.quantity,
-      },
-    });
+    res.status(200).json({ id, quantity });
   },
 
   deleteCartItem(req: Request<IdParams>, res: Response) {
-    const reqId = req.params.id;
-    const isDeleted = cartService.deleteCartItem(reqId);
-
-    if (!isDeleted) {
-      return res.status(404).send();
-    }
-
+    cartService.deleteCartItem(req.params.id);
     res.sendStatus(204);
   },
 };
