@@ -61,45 +61,35 @@ describe('productService', () => {
   test('createProduct는 상품을 생성한다', async () => {
     const {productService} = await loadProductService();
 
-    expect(productService.createProduct({name: '새 상품', price: 1000, imageUrl: '/new.png'})).toEqual({
-      status: 'created',
-      id: '6',
-    });
+    expect(productService.createProduct({name: '새 상품', price: 1000, imageUrl: '/new.png'})).toBe('6');
   });
 
-  test('createProduct는 중복 상품명이면 duplicated를 반환한다', async () => {
+  test('createProduct는 중복 상품명이면 에러를 던진다', async () => {
     const {productService} = await loadProductService();
 
-    expect(productService.createProduct({name: 'EASTER', price: 1000, imageUrl: '/new.png'})).toEqual({
-      status: 'duplicated',
-    });
+    expect(() => productService.createProduct({name: 'EASTER', price: 1000, imageUrl: '/new.png'})).toThrow();
   });
 
-  test('createProduct는 유효하지 않은 요청이면 invalid를 반환한다', async () => {
+  test('createProduct는 유효하지 않은 요청이면 에러를 던진다', async () => {
     const {productService} = await loadProductService();
 
-    expect(productService.createProduct({name: '', price: 1000, imageUrl: '/new.png'})).toEqual({
-      status: 'invalid',
-      message: '상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요.',
-    });
+    expect(() => productService.createProduct({name: '', price: 1000, imageUrl: '/new.png'})).toThrow(
+      '상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요.'
+    );
   });
 
   test('deleteProduct는 상품과 연결된 장바구니 항목을 삭제한다', async () => {
     const {productService} = await loadProductService();
     const {cartItems} = await import('../db.js');
 
-    expect(productService.deleteProduct('1')).toEqual({
-      status: 'deleted',
-    });
+    expect(productService.deleteProduct('1')).toBeUndefined();
     expect(productService.getProducts().some((product) => product.id === '1')).toBe(false);
     expect(cartItems.findAll().some((cartItem) => cartItem.productInfo.id === '1')).toBe(false);
   });
 
-  test('deleteProduct는 없는 상품이면 notFound를 반환한다', async () => {
+  test('deleteProduct는 없는 상품이면 에러를 던진다', async () => {
     const {productService} = await loadProductService();
 
-    expect(productService.deleteProduct('999')).toEqual({
-      status: 'notFound',
-    });
+    expect(() => productService.deleteProduct('999')).toThrow();
   });
 });

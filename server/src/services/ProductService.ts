@@ -1,29 +1,9 @@
 import {cartItems, products} from '../db.js';
+import {HttpError} from '../middlewares/errorHandler.js';
 import {Product} from '../models/Product.js';
 import type {CreateProductRequestBody} from '../type.js';
 
 const PRODUCT_NAME_MAX_LENGTH = 100;
-
-type CreateProductResult =
-  | {
-      status: 'created';
-      id: string;
-    }
-  | {
-      status: 'duplicated';
-    }
-  | {
-      status: 'invalid';
-      message: string;
-    };
-
-type DeleteProductResult =
-  | {
-      status: 'deleted';
-    }
-  | {
-      status: 'notFound';
-    };
 
 export const isValidProductName = (name: unknown) => {
   return typeof name === 'string' && name.length > 0 && name.length <= PRODUCT_NAME_MAX_LENGTH;
@@ -56,44 +36,30 @@ export const productService = {
     return products.findAll();
   },
 
-  createProduct(body: unknown): CreateProductResult {
+  createProduct(body: unknown) {
     if (!isValidCreateProductBody(body)) {
-      return {
-        status: 'invalid',
-        message: '상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요.',
-      };
+      throw new HttpError(400, '상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요.');
     }
 
     const {name, price, imageUrl} = body;
 
     if (products.hasName(name)) {
-      return {
-        status: 'duplicated',
-      };
+      throw new HttpError(409);
     }
 
     const newId = products.getNextId();
 
     products.add(new Product(newId, name, price, imageUrl));
 
-    return {
-      status: 'created',
-      id: newId,
-    };
+    return newId;
   },
 
-  deleteProduct(id: string): DeleteProductResult {
+  deleteProduct(id: string) {
     if (!products.findById(id)) {
-      return {
-        status: 'notFound',
-      };
+      throw new HttpError(404);
     }
 
     cartItems.deleteByProductId(id);
     products.deleteById(id);
-
-    return {
-      status: 'deleted',
-    };
   },
 };

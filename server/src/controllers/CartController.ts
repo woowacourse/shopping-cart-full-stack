@@ -13,35 +13,19 @@ export const cartController = {
   updateQuantity(req: Request<CartItemIdParams, unknown, UpdateCartQuantityRequestBody>, res: Response) {
     const cartItemId = req.params.cartItemId;
     const {quantity} = req.body;
-    const result = cartService.updateQuantity(cartItemId, quantity);
-
-    if (result.status === 'invalid') {
-      return res.status(400).json({
-        body: {
-          message: result.message,
-        },
-      });
-    }
-
-    if (result.status === 'notFound') {
-      return res.status(404).send();
-    }
+    const updatedQuantity = cartService.updateQuantity(cartItemId, quantity);
 
     res.status(200).json({
       body: {
         id: cartItemId,
-        quantity: result.quantity,
+        quantity: updatedQuantity,
       },
     });
   },
 
   deleteCartItem(req: Request<CartItemIdParams>, res: Response) {
     const cartItemId = req.params.cartItemId;
-    const isDeleted = cartService.deleteCartItem(cartItemId);
-
-    if (!isDeleted) {
-      return res.status(404).send();
-    }
+    cartService.deleteCartItem(cartItemId);
 
     res.sendStatus(204);
   },

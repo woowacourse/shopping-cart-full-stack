@@ -11,23 +11,11 @@ export const productController = {
   },
 
   createProduct(req: Request<{}, unknown, CreateProductRequestBody>, res: Response) {
-    const result = productService.createProduct(req.body);
-
-    if (result.status === 'invalid') {
-      return res.status(400).json({
-        body: {
-          message: result.message,
-        },
-      });
-    }
-
-    if (result.status === 'duplicated') {
-      return res.status(409).send();
-    }
+    const productId = productService.createProduct(req.body);
 
     res.status(201).json({
       body: {
-        id: result.id,
+        id: productId,
       },
     });
   },
@@ -35,11 +23,7 @@ export const productController = {
   deleteProduct(req: Request<ProductIdParams>, res: Response) {
     const productId = req.params.productId;
 
-    const result = productService.deleteProduct(productId);
-
-    if (result.status === 'notFound') {
-      return res.status(404).send();
-    }
+    productService.deleteProduct(productId);
 
     res.sendStatus(204);
   },

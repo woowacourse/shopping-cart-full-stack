@@ -1,17 +1,5 @@
 import {cartItems} from '../db.js';
-
-type UpdateQuantityResult =
-  | {
-      status: 'updated';
-      quantity: number;
-    }
-  | {
-      status: 'notFound';
-    }
-  | {
-      status: 'invalid';
-      message: string;
-    };
+import {HttpError} from '../middlewares/errorHandler.js';
 
 export const isValidQuantity = (quantity: unknown) => {
   return typeof quantity === 'number' && Number.isInteger(quantity) && quantity >= 1 && quantity <= 99;
@@ -22,29 +10,25 @@ export const cartService = {
     return cartItems.findAll();
   },
 
-  updateQuantity(id: string, quantity: number): UpdateQuantityResult {
+  updateQuantity(id: string, quantity: number) {
     if (!isValidQuantity(quantity)) {
-      return {
-        status: 'invalid',
-        message: '수량은 1 이상 99 이하의 정수여야 합니다.',
-      };
+      throw new HttpError(400, '수량은 1 이상 99 이하의 정수여야 합니다.');
     }
 
     const updatedCartItem = cartItems.updateQuantity(id, quantity);
 
     if (!updatedCartItem) {
-      return {
-        status: 'notFound',
-      };
+      throw new HttpError(404);
     }
 
-    return {
-      status: 'updated',
-      quantity: updatedCartItem.getQuantity(),
-    };
+    return updatedCartItem.getQuantity();
   },
 
   deleteCartItem(id: string) {
-    return cartItems.deleteById(id);
+    const isDeleted = cartItems.deleteById(id);
+
+    if (!isDeleted) {
+      throw new HttpError(404);
+    }
   },
 };
