@@ -57,9 +57,9 @@ describe("product router 테스트", () => {
 
       const response = await request(app).post("/products").send(product);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(201);
       expect(response.body).toEqual({
-        status: 200,
+        status: 201,
         data: {
           id: 4,
           ...product,
