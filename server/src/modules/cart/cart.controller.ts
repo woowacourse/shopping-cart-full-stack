@@ -38,7 +38,7 @@ class CartController {
 
       this.cartService.deleteCartItem(Number(productId));
 
-      res.status(204).json();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

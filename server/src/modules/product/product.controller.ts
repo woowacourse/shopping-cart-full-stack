@@ -30,7 +30,7 @@ class ProductController {
 
       this.productService.deleteProduct(Number(productId));
 
-      res.status(204).json();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
