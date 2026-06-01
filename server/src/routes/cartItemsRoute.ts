@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import CartItemsContorller from '../controllers/CartItemsContorller';
-const cartItemsRouter = Router();
 
-const cartItemsController = new CartItemsContorller();
+export const createCartItemsRouter = (cartItemsController: CartItemsContorller) => {
+  const cartItemsRouter = Router();
 
-cartItemsRouter.get('/cart', cartItemsController.getCartItems);
-cartItemsRouter.post('/cart', cartItemsController.postCartItems);
-cartItemsRouter.patch('/cart/:cartItemId', cartItemsController.patchCartItems);
-cartItemsRouter.delete('/cart/:cartItemId', cartItemsController.deleteCartItems);
+  cartItemsRouter.get('/', cartItemsController.getCartItems);
+  cartItemsRouter.post('/', cartItemsController.postCartItems);
+  cartItemsRouter.patch('/:cartItemId', cartItemsController.patchCartItems);
+  cartItemsRouter.delete('/:cartItemId', cartItemsController.deleteCartItems);
 
-export default cartItemsRouter;
+  return cartItemsRouter;
+};

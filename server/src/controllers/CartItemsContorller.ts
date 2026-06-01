@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import CartItemsService from '../services/CartItemsService';
+import { CartItemsServicePort } from '../types';
 import {
   InsertCartItemBodySchema,
   UpdateCartItemRequestParamsSchema,
@@ -8,10 +8,10 @@ import {
 } from '../schemas';
 
 class CartItemContorller {
-  service;
+  private readonly service;
 
-  constructor() {
-    this.service = new CartItemsService();
+  constructor({ service }: { service: CartItemsServicePort }) {
+    this.service = service;
   }
 
   getCartItems = async (_req: Request, res: Response, next: NextFunction) => {

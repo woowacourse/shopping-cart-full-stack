@@ -1,6 +1,9 @@
-import ProductsRepository from '../repositories/ProductsRepository';
-import CartItemsRepository from '../repositories/CartItemsRepository';
-import { CartItem } from '../types';
+import {
+  CartItem,
+  CartItemsRepository,
+  CartItemsServicePort,
+  ProductsRepository,
+} from '../types';
 import {
   CartItemNotFoundError,
   CartItemProductMissingError,
@@ -9,18 +12,24 @@ import {
 } from '../errors';
 import { CartItemSchema } from '../schemas';
 
-class CartItemsService {
-  productsRepository;
-  cartRepository;
+class CartItemsService implements CartItemsServicePort {
+  private readonly productsRepository;
+  private readonly cartItemsRepository;
 
-  constructor() {
-    this.productsRepository = new ProductsRepository();
-    this.cartRepository = new CartItemsRepository();
+  constructor({
+    productsRepository,
+    cartItemsRepository,
+  }: {
+    productsRepository: ProductsRepository;
+    cartItemsRepository: CartItemsRepository;
+  }) {
+    this.productsRepository = productsRepository;
+    this.cartItemsRepository = cartItemsRepository;
   }
 
   async getCartItems() {
     const products = await this.productsRepository.getAll();
-    const cartItems = await this.cartRepository.getAll();
+    const cartItems = await this.cartItemsRepository.getAll();
 
     return cartItems.map((item) => {
       const product = products.find((product) => product.productId === item.productId);
@@ -45,13 +54,13 @@ class CartItemsService {
 
     if (!product) throw new ProductNotFoundError(parsedCartItem.productId);
 
-    const cartItems = await this.cartRepository.getAll();
+    const cartItems = await this.cartItemsRepository.getAll();
 
     if (cartItems.find((item) => item.productId === product.productId)) {
       throw new ProductAlreadyInCartError(product.productId);
     }
 
-    const inserted = await this.cartRepository.insertByUser(parsedCartItem);
+    const inserted = await this.cartItemsRepository.insertByUser(parsedCartItem);
 
     return {
       cartItemId: inserted.cartItemId,
@@ -66,7 +75,7 @@ class CartItemsService {
   ) {
     const parsedCartItemPartial = CartItemSchema.pick({ quantity: true }).parse(cartItemPartial);
 
-    const cartItem = await this.cartRepository.getById(cartItemId);
+    const cartItem = await this.cartItemsRepository.getById(cartItemId);
 
     if (!cartItem) throw new CartItemNotFoundError(cartItemId);
 
@@ -79,7 +88,7 @@ class CartItemsService {
       quantity: parsedCartItemPartial.quantity,
     };
 
-    await this.cartRepository.updateById(cartItemId, newCartItem);
+    await this.cartItemsRepository.updateById(cartItemId, newCartItem);
 
     return {
       cartItemId: newCartItem.cartItemId,
@@ -89,11 +98,11 @@ class CartItemsService {
   }
 
   async deleteCartItem(cartItemId: CartItem['cartItemId']) {
-    const cartItem = await this.cartRepository.getById(cartItemId);
+    const cartItem = await this.cartItemsRepository.getById(cartItemId);
 
     if (!cartItem) throw new CartItemNotFoundError(cartItemId);
 
-    const deleted = await this.cartRepository.deleteById(cartItemId);
+    const deleted = await this.cartItemsRepository.deleteById(cartItemId);
 
     if (!deleted) throw new CartItemNotFoundError(cartItemId);
 

@@ -1,8 +1,8 @@
-import { CartItem } from './../types';
+import { CartItem, CartItemsRepository } from './../types';
 
 export const cartItems = new Map<string, CartItem>();
 
-class CartItemsRepository {
+class InMemoryCartItemsRepository implements CartItemsRepository {
   store;
 
   constructor() {
@@ -47,4 +47,4 @@ class CartItemsRepository {
   }
 }
 
-export default CartItemsRepository;
+export default InMemoryCartItemsRepository;

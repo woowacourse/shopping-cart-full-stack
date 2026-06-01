@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
-import { products } from '../repositories/ProductsRepository';
-import { cartItems } from '../repositories/CartItemsRepository';
+import { products } from '../repositories/InMemoryProductsRepository';
+import { cartItems } from '../repositories/InMemoryCartItemsRepository';
 
 describe('상품', () => {
   beforeEach(() => {

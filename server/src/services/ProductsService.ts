@@ -1,16 +1,25 @@
 import { ProductNotFoundError } from '../errors';
-import ProductsRepository from '../repositories/ProductsRepository';
-import CartItemsRepository from '../repositories/CartItemsRepository';
-import { Product } from '../types';
+import {
+  CartItemsRepository,
+  ProductsRepository,
+  ProductsServicePort,
+  Product,
+} from '../types';
 import { ProductSchema } from './../schemas';
 
-class ProductsService {
-  productsRepository;
-  cartItemsRepository;
+class ProductsService implements ProductsServicePort {
+  private readonly productsRepository;
+  private readonly cartItemsRepository;
 
-  constructor() {
-    this.productsRepository = new ProductsRepository();
-    this.cartItemsRepository = new CartItemsRepository();
+  constructor({
+    productsRepository,
+    cartItemsRepository,
+  }: {
+    productsRepository: ProductsRepository;
+    cartItemsRepository: CartItemsRepository;
+  }) {
+    this.productsRepository = productsRepository;
+    this.cartItemsRepository = cartItemsRepository;
   }
 
   async getProducts() {

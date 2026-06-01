@@ -1,8 +1,8 @@
-import { Product } from './../types';
+import { Product, ProductsRepository } from './../types';
 
 export const products = new Map<string, Product>();
 
-class ProductsRepository {
+class InMemoryProductsRepository implements ProductsRepository {
   store;
 
   constructor() {
@@ -43,4 +43,4 @@ class ProductsRepository {
   }
 }
 
-export default ProductsRepository;
+export default InMemoryProductsRepository;

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import ProductsService from '../services/ProductsService';
+import { ProductsServicePort } from '../types';
 import { InsertProductRequestBodySchema, DeleteProductRequestParamsSchema } from './../schemas';
 
 class ProductsController {
-  service;
+  private readonly service;
 
-  constructor() {
-    this.service = new ProductsService();
+  constructor({ service }: { service: ProductsServicePort }) {
+    this.service = service;
   }
 
   getProducts = async (_req: Request, res: Response, next: NextFunction) => {

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
-import { cartItems } from '../repositories/CartItemsRepository';
-import { products } from '../repositories/ProductsRepository';
+import { cartItems } from '../repositories/InMemoryCartItemsRepository';
+import { products } from '../repositories/InMemoryProductsRepository';
 
 describe('장바구니', () => {
   beforeEach(() => {
