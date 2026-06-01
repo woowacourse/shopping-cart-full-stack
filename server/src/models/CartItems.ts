@@ -34,7 +34,7 @@ export class CartItems {
   }
 
   deleteByProductId(id: string) {
-    const targetIndex = this.cartItems.findIndex((cartItem) => cartItem.productInfo.id === id);
+    const targetIndex = this.cartItems.findIndex((cartItem) => cartItem.product.id === id);
 
     if (targetIndex === -1) {
       return false;

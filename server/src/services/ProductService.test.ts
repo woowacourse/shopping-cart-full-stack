@@ -72,7 +72,7 @@ describe('productService', () => {
     productService.deleteProduct('1');
 
     expect(productService.getProducts().some((product) => product.id === '1')).toBe(false);
-    expect(cartItems.findAll().some((cartItem) => cartItem.productInfo.id === '1')).toBe(false);
+    expect(cartItems.findAll().some((cartItem) => cartItem.product.id === '1')).toBe(false);
   });
 
   test('deleteProduct는 없는 상품이면 NotFoundError를 던진다', async () => {

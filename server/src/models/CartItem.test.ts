@@ -27,7 +27,7 @@ describe('CartItem', () => {
 
     expect(cartItem.toJSON()).toEqual({
       id: '1',
-      productInfo: new Product('1', '상품', 1000, '/image.png'),
+      product: new Product('1', '상품', 1000, '/image.png'),
       quantity: 1,
     });
   });

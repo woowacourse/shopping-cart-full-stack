@@ -37,7 +37,7 @@ describe("Cart API", () => {
     expect(response.body).toHaveLength(3);
     expect(response.body[0]).toMatchObject({
       id: "1",
-      productInfo: {
+      product: {
         id: "1",
         name: "EASTER",
       },
