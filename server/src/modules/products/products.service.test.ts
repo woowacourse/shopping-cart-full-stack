@@ -6,7 +6,7 @@ import {
   getProductByNameQuery,
 } from "./products.repository";
 import {
-  deleteCartQuery,
+  deleteCartsProductQuery,
   getCartItemByProductIdQuery,
 } from "../carts/carts.repository";
 import { addProduct, deleteProduct, getAllProducts } from "./products.service";
@@ -23,7 +23,7 @@ const deleteProductQueryMock = jest.mocked(deleteProductQuery);
 const getCartItemByProductIdQueryMock = jest.mocked(
   getCartItemByProductIdQuery,
 );
-const deleteCartQueryMock = jest.mocked(deleteCartQuery);
+const deleteCartsProductQueryMock = jest.mocked(deleteCartsProductQuery);
 
 describe("products", () => {
   beforeEach(() => {
@@ -141,10 +141,10 @@ describe("products", () => {
 
       // when & then
       expect(() => deleteProduct(1)).toThrow(
-        ERROR_CODES.NOT_EXIST_PRODUCT.code,
+        ERROR_CODES.NOT_EXIST_PRODUCT.message,
       );
       expect(deleteProductQueryMock).not.toHaveBeenCalled();
-      expect(deleteCartQueryMock).not.toHaveBeenCalled();
+      expect(deleteCartsProductQueryMock).not.toHaveBeenCalled();
     });
 
     it("존재하는 상품을 삭제하면 해당 id를 반환한다.", () => {
@@ -152,6 +152,7 @@ describe("products", () => {
       const product = { id: 1, name: "상품1", price: 1000, image: "" };
       getProductByIdQueryMock.mockReturnValue(product);
       getCartItemByProductIdQueryMock.mockReturnValue(undefined);
+      deleteProductQueryMock.mockReturnValue(product.id);
 
       // when
       const result = deleteProduct(product.id);
@@ -172,15 +173,16 @@ describe("products", () => {
 
       // then
       expect(getCartItemByProductIdQueryMock).toHaveBeenCalledWith(product.id);
-      expect(deleteCartQueryMock).not.toHaveBeenCalled();
+      expect(deleteCartsProductQueryMock).not.toHaveBeenCalled();
     });
 
     it("장바구니에 담겨있는 상품을 삭제하면 해당 장바구니 항목도 함께 삭제한다.", () => {
       // given
       const product = { id: 1, name: "상품1", price: 1000, image: "" };
-      const cartItemId = 1;
+      const cartItem = { product, quantity: 1 };
       getProductByIdQueryMock.mockReturnValue(product);
-      getCartItemByProductIdQueryMock.mockReturnValue(cartItemId);
+      getCartItemByProductIdQueryMock.mockReturnValue(cartItem);
+      deleteProductQueryMock.mockReturnValue(product.id);
 
       // when
       const result = deleteProduct(product.id);
@@ -188,7 +190,7 @@ describe("products", () => {
       // then
       expect(deleteProductQueryMock).toHaveBeenCalledWith(product.id);
       expect(getCartItemByProductIdQueryMock).toHaveBeenCalledWith(product.id);
-      expect(deleteCartQueryMock).toHaveBeenCalledWith(cartItemId);
+      expect(deleteCartsProductQueryMock).toHaveBeenCalledWith(product.id);
       expect(result).toBe(product.id);
     });
   });

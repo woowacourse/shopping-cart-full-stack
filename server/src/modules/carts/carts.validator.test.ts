@@ -17,19 +17,19 @@ describe("carts.validator", () => {
 
     it("수량이 0이면 OUT_OF_RANGE_CARTS_QUANTITY 에러를 던진다.", () => {
       expect(() => validateCartQuantity(0)).toThrow(
-        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.code,
+        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.message,
       );
     });
 
     it("수량이 음수이면 OUT_OF_RANGE_CARTS_QUANTITY 에러를 던진다.", () => {
       expect(() => validateCartQuantity(-1)).toThrow(
-        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.code,
+        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.message,
       );
     });
 
     it("수량이 100이면 OUT_OF_RANGE_CARTS_QUANTITY 에러를 던진다.", () => {
       expect(() => validateCartQuantity(100)).toThrow(
-        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.code,
+        ERROR_CODES.OUT_OF_RANGE_CARTS_QUANTITY.message,
       );
     });
   });
