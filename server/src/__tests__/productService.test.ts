@@ -56,13 +56,14 @@ describe("상품 서비스 테스트", () => {
   test("상품 1개를 삭제하면 장바구니에 담긴 상품도 같이 삭제된다.", () => {
     // given
     const productId = productService.addProduct(mockProduct);
-    cartRepository.add(productId, 2);
+    const cart = cartRepository.create();
+    cart.addCartItem(productId, 2);
 
     // when
     productService.deleteProduct(productId);
 
     // then
-    expect(cartRepository.findByProductId(productId)).toBeUndefined();
+    expect(cart.toJsonCartItems()).toEqual([]);
   });
 
   test("존재하지 않는 상품을 삭제하면 에러를 발생시킨다.", () => {
