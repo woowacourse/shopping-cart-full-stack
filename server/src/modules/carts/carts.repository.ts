@@ -11,7 +11,11 @@ export const findById = (id: number) => {
     return new Cart({
         id: cart.id,
         products: cart.products.map((cartProduct) => {
-            const productData = rawProducts.find((rawProduct) => rawProduct.id === cartProduct.id)!;
+            const productData = rawProducts.find((rawProduct) => rawProduct.id === cartProduct.id);
+
+            if (!productData) {
+                throw new Error(`데이터 정합성 오류: 카트에 존재하지 않는 상품이 참조되고 있습니다. productId: ${cartProduct.id}`);
+            }
 
             return new ProductInCart({
                 product: new Product(productData),
@@ -49,7 +53,11 @@ export const findProductInCart = (cartId: number, productId: number) => {
     const cartProduct = cart.products.find((product) => product.id === productId);
     if (!cartProduct) return undefined;
 
-    const productData = rawProducts.find((rawProduct) => rawProduct.id === cartProduct.id)!;
+    const productData = rawProducts.find((rawProduct) => rawProduct.id === cartProduct.id);
+
+    if (!productData) {
+        throw new Error(`데이터 정합성 오류: 카트에 존재하지 않는 상품이 참조되고 있습니다. productId: ${cartProduct.id}`);
+    }
 
     return new ProductInCart({
         product: new Product(productData),
