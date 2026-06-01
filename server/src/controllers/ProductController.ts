@@ -10,7 +10,7 @@ export const productController = {
   createProduct(req: Request, res: Response) {
     const product = productService.createProduct(req.body);
 
-    res.status(201).location(`/products/${product.id}`).json(product);
+    res.status(201).json(product);
   },
 
   deleteProduct(req: Request<IdParams>, res: Response) {

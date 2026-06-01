@@ -62,7 +62,6 @@ describe("Product API", () => {
       price: 1000,
       imageUrl: "/new.png",
     });
-    expect(response.headers.location).toBe("/products/6");
   });
 
   test("POST /products는 유효하지 않은 요청이면 400과 에러 정보를 응답한다", async () => {
