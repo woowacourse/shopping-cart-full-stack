@@ -16,7 +16,10 @@ export default class CartService {
   #productRepository: ProductRepositoryInterface;
   #cartRepository: CartRepositoryInterface;
 
-  constructor(productRepository: ProductRepositoryInterface, cartRepository: CartRepositoryInterface) {
+  constructor(
+    productRepository: ProductRepositoryInterface,
+    cartRepository: CartRepositoryInterface,
+  ) {
     this.#productRepository = productRepository;
     this.#cartRepository = cartRepository;
   }
@@ -29,15 +32,33 @@ export default class CartService {
       return {
         cartItemId: cartItem.cartItemId,
         quantity: cartItem.quantity,
-        product: product
+        product: product,
       };
     });
+  }
+
+  #mergeIfExisting(productId: number, quantity: number): CartItemData | null {
+    const cartItems = this.#cartRepository.getCartProducts();
+    const existingItem = cartItems.find((item) => item.productId === productId);
+
+    if (!existingItem) return null;
+
+    const mergedQuantity = existingItem.quantity + quantity;
+    validateQuantity(mergedQuantity);
+
+    const updatedItem = this.#cartRepository.changeQuantity(existingItem.cartItemId, mergedQuantity);
+    if (!updatedItem) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
+
+    return updatedItem;
   }
 
   postCartItem(productId: number, quantity: number): CartItemData {
     validateQuantity(quantity);
     const product = this.#productRepository.findById(Number(productId));
     if (!product) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_PRODUCT);
+
+    const mergedItem = this.#mergeIfExisting(productId, quantity);
+    if (mergedItem) return mergedItem;
 
     return this.#cartRepository.addProductToCart(productId, quantity);
   }
@@ -56,8 +77,12 @@ export default class CartService {
     if (!cartItemId) throw new InvalidError(ERROR_MESSAGE.INVALID_CART_ID);
     if (!newQuantity) throw new InvalidError(ERROR_MESSAGE.INVALID_QUANTITY);
 
-    const updatedQuantity = this.#cartRepository.changeQuantity(cartItemId, newQuantity);
-    if (!updatedQuantity) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
+    const updatedQuantity = this.#cartRepository.changeQuantity(
+      cartItemId,
+      newQuantity,
+    );
+    if (!updatedQuantity)
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND_CART_ITEM);
 
     return updatedQuantity;
   }
