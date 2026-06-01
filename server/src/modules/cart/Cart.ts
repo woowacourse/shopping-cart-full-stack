@@ -47,6 +47,13 @@ class Cart {
     return this.cartItems.map((cartItem) => cartItem.toJson());
   }
 
+  toJson() {
+    return {
+      id: this.id,
+      cartItems: this.toJsonCartItems(),
+    };
+  }
+
   isSameId(cartId: number) {
     return this.id === cartId;
   }

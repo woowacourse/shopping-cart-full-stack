@@ -221,10 +221,13 @@ describe("GET /products API 테스트", () => {
 
 describe("GET /carts/:cartId/items API 테스트", () => {
   let app: Express;
-  const cartId = 1;
+  let cartId = 0;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     app = createApp();
+
+    const cartResponse = await request(app).post("/carts");
+    cartId = cartResponse.body.result.id;
   });
 
   test("장바구니 상품 조회 시 200과 상품 목록을 응답한다.", async () => {
@@ -286,11 +289,14 @@ describe("GET /carts/:cartId/items API 테스트", () => {
 
 describe("DELETE /carts/:cartId/items/:productId API 테스트", () => {
   let app: Express;
-  const cartId = 1;
+  let cartId = 0;
   let deleteId = 0;
 
   beforeEach(async () => {
     app = createApp();
+
+    const cartResponse = await request(app).post("/carts");
+    cartId = cartResponse.body.result.id;
 
     const newProduct = {
       name: "아디다스 양말",
@@ -342,10 +348,13 @@ describe("DELETE /carts/:cartId/items/:productId API 테스트", () => {
 describe("PATCH /carts/:cartId/items/:productId API 테스트", () => {
   let updateId = 0;
   let app: Express;
-  const cartId = 1;
+  let cartId = 0;
 
   beforeEach(async () => {
     app = createApp();
+
+    const cartResponse = await request(app).post("/carts");
+    cartId = cartResponse.body.result.id;
 
     const newProduct = {
       name: "아디다스 양말",

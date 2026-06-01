@@ -12,7 +12,7 @@ class CartService {
   addCart() {
     const newCart = this.cartRepository.create();
 
-    return newCart;
+    return newCart.toJson().id;
   }
 
   getCartItems(cartId: number) {

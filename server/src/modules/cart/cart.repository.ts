@@ -3,6 +3,7 @@ import Cart from "./Cart.js";
 export interface CartRepository {
   create(): Cart;
   findById(cartId: number): Cart | undefined;
+  removeProductFromAllCarts(productId: number): void;
 }
 
 export class InMemoryCartRepository implements CartRepository {
@@ -20,5 +21,17 @@ export class InMemoryCartRepository implements CartRepository {
 
   findById(cartId: number) {
     return this.carts.find((cart) => cart.isSameId(cartId));
+  }
+
+  removeProductFromAllCarts(productId: number) {
+    this.carts.forEach((cart) => {
+      const hasCartItem = cart
+        .toJsonCartItems()
+        .some((cartItem) => cartItem.productId === productId);
+
+      if (hasCartItem) {
+        cart.deleteCartItem(productId);
+      }
+    });
   }
 }
