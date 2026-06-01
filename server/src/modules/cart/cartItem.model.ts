@@ -12,27 +12,24 @@ export class CartItem {
   purchaseQuantity;
 
   constructor(cartItem: Type) {
-    this.validator(cartItem);
+    this.validatePurchaseQuantity(cartItem.purchaseQuantity);
 
     this.cartItemId = cartItem.cartItemId;
     this.productId = cartItem.productId;
     this.purchaseQuantity = cartItem.purchaseQuantity;
   }
 
-  validator(cartItem: Type) {
-    if (
-      !Number.isInteger(cartItem.purchaseQuantity) ||
-      cartItem.purchaseQuantity < 1 ||
-      cartItem.purchaseQuantity > 99
-    ) {
+  changeQuantityTo(quantity: number) {
+    this.validatePurchaseQuantity(quantity);
+    this.purchaseQuantity = quantity;
+  }
+
+  private validatePurchaseQuantity(quantity: number) {
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
       throw new ModelError(
         'INVALID_PURCHASE_QUANTITY',
         '유효하지 않은 구매 수량입니다.',
       );
     }
-  }
-
-  changeQuantityTo(quantity: number) {
-    this.purchaseQuantity = quantity;
   }
 }

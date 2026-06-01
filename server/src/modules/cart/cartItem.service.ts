@@ -1,4 +1,5 @@
 import { AppError } from '../../errors/AppError.js';
+import { ModelError } from '../../errors/ModelError.js';
 import type { Product } from '../products/product.model.js';
 import { productRepository } from '../products/product.repository.js';
 import { CartItem } from './cartItem.model.js';
@@ -7,8 +8,6 @@ import { cartItemRepository } from './cartItem.repository.js';
 export const cartItemService = {
   addCartItem(productId: string, purchaseQuantity: number) {
     const product = validateProductId(productId);
-    validatePurchaseQuantity(purchaseQuantity);
-    validateRemainingQuantity(product, purchaseQuantity);
 
     // 추가하려는 상품이 장바구니에 이미 존재할 경우
     const foundCartItem = cartItemRepository.findByProductId(productId);
@@ -16,19 +15,24 @@ export const cartItemService = {
       const nextPurchaseQuantity =
         foundCartItem.purchaseQuantity + purchaseQuantity;
 
-      validatePurchaseQuantity(nextPurchaseQuantity);
       validateRemainingQuantity(product, nextPurchaseQuantity);
-      foundCartItem.changeQuantityTo(nextPurchaseQuantity);
+      convertModelError(() =>
+        foundCartItem.changeQuantityTo(nextPurchaseQuantity),
+      );
 
       return { cartItemId: foundCartItem.cartItemId, isNew: false };
     }
 
     // 추가하려는 상품이 장바구니에 존재하지 않는 경우
-    const cartItem = new CartItem({
-      cartItemId: crypto.randomUUID(),
-      productId,
-      purchaseQuantity,
-    });
+    validateRemainingQuantity(product, purchaseQuantity);
+    const cartItem = convertModelError(
+      () =>
+        new CartItem({
+          cartItemId: crypto.randomUUID(),
+          productId,
+          purchaseQuantity,
+        }),
+    );
 
     cartItemRepository.save(cartItem);
     return { cartItemId: cartItem.cartItemId, isNew: true };
@@ -53,7 +57,6 @@ export const cartItemService = {
 
   changePurchaseQuantity(cartItemId: string, quantity: number) {
     const cartItem = validateCartItemId(cartItemId);
-    validatePurchaseQuantity(quantity);
 
     // 이중 검증
     const product = productRepository.findById(cartItem.productId);
@@ -62,13 +65,26 @@ export const cartItemService = {
     }
 
     validateRemainingQuantity(product, quantity);
-    cartItem.changeQuantityTo(quantity);
+    convertModelError(() => cartItem.changeQuantityTo(quantity));
 
     return {
       cartItemId: cartItem.cartItemId,
       purchaseQuantity: cartItem.purchaseQuantity,
     };
   },
+};
+
+// Model이 던지는 도메인 에러(ModelError)를 HTTP 계층이 이해하는 AppError로 변환한다
+const convertModelError = <T>(operation: () => T): T => {
+  try {
+    return operation();
+  } catch (error) {
+    if (error instanceof ModelError) {
+      throw new AppError(400, error.code, error.message);
+    }
+
+    throw error;
+  }
 };
 
 const validateCartItemId = (cartItemId: string) => {
@@ -109,21 +125,6 @@ const validateProductId = (productId: string) => {
   }
 
   return product;
-};
-
-const validatePurchaseQuantity = (purchaseQuantity: number) => {
-  if (
-    typeof purchaseQuantity !== 'number' ||
-    !Number.isInteger(purchaseQuantity) ||
-    purchaseQuantity < 1 ||
-    purchaseQuantity > 99
-  ) {
-    throw new AppError(
-      400,
-      'INVALID_PURCHASE_QUANTITY',
-      '유효하지 않은 구매 수량입니다.',
-    );
-  }
 };
 
 const validateRemainingQuantity = (
