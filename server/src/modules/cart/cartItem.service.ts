@@ -39,7 +39,19 @@ export const cartItemService = {
   },
 
   getCartItems() {
-    return cartItemRepository.findAll();
+    // CartItem은 productId만 보관하므로, 응답 시점에 상품 정보를 조회해 합친다
+    return cartItemRepository.findAll().map((cartItem) => {
+      const product = productRepository.findById(cartItem.productId);
+
+      return {
+        cartItemId: cartItem.cartItemId,
+        productId: cartItem.productId,
+        productName: product?.productName,
+        productPrice: product?.productPrice,
+        imageUrl: product?.imageUrl,
+        purchaseQuantity: cartItem.purchaseQuantity,
+      };
+    });
   },
 
   getCartItemById(cartItemId: string) {

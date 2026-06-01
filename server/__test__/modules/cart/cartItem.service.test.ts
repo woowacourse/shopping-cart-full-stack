@@ -38,6 +38,24 @@ describe('CartItemService', () => {
       expect(cartItems[1].cartItemId).toBe(cartItemB.cartItemId);
     });
 
+    test('장바구니 목록 조회 시 상품 정보(이름/가격/이미지)를 함께 반환한다.', () => {
+      // given
+      cartItemService.addCartItem('1', 2);
+
+      // when
+      const cartItems = cartItemService.getCartItems();
+
+      // then
+      expect(cartItems[0]).toEqual({
+        cartItemId: expect.any(String),
+        productId: '1',
+        productName: '콜라',
+        productPrice: 1300,
+        imageUrl: 'src/assets/coke.png',
+        purchaseQuantity: 2,
+      });
+    });
+
     test('존재하지 않은 장바구니 상품 조회 시 에러를 반환한다.', () => {
       expect(() => {
         cartItemService.getCartItemById('1123');
