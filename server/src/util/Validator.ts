@@ -1,6 +1,6 @@
-import { InvalidError } from "../../errors/CustomErrorClass";
-import { ERROR_MESSAGE } from "../../errors/ErrorMessage";
-import { ProductInput } from "../Product";
+import { InvalidError } from "../errors/CustomErrorClass";
+import { ERROR_MESSAGE } from "../errors/ErrorMessage";
+import { ProductInput } from "../repositories/Product";
 
 export const validateQuantity = (quantity: number): void => {
   if (
