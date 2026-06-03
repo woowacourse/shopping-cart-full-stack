@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import HeaderButton from "../button/HeaderButton";
 
 export default function ShoppingCartPage() {
   return (
