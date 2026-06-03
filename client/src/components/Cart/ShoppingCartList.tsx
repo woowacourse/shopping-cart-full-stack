@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import CartItem from "./CartItem";
 
 interface Props {
   cartItems: CartItems[];

@@ -47,13 +47,6 @@
   - `productData.price`
   - 수량 선택 input박스 양 옆에 `-`, `+` 버튼
 
-### ItemDeleteButton.tsx
-
-**해당 상품 장바구니에서 삭제**
-
-- [] 버튼 텍스트는 "삭제"
-- [] 누르면 해당 `cartItemId`로 delete api 호출
-
 ### CheckButton.tsx
 
 **모든 검증을 통과했는지 확인 후 누르면 `OrderResult.tsx` 컴포넌트 호출**
