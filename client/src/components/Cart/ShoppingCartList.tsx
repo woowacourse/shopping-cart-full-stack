@@ -5,7 +5,7 @@ interface Props {
   cartItems: CartItems[];
 }
 
-export default function ShoppingCartList({ cartItems }): Props {
+export default function ShoppingCartList({ cartItems }: Props) {
   return (
     <Container>
       <input type="checkbox">전체선택</input>

@@ -3,13 +3,13 @@ interface Props{
     onDelete: (cartItemId)=> void;
 }
 
-export default function CartItem({cartItem,onDelete()}):Props {
-  return (
-    <div>
+export default function CartItem({cartItem,onDelete()}Props) {
+    return (
+        <div>
         <Conatiner>
             <ButtonRaw>
                 <input type="checkbox"/>
-                <button onClick= {()=> {onDelete(cartItem.cartItemId)}}>
+                <button onClick= {()=> {onDelete(cartItem.cartItemId)}}/>
             </ButtonRaw>
             <ItemContainer>
                 <img src={cartItem.thumbnailUrl}/>
@@ -23,6 +23,8 @@ export default function CartItem({cartItem,onDelete()}):Props {
             
         </Container>
     </div>
-  );
+    );
 }
+  
+
 
