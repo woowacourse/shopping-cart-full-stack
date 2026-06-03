@@ -1,9 +1,9 @@
 interface Props{
     cartItem: CartItem;
-    onDelete: (cartItemId)=> void;
+    onDelete: (cartItemId: number)=> void;
 }
 
-export default function CartItem({cartItem,onDelete()}Props) {
+export default function CartItem({cartItem,onDelete}: Props) {
     return (
         <div>
         <Conatiner>

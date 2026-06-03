@@ -67,7 +67,14 @@
   | 배송비 | `deliveryPrice` |
   | 총 결제 금액 | `totalOrderPrice` |
 
-### 장바구니 상태 관리
+# 장바구니 상태 관리
+
+## 장바구니 상품 선택
+
+### `selectedItems`
+
+1.  `ShoppingCartPage`에서 상태 관리
+2.  select박스 클릭 이벤트 핸들러 Props로 내려줌 (`CartItem`, `ShoppingCartList`)
 
 useState 초기값을 애초에 localStorage로 연결해서 초기값 세팅해서 useEffect로 감싸기
 -> 상태를 따로 정의하면 리렌더링시 잠깐의 깜빡임 현상이 나타날것을 방지(애초에 값 초기화를 localStorage에서)

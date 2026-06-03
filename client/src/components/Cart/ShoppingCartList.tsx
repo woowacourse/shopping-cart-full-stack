@@ -10,7 +10,7 @@ export default function ShoppingCartList({ cartItems }: Props) {
     <Container>
       <input type="checkbox">전체선택</input>
       {cartItems.map((cartItem) => {
-        <CartItem />;
+        return <CartItem cartItem={} onDelete={} />;
       })}
     </Container>
   );
