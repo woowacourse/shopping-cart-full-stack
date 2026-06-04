@@ -1,11 +1,10 @@
 import styled from "styled-components";
 import HeaderButton from "../button/HeaderButton";
+import { useLocation } from "react-router-dom";
 
-interface Props {
-  totalPrice: number;
-}
-
-export default function OrderConfirmPage({ totalPrice }: Props) {
+export default function OrderConfirmPage() {
+  const location = useLocation();
+  const { itemCount, totalQuantity, totalPrice } = location.state;
   return (
     <Body>
       <Nav>
@@ -13,7 +12,8 @@ export default function OrderConfirmPage({ totalPrice }: Props) {
       </Nav>
       <Title> 주문 확인 </Title>
       <Label>
-        총 2종류의 상품 4개를 주문합니다. 최종 결제 금액을 확인해 주세요.
+        총 {itemCount}종류의 상품 {totalQuantity}개를 주문합니다. 최종 결제
+        금액을 확인해 주세요.
       </Label>
       <p>총 결제 금액</p>
       <p>{totalPrice}원</p>
