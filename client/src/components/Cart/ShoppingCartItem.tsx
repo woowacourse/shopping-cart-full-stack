@@ -3,14 +3,24 @@ import type { CartItem } from "../../type/types";
 interface Props {
   cartItem: CartItem;
   onDelete: (cartItemId: number) => void;
+  onTogle: (cartItemId: number) => void;
 }
 
-export default function ShoppingCartItem({ cartItem, onDelete }: Props) {
+export default function ShoppingCartItem({
+  cartItem,
+  onDelete,
+  onTogle,
+}: Props) {
   return (
     <div>
       <Container>
         <ButtonRaw>
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            onChange={() => {
+              onTogle(cartItem.cartItemId);
+            }}
+          />
           <button
             onClick={() => {
               onDelete(cartItem.cartItemId);

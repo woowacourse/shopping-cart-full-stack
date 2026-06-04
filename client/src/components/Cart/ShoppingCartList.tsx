@@ -5,14 +5,27 @@ import ShoppingCartItem from "./ShoppingCartItem";
 interface Props {
   cartItems: CartItem[];
   onDelete: (cartItemId: number) => void;
+  onTogle: (cartItemId: number) => void;
 }
 
-export default function ShoppingCartList({ cartItems, onDelete }: Props) {
+export default function ShoppingCartList({
+  cartItems,
+  onDelete,
+  onTogle,
+}: Props) {
   return (
     <Container>
-      <input type="checkbox">전체선택</input>
+      <input type="checkbox" onChange={() => {}}>
+        전체선택
+      </input>
       {cartItems.map((cartItem) => {
-        return <ShoppingCartItem cartItem={cartItem} onDelete={onDelete} />;
+        return (
+          <ShoppingCartItem
+            cartItem={cartItem}
+            onDelete={onDelete}
+            onTogle={onTogle}
+          />
+        );
       })}
     </Container>
   );

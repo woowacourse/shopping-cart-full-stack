@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import HeaderButton from "../button/HeaderButton";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import type { CartItem } from "../../type/types";
 import { shoppingCartApi } from "../../api/shoppingCartApi";
 import ShoppingCartList from "../Cart/ShoppingCartList";
@@ -19,11 +19,31 @@ export default function ShoppingCartPage() {
       if (!res.ok) throw new Error("서버 에러");
       const data = await res.json();
       setCartItems(data);
-      const selectedInit = new Map();
-      setSelectedItems(selectedInit);
+
+      const selectedInit = new Map<number, boolean>(
+        data.map((item: CartItem): [number, boolean] => {
+          return [item.cartItemId, true];
+        }),
+      );
+
+      if (localStorage.getItem("storedCartItems")) {
+        const storedCartItems = new Map<number, boolean>(
+          JSON.parse(localStorage.getItem("storedCartItems")!),
+        );
+        setSelectedItems(storedCartItems);
+      } else {
+        setSelectedItems(selectedInit);
+      }
     } catch (error) {
       throw new Error();
     }
+  };
+
+  const onToggle = (cartItemId: number) => {
+    const newMap = new Map(selectedItems);
+    newMap.set(cartItemId, !selectedItems.get(cartItemId));
+    setSelectedItems(newMap);
+    localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
   };
 
   useEffect(() => {
@@ -47,7 +67,11 @@ export default function ShoppingCartPage() {
       </Nav>
       <Title> 장바구니 </Title>
       <Label>현재 2종류의 상품이 담겨있습니다.</Label>
-      <ShoppingCartList cartItems={cartItems} onDelete={onDelete} />
+      <ShoppingCartList
+        cartItems={cartItems}
+        onDelete={onDelete}
+        onTogle={onToggle}
+      />
       <ResultOrder />
       <CheckButton />
     </Body>
