@@ -3,6 +3,8 @@ import HeaderButton from "../button/HeaderButton";
 import { useEffect, useState } from "react";
 import type { CartItem } from "../../type/types";
 import { shoppingCartApi } from "../../api/shoppingCartApi";
+import ShoppingCartList from "../Cart/ShoppingCartList";
+
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
@@ -16,9 +18,20 @@ export default function ShoppingCartPage() {
       throw new Error();
     }
   };
+
   useEffect(() => {
     fetchCartItems();
   }, []);
+
+  const onDelete = async (cartItemId: number) => {
+    try {
+      const res = await shoppingCartApi.delete(cartItemId);
+      if (!res.ok) throw new Error();
+      fetchCartItems();
+    } catch {
+      alert("상품 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+  };
 
   return (
     <Body>
@@ -27,7 +40,7 @@ export default function ShoppingCartPage() {
       </Nav>
       <Title> 장바구니 </Title>
       <Label>현재 2종류의 상품이 담겨있습니다.</Label>
-      <ShoppingCartList />
+      <ShoppingCartList cartItems={cartItems} onDelete={onDelete} />
       <ResultOrder />
       <CheckButton />
     </Body>

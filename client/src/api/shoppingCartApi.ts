@@ -6,6 +6,6 @@ export const shoppingCartApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
-  delete: (cartItemId: string) =>
+  delete: (cartItemId: number) =>
     fetch(`/cart/${cartItemId}`, { method: "DELETE" }),
 };

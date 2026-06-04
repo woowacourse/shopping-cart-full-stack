@@ -1,16 +1,18 @@
 import styled from "styled-components";
 import type { CartItem } from "../../type/types";
+import ShoppingCartItem from "./ShoppingCartItem";
 
 interface Props {
   cartItems: CartItem[];
+  onDelete: (cartItemId: number) => void;
 }
 
-export default function ShoppingCartList({ cartItems }: Props) {
+export default function ShoppingCartList({ cartItems, onDelete }: Props) {
   return (
     <Container>
       <input type="checkbox">전체선택</input>
       {cartItems.map((cartItem) => {
-        return <CartItem cartItem={} onDelete={} />;
+        return <ShoppingCartItem cartItem={cartItem} onDelete={onDelete} />;
       })}
     </Container>
   );
