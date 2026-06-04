@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import type { CartItem } from "../../type/types";
 interface Props {
   cartItem: CartItem;
@@ -28,3 +29,9 @@ export default function ShoppingCartItem({ cartItem, onDelete }: Props) {
     </div>
   );
 }
+
+const Container = styled.div``;
+const ButtonRaw = styled.div``;
+const ItemContainer = styled.div``;
+const ItemInfoContainer = styled.div``;
+const QuantityChangeButton = styled.div``;

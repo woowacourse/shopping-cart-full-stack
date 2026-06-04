@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 import type { CartItem } from "../../type/types";
 import { shoppingCartApi } from "../../api/shoppingCartApi";
 import ShoppingCartList from "../Cart/ShoppingCartList";
+import CheckButton from "../button/CheckButton";
+import ResultOrder from "./ResultOrder";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<Map<number, boolean>>(
+    new Map(),
+  );
 
   const fetchCartItems = async () => {
     try {
@@ -14,6 +19,8 @@ export default function ShoppingCartPage() {
       if (!res.ok) throw new Error("서버 에러");
       const data = await res.json();
       setCartItems(data);
+      const selectedInit = new Map();
+      setSelectedItems(selectedInit);
     } catch (error) {
       throw new Error();
     }
