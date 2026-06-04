@@ -46,6 +46,24 @@ export default function ShoppingCartPage() {
     localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
   };
 
+  const onTogleAll = () => {
+    if ([...selectedItems.values()].every((value) => value === true)) {
+      const newMap = new Map(selectedItems);
+      newMap.forEach((_, key) => {
+        newMap.set(key, false);
+      });
+      setSelectedItems(newMap);
+      localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
+    } else {
+      const newMap = new Map(selectedItems);
+      newMap.forEach((_, key) => {
+        newMap.set(key, true);
+      });
+      setSelectedItems(newMap);
+      localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
+    }
+  };
+
   useEffect(() => {
     fetchCartItems();
   }, []);
@@ -71,6 +89,8 @@ export default function ShoppingCartPage() {
         cartItems={cartItems}
         onDelete={onDelete}
         onTogle={onToggle}
+        onTogleAll={onTogleAll}
+        selectedItems={selectedItems}
       />
       <ResultOrder />
       <CheckButton />

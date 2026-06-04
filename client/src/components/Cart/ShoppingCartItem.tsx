@@ -2,6 +2,7 @@ import styled from "styled-components";
 import type { CartItem } from "../../type/types";
 interface Props {
   cartItem: CartItem;
+  selectedItems: Map<number, boolean>;
   onDelete: (cartItemId: number) => void;
   onTogle: (cartItemId: number) => void;
 }
@@ -10,6 +11,7 @@ export default function ShoppingCartItem({
   cartItem,
   onDelete,
   onTogle,
+  selectedItems,
 }: Props) {
   return (
     <div>
@@ -20,6 +22,7 @@ export default function ShoppingCartItem({
             onChange={() => {
               onTogle(cartItem.cartItemId);
             }}
+            checked={selectedItems.get(cartItem.cartItemId) ?? false}
           />
           <button
             onClick={() => {
