@@ -8,6 +8,7 @@ interface Props {
   onDelete: (cartItemId: number) => void;
   onTogle: (cartItemId: number) => void;
   onTogleAll: () => void;
+  onQuantityChange: (cartItemId: number, quantity: number) => void;
 }
 
 export default function ShoppingCartList({
@@ -16,6 +17,7 @@ export default function ShoppingCartList({
   onTogle,
   onTogleAll,
   selectedItems,
+  onQuantityChange,
 }: Props) {
   return (
     <Container>
@@ -37,6 +39,7 @@ export default function ShoppingCartList({
             onDelete={onDelete}
             onTogle={onTogle}
             selectedItems={selectedItems}
+            onQuantityChange={onQuantityChange}
           />
         );
       })}

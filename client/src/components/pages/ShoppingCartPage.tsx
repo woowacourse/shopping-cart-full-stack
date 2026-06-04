@@ -87,6 +87,16 @@ export default function ShoppingCartPage() {
   const deliveryPrice = Number(orderPrice) >= 100000 ? 0 : 3000;
   const totalPrice = Number(orderPrice) + Number(deliveryPrice);
 
+  const onQuantityChange = (cartItemId: number, newQuantity: number) => {
+    const newCartItems = cartItems.map((item) => {
+      if (item.cartItemId === cartItemId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    setCartItems(newCartItems);
+  };
+
   return (
     <Body>
       <Nav>
@@ -100,6 +110,7 @@ export default function ShoppingCartPage() {
         onTogle={onToggle}
         onTogleAll={onTogleAll}
         selectedItems={selectedItems}
+        onQuantityChange={onQuantityChange}
       />
       <ResultOrder
         orderPrice={orderPrice}

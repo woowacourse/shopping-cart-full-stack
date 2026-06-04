@@ -1,10 +1,12 @@
 import styled from "styled-components";
 import type { CartItem } from "../../type/types";
+import QuantityControl from "./QuantityControl";
 interface Props {
   cartItem: CartItem;
   selectedItems: Map<number, boolean>;
   onDelete: (cartItemId: number) => void;
   onTogle: (cartItemId: number) => void;
+  onQuantityChange: (cartItemId: number, quantity: number) => void;
 }
 
 export default function ShoppingCartItem({
@@ -12,6 +14,7 @@ export default function ShoppingCartItem({
   onDelete,
   onTogle,
   selectedItems,
+  onQuantityChange,
 }: Props) {
   return (
     <div>
@@ -31,11 +34,19 @@ export default function ShoppingCartItem({
           />
         </ButtonRaw>
         <ItemContainer>
-          <img src={cartItem.productData.thumbnailUrl} />
+          <img
+            width={112}
+            height={112}
+            src={cartItem.productData.thumbnailUrl}
+          />
           <ItemInfoContainer>
             <p>{cartItem.productData.name}</p>
             <p>{cartItem.productData.price}원</p>
-            <QuantityChangeButton />
+            <QuantityControl
+              cartItemId={cartItem.cartItemId}
+              quantity={cartItem.quantity}
+              onQuantityChange={onQuantityChange}
+            />
           </ItemInfoContainer>
         </ItemContainer>
       </Container>
@@ -47,4 +58,3 @@ const Container = styled.div``;
 const ButtonRaw = styled.div``;
 const ItemContainer = styled.div``;
 const ItemInfoContainer = styled.div``;
-const QuantityChangeButton = styled.div``;
