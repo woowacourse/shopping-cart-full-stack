@@ -117,7 +117,7 @@ export default function ShoppingCartPage() {
         deliveryPrice={deliveryPrice}
         totalPrice={totalPrice}
       />
-      <CheckButton />
+      <CheckButton cartItems={cartItems} selectedItems={selectedItems} />
     </Body>
   );
 }
