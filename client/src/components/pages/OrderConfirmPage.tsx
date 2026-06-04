@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import HeaderButton from "../button/HeaderButton";
+import HeaderButton from "../button/ShopButton";
 import { useLocation } from "react-router-dom";
 
 export default function OrderConfirmPage() {

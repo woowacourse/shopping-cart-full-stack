@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import HeaderButton from "../button/HeaderButton";
+import HeaderButton from "../button/ShopButton";
 import { ChangeEvent, useEffect, useState } from "react";
 import type { CartItem } from "../../type/types";
 import { shoppingCartApi } from "../../api/shoppingCartApi";
