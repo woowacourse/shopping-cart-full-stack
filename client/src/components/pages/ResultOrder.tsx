@@ -17,15 +17,15 @@ export default function ResultOrder({
       </th>
       <tr>
         <td>주문 금액</td>
-        <td>{orderPrice}</td>
+        <td>{orderPrice}원</td>
       </tr>
       <tr>
         <td>배송비</td>
-        <td>{deliveryPrice}</td>
+        <td>{deliveryPrice}원</td>
       </tr>
       <tr>
         <td>총 결제 금액</td>
-        <td>{totalPrice}</td>
+        <td>{totalPrice}원</td>
       </tr>
     </table>
   );

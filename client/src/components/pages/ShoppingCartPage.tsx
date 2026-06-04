@@ -78,6 +78,15 @@ export default function ShoppingCartPage() {
     }
   };
 
+  const orderPrice = cartItems
+    .filter((cartItem) => selectedItems.get(cartItem.cartItemId))
+    .reduce(
+      (acc, cartItem) => acc + cartItem.productData.price * cartItem.quantity,
+      0,
+    );
+  const deliveryPrice = Number(orderPrice) >= 100000 ? 0 : 3000;
+  const totalPrice = Number(orderPrice) + Number(deliveryPrice);
+
   return (
     <Body>
       <Nav>
@@ -92,7 +101,11 @@ export default function ShoppingCartPage() {
         onTogleAll={onTogleAll}
         selectedItems={selectedItems}
       />
-      <ResultOrder />
+      <ResultOrder
+        orderPrice={orderPrice}
+        deliveryPrice={deliveryPrice}
+        totalPrice={totalPrice}
+      />
       <CheckButton />
     </Body>
   );
