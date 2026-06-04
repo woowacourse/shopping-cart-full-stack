@@ -9,21 +9,20 @@ type AsyncState<T> =
 export default function useFetch<T>(url: string) {
   const [state, setState] = useState<AsyncState<T>>({ status: "loading" });
 
+  const fetchData = async () => {
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      setState({ status: "success", data });
+    } catch (error) {
+      setState({
+        status: "error",
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        setState({ status: "success", data });
-      } catch (error) {
-        setState({
-          status: "error",
-          error: error instanceof Error ? error : new Error(String(error)),
-        });
-      }
-    };
-
     fetchData();
   }, [url]);
-  return state;
+  return { state, fetchData };
 }

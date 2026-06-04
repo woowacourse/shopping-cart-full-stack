@@ -8,6 +8,7 @@ import ShoppingCartList from "../Cart/ShoppingCartList";
 import CheckButton from "../button/CheckButton";
 import ResultOrder from "./ResultOrder";
 import ShopButton from "../button/ShopButton";
+import useFetch from "../../hooks/useFetch";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -15,35 +16,23 @@ export default function ShoppingCartPage() {
     new Map(),
   );
 
-  const fetchCartItems = async () => {
-    try {
-      const res = await shoppingCartApi.get();
-      if (!res.ok) throw new Error("서버 에러");
-      const data = await res.json();
-      setCartItems(data);
-
-      const selectedInit = new Map<number, boolean>(
-        data.map((item: CartItem): [number, boolean] => {
-          return [item.cartItemId, true];
-        }),
-      );
-
-      if (localStorage.getItem("storedCartItems")) {
-        const storedCartItems = new Map<number, boolean>(
-          JSON.parse(localStorage.getItem("storedCartItems")!),
-        );
-        setSelectedItems(storedCartItems);
-      } else {
-        setSelectedItems(selectedInit);
-      }
-    } catch (error) {
-      throw new Error();
-    }
-  };
+  const { state, fetchData } = useFetch<CartItem[]>("/cart");
 
   useEffect(() => {
-    fetchCartItems();
-  }, []);
+    if (state.status !== "success") return;
+
+    const data = state.data;
+    setCartItems(data);
+
+    const stored = localStorage.getItem("storedCartItems");
+    if (stored) {
+      setSelectedItems(new Map<number, boolean>(JSON.parse(stored)));
+    } else {
+      setSelectedItems(
+        new Map(data.map((item): [number, boolean] => [item.cartItemId, true])),
+      );
+    }
+  }, [state]);
 
   const onToggle = (cartItemId: number) => {
     const newMap = new Map(selectedItems);
@@ -74,7 +63,7 @@ export default function ShoppingCartPage() {
     try {
       const res = await shoppingCartApi.delete(cartItemId);
       if (!res.ok) throw new Error();
-      fetchCartItems();
+      fetchData();
     } catch {
       alert("상품 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.");
     }
@@ -100,46 +89,49 @@ export default function ShoppingCartPage() {
   };
 
   return (
-    <Body>
-      <Nav>
-        <ShopButton />
-      </Nav>
-      <TopSection>
-        <Title> 장바구니 </Title>
-        <Label>현재 2종류의 상품이 담겨있습니다.</Label>
-      </TopSection>
-      <ShoppingCartList
-        cartItems={cartItems}
-        onDelete={onDelete}
-        onTogle={onToggle}
-        onTogleAll={onTogleAll}
-        selectedItems={selectedItems}
-        onQuantityChange={onQuantityChange}
-      />
-      <ResultOrder
-        orderPrice={orderPrice}
-        deliveryPrice={deliveryPrice}
-        totalPrice={totalPrice}
-      />
-      <CheckButton
-        cartItems={cartItems}
-        selectedItems={selectedItems}
-        totalPrice={totalPrice}
-      />
-    </Body>
+    <MainContainer>
+      <Body>
+        <Nav>
+          <ShopButton />
+        </Nav>
+        <TopSection>
+          <Title> 장바구니 </Title>
+          <Label>현재 2종류의 상품이 담겨있습니다.</Label>
+        </TopSection>
+        <ShoppingCartList
+          cartItems={cartItems}
+          onDelete={onDelete}
+          onTogle={onToggle}
+          onTogleAll={onTogleAll}
+          selectedItems={selectedItems}
+          onQuantityChange={onQuantityChange}
+        />
+        <ResultOrder
+          orderPrice={orderPrice}
+          deliveryPrice={deliveryPrice}
+          totalPrice={totalPrice}
+        />
+        <CheckButton
+          cartItems={cartItems}
+          selectedItems={selectedItems}
+          totalPrice={totalPrice}
+        />
+      </Body>
+    </MainContainer>
   );
 }
 
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+`;
 const Body = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   width: 430px;
-  height: 936px;
 `;
 
 const Nav = styled.nav`

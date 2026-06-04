@@ -7,26 +7,30 @@ export default function OrderConfirmPage() {
   const location = useLocation();
   const { itemCount, totalQuantity, totalPrice } = location.state;
   return (
-    <Body>
-      <Nav>
-        <BackButton />
-      </Nav>
-      <Title> 주문 확인 </Title>
-      <Label>
-        총 {itemCount}종류의 상품 {totalQuantity}개를 주문합니다. 최종 결제
-        금액을 확인해 주세요.
-      </Label>
-      <p>총 결제 금액</p>
-      <p>{totalPrice.toLocaleString()}원</p>
-    </Body>
+    <MainContainer>
+      <Body>
+        <Nav>
+          <BackButton />
+        </Nav>
+        <Title> 주문 확인 </Title>
+        <Label>
+          총 {itemCount}종류의 상품 {totalQuantity}개를 주문합니다. 최종 결제
+          금액을 확인해 주세요.
+        </Label>
+        <p>총 결제 금액</p>
+        <p>{totalPrice.toLocaleString()}원</p>
+      </Body>
+    </MainContainer>
   );
 }
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+`;
 
 const Body = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
