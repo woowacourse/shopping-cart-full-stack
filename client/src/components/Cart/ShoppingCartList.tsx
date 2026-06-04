@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import CartItem from "./CartItem";
+import type { CartItem } from "../../type/types";
 
 interface Props {
-  cartItems: CartItems[];
+  cartItems: CartItem[];
 }
 
 export default function ShoppingCartList({ cartItems }: Props) {

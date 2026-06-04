@@ -1,7 +1,25 @@
 import styled from "styled-components";
 import HeaderButton from "../button/HeaderButton";
-
+import { useEffect, useState } from "react";
+import type { CartItem } from "../../type/types";
+import { shoppingCartApi } from "../../api/shoppingCartApi";
 export default function ShoppingCartPage() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  const fetchCartItems = async () => {
+    try {
+      const res = await shoppingCartApi.get();
+      if (!res.ok) throw new Error("서버 에러");
+      const data = await res.json();
+      setCartItems(data);
+    } catch (error) {
+      throw new Error();
+    }
+  };
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
   return (
     <Body>
       <Nav>
