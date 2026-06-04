@@ -41,6 +41,10 @@ export default function ShoppingCartPage() {
     }
   };
 
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
   const onToggle = (cartItemId: number) => {
     const newMap = new Map(selectedItems);
     newMap.set(cartItemId, !selectedItems.get(cartItemId));
@@ -65,10 +69,6 @@ export default function ShoppingCartPage() {
       localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
     }
   };
-
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
 
   const onDelete = async (cartItemId: number) => {
     try {
