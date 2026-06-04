@@ -1,3 +1,10 @@
+import { useNavigate } from "react-router-dom";
+
 export default function ShopButton() {
-  return <button type="submit">SHOP</button>;
+  const navigate = useNavigate();
+  return (
+    <button type="submit" onClick={() => navigate("/")}>
+      SHOP
+    </button>
+  );
 }
