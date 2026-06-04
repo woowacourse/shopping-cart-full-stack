@@ -31,7 +31,9 @@ export default function ShoppingCartItem({
             onClick={() => {
               onDelete(cartItem.cartItemId);
             }}
-          />
+          >
+            삭제
+          </button>
         </ButtonRaw>
         <ItemContainer>
           <img
@@ -40,8 +42,8 @@ export default function ShoppingCartItem({
             src={cartItem.productData.thumbnailUrl}
           />
           <ItemInfoContainer>
-            <p>{cartItem.productData.name}</p>
-            <p>{cartItem.productData.price}원</p>
+            <Name>{cartItem.productData.name}</Name>
+            <Price>{cartItem.productData.price.toLocaleString()}원</Price>
             <QuantityControl
               cartItemId={cartItem.cartItemId}
               quantity={cartItem.quantity}
@@ -54,7 +56,27 @@ export default function ShoppingCartItem({
   );
 }
 
-const Container = styled.div``;
-const ButtonRaw = styled.div``;
-const ItemContainer = styled.div``;
-const ItemInfoContainer = styled.div``;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 384px;
+`;
+const ButtonRaw = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const ItemContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+`;
+const ItemInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 24px;
+`;
+
+const Name = styled.p``;
+
+const Price = styled.p``;

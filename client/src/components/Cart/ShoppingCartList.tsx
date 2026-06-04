@@ -21,7 +21,7 @@ export default function ShoppingCartList({
 }: Props) {
   return (
     <Container>
-      <label>
+      <Label>
         <input
           type="checkbox"
           onChange={() => {
@@ -30,7 +30,7 @@ export default function ShoppingCartList({
           checked={[...selectedItems.values()].every((value) => value === true)}
         />
         전체선택
-      </label>
+      </Label>
 
       {cartItems.map((cartItem) => {
         return (
@@ -49,6 +49,13 @@ export default function ShoppingCartList({
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column; // 추가
   width: 382px;
-  height: 384px;
+  gap: 20px;
+`;
+
+const Label = styled.label`
+  display: flex;
+  flex-direction: row; // column → row
+  align-items: center;
 `;

@@ -1,11 +1,13 @@
 import styled from "styled-components";
-import HeaderButton from "../button/ShopButton";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
 import type { CartItem } from "../../type/types";
+
 import { shoppingCartApi } from "../../api/shoppingCartApi";
 import ShoppingCartList from "../Cart/ShoppingCartList";
 import CheckButton from "../button/CheckButton";
 import ResultOrder from "./ResultOrder";
+import ShopButton from "../button/ShopButton";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -100,10 +102,12 @@ export default function ShoppingCartPage() {
   return (
     <Body>
       <Nav>
-        <HeaderButton />
+        <ShopButton />
       </Nav>
-      <Title> 장바구니 </Title>
-      <Label>현재 2종류의 상품이 담겨있습니다.</Label>
+      <TopSection>
+        <Title> 장바구니 </Title>
+        <Label>현재 2종류의 상품이 담겨있습니다.</Label>
+      </TopSection>
       <ShoppingCartList
         cartItems={cartItems}
         onDelete={onDelete}
@@ -127,16 +131,30 @@ export default function ShoppingCartPage() {
 }
 
 const Body = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   width: 430px;
   height: 936px;
 `;
 
 const Nav = styled.nav`
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 64px;
   background-color: #000000;
 `;
 
+const TopSection = styled.div`
+  width: 382px;
+  height: 62px;
+  margin: 24px 36px;
+`;
 const Title = styled.div`
   font-size: 24px;
   font-family: sans-serif;

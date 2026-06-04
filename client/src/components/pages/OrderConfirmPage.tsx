@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import HeaderButton from "../button/ShopButton";
 import { useLocation } from "react-router-dom";
+
+import BackButton from "../button/BackButton";
 
 export default function OrderConfirmPage() {
   const location = useLocation();
@@ -8,7 +9,7 @@ export default function OrderConfirmPage() {
   return (
     <Body>
       <Nav>
-        <HeaderButton />
+        <BackButton />
       </Nav>
       <Title> 주문 확인 </Title>
       <Label>
@@ -16,12 +17,21 @@ export default function OrderConfirmPage() {
         금액을 확인해 주세요.
       </Label>
       <p>총 결제 금액</p>
-      <p>{totalPrice}원</p>
+      <p>{totalPrice.toLocaleString()}원</p>
     </Body>
   );
 }
 
 const Body = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 430px;
+  height: 936px;
   width: 430px;
   height: 936px;
 `;

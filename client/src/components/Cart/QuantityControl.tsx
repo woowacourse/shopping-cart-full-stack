@@ -45,6 +45,8 @@ export default function QuantityControl({
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
+  gap: 1.5px;
 `;
 
 const MinusButton = styled.button`
