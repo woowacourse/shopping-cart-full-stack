@@ -24,5 +24,6 @@ export default function useFetch<T>(url: string) {
   useEffect(() => {
     fetchData();
   }, [url]);
+
   return { state, fetchData };
 }

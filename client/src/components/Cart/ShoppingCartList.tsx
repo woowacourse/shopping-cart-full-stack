@@ -7,7 +7,7 @@ interface Props {
   selectedItems: Map<number, boolean>;
   onDelete: (cartItemId: number) => void;
   onTogle: (cartItemId: number) => void;
-  onTogleAll: () => void;
+  onToggleAll: () => void;
   onQuantityChange: (cartItemId: number, quantity: number) => void;
 }
 
@@ -15,7 +15,7 @@ export default function ShoppingCartList({
   cartItems,
   onDelete,
   onTogle,
-  onTogleAll,
+  onToggleAll,
   selectedItems,
   onQuantityChange,
 }: Props) {
@@ -25,7 +25,7 @@ export default function ShoppingCartList({
         <input
           type="checkbox"
           onChange={() => {
-            onTogleAll();
+            onToggleAll();
           }}
           checked={[...selectedItems.values()].every((value) => value === true)}
         />

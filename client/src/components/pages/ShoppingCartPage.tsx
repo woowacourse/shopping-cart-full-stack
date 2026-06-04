@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 
 import type { CartItem } from "../../type/types";
 
-import { shoppingCartApi } from "../../api/shoppingCartApi";
 import ShoppingCartList from "../Cart/ShoppingCartList";
 import CheckButton from "../button/CheckButton";
 import ResultOrder from "./ResultOrder";
 import ShopButton from "../button/ShopButton";
-import useFetch from "../../hooks/useFetch";
+import useCartItmes from "../../hooks/useCartItmes";
+import useCartSelectBox from "../../hooks/useCartSelectBox";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -16,58 +16,16 @@ export default function ShoppingCartPage() {
     new Map(),
   );
 
-  const { state, fetchData } = useFetch<CartItem[]>("/cart");
+  const { onDelete, onQuantityChange } = useCartItmes({
+    setCartItems,
+    setSelectedItems,
+    cartItems,
+  });
 
-  useEffect(() => {
-    if (state.status !== "success") return;
-
-    const data = state.data;
-    setCartItems(data);
-
-    const stored = localStorage.getItem("storedCartItems");
-    if (stored) {
-      setSelectedItems(new Map<number, boolean>(JSON.parse(stored)));
-    } else {
-      setSelectedItems(
-        new Map(data.map((item): [number, boolean] => [item.cartItemId, true])),
-      );
-    }
-  }, [state]);
-
-  const onToggle = (cartItemId: number) => {
-    const newMap = new Map(selectedItems);
-    newMap.set(cartItemId, !selectedItems.get(cartItemId));
-    setSelectedItems(newMap);
-    localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
-  };
-
-  const onTogleAll = () => {
-    if ([...selectedItems.values()].every((value) => value === true)) {
-      const newMap = new Map(selectedItems);
-      newMap.forEach((_, key) => {
-        newMap.set(key, false);
-      });
-      setSelectedItems(newMap);
-      localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
-    } else {
-      const newMap = new Map(selectedItems);
-      newMap.forEach((_, key) => {
-        newMap.set(key, true);
-      });
-      setSelectedItems(newMap);
-      localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
-    }
-  };
-
-  const onDelete = async (cartItemId: number) => {
-    try {
-      const res = await shoppingCartApi.delete(cartItemId);
-      if (!res.ok) throw new Error();
-      fetchData();
-    } catch {
-      alert("상품 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.");
-    }
-  };
+  const { onToggle, onToggleAll } = useCartSelectBox({
+    selectedItems,
+    setSelectedItems,
+  });
 
   const orderPrice = cartItems
     .filter((cartItem) => selectedItems.get(cartItem.cartItemId))
@@ -77,16 +35,6 @@ export default function ShoppingCartPage() {
     );
   const deliveryPrice = Number(orderPrice) >= 100000 ? 0 : 3000;
   const totalPrice = Number(orderPrice) + Number(deliveryPrice);
-
-  const onQuantityChange = (cartItemId: number, newQuantity: number) => {
-    const newCartItems = cartItems.map((item) => {
-      if (item.cartItemId === cartItemId) {
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
-    setCartItems(newCartItems);
-  };
 
   return (
     <MainContainer>
@@ -102,7 +50,7 @@ export default function ShoppingCartPage() {
           cartItems={cartItems}
           onDelete={onDelete}
           onTogle={onToggle}
-          onTogleAll={onTogleAll}
+          onToggleAll={onToggleAll}
           selectedItems={selectedItems}
           onQuantityChange={onQuantityChange}
         />
