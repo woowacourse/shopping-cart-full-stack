@@ -9,10 +9,10 @@
 **장바구니 페이지**
 기본 구성
 
-- [x] 검정 배경에 `HeaderButton` 박힌 네비게이션바
-- [] 타이틀 "장바구니" 텍스트
-- [] 라벨 "현재 `{ShoppingCartList.length}`종류의 상품이 담겨있습니다."
-- [] 상품 없으면 "장바구니에 담은 상품이 없습니다." 텍스트 띄우기
+- [x] 검정 배경에 `HeaderButton` 박힌 네비게이션바 (버튼 두 개로 나눴음)
+- [x] 타이틀 "장바구니" 텍스트
+- [x] 라벨 "현재 `{}`종류의 상품이 담겨있습니다."
+- [x] 상품 없으면 "장바구니에 담은 상품이 없습니다." 텍스트 띄우기
 
 ### OrderConfirmPage.tsx
 
@@ -23,26 +23,26 @@
 
 **status에 따라 "SHOP" 혹은 화살표 이모지**
 
-- [] SHOP 버튼은 추후에 상품 리스트 페이지로 navigate
-- [] 화살표 이미지는 누르면 이전 화면으로 navigate
+- [x] SHOP 버튼은 추후에 상품 리스트 페이지로 navigate
+- [x] 화살표 이미지는 누르면 이전 화면으로 navigate
 
 ### ShoppingCartList.tsx
 
 **장바구니에 담긴 상품 리스트**
 기본 구성
 
-- [] 상단에 체크박스와 "전체선택" 텍스트
-- [] map 메서드로 ` CartItem` 컴포넌트 childeren으로 호출
+- [x] 상단에 체크박스와 "전체선택" 텍스트
+- [x] map 메서드로 ` CartItem` 컴포넌트 childeren으로 호출
 
 ### CartItem.tsx
 
 **장바구니에 담긴 상품 하나 컴포넌트**
 기본 구성
 
-- [] 우측 상단 체크박스(`ShoppingCartList`의 체크박스와 상태 연동)
-- [] 같은 행, 컴포넌트 좌측 상단에 `ItemDeleteButton` (삭제 버튼)
-- [] 그 밑에 썸네일 이미지
-- [] 썸네일 우측에 `flex-direction: column`으로
+- [x] 우측 상단 체크박스(`ShoppingCartList`의 체크박스와 상태 연동)
+- [x] 같은 행, 컴포넌트 좌측 상단에 `ItemDeleteButton` (삭제 버튼)
+- [x] 그 밑에 썸네일 이미지
+- [x] 썸네일 우측에 `flex-direction: column`으로
   - `productData.name`
   - `productData.price`
   - 수량 선택 input박스 양 옆에 `-`, `+` 버튼
@@ -51,21 +51,21 @@
 
 **모든 검증을 통과했는지 확인 후 누르면 `OrderResult.tsx` 컴포넌트 호출**
 
-- [] 기본 텍스트는 "주문 확인"
-- [] 장바구니에 상품이 없을 때
-  백그라운드 색 #BEBEBE + 비화성화(클릭X)
-- [] 검증 통과후 주문 확인 버튼을 누르고, 결제 확인 (OrderResult)
+- [x] 기본 텍스트는 "주문 확인"
+- [x] 장바구니에 상품이 없을 때
+      백그라운드 색 #BEBEBE + 비화성화(클릭X)
+- [x] 검증 통과후 주문 확인 버튼을 누르고, 결제 확인 (OrderResult)
 
 ### ResultOrder.tsx
 
 무료배송 안내 메시지, 주문금액, 배송비, 총 결제금액
 
-- [] 테이블로 구성
-  |{이미지} 총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다. | |  
-  | --- | --- |
-  | 주문 금액 | `OrderPrice` |
-  | 배송비 | `deliveryPrice` |
-  | 총 결제 금액 | `totalOrderPrice` |
+- [x] 테이블로 구성
+      |{이미지} 총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다. | |  
+      | --- | --- |
+      | 주문 금액 | `OrderPrice` |
+      | 배송비 | `deliveryPrice` |
+      | 총 결제 금액 | `totalOrderPrice` |
 
 # 장바구니 상태 관리
 
