@@ -22,11 +22,15 @@ export default function useCartSelectBox({ cartItems }: Props) {
     }
   }, [cartItems]);
 
+  const save = (map: Map<number, boolean>) => {
+    setSelectedItems(map);
+    localStorage.setItem("storedCartItems", JSON.stringify([...map]));
+  };
+
   const onToggle = (cartItemId: number) => {
     const newMap = new Map(selectedItems);
     newMap.set(cartItemId, !selectedItems.get(cartItemId));
-    setSelectedItems(newMap);
-    localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
+    save(newMap);
   };
 
   const onToggleAll = () => {
@@ -35,16 +39,14 @@ export default function useCartSelectBox({ cartItems }: Props) {
       newMap.forEach((_, key) => {
         newMap.set(key, false);
       });
-      setSelectedItems(newMap);
-      localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
+      save(newMap);
     } else {
       const newMap = new Map(selectedItems);
       newMap.forEach((_, key) => {
         newMap.set(key, true);
       });
-      setSelectedItems(newMap);
-      localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
+      save(newMap);
     }
   };
-  return { selectedItems, setSelectedItems, onToggle, onToggleAll };
+  return { selectedItems, onToggle, onToggleAll };
 }
