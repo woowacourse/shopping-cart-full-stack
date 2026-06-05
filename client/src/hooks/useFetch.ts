@@ -12,6 +12,7 @@ export default function useFetch<T>(url: string) {
   const fetchData = async () => {
     try {
       const res = await fetch(url);
+      if (!res.ok) throw new Error("서버 에러");
       const data = await res.json();
       setState({ status: "success", data });
     } catch (error) {
