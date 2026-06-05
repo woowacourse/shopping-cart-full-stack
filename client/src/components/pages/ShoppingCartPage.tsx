@@ -9,6 +9,7 @@ import ResultOrder from "./ResultOrder";
 import ShopButton from "../button/ShopButton";
 import useCartItmes from "../../hooks/useCartItmes";
 import useCartSelectBox from "../../hooks/useCartSelectBox";
+import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -16,7 +17,7 @@ export default function ShoppingCartPage() {
     new Map(),
   );
 
-  const { onDelete, onQuantityChange } = useCartItmes({
+  const { state, onDelete, onQuantityChange } = useCartItmes({
     setCartItems,
     setSelectedItems,
     cartItems,
@@ -38,33 +39,37 @@ export default function ShoppingCartPage() {
 
   return (
     <MainContainer>
-      <Body>
-        <Nav>
-          <ShopButton />
-        </Nav>
-        <TopSection>
-          <Title> 장바구니 </Title>
-          <Label>현재 2종류의 상품이 담겨있습니다.</Label>
-        </TopSection>
-        <ShoppingCartList
-          cartItems={cartItems}
-          onDelete={onDelete}
-          onTogle={onToggle}
-          onToggleAll={onToggleAll}
-          selectedItems={selectedItems}
-          onQuantityChange={onQuantityChange}
-        />
-        <ResultOrder
-          orderPrice={orderPrice}
-          deliveryPrice={deliveryPrice}
-          totalPrice={totalPrice}
-        />
-        <CheckButton
-          cartItems={cartItems}
-          selectedItems={selectedItems}
-          totalPrice={totalPrice}
-        />
-      </Body>
+      {state.status === "loading" ? (
+        <ShoppingCartSkeleton />
+      ) : (
+        <Body>
+          <Nav>
+            <ShopButton />
+          </Nav>
+          <TopSection>
+            <Title> 장바구니 </Title>
+            <Label>현재 2종류의 상품이 담겨있습니다.</Label>
+          </TopSection>
+          <ShoppingCartList
+            cartItems={cartItems}
+            onDelete={onDelete}
+            onTogle={onToggle}
+            onToggleAll={onToggleAll}
+            selectedItems={selectedItems}
+            onQuantityChange={onQuantityChange}
+          />
+          <ResultOrder
+            orderPrice={orderPrice}
+            deliveryPrice={deliveryPrice}
+            totalPrice={totalPrice}
+          />
+          <CheckButton
+            cartItems={cartItems}
+            selectedItems={selectedItems}
+            totalPrice={totalPrice}
+          />
+        </Body>
+      )}
     </MainContainer>
   );
 }

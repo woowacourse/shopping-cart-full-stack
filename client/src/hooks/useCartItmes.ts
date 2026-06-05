@@ -52,5 +52,5 @@ export default function useCartItmes({
     setCartItems(newCartItems);
   };
 
-  return { onDelete, onQuantityChange };
+  return { state, onDelete, onQuantityChange };
 }
