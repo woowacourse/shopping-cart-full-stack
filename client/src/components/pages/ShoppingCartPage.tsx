@@ -25,6 +25,8 @@ export default function ShoppingCartPage() {
     <MainContainer>
       {state.status === "loading" ? (
         <ShoppingCartSkeleton />
+      ) : state.status === "error" ? (
+        <ErrorMessage>장바구니를 불러오는 데 실패했습니다.</ErrorMessage>
       ) : (
         <Body>
           <Nav>
@@ -94,4 +96,10 @@ const Label = styled.div`
   font-size: 12px;
   font-family: sans-serif;
   font-weight: 500;
+`;
+
+const ErrorMessage = styled.p`
+  margin-top: 40px;
+  font-size: 14px;
+  color: #888;
 `;
