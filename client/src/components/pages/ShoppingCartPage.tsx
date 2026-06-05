@@ -48,7 +48,7 @@ export default function ShoppingCartPage() {
           </Nav>
           <TopSection>
             <Title> 장바구니 </Title>
-            <Label>현재 2종류의 상품이 담겨있습니다.</Label>
+            <Label>현재 {cartItems.length} 종류의 상품이 담겨있습니다.</Label>
           </TopSection>
           <ShoppingCartList
             cartItems={cartItems}
