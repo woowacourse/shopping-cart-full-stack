@@ -5,7 +5,7 @@ import { cartRepository } from "./repositories/CartRepository";
 
 const PORT = process.env.PORT ?? 3000;
 
-// 초기 데이터
+// 초기 데이터(테스트용)
 const product1 = productRepository.addProduct({
   name: "상품이름A",
   price: 35000,
