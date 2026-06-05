@@ -19,6 +19,7 @@ export default function OrderConfirmPage() {
         </Label>
         <p>총 결제 금액</p>
         <p>{totalPrice.toLocaleString()}원</p>
+        <PayButton disabled>결제하기</PayButton>
       </Body>
     </MainContainer>
   );
@@ -56,4 +57,15 @@ const Label = styled.div`
   font-size: 12px;
   font-family: sans-serif;
   font-weight: 500;
+`;
+
+const PayButton = styled.button`
+  width: 100%;
+  height: 64px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: sans-serif;
+  color: #ffffff;
+  background-color: #bebebe;
+  cursor: not-allowed;
 `;
