@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import useFetch from "./useFetch";
 import { CartItem } from "../type/types";
-import { shoppingCartApi } from "../api/shoppingCartApi";
+import { shoppingCartApi, BASE_URL } from "../api/shoppingCartApi";
 
 export default function useCartItmes() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const { state, fetchData } = useFetch<CartItem[]>("/cart");
+  const { state, fetchData } = useFetch<CartItem[]>(`${BASE_URL}/cart`);
 
   useEffect(() => {
     if (state.status !== "success") return;

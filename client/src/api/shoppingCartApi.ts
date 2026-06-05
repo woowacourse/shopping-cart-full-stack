@@ -1,11 +1,13 @@
+export const BASE_URL = import.meta.env.VITE_API_URL ?? "";
+
 export const shoppingCartApi = {
-  get: () => fetch("/cart"),
+  get: () => fetch(`${BASE_URL}/cart`),
   post: (body: {}) =>
-    fetch("/cart", {
+    fetch(`${BASE_URL}/cart`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
   delete: (cartItemId: number) =>
-    fetch(`/cart/${cartItemId}`, { method: "DELETE" }),
+    fetch(`${BASE_URL}/cart/${cartItemId}`, { method: "DELETE" }),
 };
