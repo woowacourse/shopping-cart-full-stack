@@ -10,6 +10,7 @@ import ShopButton from "../button/ShopButton";
 import useCartItmes from "../../hooks/useCartItmes";
 import useCartSelectBox from "../../hooks/useCartSelectBox";
 import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
+import { getOrderPrice } from "../../util/getOrderPrice";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -28,14 +29,10 @@ export default function ShoppingCartPage() {
     setSelectedItems,
   });
 
-  const orderPrice = cartItems
-    .filter((cartItem) => selectedItems.get(cartItem.cartItemId))
-    .reduce(
-      (acc, cartItem) => acc + cartItem.productData.price * cartItem.quantity,
-      0,
-    );
-  const deliveryPrice = Number(orderPrice) >= 100000 ? 0 : 3000;
-  const totalPrice = Number(orderPrice) + Number(deliveryPrice);
+  const { orderPrice, deliveryPrice, totalPrice } = getOrderPrice({
+    cartItems,
+    selectedItems,
+  });
 
   return (
     <MainContainer>
