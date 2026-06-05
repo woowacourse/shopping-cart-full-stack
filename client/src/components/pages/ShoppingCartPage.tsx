@@ -1,7 +1,4 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
-
-import type { CartItem } from "../../type/types";
 
 import ShoppingCartList from "../Cart/ShoppingCartList";
 import CheckButton from "../button/CheckButton";
@@ -13,20 +10,10 @@ import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
 import { getOrderPrice } from "../../util/getOrderPrice";
 
 export default function ShoppingCartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [selectedItems, setSelectedItems] = useState<Map<number, boolean>>(
-    new Map(),
-  );
+  const { state, cartItems, onDelete, onQuantityChange } = useCartItmes();
 
-  const { state, onDelete, onQuantityChange } = useCartItmes({
-    setCartItems,
-    setSelectedItems,
+  const { selectedItems, onToggle, onToggleAll } = useCartSelectBox({
     cartItems,
-  });
-
-  const { onToggle, onToggleAll } = useCartSelectBox({
-    selectedItems,
-    setSelectedItems,
   });
 
   const { orderPrice, deliveryPrice, totalPrice } = getOrderPrice({

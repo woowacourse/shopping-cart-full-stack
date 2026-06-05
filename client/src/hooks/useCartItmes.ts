@@ -1,35 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "./useFetch";
 import { CartItem } from "../type/types";
 import { shoppingCartApi } from "../api/shoppingCartApi";
 
-interface Props {
-  cartItems: CartItem[];
-  setCartItems: (items: CartItem[]) => void;
-  setSelectedItems: (map: Map<number, boolean>) => void;
-}
-
-export default function useCartItmes({
-  setCartItems,
-  setSelectedItems,
-  cartItems,
-}: Props) {
+export default function useCartItmes() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const { state, fetchData } = useFetch<CartItem[]>("/cart");
 
   useEffect(() => {
     if (state.status !== "success") return;
-
-    const data = state.data;
-    setCartItems(data);
-
-    const stored = localStorage.getItem("storedCartItems");
-    if (stored) {
-      setSelectedItems(new Map<number, boolean>(JSON.parse(stored)));
-    } else {
-      setSelectedItems(
-        new Map(data.map((item): [number, boolean] => [item.cartItemId, true])),
-      );
-    }
+    setCartItems(state.data);
   }, [state]);
 
   const onDelete = async (cartItemId: number) => {
@@ -52,5 +32,5 @@ export default function useCartItmes({
     setCartItems(newCartItems);
   };
 
-  return { state, onDelete, onQuantityChange };
+  return { state, cartItems, setCartItems, onDelete, onQuantityChange };
 }

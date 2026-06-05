@@ -1,12 +1,27 @@
+import { useEffect, useState } from "react";
+import { CartItem } from "../type/types";
+
 interface Props {
-  selectedItems: Map<number, boolean>;
-  setSelectedItems: (map: Map<number, boolean>) => void;
+  cartItems: CartItem[];
 }
 
-export default function useCartSelectBox({
-  selectedItems,
-  setSelectedItems,
-}: Props) {
+export default function useCartSelectBox({ cartItems }: Props) {
+  const [selectedItems, setSelectedItems] = useState<Map<number, boolean>>(
+    new Map(),
+  );
+
+  useEffect(() => {
+    if (cartItems.length === 0) return;
+    const stored = localStorage.getItem("storedCartItems");
+    if (stored) {
+      setSelectedItems(new Map(JSON.parse(stored)));
+    } else {
+      setSelectedItems(
+        new Map(cartItems.map((item) => [item.cartItemId, true])),
+      );
+    }
+  }, [cartItems]);
+
   const onToggle = (cartItemId: number) => {
     const newMap = new Map(selectedItems);
     newMap.set(cartItemId, !selectedItems.get(cartItemId));
@@ -31,5 +46,5 @@ export default function useCartSelectBox({
       localStorage.setItem("storedCartItems", JSON.stringify([...newMap]));
     }
   };
-  return { onToggle, onToggleAll };
+  return { selectedItems, setSelectedItems, onToggle, onToggleAll };
 }
