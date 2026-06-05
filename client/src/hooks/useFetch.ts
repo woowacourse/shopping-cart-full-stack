@@ -10,6 +10,7 @@ export default function useFetch<T>(url: string) {
   const [state, setState] = useState<AsyncState<T>>({ status: "loading" });
 
   const fetchData = async () => {
+    setState({ status: "loading" });
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error("서버 에러");
