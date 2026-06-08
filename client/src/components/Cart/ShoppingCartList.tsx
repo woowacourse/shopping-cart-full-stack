@@ -38,7 +38,7 @@ export default function ShoppingCartList({
             cartItem={cartItem}
             onDelete={onDelete}
             onTogle={onTogle}
-            selectedItems={selectedItems}
+            isSelected={selectedItems.get(cartItem.cartItemId) ?? false}
             onQuantityChange={onQuantityChange}
           />
         );
