@@ -34,19 +34,12 @@ export default function useCartSelectBox({ cartItems }: Props) {
   };
 
   const onToggleAll = () => {
-    if ([...selectedItems.values()].every((value) => value === true)) {
-      const newMap = new Map(selectedItems);
-      newMap.forEach((_, key) => {
-        newMap.set(key, false);
-      });
-      save(newMap);
-    } else {
-      const newMap = new Map(selectedItems);
-      newMap.forEach((_, key) => {
-        newMap.set(key, true);
-      });
-      save(newMap);
-    }
+    const allSelected = [...selectedItems.values()].every(
+      (value) => value === true,
+    );
+    const newMap = new Map(selectedItems);
+    newMap.forEach((_, key) => newMap.set(key, !allSelected));
+    save(newMap);
   };
   return { selectedItems, onToggle, onToggleAll };
 }
