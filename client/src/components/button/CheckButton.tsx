@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { CartItem } from "../../type/types";
 import { useNavigate } from "react-router-dom";
+import { totalQuantity } from "../../util/getOrderPrice";
 
 interface Props {
   cartItems: CartItem[];
@@ -24,12 +25,12 @@ export default function CheckButton({
       (value) => value === true,
     ).length;
 
-    const totalQuantity = cartItems
-      .filter((cartItem) => selectedItems.get(cartItem.cartItemId))
-      .reduce((acc, cartItem) => acc + cartItem.quantity, 0);
-
     navigate("/order-confirm", {
-      state: { itemCount, totalQuantity, totalPrice },
+      state: {
+        itemCount,
+        totalQuantity: totalQuantity({ cartItems, selectedItems }),
+        totalPrice,
+      },
     });
   };
   return (

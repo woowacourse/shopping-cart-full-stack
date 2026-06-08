@@ -16,3 +16,9 @@ export const getOrderPrice = ({ cartItems, selectedItems }: Props) => {
   const totalPrice = Number(orderPrice) + Number(deliveryPrice);
   return { orderPrice, deliveryPrice, totalPrice };
 };
+
+export const totalQuantity = ({ cartItems, selectedItems }: Props) => {
+  return cartItems
+    .filter((cartItem) => selectedItems.get(cartItem.cartItemId))
+    .reduce((acc, cartItem) => acc + cartItem.quantity, 0);
+};
