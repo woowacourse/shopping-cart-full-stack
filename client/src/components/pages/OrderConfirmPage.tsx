@@ -40,8 +40,6 @@ const Body = styled.div`
   justify-content: flex-start;
   width: 430px;
   height: 936px;
-  width: 430px;
-  height: 936px;
 `;
 
 const Nav = styled.nav`
