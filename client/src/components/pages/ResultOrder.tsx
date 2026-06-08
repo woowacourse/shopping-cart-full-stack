@@ -50,10 +50,12 @@ const Notice = styled.div`
   margin-bottom: 16px;
   font-size: 13px;
   color: #555;
+  border-bottom: solid 1px #0000001a;
 `;
 
 const PriceTable = styled.table`
   width: 100%;
+  font-weight: 700;
   border-collapse: collapse;
 `;
 
@@ -70,7 +72,7 @@ const PriceRow = styled.tr`
 `;
 
 const TotalRow = styled(PriceRow)`
-  border-top: 1px solid #222;
+  border-top: 1px solid #0000001a;
 
   td {
     padding-top: 16px;

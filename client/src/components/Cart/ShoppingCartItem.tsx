@@ -59,11 +59,14 @@ export default function ShoppingCartItem({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 384px;
+  width: 430px;
+  border-top: solid 1px #0000001a;
 `;
 const ButtonRaw = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  margin: 12px 0;
 `;
 
 const ItemContainer = styled.div`

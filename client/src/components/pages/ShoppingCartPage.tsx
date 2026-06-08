@@ -32,28 +32,30 @@ export default function ShoppingCartPage() {
           <Nav>
             <ShopButton />
           </Nav>
-          <TopSection>
-            <Title> 장바구니 </Title>
-            <Label>현재 {cartItems.length} 종류의 상품이 담겨있습니다.</Label>
-          </TopSection>
-          <ShoppingCartList
-            cartItems={cartItems}
-            onDelete={onDelete}
-            onTogle={onToggle}
-            onToggleAll={onToggleAll}
-            selectedItems={selectedItems}
-            onQuantityChange={onQuantityChange}
-          />
-          <ResultOrder
-            orderPrice={orderPrice}
-            deliveryPrice={deliveryPrice}
-            totalPrice={totalPrice}
-          />
-          <CheckButton
-            cartItems={cartItems}
-            selectedItems={selectedItems}
-            totalPrice={totalPrice}
-          />
+          <SubContainer>
+            <TopSection>
+              <Title> 장바구니 </Title>
+              <Label>현재 {cartItems.length} 종류의 상품이 담겨있습니다.</Label>
+            </TopSection>
+            <ShoppingCartList
+              cartItems={cartItems}
+              onDelete={onDelete}
+              onTogle={onToggle}
+              onToggleAll={onToggleAll}
+              selectedItems={selectedItems}
+              onQuantityChange={onQuantityChange}
+            />
+            <ResultOrder
+              orderPrice={orderPrice}
+              deliveryPrice={deliveryPrice}
+              totalPrice={totalPrice}
+            />
+            <CheckButton
+              cartItems={cartItems}
+              selectedItems={selectedItems}
+              totalPrice={totalPrice}
+            />
+          </SubContainer>
         </Body>
       )}
     </MainContainer>
@@ -65,12 +67,16 @@ const MainContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  height: 100vh;
+  overflow: hidden;
 `;
 const Body = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   width: 430px;
+  height: 100vh;
+  overflow: hidden;
 `;
 
 const Nav = styled.nav`
@@ -81,10 +87,21 @@ const Nav = styled.nav`
   background-color: #000000;
 `;
 
+const SubContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  overflow: hidden;
+  flex: 1;
+  padding: 24px;
+  box-sizing: border-box;
+`;
+
 const TopSection = styled.div`
-  width: 382px;
+  width: 100%;
   height: 62px;
-  margin: 24px 36px;
+  margin-bottom: 24px;
 `;
 const Title = styled.div`
   font-size: 24px;

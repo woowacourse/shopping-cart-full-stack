@@ -47,5 +47,6 @@ const Button = styled.button<{ disabled?: boolean }>`
   font-family: sans-serif;
   color: #ffffff;
   background-color: ${({ disabled }) => (disabled ? "#BEBEBE" : "#000000")};
+  margin-top: auto;
   cursor: pointer;
 `;

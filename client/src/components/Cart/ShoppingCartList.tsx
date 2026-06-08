@@ -53,8 +53,12 @@ export default function ShoppingCartList({
 const Container = styled.div`
   display: flex;
   flex-direction: column; // 추가
-  width: 382px;
+  width: 100%;
   gap: 20px;
+  flex: 1;
+  margin-bottom: 52px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const Label = styled.label`
