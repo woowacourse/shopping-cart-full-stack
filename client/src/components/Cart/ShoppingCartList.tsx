@@ -27,7 +27,10 @@ export default function ShoppingCartList({
           onChange={() => {
             onToggleAll();
           }}
-          checked={[...selectedItems.values()].every((value) => value === true)}
+          checked={
+            cartItems.length > 0 &&
+            [...selectedItems.values()].every((value) => value === true)
+          }
         />
         전체선택
       </Label>
