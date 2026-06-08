@@ -3,7 +3,7 @@ import { productRepository } from "../repositories/ProductRepository";
 import { cartRepository } from "../repositories/CartRepository";
 import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
-import { validateQuantity } from "../repositories/util/Validator";
+import { validateQuantity } from "../util/Validator";
 
 export const getCartItemsService = (): CartItemData[] => {
   return cartRepository.getCartProducts().map((cartItem) => {

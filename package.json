@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "styled-components": "^6.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
