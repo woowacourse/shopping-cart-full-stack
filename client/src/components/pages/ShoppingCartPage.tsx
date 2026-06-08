@@ -23,11 +23,11 @@ export default function ShoppingCartPage() {
 
   return (
     <MainContainer>
-      {state.status === "loading" ? (
-        <ShoppingCartSkeleton />
-      ) : state.status === "error" ? (
+      {state.status === "loading" && <ShoppingCartSkeleton />}
+      {state.status === "error" && (
         <ErrorMessage>장바구니를 불러오는 데 실패했습니다.</ErrorMessage>
-      ) : (
+      )}
+      {state.status === "success" && (
         <Body>
           <Nav>
             <ShopButton />
