@@ -1,5 +1,5 @@
-import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
+import { QUANTITY_CONSTNATS } from "../../constants/constants";
 
 interface Props {
   cartItemId: number;
@@ -12,29 +12,21 @@ export default function QuantityControl({
   quantity,
   onQuantityChange,
 }: Props) {
-  const [controlQuantity, setContorlQuantity] = useState(quantity);
-
   return (
     <Container>
       <MinusButton
         onClick={() => {
-          if (controlQuantity > 1) {
-            const newQuantity = controlQuantity - 1;
-            setContorlQuantity(newQuantity);
-            onQuantityChange(cartItemId, newQuantity);
-          } else return;
+          quantity > QUANTITY_CONSTNATS.MIN_QUANTITY &&
+            onQuantityChange(cartItemId, quantity - 1);
         }}
       >
         -
       </MinusButton>
-      <Input type="number" value={controlQuantity} />
+      <Input type="number" value={quantity} />
       <PlusButton
         onClick={() => {
-          if (controlQuantity < 99) {
-            const newQuantity = controlQuantity + 1;
-            setContorlQuantity(newQuantity);
-            onQuantityChange(cartItemId, newQuantity);
-          } else return;
+          quantity < QUANTITY_CONSTNATS.MAX_QUANTITY &&
+            onQuantityChange(cartItemId, quantity + 1);
         }}
       >
         +

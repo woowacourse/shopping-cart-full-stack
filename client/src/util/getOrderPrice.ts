@@ -1,3 +1,4 @@
+import { PRICE_CONSTATNS } from "../constants/constants";
 import { CartItem } from "../type/types";
 
 interface Props {
@@ -12,7 +13,10 @@ export const getOrderPrice = ({ cartItems, selectedItems }: Props) => {
       (acc, cartItem) => acc + cartItem.productData.price * cartItem.quantity,
       0,
     );
-  const deliveryPrice = Number(orderPrice) >= 100000 ? 0 : 3000;
+  const deliveryPrice =
+    Number(orderPrice) >= PRICE_CONSTATNS.FREE_DELIVERY_CONDITION_COST
+      ? 0
+      : PRICE_CONSTATNS.DEFAULT_DELIVERY_COST;
   const totalPrice = Number(orderPrice) + Number(deliveryPrice);
   return { orderPrice, deliveryPrice, totalPrice };
 };
