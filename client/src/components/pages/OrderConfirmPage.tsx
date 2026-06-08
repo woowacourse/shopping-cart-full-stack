@@ -1,10 +1,13 @@
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import BackButton from "../button/BackButton";
 
 export default function OrderConfirmPage() {
   const location = useLocation();
+  if (!location.state) {
+    return <Navigate to="/cart" replace />;
+  }
   const { itemCount, totalQuantity, totalPrice } = location.state;
   return (
     <MainContainer>
