@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useFetch from "./useFetch";
 import { CartItem } from "../type/types";
 import { shoppingCartApi, BASE_URL } from "../api/shoppingCartApi";
+import { ERROR_MESSAGES } from "../constants/messages";
 
 export default function useCartItmes() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -18,19 +19,24 @@ export default function useCartItmes() {
       if (!res.ok) throw new Error();
       fetchData();
     } catch {
-      alert("상품 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      alert(ERROR_MESSAGES.DELETE_ERROR_MESSAGE);
     }
   };
 
-  const onQuantityChange = (cartItemId: number, newQuantity: number) => {
-    const newCartItems = cartItems.map((item) => {
-      if (item.cartItemId === cartItemId) {
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
-    setCartItems(newCartItems);
+  const onQuantityChange = async (cartItemId: number, newQuantity: number) => {
+    try {
+      const res = await shoppingCartApi.patch(cartItemId, newQuantity);
+      if (!res.ok) throw new Error();
+      const newCartItems = cartItems.map((item) => {
+        if (item.cartItemId === cartItemId) {
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+      setCartItems(newCartItems);
+    } catch {
+      alert(ERROR_MESSAGES.PATCH_ERROR_MESSAGE);
+    }
   };
-
   return { state, cartItems, onDelete, onQuantityChange };
 }
