@@ -6,13 +6,13 @@ type AsyncState<T> =
   | { status: "success"; data: T }
   | { status: "error"; error: Error };
 
-export default function useFetch<T>(url: string) {
+export default function useFetch<T>(fetcher: () => Promise<Response>) {
   const [state, setState] = useState<AsyncState<T>>({ status: "loading" });
 
   const fetchData = async () => {
     setState({ status: "loading" });
     try {
-      const res = await fetch(url);
+      const res = await fetcher();
       if (!res.ok) throw new Error("서버 에러");
       const data = await res.json();
       setState({ status: "success", data });
@@ -25,7 +25,7 @@ export default function useFetch<T>(url: string) {
   };
   useEffect(() => {
     fetchData();
-  }, [url]);
+  }, []);
 
   return { state, fetchData };
 }
