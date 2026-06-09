@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { QUANTITY_CONSTNATS } from "../../constants/constants";
+import { QUANTITY_CONSTANTS } from "../../constants/constants";
 
 interface Props {
   cartItemId: number;
@@ -16,7 +16,7 @@ export default function QuantityControl({
     <Container>
       <MinusButton
         onClick={() => {
-          quantity > QUANTITY_CONSTNATS.MIN_QUANTITY &&
+          quantity > QUANTITY_CONSTANTS.MIN_QUANTITY &&
             onQuantityChange(cartItemId, quantity - 1);
         }}
       >
@@ -25,7 +25,7 @@ export default function QuantityControl({
       <Input type="number" value={quantity} />
       <PlusButton
         onClick={() => {
-          quantity < QUANTITY_CONSTNATS.MAX_QUANTITY &&
+          quantity < QUANTITY_CONSTANTS.MAX_QUANTITY &&
             onQuantityChange(cartItemId, quantity + 1);
         }}
       >

@@ -40,7 +40,7 @@ export default function ShoppingCartPage() {
             <ShoppingCartList
               cartItems={cartItems}
               onDelete={onDelete}
-              onTogle={onToggle}
+              onToggle={onToggle}
               onToggleAll={onToggleAll}
               selectedItems={selectedItems}
               onQuantityChange={onQuantityChange}
