@@ -34,12 +34,12 @@ describe('Cart API', () => {
     const app = await loadApp();
     const response = await request(app).get('/carts').expect(200);
 
-    expect(response.body.body).toHaveLength(3);
+    expect(response.body.body).toHaveLength(10);
     expect(response.body.body[0]).toMatchObject({
       id: '1',
       productInfo: {
         id: '1',
-        name: 'EASTER',
+        name: '자유로운 준',
       },
       quantity: 1,
     });

@@ -55,19 +55,19 @@ describe('productService', () => {
   test('getProducts는 상품 목록을 반환한다', async () => {
     const {productService} = await loadProductService();
 
-    expect(productService.getProducts()).toHaveLength(5);
+    expect(productService.getProducts()).toHaveLength(10);
   });
 
   test('createProduct는 상품을 생성한다', async () => {
     const {productService} = await loadProductService();
 
-    expect(productService.createProduct({name: '새 상품', price: 1000, imageUrl: '/new.png'})).toBe('6');
+    expect(productService.createProduct({name: '새 상품', price: 1000, imageUrl: '/new.png'})).toBe('11');
   });
 
   test('createProduct는 중복 상품명이면 에러를 던진다', async () => {
     const {productService} = await loadProductService();
 
-    expect(() => productService.createProduct({name: 'EASTER', price: 1000, imageUrl: '/new.png'})).toThrow();
+    expect(() => productService.createProduct({name: '자유로운 준', price: 1000, imageUrl: '/new.png'})).toThrow();
   });
 
   test('createProduct는 유효하지 않은 요청이면 에러를 던진다', async () => {

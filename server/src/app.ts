@@ -8,7 +8,8 @@ import {productController} from './controllers/ProductController.js';
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+const localAllowedOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+const allowedOrigins = createAllowedOrigins();
 
 const corsOptions: cors.CorsOptions = {
   origin: allowedOrigins,
@@ -30,3 +31,9 @@ app.delete('/carts/:cartItemId', asyncHandler(cartController.deleteCartItem));
 app.use(errorHandler);
 
 export default app;
+
+function createAllowedOrigins() {
+  if (!process.env.CLIENT_ORIGIN) return localAllowedOrigins;
+
+  return [...localAllowedOrigins, process.env.CLIENT_ORIGIN];
+}

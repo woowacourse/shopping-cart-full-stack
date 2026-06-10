@@ -9,7 +9,7 @@ describe('cartService', () => {
   test('getCartItems는 장바구니 항목 목록을 반환한다', async () => {
     const {cartService} = await loadCartService();
 
-    expect(cartService.getCartItems()).toHaveLength(3);
+    expect(cartService.getCartItems()).toHaveLength(10);
   });
 
   test('updateQuantity는 장바구니 항목 수량을 변경한다', async () => {
@@ -34,7 +34,7 @@ describe('cartService', () => {
     const {cartService} = await loadCartService();
 
     expect(cartService.deleteCartItem('1')).toBeUndefined();
-    expect(cartService.getCartItems()).toHaveLength(2);
+    expect(cartService.getCartItems()).toHaveLength(9);
   });
 
   test('deleteCartItem은 없는 항목이면 에러를 던진다', async () => {

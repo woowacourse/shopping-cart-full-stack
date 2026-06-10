@@ -34,12 +34,11 @@ describe('Product API', () => {
     const app = await loadApp();
     const response = await request(app).get('/products').expect(200);
 
-    expect(response.body.body).toHaveLength(5);
+    expect(response.body.body).toHaveLength(10);
     expect(response.body.body[0]).toMatchObject({
       id: '1',
-      name: 'EASTER',
-      price: 100000000000,
-      imageUrl: '/testURL1',
+      name: '자유로운 준',
+      price: 7,
     });
   });
 
@@ -58,7 +57,7 @@ describe('Product API', () => {
 
     expect(response.body).toEqual({
       body: {
-        id: '6',
+        id: '11',
       },
     });
   });
@@ -77,7 +76,7 @@ describe('Product API', () => {
   test('POST /products는 중복 상품명이면 409를 응답한다', async () => {
     const app = await loadApp();
 
-    await request(app).post('/products').send({name: 'EASTER', price: 1000, imageUrl: '/new.png'}).expect(409);
+    await request(app).post('/products').send({name: '자유로운 준', price: 1000, imageUrl: '/new.png'}).expect(409);
   });
 
   test('DELETE /products/:id는 상품을 삭제한다', async () => {
