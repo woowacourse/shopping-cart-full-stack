@@ -6,7 +6,7 @@ interface Props {
   cartItems: CartItem[];
   selectedItems: Map<number, boolean>;
   onDelete: (cartItemId: number) => void;
-  onTogle: (cartItemId: number) => void;
+  onToggle: (cartItemId: number) => void;
   onToggleAll: () => void;
   onQuantityChange: (cartItemId: number, quantity: number) => void;
 }
@@ -14,7 +14,7 @@ interface Props {
 export default function ShoppingCartList({
   cartItems,
   onDelete,
-  onTogle,
+  onToggle,
   onToggleAll,
   selectedItems,
   onQuantityChange,
@@ -40,7 +40,7 @@ export default function ShoppingCartList({
           <ShoppingCartItem
             cartItem={cartItem}
             onDelete={onDelete}
-            onTogle={onTogle}
+            onToggle={onToggle}
             isSelected={selectedItems.get(cartItem.cartItemId) ?? false}
             onQuantityChange={onQuantityChange}
           />

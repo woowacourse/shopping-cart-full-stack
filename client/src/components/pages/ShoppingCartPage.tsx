@@ -4,13 +4,13 @@ import ShoppingCartList from "../Cart/ShoppingCartList";
 import CheckButton from "../button/CheckButton";
 import ResultOrder from "./ResultOrder";
 import ShopButton from "../button/ShopButton";
-import useCartItmes from "../../hooks/useCartItmes";
+import useCartItems from "../../hooks/useCartItems";
 import useCartSelectBox from "../../hooks/useCartSelectBox";
 import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
 import { getOrderPrice } from "../../util/getOrderPrice";
 
 export default function ShoppingCartPage() {
-  const { state, cartItems, onDelete, onQuantityChange } = useCartItmes();
+  const { state, cartItems, onDelete, onQuantityChange } = useCartItems();
 
   const { selectedItems, onToggle, onToggleAll } = useCartSelectBox({
     cartItems,
@@ -40,7 +40,7 @@ export default function ShoppingCartPage() {
             <ShoppingCartList
               cartItems={cartItems}
               onDelete={onDelete}
-              onTogle={onToggle}
+              onToggle={onToggle}
               onToggleAll={onToggleAll}
               selectedItems={selectedItems}
               onQuantityChange={onQuantityChange}

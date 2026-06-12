@@ -4,7 +4,7 @@ import { CartItem } from "../type/types";
 import { shoppingCartApi } from "../api/shoppingCartApi";
 import { ERROR_MESSAGES } from "../constants/messages";
 
-export default function useCartItmes() {
+export default function useCartItems() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const { state, fetchData } = useFetch<CartItem[]>(shoppingCartApi.get);
 

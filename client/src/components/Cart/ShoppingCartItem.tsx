@@ -5,14 +5,14 @@ interface Props {
   cartItem: CartItem;
   isSelected: boolean;
   onDelete: (cartItemId: number) => void;
-  onTogle: (cartItemId: number) => void;
+  onToggle: (cartItemId: number) => void;
   onQuantityChange: (cartItemId: number, quantity: number) => void;
 }
 
 export default function ShoppingCartItem({
   cartItem,
   onDelete,
-  onTogle,
+  onToggle,
   isSelected,
   onQuantityChange,
 }: Props) {
@@ -23,7 +23,7 @@ export default function ShoppingCartItem({
           <input
             type="checkbox"
             onChange={() => {
-              onTogle(cartItem.cartItemId);
+              onToggle(cartItem.cartItemId);
             }}
             checked={isSelected}
           />
