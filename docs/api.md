@@ -1,209 +1,295 @@
-# API 명세서
+# 장바구니 3단계 API 명세
 
-## 공통
-- 응답 본문이 있는 경우 최상위 필드는 `body`입니다.
-- 응답 본문에는 `status`, `message`를 포함하지 않습니다.
-- 요청 본문은 JSON 형식입니다.
-- 에러 응답은 기본적으로 상태 코드로 표현합니다.
-- 검증 실패처럼 클라이언트 안내가 필요한 경우 `body.message`를 포함합니다.
+## 개요
 
-### 상태 코드
+| Category | Method | Endpoint | Success | Error | 설명 |
+| --- | --- | --- | --- | --- | --- |
+| preorder | POST | `/preorder` | 201 | 400 | 선택된 장바구니 항목으로 임시 주문서를 생성한다. |
+| preorder | GET | `/preorder/:preorderId` | 200 | 404 | 임시 주문서의 상품 정보를 조회한다. |
+| coupons | GET | `/coupons?preorderId={preorderId}` | 200 | 404 | 임시 주문 기준으로 쿠폰 목록과 사용 가능 여부를 조회한다. |
+| order | POST | `/order` | 201 | 400, 409 | 클라이언트의 예상 결제 금액과 주문 정보를 검증한 뒤 주문을 생성한다. |
+| order | GET | `/order/:orderId` | 200 | 404 | 주문 요약 정보를 조회한다. |
 
-| 상태 코드 | 의미 |
-| --- | --- |
-| `200` | 요청 성공 |
-| `201` | 리소스 생성 성공 |
-| `204` | 요청 성공, 응답 본문 없음 |
-| `400` | 요청 본문이 없거나 유효하지 않음 |
-| `404` | 요청한 리소스가 없음 |
-| `409` | 이미 존재하는 리소스와 충돌 |
-| `500` | 서버 오류 |
+## 공통 규칙
 
-## 상품
+- 요청과 응답 본문은 JSON 형식을 사용한다.
+- 쿠폰 등록, 수정, 삭제 API는 제공하지 않는다.
+- 쿠폰 데이터는 DB에 하드코딩된 초기 데이터로 관리한다.
+- 결제 금액의 원천 계산은 서버가 담당한다.
+- 프론트엔드가 전달하는 예상 금액은 무결성 비교용이며, 서버는 해당 값을 신뢰하지 않는다.
+- 서버는 쿠폰 유효성, 서버 시간, 임시 주문 데이터, 최신 상품/재고 데이터를 기준으로 주문을 검증한다.
 
-### `GET /products`
+## Preorder
 
-상품 목록을 조회합니다.
+### POST `/preorder`
 
-Response `200`
+프론트에서 선택된 장바구니 ID 리스트를 보내면, DB에서 해당 cart ID에 저장되어 있는 `productId`와 `quantity`를 불러온다. 이후 `productId`를 기반으로 상품 정보를 조회하고, 캐시의 preorder 테이블에 저장한다.
+
+### Request Body
+
 ```json
 {
-  "body": [
+  "selectedCartIds": ["string"]
+}
+```
+
+### Request Example
+
+```json
+{
+  "selectedCartIds": ["1", "3", "8"]
+}
+```
+
+### Response
+
+```json
+{
+  "preorderId": "string"
+}
+```
+
+### Response Example
+
+```json
+{
+  "preorderId": "8400-e29b4-00"
+}
+```
+
+### Status Code
+
+| Code | 설명 |
+|---:|---|
+| 201 | preorder 생성 성공 |
+| 400 | request body의 `selectedCartIds`가 유효하지 않음 |
+
+---
+
+### GET `/preorder/:preorderId`
+
+캐시에 저장된 preorder 정보인 `productId`, `quantity`, 상품 이름, 상품 가격, 상품 섬네일을 조회한다.
+
+### Request
+
+없음
+
+### Response
+
+```json
+{
+  "preorderId": "string",
+  "items": [
     {
-      "id": "string",
+      "productId": "string",
+      "price": "number",
       "name": "string",
-      "price": number,
-      "imageUrl": "string"
+      "thumbnail": "string",
+      "quantity": "number"
     }
   ]
 }
 ```
 
-Responses
-- `500`: 서버 오류
+### Response Example
 
-### `POST /products`
-
-상품을 추가합니다.
-
-Request
 ```json
 {
-  "name": "string",
-  "price": number,
-  "imageUrl": "string"
-}
-```
-
-Request fields
-
-| 필드 | 타입 | 필수 | 조건 |
-| --- | --- | --- | --- |
-| `name` | `string` | 예 | 1자 이상 100자 이하 |
-| `price` | `number` | 예 | 0보다 큰 유한한 숫자 |
-| `imageUrl` | `string` | 예 | 빈 문자열 불가 |
-
-Request example
-```json
-{
-  "name": "새 상품",
-  "price": 1000,
-  "imageUrl": "/new.png"
-}
-```
-
-Response `201`
-```json
-{
-  "body": {
-    "id": "string"
-  }
-}
-```
-
-Responses
-- `400`: 필수 필드 누락 또는 유효하지 않은 값
-- `409`: 중복 상품
-- `500`: 서버 오류
-
-Error Response `400`
-```json
-{
-  "body": {
-    "message": "상품 이름, 가격, 이미지 URL을 올바르게 입력해주세요."
-  }
-}
-```
-
-### `DELETE /products/:productId`
-
-상품을 삭제합니다.
-
-삭제한 상품이 장바구니에 담겨 있으면 해당 장바구니 항목도 함께 삭제합니다.
-
-Path parameters
-
-| 이름 | 타입 | 설명 |
-| --- | --- | --- |
-| `productId` | `string` | 삭제할 상품 id |
-
-Responses
-- `204`: 삭제 성공
-- `404`: 상품 없음
-- `500`: 서버 오류
-
-## 장바구니
-
-### `GET /carts`
-
-장바구니 항목 목록을 조회합니다.
-
-Response `200`
-```json
-{
-  "body": [
+  "preorderId": "8400-e29b4-00",
+  "items": [
     {
-      "id": "string",
-      "productInfo": {
-        "id": "string",
-        "name": "string",
-        "price": number,
-        "imageUrl": "string"
-      },
-      "quantity": number
+      "productId": "11001123",
+      "price": 35000,
+      "name": "무지 반팔티",
+      "thumbnail": "https://test.s3/products/tee.png",
+      "quantity": 2
     }
   ]
 }
 ```
 
-Responses
-- `500`: 서버 오류
+### Status Code
 
-### `PATCH /carts/:cartItemId`
+| Code | 설명 |
+|---:|---|
+| 200 | preorder 조회 성공 |
+| 404 | `preorderId`가 유효하지 않음 |
 
-장바구니 항목의 수량을 변경합니다.
+---
 
-Path parameters
+## Coupons
 
-| 이름 | 타입 | 설명 |
-| --- | --- | --- |
-| `cartItemId` | `string` | 수량을 변경할 장바구니 항목 id |
+### GET `/coupons?preorderId={preorderId}`
 
-Request
+coupon DB에 저장된 쿠폰 ID, 쿠폰 이름, 쿠폰 타입, 쿠폰 만료일, 쿠폰 condition, 쿠폰 benefit을 조회한다. 백엔드에서 쿠폰 적용 가능 여부를 계산하여 `disabled` 상태를 함께 전달해야 한다.
+
+### Query Parameters
+
+| Name | Type | Required | 설명 |
+|---|---|---:|---|
+| preorderId | string | Yes | 쿠폰 적용 가능 여부를 계산할 preorder ID |
+
+### Response
+
 ```json
 {
-  "quantity": number
+  "coupons": [
+    {
+      "couponId": "number",
+      "name": "string",
+      "type": "FIXED" | "RATE",
+      "expirationDate": "string",
+      "condition": "object",
+      "benefit": "object",
+      "disabled": "boolean"
+    }
+  ]
 }
 ```
 
-Request fields
+### Response Example
 
-| 필드 | 타입 | 필수 | 조건 |
-| --- | --- | --- | --- |
-| `quantity` | `number` | 예 | 1 이상 99 이하의 정수 |
-
-Request example
 ```json
 {
-  "quantity": 3
+  "coupons": [
+    {
+      "couponId": 1,
+      "name": "5000원 할인 쿠폰",
+      "type": "FIXED",
+      "expirationDate": "2026-06-12",
+      "condition": {
+        "minOrderAmount": 100000
+      },
+      "benefit": {
+        "discountAmount": 5000
+      },
+      "disabled": false
+    }
+  ]
 }
 ```
 
-Response `200`
+### Status Code
+
+| Code | 설명 |
+|---:|---|
+| 200 | 쿠폰 목록 조회 성공 |
+| 404 | `preorderId`가 유효하지 않음 |
+
+---
+
+## Order
+
+### POST `/order`
+
+클라이언트에서 계산을 완료한 뒤, 클라이언트의 예상 결제 금액과 금액에 영향을 끼치는 요소를 백엔드로 보낸다.
+
+금액에 영향을 끼치는 요소는 다음과 같다.
+
+- `preorderId`
+- `quantity`
+- `isRemoteArea`
+- `couponIds`
+
+백엔드는 주문 요청을 검증하고, 성공한 경우 `orderId`를 반환한다.
+
+### Request Body
+
 ```json
 {
-  "body": {
-    "id": "string",
-    "quantity": number
+  "preorderId": "string",
+  "isRemoteArea": "boolean",
+  "couponIds": ["number"],
+  "expectedPrice": {
+    "orderAmount": "number",
+    "discountAmount": "number",
+    "shippingFee": "number",
+    "totalPaymentAmount": "number"
   }
 }
 ```
 
-Responses
-- `400`: 필수 필드 누락 또는 유효하지 않은 수량
-- `404`: 장바구니 항목 없음
-- `500`: 서버 오류
+### Request Example
 
-Error Response `400`
 ```json
 {
-  "body": {
-    "message": "수량은 1 이상 99 이하의 정수여야 합니다."
+  "preorderId": "8400-e29b4-00",
+  "isRemoteArea": true,
+  "couponIds": [1],
+  "expectedPrice": {
+    "orderAmount": 70000,
+    "discountAmount": 5000,
+    "shippingFee": 6000,
+    "totalPaymentAmount": 71000
   }
 }
 ```
 
-### `DELETE /carts/:cartItemId`
+### Response
 
-장바구니 항목을 삭제합니다.
+```json
+{
+  "orderId": "string"
+}
+```
 
-Path parameters
+### Response Example
 
-| 이름 | 타입 | 설명 |
-| --- | --- | --- |
-| `cartItemId` | `string` | 삭제할 장바구니 항목 id |
+```json
+{
+  "orderId": "00-11-aa-bb"
+}
+```
 
-Responses
-- `204`: 삭제 성공
-- `404`: 장바구니 항목 없음
-- `500`: 서버 오류
+### Error Response Example
+
+```json
+{
+  "message": "string"
+}
+```
+
+### Status Code
+
+| Code | 설명 |
+|---:|---|
+| 201 | 주문 생성 성공 |
+| 400 | 요청 값이 유효하지 않음. 실패 이유를 `message`로 전달 |
+| 409 | Conflict. 예: 백엔드에서 재계산한 결제 금액과 클라이언트의 `expectedPrice`가 일치하지 않음 |
+
+---
+
+### GET `/order/:orderId`
+
+주문 ID를 기반으로 주문 요약 정보를 조회한다.
+
+### Request
+
+없음
+
+### Response
+
+```json
+{
+  "itemCount": "number",
+  "totalQuantity": "number",
+  "totalAmount": "number"
+}
+```
+
+### Response Example
+
+```json
+{
+  "itemCount": 1,
+  "totalQuantity": 2,
+  "totalAmount": 100000
+}
+```
+
+### Status Code
+
+| Code | 설명 |
+|---:|---|
+| 200 | 주문 요약 조회 성공 |
+| 404 | `orderId`가 유효하지 않음 |
