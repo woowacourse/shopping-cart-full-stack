@@ -34,7 +34,8 @@ const MainContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 936px;
+  height: 100vh;
+  overflow: hidden;
 `;
 
 const Body = styled.div`
@@ -43,7 +44,8 @@ const Body = styled.div`
   align-items: center;
   justify-content: flex-start;
   width: 430px;
-  height: 936px;
+  height: 100vh;
+  overflow: hidden;
 `;
 
 const Nav = styled.nav`
@@ -58,8 +60,8 @@ const ConfirmOrderSection = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 24px;
 `;
 
