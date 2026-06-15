@@ -4,7 +4,7 @@ import OrderController from "../controller/OrderController";
 const orderRouter = Router();
 
 // GET /order
-orderRouter.get("/", OrderController.getOrder);
+orderRouter.get("/:orderId", OrderController.getOrder);
 
 // POST /order
 orderRouter.post("/", OrderController.postOrder);
