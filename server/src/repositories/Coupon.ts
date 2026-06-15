@@ -1,6 +1,6 @@
 export interface Coupon {
   couponId: number;
-  couponCode: string; // 'FIXED5000' | 'BOGO' | 'FREESHIPPING' | 'MIRACLESALE'
+  couponCode: string; // 'FIXED5000' | 'BTGO' | 'FREESHIPPING' | 'MIRACLESALE'
   expiredDate: string;
   minOrderAmount?: number;
   usableStartAt?: string | null;

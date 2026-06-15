@@ -1,3 +1,4 @@
+import { couponRepository } from "./CouponRepository";
 import { StoredOrder } from "./StoredOrder";
 
 export default class StoredOrderRepository {
@@ -30,6 +31,12 @@ export default class StoredOrderRepository {
     const order = this.#storedOrders.get(orderId);
     if (!order) return;
     this.#storedOrders.set(orderId, { ...order, remoteArea });
+  }
+
+  updateAppliedCoupon(orderId: number, couponIds: number[]): void {
+    const order = this.#storedOrders.get(orderId);
+    if (!order) return;
+    this.#storedOrders.set(orderId, { ...order, appliedCoupon: couponIds });
   }
 
   deleteById(orderId: number): void {

@@ -1,5 +1,6 @@
 import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
+import { couponRepository } from "../repositories/CouponRepository";
 import { StoredOrder } from "../repositories/StoredOrder";
 import { storedOrderRepository } from "../repositories/StoredOrderRepository";
 
@@ -25,6 +26,23 @@ export const updateRemoteAreaService = (
   if (!order)
     throw new NotFoundError("NOT_FOUND_ERROR", ERROR_MESSAGE.NOT_FOUND_ORDER);
   storedOrderRepository.updateRemoteArea(orderId, remoteArea);
+};
+
+export const updateApplyCouponService = (
+  orderId: number,
+  couponIds: number[],
+) => {
+  const order = storedOrderRepository.findById(orderId);
+  if (!order)
+    throw new NotFoundError("NOT_FOUND_ERROR", ERROR_MESSAGE.NOT_FOUND_ORDER);
+  couponIds.forEach((id) => {
+    if (!couponRepository.findById(id))
+      throw new InvalidError(
+        "NOT_FOUND_COUPON",
+        ERROR_MESSAGE.NOT_FOUND_COUPON,
+      );
+  });
+  storedOrderRepository.updateAppliedCoupon(orderId, couponIds);
 };
 
 export const deleteOrderService = (orderId: number): void => {
