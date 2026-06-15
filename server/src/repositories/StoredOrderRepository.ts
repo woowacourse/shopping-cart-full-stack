@@ -15,8 +15,8 @@ export default class StoredOrderRepository {
     return [...this.#storedOrders.values()];
   }
 
-  findById(productId: number): StoredOrder | null {
-    return this.#storedOrders.get(productId) ?? null;
+  findById(orderId: number): StoredOrder | null {
+    return this.#storedOrders.get(orderId) ?? null;
   }
 
   addOrder(data: Omit<StoredOrder, "orderId">): StoredOrder {
@@ -26,8 +26,8 @@ export default class StoredOrderRepository {
     return order;
   }
 
-  deleteById(productId: number): void {
-    this.#storedOrders.delete(productId);
+  deleteById(orderId: number): void {
+    this.#storedOrders.delete(orderId);
   }
 
   clear(): void {
