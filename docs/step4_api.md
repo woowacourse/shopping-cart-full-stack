@@ -9,20 +9,24 @@
 - URI: /order/
 - Request Body
 
+```
 {
-items: [
-{
-productId: number
-quantity: number
-}, ...
-]
+    items: [
+        {
+            productId: number
+            quantity: number
+        }, ...
+        ]
 }
+```
 
 - Response
 
+```
 {
 orderId: number,
 }
+```
 
 - Status Code
 
@@ -39,26 +43,28 @@ orderId: number,
 - URI: /order/:id
 - Response
 
+```
 {
-items: [
-{
-productId, name, price, quantity, imageUrl
-}, ...
-],
-coupons: [
-{
-couponId, name, expiredDate, minOrderAmount,
-usableStartAt, usableEndAt,
-isSelected,
-isDisabled,
-}, ...
-],
-remoteArea: true/false,
-orderAmount,
-couponDiscount,
-shippingFee,
-totalAmount,
-}
+    items: [{ productId, name, price, quantity, imageUrl }],
+    coupons: [
+      {
+        couponId,
+        couponCode,   // name → couponCode
+        expiredDate,
+        minOrderAmount,
+        usableStartAt,
+        usableEndAt,
+        isSelected,
+        isDisabled,
+      }
+    ],
+    remoteArea,
+    orderAmount,
+    couponDiscount,
+    shippingFee,
+    totalAmount,
+  }
+```
 
 - Status Code
 
@@ -80,9 +86,11 @@ totalAmount,
 - URI: /order/:id/address
 - Request Body
 
+```
 {
 remoteArea: true/false
 }
+```
 
 - Status Code
 
@@ -95,9 +103,11 @@ remoteArea: true/false
 - URI: /order/:id/coupon
 - Request Body
 
+```
 {
 coupons: [1] // [1,2] | null, 최대 길이 2인 number[]
 }
+```
 
 - Status Code
 
@@ -112,9 +122,11 @@ coupons: [1] // [1,2] | null, 최대 길이 2인 number[]
 - URI: /order/:id/coupon/calculate?couponIds=1,2
 - Response
 
+```
 {
 couponDiscount: number
 }
+```
 
 - Status Code
 
@@ -131,11 +143,13 @@ couponDiscount: number
 - URI: /order/:id/payment
 - Response
 
+```
 {
-itemCount,
-totalQuantity,
-totalAmount,
+    itemCount,
+    totalQuantity,
+    totalAmount,
 }
+```
 
 - Status Code
 
