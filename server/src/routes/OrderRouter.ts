@@ -9,6 +9,9 @@ orderRouter.get("/:orderId", OrderController.getOrder);
 // POST /order
 orderRouter.post("/", OrderController.postOrder);
 
+// PATCH /order
+orderRouter.patch("/:orderId/address", OrderController.patchOrder);
+
 // DELETE /order/:orderId
 orderRouter.delete("/:orderId", OrderController.deleteOrder);
 

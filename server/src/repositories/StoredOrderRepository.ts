@@ -26,6 +26,12 @@ export default class StoredOrderRepository {
     return order;
   }
 
+  updateRemoteArea(orderId: number, remoteArea: boolean): void {
+    const order = this.#storedOrders.get(orderId);
+    if (!order) return;
+    this.#storedOrders.set(orderId, { ...order, remoteArea });
+  }
+
   deleteById(orderId: number): void {
     this.#storedOrders.delete(orderId);
   }

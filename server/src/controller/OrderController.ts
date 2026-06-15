@@ -3,6 +3,7 @@ import {
   deleteOrderService,
   getOrdersService,
   postOrderService,
+  updateRemoteAreaService,
 } from "../service/OrderService";
 import { handleError } from "./ErrorHandler";
 
@@ -25,6 +26,17 @@ const postOrder = (request: Request, response: Response): void => {
   }
 };
 
+const patchOrder = (request: Request, response: Response): void => {
+  try {
+    const orderId = Number(request.params.orderId);
+    const remoteArea = Boolean(request.body.remoteArea);
+    updateRemoteAreaService(orderId, remoteArea);
+    response.status(204).send();
+  } catch (error) {
+    handleError(response, error);
+  }
+};
+
 const deleteOrder = (request: Request, response: Response): void => {
   try {
     const orderId = Number(request.params.orderId);
@@ -35,4 +47,4 @@ const deleteOrder = (request: Request, response: Response): void => {
   }
 };
 
-export default { getOrder, postOrder, deleteOrder };
+export default { getOrder, postOrder, deleteOrder, patchOrder };
