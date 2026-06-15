@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cartRouter from "./routes/CartRouter";
 import productRouter from "./routes/ProductRouter";
+import orderRouter from "./routes/OrderRouter";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(
 app.use(express.json());
 app.use("/cart", cartRouter);
 app.use("/products", productRouter);
+app.use("/order", orderRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
