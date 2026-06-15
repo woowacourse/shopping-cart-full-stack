@@ -1,7 +1,7 @@
 import { InvalidError, NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { StoredOrder } from "../repositories/StoredOrder";
-import { storedOrderRepository } from "../repositories/OrderRepository";
+import { storedOrderRepository } from "../repositories/StoredOrderRepository";
 
 export const getOrdersService = (orderId: number): StoredOrder => {
   const order = storedOrderRepository.findById(orderId);

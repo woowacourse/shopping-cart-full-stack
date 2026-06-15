@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../../src/app";
-import { storedOrderRepository } from "../../src/repositories/OrderRepository";
+import { storedOrderRepository } from "../../src/repositories/StoredOrderRepository";
 
 describe("주문 API 통합 테스트", () => {
   beforeEach(() => {
