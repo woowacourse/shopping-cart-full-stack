@@ -1,28 +1,43 @@
 import { Coupon } from "./Coupon";
 
-export default class CouponRepository {
-  // Coupons의 데이터를 담고 있는 private 변수
-  // Map 형태에 넣어주기 위한 index로 nextId
-  #Coupons: Map<number, Coupon>;
+const COUPONS: Coupon[] = [
+  {
+    couponId: 1,
+    couponCode: "FIXED5000",
+    expiredDate: "2026-11-30",
+    minOrderAmount: 100000,
+    discountAmount: 5000,
+  },
 
-  constructor() {
-    this.#Coupons = new Map();
+  {
+    couponId: 2,
+    couponCode: "BTGO",
+    expiredDate: "2026-05-30",
+  },
+
+  {
+    couponId: 3,
+    couponCode: "FREESHIPPING",
+    expiredDate: "2026-08-31",
+    minOrderAmount: 50000,
+  },
+  {
+    couponId: 4,
+    couponCode: "MIRACLESALE",
+    expiredDate: "2026-07-31",
+    usableStartAt: "04:00",
+    usableEndAt: "07:00",
+    discountRate: 30,
+  },
+];
+
+export class CouponRepository {
+  findAll(): Coupon[] {
+    return COUPONS;
   }
 
-  getCoupons(): Coupon[] {
-    return [...this.#Coupons.values()];
-  }
-
-  findById(productId: number): Coupon | null {
-    return this.#Coupons.get(productId) ?? null;
-  }
-
-  deleteById(productId: number): void {
-    this.#Coupons.delete(productId);
-  }
-
-  clear(): void {
-    this.#Coupons.clear();
+  findById(couponId: number): Coupon | null {
+    return COUPONS.find((c) => c.couponId === couponId) ?? null;
   }
 }
 
