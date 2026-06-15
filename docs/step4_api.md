@@ -12,7 +12,7 @@
 {
 items: [
 {
-product_id: number
+productId: number
 quantity: number
 }, ...
 ]
@@ -21,12 +21,12 @@ quantity: number
 - Response
 
 {
-order_id: number,
+orderId: number,
 }
 
 - Status Code
 
-201: 성공시 받아온 order_id로 새 리스트 생성.
+201: 성공시 받아온 orderId로 새 리스트 생성.
 400: quantity가 1이상 99이하여야 함. (음수, 0, 100이상)
 400: 재고수량보다 많은 수량을 주문
 404: 존재하지 않는 product를 주문
@@ -42,22 +42,22 @@ order_id: number,
 {
 items: [
 {
-product_id, name, price, quantity, image_url
+productId, name, price, quantity, imageUrl
 }, ...
 ],
 coupons: [
 {
-coupon_id, name, expired_date, min_order_amount,
-usable_start_at, usable_end_at,
-is_selected,
-is_disabled,
+couponId, name, expiredDate, minOrderAmount,
+usableStartAt, usableEndAt,
+isSelected,
+isDisabled,
 }, ...
 ],
-remote_area: true/false,
-order_amount,
-coupon_discount,
-shipping_fee,
-total_amount,
+remoteArea: true/false,
+orderAmount,
+couponDiscount,
+shippingFee,
+totalAmount,
 }
 
 - Status Code
@@ -81,7 +81,7 @@ total_amount,
 - Request Body
 
 {
-remote_area: true/false
+remoteArea: true/false
 }
 
 - Status Code
@@ -109,11 +109,11 @@ coupons: [1] // [1,2] | null, 최대 길이 2인 number[]
 
 - Description: 체크된 쿠폰 조합으로 할인되는 금액을 계산한다.
 - Method: GET
-- URI: /order/:id/coupon/calculate?coupon_ids=1,2
+- URI: /order/:id/coupon/calculate?couponIds=1,2
 - Response
 
 {
-coupon_discount: number
+couponDiscount: number
 }
 
 - Status Code
@@ -132,9 +132,9 @@ coupon_discount: number
 - Response
 
 {
-item_count,
-total_quantity,
-total_amount,
+itemCount,
+totalQuantity,
+totalAmount,
 }
 
 - Status Code
