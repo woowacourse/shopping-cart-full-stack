@@ -3,6 +3,7 @@ import {
   deleteOrderService,
   getOrdersService,
   postOrderService,
+  updateApplyCouponService,
   updateRemoteAreaService,
 } from "../service/OrderService";
 import { handleError } from "./ErrorHandler";
@@ -37,6 +38,17 @@ const patchOrder = (request: Request, response: Response): void => {
   }
 };
 
+const patchCoupon = (request: Request, response: Response): void => {
+  try {
+    const orderId = Number(request.params.orderId);
+    const couponIds = request.body.couponIds;
+    updateApplyCouponService(orderId, couponIds);
+    response.status(204).send();
+  } catch (error) {
+    handleError(response, error);
+  }
+};
+
 const deleteOrder = (request: Request, response: Response): void => {
   try {
     const orderId = Number(request.params.orderId);
@@ -47,4 +59,4 @@ const deleteOrder = (request: Request, response: Response): void => {
   }
 };
 
-export default { getOrder, postOrder, deleteOrder, patchOrder };
+export default { getOrder, postOrder, deleteOrder, patchOrder, patchCoupon };

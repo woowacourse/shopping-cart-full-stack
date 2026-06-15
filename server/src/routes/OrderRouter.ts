@@ -12,6 +12,9 @@ orderRouter.post("/", OrderController.postOrder);
 // PATCH /order
 orderRouter.patch("/:orderId/address", OrderController.patchOrder);
 
+//PATCH/order/:orderId/coupon
+orderRouter.patch("/:orderId/coupon", OrderController.patchCoupon);
+
 // DELETE /order/:orderId
 orderRouter.delete("/:orderId", OrderController.deleteOrder);
 
