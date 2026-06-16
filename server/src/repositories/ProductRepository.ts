@@ -32,6 +32,16 @@ export default class ProductRepository {
     this.#products.delete(productId);
   }
 
+  // totalQuantity(전체 재고) - quantity(주문 수량)
+  decreaseQuantity(productId: number, quantity: number) {
+    const product = this.#products.get(productId);
+    if (!product) return;
+    this.#products.set(productId, {
+      ...product,
+      totalQuantity: product.totalQuantity - quantity,
+    });
+  }
+
   clear(): void {
     this.#products.clear();
     this.#nextId = 1;
