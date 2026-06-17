@@ -89,3 +89,15 @@ export const isFreeShippingAvailable = (orderId: number): boolean => {
   const amount = Number(order.orderAmount);
   return amount >= 50000 && amount < 100000;
 };
+
+// 4. MIRACLESALE
+// - GET /order요청을 보냈을 때,
+// GET/coupon/:orderId 요청을 보낼 때,
+// 결제하기 요청을 보낼 때의 클라이언트의 현재 시간이 04:00~07:00 사이가 아니라면 비활성화 및 적용 불가
+// - 적용 시간이 2026-07-31 이후면 삭제
+export const isMiracleSaleAvailable = (): boolean => {
+  const coupon = couponRepository.findById(4);
+  if (!coupon) return false;
+  if (isExpired(coupon.expiredDate)) return false;
+  return isInMiracleSaleHours();
+};
