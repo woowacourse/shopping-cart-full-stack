@@ -18,4 +18,7 @@ orderRouter.patch("/:orderId/coupon", OrderController.patchCoupon);
 // DELETE /order/:orderId
 orderRouter.delete("/:orderId", OrderController.deleteOrder);
 
+// POST /order/:orderId/payment
+orderRouter.post("/:orderId/payment", OrderController.postPayment);
+
 export default orderRouter;

@@ -3,14 +3,18 @@ import {
   deleteOrderService,
   getOrdersService,
   postOrderService,
+  postPaymentService,
   updateApplyCouponService,
   updateRemoteAreaService,
 } from "../service/OrderService";
 import { handleError } from "./ErrorHandler";
+import { applyCouponsService } from "../service/CouponService";
 
 const getOrder = (request: Request, response: Response): void => {
   try {
-    const order = getOrdersService(Number(request.params.orderId));
+    const orderId = Number(request.params.orderId);
+    applyCouponsService(orderId);
+    const order = getOrdersService(orderId);
     response.status(200).json(order);
   } catch (error) {
     handleError(response, error);
@@ -59,4 +63,21 @@ const deleteOrder = (request: Request, response: Response): void => {
   }
 };
 
-export default { getOrder, postOrder, deleteOrder, patchOrder, patchCoupon };
+const postPayment = (request: Request, response: Response): void => {
+  try {
+    const orderId = Number(request.params.orderId);
+    const result = postPaymentService(orderId);
+    response.status(200).json(result);
+  } catch (error) {
+    handleError(response, error);
+  }
+};
+
+export default {
+  getOrder,
+  postOrder,
+  deleteOrder,
+  patchOrder,
+  patchCoupon,
+  postPayment,
+};

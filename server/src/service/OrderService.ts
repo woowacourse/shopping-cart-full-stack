@@ -86,7 +86,8 @@ export const postPaymentService = (orderId: number) => {
   return {
     itemCount: order.items.length,
     orderQuantity: order.items.reduce((acc, item) => acc + item.quantity, 0),
-    totalAmount: 0, // 쿠폰 계산 로직 구현 후 채우기
+    totalAmount:
+      order.orderAmount - order.couponDiscountAmount + order.shippingFee,
   };
 };
 
