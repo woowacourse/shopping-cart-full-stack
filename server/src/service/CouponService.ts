@@ -49,3 +49,9 @@ const isExpired = (expiredDate: string): boolean => {
   const today = new Date().toISOString().split("T")[0];
   return today > expiredDate;
 };
+
+// 결제하기 요청을 보낼 때의 클라이언트의 현재 시간이 04:00~07:00 사이가 아니라면 비활성화 및 적용 불가
+const isInMiracleSaleHours = (): boolean => {
+  const now = new Date();
+  return now.getHours() >= 4 && now.getHours() < 7;
+};
