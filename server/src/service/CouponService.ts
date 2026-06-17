@@ -130,3 +130,34 @@ const getValidCombinations = (availableIds: number[]): number[][] => {
 
   return combinations;
 };
+
+// 어떤 조합이 최대 할인인지 비교하기 위한 계산 로직
+const calculateDiscount = (orderId: number, couponIds: number[]): number => {
+  const order = storedOrderRepository.findById(orderId)!;
+  const orderAmount = Number(order.orderAmount);
+  let couponDiscount = 0;
+  let shippingDiscount = 0;
+
+  //BTGO
+  if (couponIds.includes(2)) {
+    const prices = order.items
+      .filter((item) => item.quantity >= 3)
+      .map((item) => productRepository.findById(item.productId)?.price!);
+    return prices.length > 0 ? Math.max(...prices) : 0;
+  }
+
+  //FIXED5000
+  if (couponIds.includes(1)) couponDiscount += 5000;
+
+  //FREESHIPPING
+  if (couponIds.includes(3) || orderAmount >= 100000) {
+    shippingDiscount = order.remoteArea ? 6000 : 3000;
+  }
+
+  //MIRACLESALE
+  if (couponIds.includes(4)) {
+    couponDiscount += (orderAmount - couponDiscount) * 0.3;
+  }
+
+  return couponDiscount + shippingDiscount;
+};
