@@ -6,11 +6,15 @@ import { productRepository } from "../repositories/ProductRepository";
 import { StoredOrder } from "../repositories/StoredOrder";
 import { storedOrderRepository } from "../repositories/StoredOrderRepository";
 
-export const getOrdersService = (orderId: number): StoredOrder => {
+function getOrderOrThrow(orderId: number) {
   const order = storedOrderRepository.findById(orderId);
   if (!order)
     throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
   return order;
+}
+
+export const getOrdersService = (orderId: number): StoredOrder => {
+  return getOrderOrThrow(orderId);
 };
 
 export const postOrderService = (
@@ -24,9 +28,7 @@ export const updateRemoteAreaService = (
   orderId: number,
   remoteArea: boolean,
 ) => {
-  const order = storedOrderRepository.findById(orderId);
-  if (!order)
-    throw new NotFoundError("NOT_FOUND_ERROR", ERROR_MESSAGE.NOT_FOUND_ORDER);
+  getOrderOrThrow(orderId);
   storedOrderRepository.updateRemoteArea(orderId, remoteArea);
 };
 
@@ -34,9 +36,7 @@ export const updateApplyCouponService = (
   orderId: number,
   couponIds: number[],
 ): void => {
-  const order = storedOrderRepository.findById(orderId);
-  if (!order)
-    throw new NotFoundError("NOT_FOUND_ERROR", ERROR_MESSAGE.NOT_FOUND_ORDER);
+  getOrderOrThrow(orderId);
   couponIds.forEach((id) => {
     if (!couponRepository.findById(id))
       throw new InvalidError(
@@ -51,9 +51,7 @@ export const deleteOrderService = (orderId: number): void => {
   if (!orderId)
     throw new InvalidError("INVALID_ORDER_ID", ERROR_MESSAGE.INVALID_ORDER_ID);
 
-  const order = storedOrderRepository.findById(orderId);
-  if (!order)
-    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
+  getOrderOrThrow(orderId);
 
   storedOrderRepository.deleteById(orderId);
 };
@@ -62,11 +60,7 @@ export const deleteOrderService = (orderId: number): void => {
 export const postPaymentService = (orderId: number) => {
   if (!orderId)
     throw new InvalidError("INVALID_ORDER_ID", ERROR_MESSAGE.INVALID_ORDER_ID);
-  const order = storedOrderRepository.findById(orderId);
-
-  if (!order)
-    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
-
+  const order = getOrderOrThrow(orderId);
   order.items.forEach(({ productId, quantity }) => {
     const product = productRepository.findById(productId);
     if (!product)
@@ -96,6 +90,16 @@ export const postPaymentService = (orderId: number) => {
   };
 };
 
+// 100,000원 이상 구매시 5000원 할인 함수
+export const fixed5000 = (orderId: number) => {
+  const order = getOrderOrThrow(orderId);
+  if (order.appliedCoupon.includes(1)) {
+    if (Number(order.orderAmount) >= 100000) {
+      order.couponDiscountAmount += 5000;
+    }
+  }
+};
+
 //배송비 면제 함수
 // 작동 조건
 // 1. 주문금액이 10만원 이상
@@ -103,10 +107,7 @@ export const postPaymentService = (orderId: number) => {
 // remoteArea가 true면 -6000 / remoteArea가 false면 -3000
 
 export const freeShipping = (orderId: number) => {
-  const order = storedOrderRepository.findById(orderId);
-  if (!order)
-    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
-
+  const order = getOrderOrThrow(orderId);
   const isRemoteArea = () => {
     if (order.remoteArea === true) {
       order.shippingFee = order.shippingFee - 6000;
@@ -129,18 +130,6 @@ export const freeShipping = (orderId: number) => {
     // FREESHIPING 쿠폰을 사용하였을 때
     if (order.appliedCoupon.includes(3)) {
       isRemoteArea();
-    }
-  }
-};
-
-// 100,000원 이상 구매시 5000원 할인 함수
-export const fixed5000 = (orderId: number) => {
-  const order = storedOrderRepository.findById(orderId);
-  if (!order)
-    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
-  if (order.appliedCoupon.includes(1)) {
-    if (Number(order.orderAmount) >= 100000) {
-      order.couponDiscountAmount += 5000;
     }
   }
 };
