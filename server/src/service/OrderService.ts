@@ -91,7 +91,7 @@ export const postPaymentService = (orderId: number) => {
 };
 
 // 100,000원 이상 구매시 5000원 할인 함수
-export const fixed5000 = (orderId: number) => {
+export const fixed5000Service = (orderId: number) => {
   const order = getOrderOrThrow(orderId);
   if (order.appliedCoupon.includes(1)) {
     if (Number(order.orderAmount) >= 100000) {
@@ -105,7 +105,7 @@ export const fixed5000 = (orderId: number) => {
 // 수량 3개인 상품들 productId 싹 담고,
 // 그 상품들 productId로 price 뽑아내서 배열에 담고,
 //
-export const btgo = (orderId: number) => {
+export const btgoService = (orderId: number) => {
   const order = getOrderOrThrow(orderId);
 
   if (!order.appliedCoupon.includes(2)) return;
@@ -126,7 +126,7 @@ export const btgo = (orderId: number) => {
 // 2. FREESHIPPING 쿠폰을 사용하였을 때
 // remoteArea가 true면 -6000 / remoteArea가 false면 -3000
 
-export const freeShipping = (orderId: number) => {
+export const freeShippingService = (orderId: number) => {
   const order = getOrderOrThrow(orderId);
   const isRemoteArea = () => {
     if (order.remoteArea === true) {
@@ -157,7 +157,10 @@ export const freeShipping = (orderId: number) => {
 //MIRACLESALE
 // 항상 FIXED5000 | FREESHIPPING 를 먼저 적용하고 적용한다. <- 이건 여기서 할게 아닌듯
 // 적용할 정액 쿠폰으로 할인된 가격에서 30% 할인
-export const miracleSale = (orderId: number, discountedAmount: number) => {
+export const miracleSaleService = (
+  orderId: number,
+  discountedAmount: number,
+) => {
   const order = getOrderOrThrow(orderId);
   if (order.appliedCoupon.includes(4)) {
     order.couponDiscountAmount += discountedAmount * 0.3;
