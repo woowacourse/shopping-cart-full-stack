@@ -186,8 +186,11 @@ export const applyCouponsService = (orderId: number): void => {
 
   if (bestCombination.includes(2)) {
     btgoService(orderId);
-    order.totalAmount =
-      order.orderAmount - order.couponDiscountAmount + order.shippingFee;
+    const finalOrder = storedOrderRepository.findById(orderId)!;
+    finalOrder.totalAmount =
+      finalOrder.orderAmount -
+      finalOrder.couponDiscountAmount +
+      finalOrder.shippingFee;
     return;
   }
 
