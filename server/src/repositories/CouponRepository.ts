@@ -12,7 +12,7 @@ const COUPONS: Coupon[] = [
   {
     couponId: 2,
     couponCode: "BTGO",
-    expiredDate: "2026-05-30",
+    expiredDate: "2026-06-30",
   },
 
   {
