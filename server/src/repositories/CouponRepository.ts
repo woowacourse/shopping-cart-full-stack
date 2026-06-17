@@ -25,8 +25,8 @@ const COUPONS: Coupon[] = [
     couponId: 4,
     couponCode: "MIRACLESALE",
     expiredDate: "2026-07-31",
-    usableStartAt: "04:00",
-    usableEndAt: "07:00",
+    usableStartAt: "4",
+    usableEndAt: "7",
     discountRate: 30,
   },
 ];
