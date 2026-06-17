@@ -153,3 +153,13 @@ export const freeShipping = (orderId: number) => {
     }
   }
 };
+
+//MIRACLESALE
+// 항상 FIXED5000 | FREESHIPPING 를 먼저 적용하고 적용한다. <- 이건 여기서 할게 아닌듯
+// 적용할 정액 쿠폰으로 할인된 가격에서 30% 할인
+export const miracleSale = (orderId: number, discountedAmount: number) => {
+  const order = getOrderOrThrow(orderId);
+  if (order.appliedCoupon.includes(4)) {
+    order.couponDiscountAmount += discountedAmount * 0.3;
+  }
+};
