@@ -94,12 +94,41 @@ export const postPaymentService = (orderId: number) => {
     orderQuantity: order.items.reduce((acc, item) => acc + item.quantity, 0),
     totalAmount: 0, // 쿠폰 계산 로직 구현 후 채우기
   };
+};
 
-  // order안에서 순회를 돌려 items의 productId로 해당 상품의 totalQuantity를 가져와서 order의 해당 item의 quantity랑 비교
-  // 검증 통과하면 product.totalQuantity -1
-  // 적용한 쿠폰의 유효기간이 아직 유효한지, 미라클모닝 쿠폰이 있다면 현재 적용 가능 시간대가 맞는지 검증
-  // cartRepository.delete(productId) 장바구니에서 검증 끝난 상품 삭제
-  // storedOrderRepository.delete(orderId) 임시 오더 삭제
-  //{itemCount, orderQuantity, totalAmount } response body값으로 넘겨준다.
-  // if (order?.items.quantity > product?.totalQuantity) throw new Error("재고가 부족합니다.")
+//배송비 면제 함수
+// 작동 조건
+// 1. 주문금액이 10만원 이상
+// 2. FREESHIPPING 쿠폰을 사용하였을 때
+// remoteArea가 true면 -6000 / remoteArea가 false면 -3000
+
+export const freeShipping = (orderId: number) => {
+  const order = storedOrderRepository.findById(orderId);
+  if (!order)
+    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
+
+  const isRemoteArea = () => {
+    if (order.remoteArea === true) {
+      order.shippingFee = order.shippingFee - 6000;
+    }
+    if (order.remoteArea === false) {
+      order.shippingFee = order.shippingFee - 3000;
+    }
+  };
+
+  // 주문금액이 100000원 이상
+  if (Number(order.orderAmount) >= 100000) {
+    isRemoteArea();
+  }
+
+  //주문금액이 50000~100000
+  if (
+    Number(order.orderAmount) >= 50000 &&
+    Number(order.orderAmount) < 100000
+  ) {
+    // FREESHIPING 쿠폰을 사용하였을 때
+    if (order.appliedCoupon.includes(3)) {
+      isRemoteArea();
+    }
+  }
 };
