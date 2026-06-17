@@ -5,6 +5,7 @@ import {cartController} from './controllers/CartController.js';
 import {asyncHandler} from './middlewares/asyncHandler.js';
 import {errorHandler} from './middlewares/errorHandler.js';
 import {productController} from './controllers/ProductController.js';
+import {preorderController} from './controllers/PreorderController.js';
 
 const app = express();
 
@@ -27,6 +28,8 @@ app.delete('/products/:productId', asyncHandler(productController.deleteProduct)
 app.get('/carts', asyncHandler(cartController.getCartItems));
 app.patch('/carts/:cartItemId', asyncHandler(cartController.updateQuantity));
 app.delete('/carts/:cartItemId', asyncHandler(cartController.deleteCartItem));
+
+app.post('/preorder', asyncHandler(preorderController.createPreorder));
 
 app.use(errorHandler);
 

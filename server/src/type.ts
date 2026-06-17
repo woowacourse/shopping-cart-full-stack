@@ -15,3 +15,7 @@ export interface CreateProductRequestBody {
 export interface UpdateCartQuantityRequestBody {
   quantity: number;
 }
+
+export interface CreatePreorderRequestBody {
+  selectedCartIds: string[];
+}
