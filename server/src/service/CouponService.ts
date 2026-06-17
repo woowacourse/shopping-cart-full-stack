@@ -77,3 +77,15 @@ export const isBtgoAvailable = (orderId: number): boolean => {
   if (isExpired(coupon.expiredDate)) return false;
   return order.items.some((item) => item.quantity >= 3);
 };
+
+// 3. FREESHIPPING
+// - 50000 > 주문금액 or  100000 <= 주문금액 이면 비활성화
+// - 적용 시간이 2026-08-31 이후면 삭제
+export const isFreeShippingAvailable = (orderId: number): boolean => {
+  const order = storedOrderRepository.findById(orderId);
+  const coupon = couponRepository.findById(3);
+  if (!order || !coupon) return false;
+  if (isExpired(coupon.expiredDate)) return false;
+  const amount = Number(order.orderAmount);
+  return amount >= 50000 && amount < 100000;
+};
