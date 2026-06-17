@@ -55,3 +55,14 @@ const isInMiracleSaleHours = (): boolean => {
   const now = new Date();
   return now.getHours() >= 4 && now.getHours() < 7;
 };
+
+//1. FIXED5000
+// - 주문금액 < minOrderAmount 면 비활성화
+// - 적용 시간이 2026-11-30 이후면 삭제
+export const isFixed5000Available = (orderId: number): boolean => {
+  const order = storedOrderRepository.findById(orderId);
+  const coupon = couponRepository.findById(1);
+  if (!order || !coupon) return false;
+  if (isExpired(coupon.expiredDate)) return false;
+  return Number(order.orderAmount) >= coupon.minOrderAmount!;
+};
