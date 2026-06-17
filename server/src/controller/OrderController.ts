@@ -8,7 +8,10 @@ import {
   updateRemoteAreaService,
 } from "../service/OrderService";
 import { handleError } from "./ErrorHandler";
-import { applyCouponsService } from "../service/CouponService";
+import {
+  applyCouponsService,
+  applySelectedCouponsService,
+} from "../service/CouponService";
 
 const getOrder = (request: Request, response: Response): void => {
   try {
@@ -47,6 +50,7 @@ const patchCoupon = (request: Request, response: Response): void => {
     const orderId = Number(request.params.orderId);
     const couponIds = request.body.couponIds;
     updateApplyCouponService(orderId, couponIds);
+    applySelectedCouponsService(orderId);
     response.status(204).send();
   } catch (error) {
     handleError(response, error);

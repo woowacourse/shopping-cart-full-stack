@@ -186,6 +186,8 @@ export const applyCouponsService = (orderId: number): void => {
 
   if (bestCombination.includes(2)) {
     btgoService(orderId);
+    order.totalAmount =
+      order.orderAmount - order.couponDiscountAmount + order.shippingFee;
     return;
   }
 
@@ -198,4 +200,45 @@ export const applyCouponsService = (orderId: number): void => {
       Number(freshOrder.orderAmount) - freshOrder.couponDiscountAmount;
     miracleSaleService(orderId, discountedAmount);
   }
+
+  const finalOrder = storedOrderRepository.findById(orderId)!;
+  finalOrder.totalAmount =
+    finalOrder.orderAmount -
+    finalOrder.couponDiscountAmount +
+    finalOrder.shippingFee;
+};
+
+// 유저가 고른 쿠폰대로 적용하기
+export const applySelectedCouponsService = (orderId: number): void => {
+  const order = storedOrderRepository.findById(orderId);
+  if (!order)
+    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
+
+  order.couponDiscountAmount = 0;
+  order.shippingFee = order.remoteArea ? 6000 : 3000;
+
+  const applied = order.appliedCoupon;
+
+  if (applied.includes(2)) {
+    btgoService(orderId);
+    order.totalAmount =
+      order.orderAmount - order.couponDiscountAmount + order.shippingFee;
+    return;
+  }
+
+  if (applied.includes(1)) fixed5000Service(orderId);
+  freeShippingService(orderId);
+
+  if (applied.includes(4)) {
+    const freshOrder = storedOrderRepository.findById(orderId)!;
+    const discountedAmount =
+      Number(freshOrder.orderAmount) - freshOrder.couponDiscountAmount;
+    miracleSaleService(orderId, discountedAmount);
+  }
+
+  const finalOrder = storedOrderRepository.findById(orderId)!;
+  finalOrder.totalAmount =
+    finalOrder.orderAmount -
+    finalOrder.couponDiscountAmount +
+    finalOrder.shippingFee;
 };
