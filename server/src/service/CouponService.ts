@@ -66,3 +66,14 @@ export const isFixed5000Available = (orderId: number): boolean => {
   if (isExpired(coupon.expiredDate)) return false;
   return Number(order.orderAmount) >= coupon.minOrderAmount!;
 };
+
+// 2. BTGO
+// - 수량이 3개 이상인 상품이 없으면 비활성화
+// - 적용 시간이 2026-06-30 이후면 삭제
+export const isBtgoAvailable = (orderId: number): boolean => {
+  const order = storedOrderRepository.findById(orderId);
+  const coupon = couponRepository.findById(2);
+  if (!order || !coupon) return false;
+  if (isExpired(coupon.expiredDate)) return false;
+  return order.items.some((item) => item.quantity >= 3);
+};
