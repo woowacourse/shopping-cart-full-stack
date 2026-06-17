@@ -2,7 +2,6 @@ import { NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { Coupon } from "../repositories/Coupon";
 import { couponRepository } from "../repositories/CouponRepository";
-import { storedOrderRepository } from "../repositories/StoredOrderRepository";
 
 // 쿠폰 DB에서 쿠폰 불러오기 get
 export const getCouponService = (): Coupon[] => {

@@ -132,3 +132,15 @@ export const freeShipping = (orderId: number) => {
     }
   }
 };
+
+// 100,000원 이상 구매시 5000원 할인 함수
+export const fixed5000 = (orderId: number) => {
+  const order = storedOrderRepository.findById(orderId);
+  if (!order)
+    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
+  if (order.appliedCoupon.includes(1)) {
+    if (Number(order.orderAmount) >= 100000) {
+      order.couponDiscountAmount += 5000;
+    }
+  }
+};
