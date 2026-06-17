@@ -112,3 +112,21 @@ const getAvailableCouponIds = (orderId: number): number[] => {
   if (isMiracleSaleAvailable()) available.push(4);
   return available;
 };
+
+//가능한 모든 쿠폰 조합 생성(BTGO는 단독, 나머지 쿠폰 조합 생성)
+const getValidCombinations = (availableIds: number[]): number[][] => {
+  const combinations: number[][] = [];
+  const nonBtgo = availableIds.filter((id) => id !== 2);
+
+  if (availableIds.includes(2)) combinations.push([2]);
+
+  nonBtgo.forEach((id) => combinations.push([id]));
+
+  for (let i = 0; i < nonBtgo.length; i++) {
+    for (let j = i + 1; j < nonBtgo.length; j++) {
+      combinations.push([nonBtgo[i], nonBtgo[j]]);
+    }
+  }
+
+  return combinations;
+};
