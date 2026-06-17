@@ -138,7 +138,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
   "coupons": [
     {
       "couponId": "number",
-      "code": "FIXED5000 | BOGO | FREESHIPPING | MIRACLESALE",
+      "code": "string",
       "name": "string",
       "expirationDate": "string",
       "condition": "object",
@@ -152,7 +152,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ### Coupon Condition / Benefit
 
-현재 단계의 쿠폰은 고정된 정책을 가진다. 최상위 `code`는 쿠폰 정책을 식별하고, `condition.type`과 `benefit.type`은 각각 조건과 혜택의 해석 방식을 나타낸다.
+현재 단계의 쿠폰은 고정된 정책을 가진다. 최상위 `code`는 쿠폰을 식별하는 문자열이며, `condition.type`과 `benefit.type`은 각각 조건과 혜택의 해석 방식을 나타낸다.
 
 | Code | condition | benefit |
 | --- | --- | --- |
@@ -161,7 +161,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 | `FREESHIPPING` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 50000 }` | `{ "type": "FREE_SHIPPING", "includesRemoteAreaFee": true }` |
 | `MIRACLESALE` | `{ "type": "TIME_RANGE", "start": "04:00", "end": "07:00" }` | `{ "type": "DISCOUNT_RATE", "discountRate": 0.3, "applyAfterFixedDiscount": true }` |
 
-- `code`는 `FIXED5000`, `BOGO`, `FREESHIPPING`, `MIRACLESALE` 중 하나이며 쿠폰 도메인 정책을 식별한다.
+- `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.type`과 `benefit.type`을 기준으로 해석한다.
 - `MIN_ORDER_AMOUNT`는 쿠폰 적용 전 주문 금액을 기준으로 판단한다.
 - `MIN_SAME_PRODUCT_QUANTITY`는 동일 상품을 2개 이상 구매했는지 판단할 때 사용한다.
 - `DISCOUNT_HIGHEST_UNIT_PRICE_ITEM`은 적용 가능한 상품 중 단가가 가장 높은 상품 1개를 할인 대상으로 삼는다는 의미다.
