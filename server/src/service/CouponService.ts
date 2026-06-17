@@ -168,6 +168,9 @@ export const applyCouponsService = (orderId: number): void => {
   if (!order)
     throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
 
+  order.couponDiscountAmount = 0;
+  order.shippingFee = order.remoteArea ? 6000 : 3000;
+
   const availableIds = getAvailableCouponIds(orderId);
   const combinations = getValidCombinations(availableIds);
 
