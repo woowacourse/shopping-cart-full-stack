@@ -2,6 +2,13 @@ import { NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { Coupon } from "../repositories/Coupon";
 import { couponRepository } from "../repositories/CouponRepository";
+import { storedOrderRepository } from "../repositories/StoredOrderRepository";
+import {
+  btgoService,
+  fixed5000Service,
+  freeShippingService,
+  miracleSaleService,
+} from "./OrderService";
 
 // 쿠폰 DB에서 쿠폰 불러오기 get
 export const getCouponService = (): Coupon[] => {
@@ -11,25 +18,34 @@ export const getCouponService = (): Coupon[] => {
 
   return coupons;
 };
+
 // 쿠폰 별 할인액 계산
 // 적용할 쿠폰 우선순위 정하기
-// 조건에 따른 비활성화 처리 로직 (최소 주문 금액, 만료일, 미라클모닝 조건)에 따른 비활성화 처리 로직
+// 주문금액을 받아와서 조건에 부합하는 쿠폰들로 적용한 할인액을 비교
+// MIRACLESALE은 항상 FIXED5000, FREESHIPPING 이 먼저 적용된 가격에 적용
+// BTGO 는 다른 쿠폰과 함께 사용할 수 없음
 
-// FREESHIPPING
-// 1. 주문금액 100,000원 이상이면 비활성화 (이미 무료 배송)
-// 2. 50,000 <= 주문금액 <  100,000 이면 활성화
-// remoteArea true면 -6000
-// remoteArea false면 -3000
+// 조건에 따른 쿠폰 비활성화 처리 로직
+// 1. FIXED5000
+// - 주문금액 < minOrderAmount 면 비활성화
+// - 적용 시간이 2026-11-30 이후면 삭제
 
-// FIXED5000
-// 100,000원 이상 구매시 5000원 할인 적용
+// 2. BTGO
+// - 수량이 3개 이상인 상품이 없으면 비활성화
+// - 적용 시간이 2026-06-30 이후면 삭제
 
-// BTGO
-// 1. 수량이 3개 이상인 상품이 하나라도 있으면 활성화
-// 2. 수량이 3개 이상인 상품중에서 가장 price가 큰 상품에 적용
-// 3. 할인액: 해당 상품의 price
-// 4. 이 쿠폰은 다른 쿠폰과 동시 적용 X (단독 사용만 가능)
+// 3. FREESHIPPING
+// - 50000 > 주문금액 or  100000 <= 주문금액 이면 비활성화
+// - 적용 시간이 2026-08-31 이후면 삭제
 
-//MIRACLESALE
-// 항상 FIXED5000 | FREESHIPPING 를 먼저 적용하고 적용한다.
-// 적용할 정액 쿠폰으로 할인된 가격에서 30% 할인
+// 4. MIRACLESALE
+// - GET /order요청을 보냈을 때,
+// GET/coupon/:orderId 요청을 보낼 때,
+// 결제하기 요청을 보낼 때의 클라이언트의 현재 시간이 04:00~07:00 사이가 아니라면 비활성화 및 적용 불가
+// - 적용 시간이 2026-07-31 이후면 삭제
+
+// 만료일 검증
+const isExpired = (expiredDate: string): boolean => {
+  const today = new Date().toISOString().split("T")[0];
+  return today > expiredDate;
+};
