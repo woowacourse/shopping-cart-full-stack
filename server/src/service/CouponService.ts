@@ -2,6 +2,7 @@ import { NotFoundError } from "../errors/CustomErrorClass";
 import { ERROR_MESSAGE } from "../errors/ErrorMessage";
 import { Coupon } from "../repositories/Coupon";
 import { couponRepository } from "../repositories/CouponRepository";
+import { productRepository } from "../repositories/ProductRepository";
 import { storedOrderRepository } from "../repositories/StoredOrderRepository";
 import {
   btgoService,
@@ -100,4 +101,14 @@ export const isMiracleSaleAvailable = (): boolean => {
   if (!coupon) return false;
   if (isExpired(coupon.expiredDate)) return false;
   return isInMiracleSaleHours();
+};
+
+// 적용 가능한 쿠폰 좁히기
+const getAvailableCouponIds = (orderId: number): number[] => {
+  const available: number[] = [];
+  if (isFixed5000Available(orderId)) available.push(1);
+  if (isBtgoAvailable(orderId)) available.push(2);
+  if (isFreeShippingAvailable(orderId)) available.push(3);
+  if (isMiracleSaleAvailable()) available.push(4);
+  return available;
 };
