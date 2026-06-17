@@ -3,6 +3,7 @@ import cors from "cors";
 import cartRouter from "./routes/CartRouter";
 import productRouter from "./routes/ProductRouter";
 import orderRouter from "./routes/OrderRouter";
+import couponRouter from "./routes/CouponRouter";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use("/cart", cartRouter);
 app.use("/products", productRouter);
 app.use("/order", orderRouter);
+app.use("/coupons", couponRouter);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
