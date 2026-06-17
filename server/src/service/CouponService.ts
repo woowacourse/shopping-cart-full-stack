@@ -161,3 +161,38 @@ const calculateDiscount = (orderId: number, couponIds: number[]): number => {
 
   return couponDiscount + shippingDiscount;
 };
+
+// 최적 쿠폰 조합 자동 계산 및 적용 메서드
+export const applyCouponsService = (orderId: number): void => {
+  const order = storedOrderRepository.findById(orderId);
+  if (!order)
+    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
+
+  const availableIds = getAvailableCouponIds(orderId);
+  const combinations = getValidCombinations(availableIds);
+
+  const bestCombination = combinations.reduce(
+    (best, current) =>
+      calculateDiscount(orderId, current) > calculateDiscount(orderId, best)
+        ? current
+        : best,
+    combinations[0] ?? [],
+  );
+
+  storedOrderRepository.updateAppliedCoupon(orderId, bestCombination);
+
+  if (bestCombination.includes(2)) {
+    btgoService(orderId);
+    return;
+  }
+
+  if (bestCombination.includes(1)) fixed5000Service(orderId);
+  freeShippingService(orderId);
+
+  if (bestCombination.includes(4)) {
+    const freshOrder = storedOrderRepository.findById(orderId)!;
+    const discountedAmount =
+      Number(freshOrder.orderAmount) - freshOrder.couponDiscountAmount;
+    miracleSaleService(orderId, discountedAmount);
+  }
+};
