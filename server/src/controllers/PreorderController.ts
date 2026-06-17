@@ -1,8 +1,16 @@
 import type {Request, Response} from 'express';
-import {CreatePreorderRequestBody} from '../type.js';
+import type {CreatePreorderRequestBody, PreorderIdParams} from '../type.js';
 import {preorderService} from '../services/PreorderService.js';
 
 export const preorderController = {
+  getPreorder(req: Request<PreorderIdParams>, res: Response) {
+    const preorder = preorderService.getPreorder(req.params.preorderId);
+
+    res.status(200).json({
+      body: preorder,
+    });
+  },
+
   createPreorder(req: Request<{}, unknown, CreatePreorderRequestBody>, res: Response) {
     const preorderId = preorderService.createPreorder(req.body);
 

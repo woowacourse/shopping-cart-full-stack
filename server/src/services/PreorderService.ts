@@ -3,12 +3,12 @@ import {cartItems} from '../db.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 import type {CreatePreorderRequestBody} from '../type.js';
 
-export const isCreatePreorerRequestBody = (body: unknown): body is CreatePreorderRequestBody => {
+export const isCreatePreorderRequestBody = (body: unknown): body is CreatePreorderRequestBody => {
   return typeof body === 'object' && body !== null;
 };
 
 export const isValidCreatePreorderBody = (body: unknown): body is CreatePreorderRequestBody => {
-  if (!isCreatePreorerRequestBody(body)) {
+  if (!isCreatePreorderRequestBody(body)) {
     return false;
   }
 
@@ -20,6 +20,25 @@ export const isValidCreatePreorderBody = (body: unknown): body is CreatePreorder
 };
 
 export const preorderService = {
+  getPreorder(preorderId: string) {
+    const preorderItems = preorderCache.findById(preorderId);
+
+    if (!preorderItems) {
+      throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
+    }
+
+    return {
+      preorderId,
+      items: preorderItems.map(({productId, price, name, imageUrl, quantity}) => ({
+        productId,
+        price,
+        name,
+        imageUrl,
+        quantity,
+      })),
+    };
+  },
+
   createPreorder(body: unknown) {
     if (!isValidCreatePreorderBody(body)) {
       throw new HttpError(400, 'selectedCartIds를 올바르게 입력해주세요.');

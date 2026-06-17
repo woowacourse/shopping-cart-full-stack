@@ -86,7 +86,7 @@ preorder 주문 세션에 저장된 `productId`, `quantity`, 상품 이름, 상�
       "productId": "string",
       "price": "number",
       "name": "string",
-      "thumbnail": "string",
+      "imageUrl": "string",
       "quantity": "number"
     }
   ]
@@ -103,7 +103,7 @@ preorder 주문 세션에 저장된 `productId`, `quantity`, 상품 이름, 상�
       "productId": "11001123",
       "price": 35000,
       "name": "무지 반팔티",
-      "thumbnail": "https://test.s3/products/tee.png",
+      "imageUrl": "https://test.s3/products/tee.png",
       "quantity": 2
     }
   ]

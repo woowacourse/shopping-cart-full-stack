@@ -6,6 +6,10 @@ export interface CartItemIdParams {
   cartItemId: string;
 }
 
+export interface PreorderIdParams {
+  preorderId: string;
+}
+
 export interface CreateProductRequestBody {
   name: string;
   price: number;

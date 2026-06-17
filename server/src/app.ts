@@ -30,6 +30,7 @@ app.patch('/carts/:cartItemId', asyncHandler(cartController.updateQuantity));
 app.delete('/carts/:cartItemId', asyncHandler(cartController.deleteCartItem));
 
 app.post('/preorder', asyncHandler(preorderController.createPreorder));
+app.get('/preorder/:preorderId', asyncHandler(preorderController.getPreorder));
 
 app.use(errorHandler);
 
