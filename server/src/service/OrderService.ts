@@ -100,6 +100,26 @@ export const fixed5000 = (orderId: number) => {
   }
 };
 
+//BTGO
+// BTGO쿠폰이 적용 쿠폰에 들어있다면,
+// 수량 3개인 상품들 productId 싹 담고,
+// 그 상품들 productId로 price 뽑아내서 배열에 담고,
+//
+export const btgo = (orderId: number) => {
+  const order = getOrderOrThrow(orderId);
+
+  if (!order.appliedCoupon.includes(2)) return;
+
+  const over3Items = order.items.filter((item) => item.quantity >= 3);
+  if (over3Items.length === 0) return;
+
+  const prices = over3Items.map(
+    (item) => productRepository.findById(item.productId)?.price ?? 0,
+  );
+
+  order.couponDiscountAmount += Math.max(...prices);
+};
+
 //배송비 면제 함수
 // 작동 조건
 // 1. 주문금액이 10만원 이상

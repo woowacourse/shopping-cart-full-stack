@@ -1,4 +1,3 @@
-import { couponRepository } from "./CouponRepository";
 import { StoredOrder } from "./StoredOrder";
 
 export default class StoredOrderRepository {
