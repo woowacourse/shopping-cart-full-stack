@@ -140,7 +140,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "couponId": "number",
       "code": "string",
       "name": "string",
-      "expirationDate": "string",
+      "expirationDate": "ISO 8601 datetime string",
       "condition": "object",
       "benefit": "object",
       "disabled": "boolean",
@@ -162,6 +162,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 | `MIRACLESALE` | `{ "type": "TIME_RANGE", "start": "04:00", "end": "07:00" }` | `{ "type": "DISCOUNT_RATE", "discountRate": 0.3, "applyAfterFixedDiscount": true }` |
 
 - `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.type`과 `benefit.type`을 기준으로 해석한다.
+- `expirationDate`는 ISO 8601 datetime string으로 전달한다.
 - `MIN_ORDER_AMOUNT`는 쿠폰 적용 전 주문 금액을 기준으로 판단한다.
 - `MIN_SAME_PRODUCT_QUANTITY`는 동일 상품을 2개 이상 구매했는지 판단할 때 사용한다.
 - `DISCOUNT_HIGHEST_UNIT_PRICE_ITEM`은 적용 가능한 상품 중 단가가 가장 높은 상품 1개를 할인 대상으로 삼는다는 의미다.
@@ -178,7 +179,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "couponId": 1,
       "code": "FIXED5000",
       "name": "5000원 할인 쿠폰",
-      "expirationDate": "2026-11-30",
+      "expirationDate": "2026-11-30T14:59:59.000Z",
       "condition": {
         "type": "MIN_ORDER_AMOUNT",
         "minOrderAmount": 100000
@@ -194,7 +195,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "couponId": 2,
       "code": "BOGO",
       "name": "2+1 쿠폰",
-      "expirationDate": "2026-06-30",
+      "expirationDate": "2026-06-30T14:59:59.000Z",
       "condition": {
         "type": "MIN_SAME_PRODUCT_QUANTITY",
         "minSameProductQuantity": 2
@@ -210,7 +211,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "couponId": 3,
       "code": "FREESHIPPING",
       "name": "무료 배송 쿠폰",
-      "expirationDate": "2026-08-31",
+      "expirationDate": "2026-08-31T14:59:59.000Z",
       "condition": {
         "type": "MIN_ORDER_AMOUNT",
         "minOrderAmount": 50000
@@ -226,7 +227,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "couponId": 4,
       "code": "MIRACLESALE",
       "name": "30% 시간제 할인 쿠폰",
-      "expirationDate": "2026-07-31",
+      "expirationDate": "2026-07-31T14:59:59.000Z",
       "condition": {
         "type": "TIME_RANGE",
         "start": "04:00",
