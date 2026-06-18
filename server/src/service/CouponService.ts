@@ -245,3 +245,14 @@ export const applySelectedCouponsService = (orderId: number): void => {
     finalOrder.couponDiscountAmount +
     finalOrder.shippingFee;
 };
+
+export const getCalculatedDiscountService = (
+  orderId: number,
+  couponIds: number[],
+): number => {
+  const order = storedOrderRepository.findById(orderId);
+  if (!order)
+    throw new NotFoundError("NOT_FOUND_ORDER", ERROR_MESSAGE.NOT_FOUND_ORDER);
+
+  return calculateDiscount(orderId, couponIds);
+};

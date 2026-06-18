@@ -11,6 +11,7 @@ import { handleError } from "./ErrorHandler";
 import {
   applyCouponsService,
   applySelectedCouponsService,
+  getCalculatedDiscountService,
 } from "../service/CouponService";
 import { validateCouponCount } from "../util/Validator";
 
@@ -79,6 +80,18 @@ const postPayment = (request: Request, response: Response): void => {
   }
 };
 
+const getCouponCalculate = (request: Request, response: Response): void => {
+  try {
+    const orderId = Number(request.params.orderId);
+    const raw = request.query.couponIds as string;
+    const couponIds = raw ? raw.split(",").map(Number) : [];
+    const discountAmount = getCalculatedDiscountService(orderId, couponIds);
+    response.status(200).json({ discountAmount });
+  } catch (error) {
+    handleError(response, error);
+  }
+};
+
 export default {
   getOrder,
   postOrder,
@@ -86,4 +99,5 @@ export default {
   patchOrder,
   patchCoupon,
   postPayment,
+  getCouponCalculate,
 };

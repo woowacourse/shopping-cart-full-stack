@@ -3,6 +3,12 @@ import OrderController from "../controller/OrderController";
 
 const orderRouter = Router();
 
+// GET /order/:orderId/coupon/calculate?couponIds=1,2
+orderRouter.get(
+  "/:orderId/coupon/calculate",
+  OrderController.getCouponCalculate,
+);
+
 // GET /order
 orderRouter.get("/:orderId", OrderController.getOrder);
 
