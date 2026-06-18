@@ -30,6 +30,10 @@ describe("주문 API 통합 테스트", () => {
         items: [{ productId: 1, quantity: 2 }],
         appliedCoupon: [],
         remoteArea: false,
+        orderAmount: 0,
+        couponDiscountAmount: 0,
+        shippingFee: 0,
+        totalAmount: 0,
       });
       orderId = order.orderId;
     });
@@ -56,6 +60,10 @@ describe("주문 API 통합 테스트", () => {
         items: [{ productId: 1, quantity: 2 }],
         appliedCoupon: [],
         remoteArea: false,
+        orderAmount: 0,
+        couponDiscountAmount: 0,
+        shippingFee: 0,
+        totalAmount: 0,
       });
       orderId = order.orderId;
     });
