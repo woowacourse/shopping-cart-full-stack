@@ -5,6 +5,7 @@ import { couponRepository } from "../repositories/CouponRepository";
 import { productRepository } from "../repositories/ProductRepository";
 import { StoredOrder } from "../repositories/StoredOrder";
 import { storedOrderRepository } from "../repositories/StoredOrderRepository";
+import { isMiracleSaleAvailable } from "./CouponService";
 
 function getOrderOrThrow(orderId: number) {
   const order = storedOrderRepository.findById(orderId);
@@ -61,6 +62,9 @@ export const postPaymentService = (orderId: number) => {
   if (!orderId)
     throw new InvalidError("INVALID_ORDER_ID", ERROR_MESSAGE.INVALID_ORDER_ID);
   const order = getOrderOrThrow(orderId);
+  if (order.appliedCoupon.includes(4) && !isMiracleSaleAvailable()) {
+    throw new InvalidError("INVALID_COUPON", ERROR_MESSAGE.INVALID_COUPON);
+  }
   order.items.forEach(({ productId, quantity }) => {
     const product = productRepository.findById(productId);
     if (!product)
