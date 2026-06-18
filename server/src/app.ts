@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: /\.vercel\.app$/,
+    origin: [/\.vercel\.app$/, "http://localhost:3000"],
   }),
 );
 app.use(express.json());
