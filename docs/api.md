@@ -250,6 +250,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 | Code | 설명 |
 |---:|---|
 | 200 | 쿠폰 목록 조회 성공 |
+| 400 | query parameter의 `preorderId`가 유효하지 않음 |
 | 404 | `preorderId`가 유효하지 않거나, TTL 만료 또는 서버 재시작으로 preorder를 찾을 수 없음 |
 
 ---
