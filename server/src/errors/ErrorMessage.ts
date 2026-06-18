@@ -12,5 +12,6 @@ export const ERROR_MESSAGE = {
   INVALID_NAME: "name은 필수이며 100자 이내여야합니다.",
   INVALID_THUMBNAIL_URL: "thumbnailUrl은 필수 항목입니다.",
   INVALID_COUPON: "유효하지 않은 쿠폰입니다.",
+  INVALID_COUPON_COUNT: "쿠폰은 최대 2개까지 적용할 수 있습니다.",
   SERVER_ERROR: "네트워크 에러가 발생했습니다!",
 } as const;

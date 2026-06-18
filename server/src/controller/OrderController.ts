@@ -12,6 +12,7 @@ import {
   applyCouponsService,
   applySelectedCouponsService,
 } from "../service/CouponService";
+import { validateCouponCount } from "../util/Validator";
 
 const getOrder = (request: Request, response: Response): void => {
   try {
@@ -49,6 +50,7 @@ const patchCoupon = (request: Request, response: Response): void => {
   try {
     const orderId = Number(request.params.orderId);
     const couponIds = request.body.couponIds;
+    validateCouponCount(couponIds);
     updateApplyCouponService(orderId, couponIds);
     applySelectedCouponsService(orderId);
     response.status(204).send();
