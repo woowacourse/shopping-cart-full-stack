@@ -7,4 +7,5 @@ export interface Coupon {
   usableEndAt?: string | null;
   discountAmount?: number;
   discountRate?: number;
+  isAvailable?: boolean;
 }
