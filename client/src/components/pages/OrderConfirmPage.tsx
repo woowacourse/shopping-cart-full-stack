@@ -2,33 +2,49 @@ import styled from "styled-components";
 import { Navigate, useLocation } from "react-router-dom";
 
 import BackButton from "../button/BackButton";
+import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
 
 export default function OrderConfirmPage() {
   const location = useLocation();
   if (!location.state) {
     return <Navigate to="/cart" replace />;
   }
-  const { itemCount, totalQuantity, totalPrice } = location.state;
+
+  // const { state, orderItems, ... } = useOrderData(); <- contextAPI로 해볼까?
   return (
     <MainContainer>
-      <Body>
-        <Nav>
-          <BackButton />
-        </Nav>
-        <ConfirmOrderSection>
-          <Title> 주문 확인 </Title>
-          <Label>
-            총 {itemCount}종류의 상품 {totalQuantity}개를 주문합니다. 최종 결제
-            금액을 확인해 주세요.
-          </Label>
-          <TotalPriceLabel>총 결제 금액</TotalPriceLabel>
-          <TotalPrice>{totalPrice.toLocaleString()}원</TotalPrice>
-        </ConfirmOrderSection>
-        <PayButton disabled>결제하기</PayButton>
-      </Body>
+      {state.status === "loading" && <ShoppingCartSkeleton />}
+      {state.status === "error" && (
+        <ErrorMessage>
+          주문 확인 페이지를 불러오는 데 실패했습니다.
+        </ErrorMessage>
+      )}
+      {state.status === "success" && (
+        <Body>
+          <Nav>
+            <BackButton />
+          </Nav>
+          <SubContainer>
+            <TopSection>
+              <Title> 주문 확인 </Title>
+              <Label>
+                현재 {} 종류의 상품 {}개를 주문합니다. <br />
+                최종 결제 금액을 확인해주세요.
+              </Label>
+            </TopSection>
+
+            {/* <OrderCartList/> 장바구니에서 선택된 상품 리스트(이미지, 이름, 가격, 수량) */}
+            {/* <ApplyCouponButton/> 쿠폰 적용 버튼(쿠폰 모달 여는 버튼) */}
+            {/* <ShippingInfo/> 배송 정보(제주도 및 도서 산간 지역 체크, PATCH/:orderId/address ) */}
+            {/* <FinalResultOrder/>  주문금액, 쿠폰 할인 금액, 배송비, 총 결제 금액 */}
+            {/* <paymentButton/> 결제하기 버튼(POST/order/:orderid/payment) */}
+          </SubContainer>
+        </Body>
+      )}
     </MainContainer>
   );
 }
+
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,11 +53,9 @@ const MainContainer = styled.div`
   height: 100vh;
   overflow: hidden;
 `;
-
 const Body = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: flex-start;
   width: 430px;
   height: 100vh;
@@ -56,15 +70,22 @@ const Nav = styled.nav`
   background-color: #000000;
 `;
 
-const ConfirmOrderSection = styled.div`
-  flex: 1;
+const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
+  justify-content: flex-start;
+  width: 100%;
+  overflow: hidden;
+  flex: 1;
+  padding: 24px;
+  box-sizing: border-box;
 `;
 
+const TopSection = styled.div`
+  width: 100%;
+  height: 62px;
+  margin-bottom: 24px;
+`;
 const Title = styled.div`
   font-size: 24px;
   font-family: sans-serif;
@@ -77,27 +98,8 @@ const Label = styled.div`
   font-weight: 500;
 `;
 
-const TotalPriceLabel = styled.p`
+const ErrorMessage = styled.p`
+  margin-top: 40px;
   font-size: 14px;
-  font-family: sans-serif;
-  font-weight: 500;
-  margin: 0;
-`;
-
-const TotalPrice = styled.p`
-  font-size: 24px;
-  font-family: sans-serif;
-  font-weight: 700;
-  margin: 0;
-`;
-
-const PayButton = styled.button`
-  width: 100%;
-  height: 64px;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: sans-serif;
-  color: #ffffff;
-  background-color: #bebebe;
-  cursor: not-allowed;
+  color: #888;
 `;
