@@ -20,6 +20,7 @@ export interface OrderData {
   couponDiscountAmount: number;
   shippingFee: number;
   totalAmount: number;
+  couponCombinations: Record<string, number>;
 }
 
 export interface CouponData {

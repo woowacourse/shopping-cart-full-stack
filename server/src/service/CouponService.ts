@@ -131,6 +131,20 @@ const getValidCombinations = (availableIds: number[]): number[][] => {
   return combinations;
 };
 
+export const getCouponCombinationsService = (
+  orderId: number,
+): Record<string, number> => {
+  const availableIds = getAvailableCouponIds(orderId);
+  const combinations = getValidCombinations(availableIds);
+
+  return Object.fromEntries(
+    combinations.map((combo) => [
+      combo.sort((a, b) => a - b).join(","),
+      calculateDiscount(orderId, combo),
+    ]),
+  );
+};
+
 // 어떤 조합이 최대 할인인지 비교하기 위한 계산 로직
 const calculateDiscount = (orderId: number, couponIds: number[]): number => {
   const order = storedOrderRepository.findById(orderId)!;

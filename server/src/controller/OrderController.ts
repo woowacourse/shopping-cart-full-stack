@@ -12,15 +12,18 @@ import {
   applyCouponsService,
   applySelectedCouponsService,
   getCalculatedDiscountService,
+  getCouponCombinationsService,
 } from "../service/CouponService";
 import { validateCouponCount } from "../util/Validator";
 
 const getOrder = (request: Request, response: Response): void => {
   try {
     const orderId = Number(request.params.orderId);
-    applyCouponsService(orderId);
     const order = getOrdersService(orderId);
-    response.status(200).json(order);
+    if (order.appliedCoupon.length === 0) applyCouponsService(orderId);
+    const updatedOrder = getOrdersService(orderId);
+    const couponCombinations = getCouponCombinationsService(orderId);
+    response.status(200).json({ ...updatedOrder, couponCombinations });
   } catch (error) {
     handleError(response, error);
   }
