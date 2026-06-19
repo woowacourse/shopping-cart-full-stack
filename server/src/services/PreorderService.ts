@@ -51,7 +51,7 @@ export const preorderService = {
 
     return {
       preorderId,
-      items: preorderItems.map(({productId, price, name, imageUrl, quantity}) => ({
+      items: preorderItems.items.map(({productId, price, name, imageUrl, quantity}) => ({
         productId,
         price,
         name,
