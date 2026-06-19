@@ -7,6 +7,7 @@ import {cartController} from './controllers/CartController.js';
 import {productController} from './controllers/ProductController.js';
 import {preorderController} from './controllers/PreorderController.js';
 import {couponController} from './controllers/CouponController.js';
+import {orderController} from './controllers/OrderController.js';
 
 const app = express();
 
@@ -34,6 +35,8 @@ app.post('/preorder', asyncHandler(preorderController.createPreorder));
 app.get('/preorder/:preorderId', asyncHandler(preorderController.getPreorder));
 
 app.get('/coupons', asyncHandler(couponController.getCoupons));
+
+app.post('/order/preview', asyncHandler(orderController.previewOrder));
 
 app.use(errorHandler);
 

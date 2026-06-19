@@ -23,3 +23,9 @@ export interface UpdateCartQuantityRequestBody {
 export interface CreatePreorderRequestBody {
   selectedCartIds: string[];
 }
+
+export interface PreviewOrderRequestBody {
+  preorderId: string;
+  isRemoteArea: boolean;
+  couponIds: number[];
+}
