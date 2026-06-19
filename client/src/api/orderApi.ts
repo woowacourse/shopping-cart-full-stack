@@ -17,10 +17,10 @@ export const orderApi = {
     fetch(`${BASE_URL}/order/${orderId}`, { method: "DELETE" }),
 
   //쿠폰 적용 PATCH/ order/:orderId/coupon
-  patch: (orderId: number, couponId: number) =>
+  patch: (orderId: number, couponIds: number[]) =>
     fetch(`${BASE_URL}/order/${orderId}/coupon`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderId),
+      body: JSON.stringify({ couponIds }),
     }),
 };
