@@ -13,6 +13,7 @@ export const cartController = {
   updateQuantity(req: Request<CartItemIdParams, unknown, UpdateCartQuantityRequestBody>, res: Response) {
     const cartItemId = req.params.cartItemId;
     const {quantity} = req.body;
+
     const updatedQuantity = cartService.updateQuantity(cartItemId, quantity);
 
     res.status(200).json({
@@ -25,6 +26,7 @@ export const cartController = {
 
   deleteCartItem(req: Request<CartItemIdParams>, res: Response) {
     const cartItemId = req.params.cartItemId;
+
     cartService.deleteCartItem(cartItemId);
 
     res.sendStatus(204);
