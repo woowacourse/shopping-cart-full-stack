@@ -1,7 +1,7 @@
 import {preorderCache} from '../caches/PreorderCache.js';
 import {cartItems} from '../db.js';
 import {HttpError} from '../middlewares/errorHandler.js';
-import type {CreatePreorderRequestBody} from '../type.js';
+import type {CreatePreorderRequestBody, Preorder} from '../type.js';
 
 const isValidCreatePreorderBody = (body: unknown): body is CreatePreorderRequestBody => {
   if (!body || typeof body !== 'object') {
@@ -42,7 +42,7 @@ const createPreorderItem = (cartId: string) => {
 };
 
 export const preorderService = {
-  getPreorder(preorderId: string) {
+  getPreorder(preorderId: string): Preorder {
     const preorderItems = preorderCache.findById(preorderId);
 
     if (!preorderItems) {
