@@ -1,10 +1,10 @@
-import {cartItemData} from './data/cartItems.js';
-import {couponData} from './data/coupons.js';
-import {productData} from './data/products.js';
-import {CartItem} from './models/CartItem.js';
-import {CartItems} from './models/CartItems.js';
-import {Product} from './models/Product.js';
-import {Products} from './models/Products.js';
+import {cartItemData} from '../data/cartItems.js';
+import {couponData} from '../data/coupons.js';
+import {productData} from '../data/products.js';
+import {CartItem} from '../models/CartItem.js';
+import {CartItems} from '../models/CartItems.js';
+import {Product} from '../models/Product.js';
+import {Products} from '../models/Products.js';
 
 const productList = productData.map(({id, name, price, imageUrl}) => new Product(id, name, price, imageUrl));
 

@@ -1,5 +1,5 @@
 import type {Request, Response} from 'express';
-import type {CreatePreorderRequestBody, PreorderIdParams} from '../type.js';
+import type {CreatePreorderRequestBody, PreorderIdParams} from '../types/preorder.js';
 import {preorderService} from '../services/PreorderService.js';
 
 export const preorderController = {

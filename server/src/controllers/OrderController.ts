@@ -1,5 +1,5 @@
 import type {Request, Response} from 'express';
-import type {PreviewOrderRequestBody} from '../type.js';
+import type {PreviewOrderRequestBody} from '../types/order.js';
 import {orderService} from '../services/OrderService.js';
 
 export const orderController = {

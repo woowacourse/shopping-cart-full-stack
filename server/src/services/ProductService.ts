@@ -1,7 +1,7 @@
-import {cartItems, products} from '../db.js';
+import {cartItems, products} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 import {Product} from '../models/Product.js';
-import type {CreateProductRequestBody} from '../type.js';
+import type {CreateProductRequestBody} from '../types/product.js';
 
 const PRODUCT_NAME_MAX_LENGTH = 100;
 

@@ -1,5 +1,5 @@
 import type {Coupon} from '../data/coupons.js';
-import type {Preorder} from '../type.js';
+import type {Preorder} from '../types/preorder.js';
 
 const getMinutes = (time: string) => {
   const [hour, minute] = time.split(':').map(Number);

@@ -1,4 +1,4 @@
-import {cartItems} from '../db.js';
+import {cartItems} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 
 export const cartService = {

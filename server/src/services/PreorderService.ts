@@ -1,7 +1,7 @@
 import {preorderCache} from '../caches/PreorderCache.js';
-import {cartItems} from '../db.js';
+import {cartItems} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
-import type {CreatePreorderRequestBody, Preorder} from '../type.js';
+import type {CreatePreorderRequestBody, Preorder} from '../types/preorder.js';
 
 const isValidCreatePreorderBody = (body: unknown): body is CreatePreorderRequestBody => {
   if (!body || typeof body !== 'object') {

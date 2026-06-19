@@ -1,4 +1,4 @@
-import type {PreorderItem} from '../type.js';
+import type {PreorderItem} from '../types/preorder.js';
 
 const DEFAULT_SHIPPING_FEE = 3000;
 const REMOTE_AREA_FEE = 3000;

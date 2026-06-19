@@ -1,12 +1,12 @@
 import {preorderCache} from '../caches/PreorderCache.js';
-import {coupons} from '../db.js';
+import {coupons} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 
 import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
 
 import type {Coupon} from '../data/coupons.js';
-import type {ExcludedCoupon, PreviewOrderRequestBody} from '../type.js';
+import type {ExcludedCoupon, PreviewOrderRequestBody} from '../types/order.js';
 
 const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody => {
   if (!body || typeof body !== 'object') {

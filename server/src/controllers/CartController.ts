@@ -1,7 +1,7 @@
 import type {Request, Response} from 'express';
 
 import {cartService} from '../services/CartService.js';
-import type {CartItemIdParams, UpdateCartQuantityRequestBody} from '../type.js';
+import type {CartItemIdParams, UpdateCartQuantityRequestBody} from '../types/cart.js';
 
 export const cartController = {
   getCartItems(_req: Request, res: Response) {
