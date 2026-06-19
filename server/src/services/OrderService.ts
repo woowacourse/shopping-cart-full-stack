@@ -1,20 +1,12 @@
 import {preorderCache} from '../caches/PreorderCache.js';
 import {coupons} from '../db.js';
-import type {Coupon} from '../data/coupons.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 
-import type {PreviewOrderRequestBody} from '../type.js';
-import {couponPolicyService} from './CouponPolicyService.js';
+import {getCouponDisabledReason} from '../domain/couponPolicy.js';
+import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
 
-const DEFAULT_SHIPPING_FEE = 3000;
-const REMOTE_AREA_FEE = 3000;
-
-interface ExcludedCoupon {
-  couponId: number;
-  code: string;
-  name: string;
-  excludedReason: string;
-}
+import type {Coupon} from '../data/coupons.js';
+import type {ExcludedCoupon, PreviewOrderRequestBody} from '../type.js';
 
 const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody => {
   if (!body || typeof body !== 'object') {
@@ -56,7 +48,6 @@ export const orderService = {
     couponIds.forEach((couponId) => {
       const coupon = findCouponById(couponId);
 
-      //쿠폰Id가 존재하지 않을 때
       if (!coupon) {
         excludedCoupons.push({
           couponId,
@@ -67,12 +58,11 @@ export const orderService = {
         return;
       }
 
-      const disabledReason = couponPolicyService.getDisabledReason(coupon, {
+      const disabledReason = getCouponDisabledReason(coupon, {
         preorderId,
         items: preorder.items,
       });
 
-      //쿠폰 사용 불가능할 때
       if (disabledReason) {
         excludedCoupons.push({
           couponId: coupon.id,
@@ -83,15 +73,11 @@ export const orderService = {
         return;
       }
 
-      //쿠폰 사용 가능할 때
       applicableCoupons.push(coupon);
     });
 
-    const orderAmount = preorder.items.reduce((total, item) => {
-      return total + item.price * item.quantity;
-    }, 0);
-
-    const shippingFee = DEFAULT_SHIPPING_FEE + (isRemoteArea ? REMOTE_AREA_FEE : 0);
+    const orderAmount = calculateOrderAmount(preorder.items);
+    const shippingFee = calculateShippingFee(isRemoteArea);
 
     const isSaved = preorderCache.savePreview(preorderId, {
       couponIds,

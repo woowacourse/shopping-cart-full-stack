@@ -2,7 +2,7 @@ import {HttpError} from '../middlewares/errorHandler.js';
 import {coupons} from '../db.js';
 import type {Coupon} from '../data/coupons.js';
 
-import {couponPolicyService} from './CouponPolicyService.js';
+import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {preorderService} from './PreorderService.js';
 
 const toCouponResponse = (coupon: Coupon, disabledReason: string | null) => {
@@ -27,7 +27,7 @@ export const couponService = {
     const preorder = preorderService.getPreorder(preorderId);
 
     return coupons.map((coupon) => {
-      const disabledReason = couponPolicyService.getDisabledReason(coupon, preorder);
+      const disabledReason = getCouponDisabledReason(coupon, preorder);
 
       return toCouponResponse(coupon, disabledReason);
     });

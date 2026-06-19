@@ -42,3 +42,10 @@ export interface PreviewOrderRequestBody {
   isRemoteArea: boolean;
   couponIds: number[];
 }
+
+export interface ExcludedCoupon {
+  couponId: number;
+  code: string;
+  name: string;
+  excludedReason: string;
+}
