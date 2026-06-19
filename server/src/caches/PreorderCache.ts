@@ -11,13 +11,15 @@ export interface PreorderItemSnapshot {
   quantity: number;
 }
 
+interface PreorderPreview {
+  couponIds: number[];
+  isRemoteArea: boolean;
+}
+
 interface PreorderSession {
   items: PreorderItemSnapshot[];
   expiresAt: number;
-  preview?: {
-    couponIds: number[];
-    isRemoteArea: boolean;
-  };
+  preview?: PreorderPreview;
 }
 
 const preorders = new Map<string, PreorderSession>();
@@ -52,5 +54,20 @@ export const preorderCache = {
 
   deleteById(preorderId: string) {
     return preorders.delete(preorderId);
+  },
+
+  savePreview(preorderId: string, preview: PreorderPreview) {
+    const preorder = this.findById(preorderId);
+
+    if (!preorder) {
+      return false;
+    }
+
+    preorders.set(preorderId, {
+      ...preorder,
+      preview,
+    });
+
+    return true;
   },
 };
