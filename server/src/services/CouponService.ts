@@ -1,6 +1,6 @@
 import {HttpError} from '../middlewares/errorHandler.js';
 import {coupons} from '../repositories/index.js';
-import type {Coupon} from '../data/coupons.js';
+import type {Coupon} from '../types/coupon.js';
 
 import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {preorderService} from './PreorderService.js';

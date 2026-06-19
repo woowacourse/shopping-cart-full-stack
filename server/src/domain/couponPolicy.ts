@@ -1,4 +1,4 @@
-import type {Coupon} from '../data/coupons.js';
+import type {Coupon} from '../types/coupon.js';
 import type {Preorder} from '../types/preorder.js';
 
 const getMinutes = (time: string) => {

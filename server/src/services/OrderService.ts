@@ -5,7 +5,7 @@ import {HttpError} from '../middlewares/errorHandler.js';
 import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
 
-import type {Coupon} from '../data/coupons.js';
+import type {Coupon} from '../types/coupon.js';
 import type {ExcludedCoupon, PreviewOrderRequestBody} from '../types/order.js';
 
 const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody => {
