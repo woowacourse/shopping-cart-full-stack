@@ -3,20 +3,42 @@ import {cartItems} from '../db.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 import type {CreatePreorderRequestBody} from '../type.js';
 
-export const isCreatePreorderRequestBody = (body: unknown): body is CreatePreorderRequestBody => {
-  return typeof body === 'object' && body !== null;
-};
-
-export const isValidCreatePreorderBody = (body: unknown): body is CreatePreorderRequestBody => {
-  if (!isCreatePreorderRequestBody(body)) {
+const isValidCreatePreorderBody = (body: unknown): body is CreatePreorderRequestBody => {
+  if (!body || typeof body !== 'object') {
     return false;
   }
 
+  const {selectedCartIds} = body as CreatePreorderRequestBody;
+
   return (
-    Array.isArray(body.selectedCartIds) &&
-    body.selectedCartIds.length > 0 &&
-    body.selectedCartIds.every((cartId) => typeof cartId === 'string')
+    Array.isArray(selectedCartIds) &&
+    selectedCartIds.length > 0 &&
+    selectedCartIds.every((cartId) => typeof cartId === 'string')
   );
+};
+
+const findCartItem = (cartId: string) => {
+  const cartItem = cartItems.findById(cartId);
+
+  if (!cartItem) {
+    throw new HttpError(404, '선택한 장바구니 항목을 찾을 수 없습니다.');
+  }
+
+  return cartItem;
+};
+
+const createPreorderItem = (cartId: string) => {
+  const cartItem = findCartItem(cartId);
+  const {productInfo} = cartItem;
+
+  return {
+    cartItemId: cartItem.id,
+    productId: productInfo.id,
+    name: productInfo.name,
+    price: productInfo.price,
+    imageUrl: productInfo.imageUrl,
+    quantity: cartItem.getQuantity(),
+  };
 };
 
 export const preorderService = {
@@ -45,24 +67,7 @@ export const preorderService = {
     }
 
     const {selectedCartIds} = body;
-    const preorderItems = selectedCartIds.map((cartId) => {
-      const cartItem = cartItems.findById(cartId);
-
-      if (!cartItem) {
-        throw new HttpError(404, '선택한 장바구니 항목을 찾을 수 없습니다.');
-      }
-
-      const {productInfo} = cartItem;
-
-      return {
-        cartItemId: cartItem.id,
-        productId: productInfo.id,
-        name: productInfo.name,
-        price: productInfo.price,
-        imageUrl: productInfo.imageUrl,
-        quantity: cartItem.getQuantity(),
-      };
-    });
+    const preorderItems = selectedCartIds.map(createPreorderItem);
 
     return preorderCache.save(preorderItems);
   },
