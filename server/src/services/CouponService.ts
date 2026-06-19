@@ -1,5 +1,6 @@
 import {coupons} from '../db.js';
 import type {Coupon} from '../data/coupons.js';
+import {HttpError} from '../middlewares/errorHandler.js';
 import {preorderService} from './PreorderService.js';
 
 type Preorder = ReturnType<typeof preorderService.getPreorder>;
@@ -64,7 +65,11 @@ const toCouponResponse = (coupon: Coupon, disabledReason: string | null) => {
 };
 
 export const couponService = {
-  getCoupons(preorderId: string) {
+  getCoupons(preorderId: unknown) {
+    if (typeof preorderId !== 'string' || preorderId.length === 0) {
+      throw new HttpError(400, 'preorderId를 올바르게 입력해주세요.');
+    }
+
     const preorder = preorderService.getPreorder(preorderId);
 
     return coupons.map((coupon) => {
