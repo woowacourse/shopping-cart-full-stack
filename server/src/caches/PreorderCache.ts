@@ -11,18 +11,18 @@ export interface PreorderItemSnapshot {
   quantity: number;
 }
 
-interface PreorderPreview {
+interface PreorderPreviewSnapshot {
   couponIds: number[];
   isRemoteArea: boolean;
 }
 
-interface PreorderSession {
+interface PreorderCacheSession {
   items: PreorderItemSnapshot[];
   expiresAt: number;
-  preview?: PreorderPreview;
+  preview?: PreorderPreviewSnapshot;
 }
 
-const preorders = new Map<string, PreorderSession>();
+const preorders = new Map<string, PreorderCacheSession>();
 
 export const preorderCache = {
   save(items: PreorderItemSnapshot[]) {
@@ -56,7 +56,7 @@ export const preorderCache = {
     return preorders.delete(preorderId);
   },
 
-  savePreview(preorderId: string, preview: PreorderPreview) {
+  savePreview(preorderId: string, preview: PreorderPreviewSnapshot) {
     const preorder = this.findById(preorderId);
 
     if (!preorder) {
