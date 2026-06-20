@@ -18,11 +18,26 @@ export const getOrdersService = (orderId: number): StoredOrder => {
   return getOrderOrThrow(orderId);
 };
 
-export const postOrderService = (
-  newOrder: Omit<StoredOrder, "orderId">,
-): StoredOrder => {
-  const addedOrder = storedOrderRepository.addOrder(newOrder);
-  return addedOrder;
+export const postOrderService = (newOrder: {
+  items: Array<{ productId: number; quantity: number }>;
+}): StoredOrder => {
+  const orderAmount = newOrder.items.reduce((acc, { productId, quantity }) => {
+    const product = productRepository.findById(productId);
+    return acc + (product?.price ?? 0) * quantity;
+  }, 0);
+  const shippingFee = orderAmount >= 100000 ? 0 : 3000;
+
+  const fullOrder: Omit<StoredOrder, "orderId"> = {
+    items: newOrder.items,
+    appliedCoupon: [],
+    remoteArea: false,
+    orderAmount,
+    couponDiscountAmount: 0,
+    shippingFee,
+    totalAmount: orderAmount + shippingFee,
+  };
+
+  return storedOrderRepository.addOrder(fullOrder);
 };
 
 export const updateRemoteAreaService = (
