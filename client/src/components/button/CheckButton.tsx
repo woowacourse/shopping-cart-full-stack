@@ -39,6 +39,7 @@ export default function CheckButton({
         itemCount,
         totalQuantity: totalQuantity({ cartItems, selectedItems }),
         totalPrice,
+        selectedItems,
       },
     });
   };
