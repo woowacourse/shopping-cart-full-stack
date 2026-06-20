@@ -15,6 +15,7 @@ import {
   getCouponCombinationsService,
 } from "../service/CouponService";
 import { validateCouponCount } from "../util/Validator";
+import { productRepository } from "../repositories/ProductRepository";
 
 const getOrder = (request: Request, response: Response): void => {
   try {
@@ -23,7 +24,20 @@ const getOrder = (request: Request, response: Response): void => {
     if (order.appliedCoupon.length === 0) applyCouponsService(orderId);
     const updatedOrder = getOrdersService(orderId);
     const couponCombinations = getCouponCombinationsService(orderId);
-    response.status(200).json({ ...updatedOrder, couponCombinations });
+    const itemsWithProductData = updatedOrder.items.map(
+      ({ productId, quantity }) => ({
+        productId,
+        quantity,
+        productData: productRepository.findById(productId),
+      }),
+    );
+    response
+      .status(200)
+      .json({
+        ...updatedOrder,
+        items: itemsWithProductData,
+        couponCombinations,
+      });
   } catch (error) {
     handleError(response, error);
   }
