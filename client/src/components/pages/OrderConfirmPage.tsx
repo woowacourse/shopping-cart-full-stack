@@ -8,10 +8,10 @@ import useCouponData from "../../hooks/useCouponData";
 import OrderCartList from "../order/OrderCartList";
 
 export default function OrderConfirmPage() {
-  const location = useLocation();
-  if (!location.state) {
-    return <Navigate to="/cart" replace />;
-  }
+  // const location = useLocation();
+  // if (!location.state) {
+  //   return <Navigate to="/cart" replace />;
+  // }
   const { orderId } = useParams();
   const { orderState, orderData, onDelete, updateAppliedCoupon } = useOrderData(
     Number(orderId),

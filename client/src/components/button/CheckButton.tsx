@@ -34,14 +34,7 @@ export default function CheckButton({
       (value) => value === true,
     ).length;
 
-    navigate(`/order/${orderId}`, {
-      state: {
-        itemCount,
-        totalQuantity: totalQuantity({ cartItems, selectedItems }),
-        totalPrice,
-        selectedItems,
-      },
-    });
+    navigate(`/order/${orderId}`);
   };
   return (
     <Button disabled={isDisabled} onClick={handleClick}>
