@@ -54,7 +54,7 @@ const calculateShippingDiscount = (coupons: Coupon[], shippingFee: number) => {
       return;
     }
 
-    const discountAmount = coupon.benefit.includesRemoteAreaFee ? shippingFee : 0;
+    const discountAmount = coupon.benefit.params.includesRemoteAreaFee ? shippingFee : 0;
 
     if (discountAmount <= 0) {
       return;

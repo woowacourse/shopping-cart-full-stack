@@ -7,13 +7,18 @@ export const couponData: Coupon[] = [
     name: '5000원 할인 쿠폰',
     expirationDate: new Date('2026-11-30T23:59:59+09:00'),
     condition: {
-      type: 'MIN_ORDER_AMOUNT',
-      minOrderAmount: 100000,
+      target: 'ORDER',
+      rule: 'MIN_ORDER_AMOUNT',
+      params: {
+        minOrderAmount: 100000,
+      },
     },
     benefit: {
       target: 'PRODUCT',
-      type: 'DISCOUNT_AMOUNT',
-      discountAmount: 5000,
+      rule: 'DISCOUNT_AMOUNT',
+      params: {
+        discountAmount: 5000,
+      },
     },
   },
   {
@@ -22,13 +27,18 @@ export const couponData: Coupon[] = [
     name: '2+1 쿠폰',
     expirationDate: new Date('2026-06-30T23:59:59+09:00'),
     condition: {
-      type: 'MIN_SAME_PRODUCT_QUANTITY',
-      minSameProductQuantity: 2,
+      target: 'PRODUCT',
+      rule: 'MIN_SAME_PRODUCT_QUANTITY',
+      params: {
+        minSameProductQuantity: 2,
+      },
     },
     benefit: {
       target: 'PRODUCT',
-      type: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM',
-      discountQuantity: 1,
+      rule: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM',
+      params: {
+        discountQuantity: 1,
+      },
     },
   },
   {
@@ -37,13 +47,18 @@ export const couponData: Coupon[] = [
     name: '무료 배송 쿠폰',
     expirationDate: new Date('2026-08-31T23:59:59+09:00'),
     condition: {
-      type: 'MIN_ORDER_AMOUNT',
-      minOrderAmount: 50000,
+      target: 'ORDER',
+      rule: 'MIN_ORDER_AMOUNT',
+      params: {
+        minOrderAmount: 50000,
+      },
     },
     benefit: {
       target: 'SHIPPING',
-      type: 'FREE_SHIPPING',
-      includesRemoteAreaFee: true,
+      rule: 'FREE_SHIPPING',
+      params: {
+        includesRemoteAreaFee: true,
+      },
     },
   },
   {
@@ -52,15 +67,20 @@ export const couponData: Coupon[] = [
     name: '30% 시간제 할인 쿠폰',
     expirationDate: new Date('2026-07-31T23:59:59+09:00'),
     condition: {
-      type: 'TIME_RANGE',
-      start: '04:00',
-      end: '07:00',
+      target: 'TIME',
+      rule: 'TIME_RANGE',
+      params: {
+        start: '04:00',
+        end: '07:00',
+      },
     },
     benefit: {
       target: 'PRODUCT',
-      type: 'DISCOUNT_RATE',
-      discountRate: 0.3,
-      applyAfterFixedDiscount: true,
+      rule: 'DISCOUNT_RATE',
+      params: {
+        discountRate: 0.3,
+        applyAfterFixedDiscount: true,
+      },
     },
   },
 ];

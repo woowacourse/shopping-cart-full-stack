@@ -88,13 +88,13 @@ export const getCouponDisabledReason = (coupon: Coupon, preorder: Preorder, now 
     return COUPON_DISABLED_REASON.expired;
   }
 
-  switch (condition.type) {
+  switch (condition.rule) {
     case 'MIN_ORDER_AMOUNT':
-      return getMinOrderAmountReason(preorder, condition.minOrderAmount);
+      return getMinOrderAmountReason(preorder, condition.params.minOrderAmount);
     case 'MIN_SAME_PRODUCT_QUANTITY':
-      return getSameProductQuantityReason(preorder, condition.minSameProductQuantity);
+      return getSameProductQuantityReason(preorder, condition.params.minSameProductQuantity);
     case 'TIME_RANGE':
-      return getTimeRangeReason(now, condition.start, condition.end);
+      return getTimeRangeReason(now, condition.params.start, condition.params.end);
   }
 };
 
@@ -103,24 +103,28 @@ export const calculateProductCouponDiscount = (
   items: PreorderItem[],
   remainingProductAmount: number
 ) => {
-  switch (coupon.benefit.type) {
+  switch (coupon.benefit.rule) {
     case 'DISCOUNT_AMOUNT':
-      return Math.min(coupon.benefit.discountAmount, remainingProductAmount);
+      return Math.min(coupon.benefit.params.discountAmount, remainingProductAmount);
     case 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM': {
-      if (coupon.condition.type !== 'MIN_SAME_PRODUCT_QUANTITY') {
+      if (coupon.condition.rule !== 'MIN_SAME_PRODUCT_QUANTITY') {
         return 0;
       }
 
       return Math.min(
-        getHighestUnitPriceDiscount(items, coupon.condition.minSameProductQuantity, coupon.benefit.discountQuantity),
+        getHighestUnitPriceDiscount(
+          items,
+          coupon.condition.params.minSameProductQuantity,
+          coupon.benefit.params.discountQuantity
+        ),
         remainingProductAmount
       );
     }
     case 'DISCOUNT_RATE':
-      return Math.floor(remainingProductAmount * coupon.benefit.discountRate);
+      return Math.floor(remainingProductAmount * coupon.benefit.params.discountRate);
   }
 };
 
 export const getProductCouponPriority = (coupon: ProductDiscountCoupon) => {
-  return coupon.benefit.type === 'DISCOUNT_RATE' ? 1 : 0;
+  return coupon.benefit.rule === 'DISCOUNT_RATE' ? 1 : 0;
 };

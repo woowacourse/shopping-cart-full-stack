@@ -152,17 +152,19 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ### Coupon Condition / Benefit
 
-현재 단계의 쿠폰은 고정된 정책을 가진다. 최상위 `code`는 쿠폰을 식별하는 문자열이며, `condition.type`은 조건, `benefit.target`은 할인 대상, `benefit.type`은 혜택 계산 방식을 나타낸다.
+현재 단계의 쿠폰은 고정된 정책을 가진다. 최상위 `code`는 쿠폰을 식별하는 문자열이며, `target`은 적용 대상, `rule`은 해석할 정책 이름, `params`는 정책 계산에 필요한 값을 나타낸다.
 
 | Code | condition | benefit |
 | --- | --- | --- |
-| `FIXED5000` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 100000 }` | `{ "target": "PRODUCT", "type": "DISCOUNT_AMOUNT", "discountAmount": 5000 }` |
-| `BOGO` | `{ "type": "MIN_SAME_PRODUCT_QUANTITY", "minSameProductQuantity": 2 }` | `{ "target": "PRODUCT", "type": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "discountQuantity": 1 }` |
-| `FREESHIPPING` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 50000 }` | `{ "target": "SHIPPING", "type": "FREE_SHIPPING", "includesRemoteAreaFee": true }` |
-| `MIRACLESALE` | `{ "type": "TIME_RANGE", "start": "04:00", "end": "07:00" }` | `{ "target": "PRODUCT", "type": "DISCOUNT_RATE", "discountRate": 0.3, "applyAfterFixedDiscount": true }` |
+| `FIXED5000` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 100000 } }` | `{ "target": "PRODUCT", "rule": "DISCOUNT_AMOUNT", "params": { "discountAmount": 5000 } }` |
+| `BOGO` | `{ "target": "PRODUCT", "rule": "MIN_SAME_PRODUCT_QUANTITY", "params": { "minSameProductQuantity": 2 } }` | `{ "target": "PRODUCT", "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "params": { "discountQuantity": 1 } }` |
+| `FREESHIPPING` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 50000 } }` | `{ "target": "SHIPPING", "rule": "FREE_SHIPPING", "params": { "includesRemoteAreaFee": true } }` |
+| `MIRACLESALE` | `{ "target": "TIME", "rule": "TIME_RANGE", "params": { "start": "04:00", "end": "07:00" } }` | `{ "target": "PRODUCT", "rule": "DISCOUNT_RATE", "params": { "discountRate": 0.3, "applyAfterFixedDiscount": true } }` |
 
-- `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.type`, `benefit.target`, `benefit.type`을 기준으로 해석한다.
-- `benefit.target`은 할인 대상을 나타낸다. `PRODUCT`는 상품 금액 할인, `SHIPPING`은 배송비 할인이다.
+- `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.target`, `condition.rule`, `benefit.target`, `benefit.rule`을 기준으로 해석한다.
+- `condition.target`은 조건 판단 대상을 나타낸다. `ORDER`는 주문, `PRODUCT`는 상품, `TIME`은 서버 시간 기준이다.
+- `benefit.target`은 혜택 적용 대상을 나타낸다. `PRODUCT`는 상품 금액 할인, `SHIPPING`은 배송비 할인이다.
+- `params`에는 해당 `rule` 계산에 필요한 값을 담는다.
 - `expirationDate`는 ISO 8601 datetime string으로 전달한다.
 - `MIN_ORDER_AMOUNT`는 쿠폰 적용 전 주문 금액을 기준으로 판단한다.
 - `MIN_SAME_PRODUCT_QUANTITY`는 동일 상품을 2개 이상 구매했는지 판단할 때 사용한다.
@@ -182,13 +184,18 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "name": "5000원 할인 쿠폰",
       "expirationDate": "2026-11-30T14:59:59.000Z",
       "condition": {
-        "type": "MIN_ORDER_AMOUNT",
-        "minOrderAmount": 100000
+        "target": "ORDER",
+        "rule": "MIN_ORDER_AMOUNT",
+        "params": {
+          "minOrderAmount": 100000
+        }
       },
       "benefit": {
         "target": "PRODUCT",
-        "type": "DISCOUNT_AMOUNT",
-        "discountAmount": 5000
+        "rule": "DISCOUNT_AMOUNT",
+        "params": {
+          "discountAmount": 5000
+        }
       },
       "disabled": false,
       "disabledReason": null
@@ -199,13 +206,18 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "name": "2+1 쿠폰",
       "expirationDate": "2026-06-30T14:59:59.000Z",
       "condition": {
-        "type": "MIN_SAME_PRODUCT_QUANTITY",
-        "minSameProductQuantity": 2
+        "target": "PRODUCT",
+        "rule": "MIN_SAME_PRODUCT_QUANTITY",
+        "params": {
+          "minSameProductQuantity": 2
+        }
       },
       "benefit": {
         "target": "PRODUCT",
-        "type": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM",
-        "discountQuantity": 1
+        "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM",
+        "params": {
+          "discountQuantity": 1
+        }
       },
       "disabled": true,
       "disabledReason": "동일 상품을 2개 이상 구매해야 합니다."
@@ -216,13 +228,18 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "name": "무료 배송 쿠폰",
       "expirationDate": "2026-08-31T14:59:59.000Z",
       "condition": {
-        "type": "MIN_ORDER_AMOUNT",
-        "minOrderAmount": 50000
+        "target": "ORDER",
+        "rule": "MIN_ORDER_AMOUNT",
+        "params": {
+          "minOrderAmount": 50000
+        }
       },
       "benefit": {
         "target": "SHIPPING",
-        "type": "FREE_SHIPPING",
-        "includesRemoteAreaFee": true
+        "rule": "FREE_SHIPPING",
+        "params": {
+          "includesRemoteAreaFee": true
+        }
       },
       "disabled": true,
       "disabledReason": "주문 금액이 50,000원 미만입니다."
@@ -233,15 +250,20 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "name": "30% 시간제 할인 쿠폰",
       "expirationDate": "2026-07-31T14:59:59.000Z",
       "condition": {
-        "type": "TIME_RANGE",
-        "start": "04:00",
-        "end": "07:00"
+        "target": "TIME",
+        "rule": "TIME_RANGE",
+        "params": {
+          "start": "04:00",
+          "end": "07:00"
+        }
       },
       "benefit": {
         "target": "PRODUCT",
-        "type": "DISCOUNT_RATE",
-        "discountRate": 0.3,
-        "applyAfterFixedDiscount": true
+        "rule": "DISCOUNT_RATE",
+        "params": {
+          "discountRate": 0.3,
+          "applyAfterFixedDiscount": true
+        }
       },
       "disabled": true,
       "disabledReason": "현재 적용 가능한 시간이 아닙니다."

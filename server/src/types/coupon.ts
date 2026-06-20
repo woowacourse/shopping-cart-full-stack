@@ -1,40 +1,57 @@
 export type CouponCondition =
   | {
-      type: 'MIN_ORDER_AMOUNT';
-      minOrderAmount: number;
+      target: 'ORDER';
+      rule: 'MIN_ORDER_AMOUNT';
+      params: {
+        minOrderAmount: number;
+      };
     }
   | {
-      type: 'MIN_SAME_PRODUCT_QUANTITY';
-      minSameProductQuantity: number;
+      target: 'PRODUCT';
+      rule: 'MIN_SAME_PRODUCT_QUANTITY';
+      params: {
+        minSameProductQuantity: number;
+      };
     }
   | {
-      type: 'TIME_RANGE';
-      start: string;
-      end: string;
+      target: 'TIME';
+      rule: 'TIME_RANGE';
+      params: {
+        start: string;
+        end: string;
+      };
     };
 
 export type ProductDiscountBenefit =
   | {
       target: 'PRODUCT';
-      type: 'DISCOUNT_AMOUNT';
-      discountAmount: number;
+      rule: 'DISCOUNT_AMOUNT';
+      params: {
+        discountAmount: number;
+      };
     }
   | {
       target: 'PRODUCT';
-      type: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM';
-      discountQuantity: number;
+      rule: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM';
+      params: {
+        discountQuantity: number;
+      };
     }
   | {
       target: 'PRODUCT';
-      type: 'DISCOUNT_RATE';
-      discountRate: number;
-      applyAfterFixedDiscount: boolean;
+      rule: 'DISCOUNT_RATE';
+      params: {
+        discountRate: number;
+        applyAfterFixedDiscount: boolean;
+      };
     };
 
 export type ShippingDiscountBenefit = {
   target: 'SHIPPING';
-  type: 'FREE_SHIPPING';
-  includesRemoteAreaFee: boolean;
+  rule: 'FREE_SHIPPING';
+  params: {
+    includesRemoteAreaFee: boolean;
+  };
 };
 
 export type CouponBenefit = ProductDiscountBenefit | ShippingDiscountBenefit;
