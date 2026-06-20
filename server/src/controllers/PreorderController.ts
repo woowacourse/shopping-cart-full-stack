@@ -6,6 +6,7 @@ import type {CreatePreorderRequestBody, PreorderIdParams} from '../types/preorde
 export const preorderController = {
   getPreorder(req: Request<PreorderIdParams>, res: Response) {
     const preorderId = req.params.preorderId;
+
     const preorder = preorderService.getPreorder(preorderId);
 
     res.status(200).json({

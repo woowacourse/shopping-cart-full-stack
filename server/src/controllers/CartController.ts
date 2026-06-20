@@ -12,7 +12,7 @@ export const cartController = {
 
   updateQuantity(req: Request<CartItemIdParams, unknown, UpdateCartQuantityRequestBody>, res: Response) {
     const cartItemId = req.params.cartItemId;
-    const {quantity} = req.body;
+    const quantity = req.body.quantity;
 
     const updatedQuantity = cartService.updateQuantity(cartItemId, quantity);
 
