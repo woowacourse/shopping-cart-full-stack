@@ -8,7 +8,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Navigate to="/cart" replace />} />;
       <Route path="/cart" element={<ShoppingCartPage />} />
-      <Route path="/order-confirm" element={<OrderConfirmPage />} />{" "}
+      <Route path="/order/:orderId" element={<OrderConfirmPage />} />{" "}
     </Routes>
   );
 }
