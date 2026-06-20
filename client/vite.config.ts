@@ -8,6 +8,8 @@ export default defineConfig({
     proxy: {
       "/cart": "http://localhost:3000",
       "/products": "http://localhost:3000",
+      "/order": "http://localhost:3000",
+      coupons: "http://localhost:3000",
     },
   },
   test: {
