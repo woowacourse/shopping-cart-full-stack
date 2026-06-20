@@ -1,8 +1,5 @@
+import {INVALID_QUANTITY_MESSAGE, isValidQuantity} from '../domain/cartPolicy.js';
 import {Product} from './Product.js';
-
-export const isValidQuantity = (quantity: unknown) => {
-  return typeof quantity === 'number' && Number.isInteger(quantity) && quantity >= 1 && quantity <= 99;
-};
 
 export class CartItem {
   constructor(
@@ -33,7 +30,7 @@ export class CartItem {
 
   private validateQuantity(quantity: number) {
     if (!isValidQuantity(quantity)) {
-      throw new Error('수량은 1 이상 99 이하의 정수여야 합니다.');
+      throw new Error(INVALID_QUANTITY_MESSAGE);
     }
   }
 }

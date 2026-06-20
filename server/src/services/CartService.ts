@@ -1,5 +1,6 @@
 import {cartItems} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
+import {INVALID_QUANTITY_MESSAGE, isValidQuantity} from '../domain/cartPolicy.js';
 
 export const cartService = {
   getCartItems() {
@@ -7,25 +8,17 @@ export const cartService = {
   },
 
   updateQuantity(id: string, quantity: number) {
-    try {
-      const updatedCartItem = cartItems.updateQuantity(id, quantity);
-
-      if (!updatedCartItem) {
-        throw new HttpError(404);
-      }
-
-      return updatedCartItem.getQuantity();
-    } catch (error) {
-      if (error instanceof HttpError) {
-        throw error;
-      }
-
-      if (error instanceof Error) {
-        throw new HttpError(400, error.message);
-      }
-
-      throw error;
+    if (!isValidQuantity(quantity)) {
+      throw new HttpError(400, INVALID_QUANTITY_MESSAGE);
     }
+
+    const updatedCartItem = cartItems.updateQuantity(id, quantity);
+
+    if (!updatedCartItem) {
+      throw new HttpError(404);
+    }
+
+    return updatedCartItem.getQuantity();
   },
 
   deleteCartItem(id: string) {
