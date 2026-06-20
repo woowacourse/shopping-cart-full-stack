@@ -11,6 +11,7 @@ export const couponData: Coupon[] = [
       minOrderAmount: 100000,
     },
     benefit: {
+      target: 'PRODUCT',
       type: 'DISCOUNT_AMOUNT',
       discountAmount: 5000,
     },
@@ -25,6 +26,7 @@ export const couponData: Coupon[] = [
       minSameProductQuantity: 2,
     },
     benefit: {
+      target: 'PRODUCT',
       type: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM',
       discountQuantity: 1,
     },
@@ -39,6 +41,7 @@ export const couponData: Coupon[] = [
       minOrderAmount: 50000,
     },
     benefit: {
+      target: 'SHIPPING',
       type: 'FREE_SHIPPING',
       includesRemoteAreaFee: true,
     },
@@ -54,6 +57,7 @@ export const couponData: Coupon[] = [
       end: '07:00',
     },
     benefit: {
+      target: 'PRODUCT',
       type: 'DISCOUNT_RATE',
       discountRate: 0.3,
       applyAfterFixedDiscount: true,

@@ -4,9 +4,13 @@ import {HttpError} from '../middlewares/errorHandler.js';
 
 import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
+import {calculateOrderPricing} from '../domain/orderPricingPolicy.js';
 
 import type {Coupon} from '../types/coupon.js';
-import type {ExcludedCoupon, PreviewOrderRequestBody} from '../types/order.js';
+import type {ExcludedCoupon, PreviewOrderRequestBody, PreviewOrderResponse} from '../types/order.js';
+import type {PreorderItem} from '../types/preorder.js';
+
+const MAX_COUPON_COUNT = 2;
 
 const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody => {
   if (!body || typeof body !== 'object') {
@@ -17,10 +21,12 @@ const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody
 
   return (
     typeof preorderId === 'string' &&
-    preorderId.length > 0 &&
+    preorderId.trim().length > 0 &&
     typeof isRemoteArea === 'boolean' &&
     Array.isArray(couponIds) &&
-    couponIds.every((couponId) => Number.isInteger(couponId))
+    couponIds.length <= MAX_COUPON_COUNT &&
+    couponIds.every((couponId) => Number.isInteger(couponId) && couponId > 0) &&
+    new Set(couponIds).size === couponIds.length
   );
 };
 
@@ -28,8 +34,42 @@ const findCouponById = (couponId: number) => {
   return coupons.find((coupon) => coupon.id === couponId);
 };
 
+const toExcludedCoupon = (couponId: number, excludedReason: string, coupon?: Coupon): ExcludedCoupon => {
+  return {
+    couponId,
+    code: coupon?.code ?? '',
+    name: coupon?.name ?? '',
+    excludedReason,
+  };
+};
+
+const getPreviewCoupons = (couponIds: number[], preorderId: string, items: PreorderItem[]) => {
+  const applicableCoupons: Coupon[] = [];
+  const excludedCoupons: ExcludedCoupon[] = [];
+
+  couponIds.forEach((couponId) => {
+    const coupon = findCouponById(couponId);
+
+    if (!coupon) {
+      excludedCoupons.push(toExcludedCoupon(couponId, '존재하지 않는 쿠폰입니다.'));
+      return;
+    }
+
+    const disabledReason = getCouponDisabledReason(coupon, {preorderId, items});
+
+    if (disabledReason) {
+      excludedCoupons.push(toExcludedCoupon(coupon.id, disabledReason, coupon));
+      return;
+    }
+
+    applicableCoupons.push(coupon);
+  });
+
+  return {applicableCoupons, excludedCoupons};
+};
+
 export const orderService = {
-  previewOrder(body: unknown) {
+  previewOrder(body: unknown): PreviewOrderResponse {
     if (!isValidPreviewOrderBody(body)) {
       throw new HttpError(400, '주문 미리보기 요청 값을 올바르게 입력해주세요.');
     }
@@ -42,45 +82,18 @@ export const orderService = {
       throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
     }
 
-    const applicableCoupons: Coupon[] = [];
-    const excludedCoupons: ExcludedCoupon[] = [];
-
-    couponIds.forEach((couponId) => {
-      const coupon = findCouponById(couponId);
-
-      if (!coupon) {
-        excludedCoupons.push({
-          couponId,
-          code: '',
-          name: '',
-          excludedReason: '존재하지 않는 쿠폰입니다.',
-        });
-        return;
-      }
-
-      const disabledReason = getCouponDisabledReason(coupon, {
-        preorderId,
-        items: preorder.items,
-      });
-
-      if (disabledReason) {
-        excludedCoupons.push({
-          couponId: coupon.id,
-          code: coupon.code,
-          name: coupon.name,
-          excludedReason: disabledReason,
-        });
-        return;
-      }
-
-      applicableCoupons.push(coupon);
-    });
-
     const orderAmount = calculateOrderAmount(preorder.items);
-    const shippingFee = calculateShippingFee(isRemoteArea);
+    const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
+    const {applicableCoupons, excludedCoupons} = getPreviewCoupons(couponIds, preorderId, preorder.items);
+    const {price, appliedCoupons} = calculateOrderPricing(
+      applicableCoupons,
+      preorder.items,
+      orderAmount,
+      shippingFee
+    );
 
     const isSaved = preorderCache.savePreview(preorderId, {
-      couponIds,
+      couponIds: appliedCoupons.map((coupon) => coupon.couponId),
       isRemoteArea,
     });
 
@@ -89,15 +102,8 @@ export const orderService = {
     }
 
     return {
-      price: {
-        orderAmount,
-        productDiscountAmount: 0,
-        shippingDiscountAmount: 0,
-        totalDiscountAmount: 0,
-        shippingFee,
-        totalPaymentAmount: orderAmount + shippingFee,
-      },
-      appliedCoupons: [],
+      price,
+      appliedCoupons,
       excludedCoupons,
     };
   },

@@ -1,6 +1,10 @@
-import type {Coupon} from '../types/coupon.js';
-import type {Preorder} from '../types/preorder.js';
 import {calculateOrderAmount} from './orderPolicy.js';
+
+import type {Coupon, ProductDiscountBenefit, ShippingDiscountBenefit} from '../types/coupon.js';
+import type {Preorder, PreorderItem} from '../types/preorder.js';
+
+type ProductDiscountCoupon = Coupon & {benefit: ProductDiscountBenefit};
+type ShippingDiscountCoupon = Coupon & {benefit: ShippingDiscountBenefit};
 
 const COUPON_DISABLED_REASON = {
   expired: '만료된 쿠폰입니다.',
@@ -21,6 +25,14 @@ const isInTimeRange = (time: Date, start: string, end: string) => {
   const endMinutes = getTimeRangeMinutes(end);
 
   return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+};
+
+export const isProductDiscountCoupon = (coupon: Coupon): coupon is ProductDiscountCoupon => {
+  return coupon.benefit.target === 'PRODUCT';
+};
+
+export const isShippingDiscountCoupon = (coupon: Coupon): coupon is ShippingDiscountCoupon => {
+  return coupon.benefit.target === 'SHIPPING';
 };
 
 // logics
@@ -52,6 +64,22 @@ const getTimeRangeReason = (time: Date, start: string, end: string) => {
   return null;
 };
 
+const getHighestUnitPriceDiscount = (
+  items: PreorderItem[],
+  minSameProductQuantity: number,
+  discountQuantity: number
+) => {
+  const targetItem = items
+    .filter((item) => item.quantity >= minSameProductQuantity)
+    .sort((a, b) => b.price - a.price)[0];
+
+  if (!targetItem) {
+    return 0;
+  }
+
+  return targetItem.price * discountQuantity;
+};
+
 // policies
 export const getCouponDisabledReason = (coupon: Coupon, preorder: Preorder, now = new Date()) => {
   const {condition, expirationDate} = coupon;
@@ -70,11 +98,29 @@ export const getCouponDisabledReason = (coupon: Coupon, preorder: Preorder, now 
   }
 };
 
-export const calculateCouponDiscount = (coupon: Coupon) => {
+export const calculateProductCouponDiscount = (
+  coupon: ProductDiscountCoupon,
+  items: PreorderItem[],
+  remainingProductAmount: number
+) => {
   switch (coupon.benefit.type) {
     case 'DISCOUNT_AMOUNT':
-      return coupon.benefit.discountAmount;
-    default:
-      return 0;
+      return Math.min(coupon.benefit.discountAmount, remainingProductAmount);
+    case 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM': {
+      if (coupon.condition.type !== 'MIN_SAME_PRODUCT_QUANTITY') {
+        return 0;
+      }
+
+      return Math.min(
+        getHighestUnitPriceDiscount(items, coupon.condition.minSameProductQuantity, coupon.benefit.discountQuantity),
+        remainingProductAmount
+      );
+    }
+    case 'DISCOUNT_RATE':
+      return Math.floor(remainingProductAmount * coupon.benefit.discountRate);
   }
+};
+
+export const getProductCouponPriority = (coupon: ProductDiscountCoupon) => {
+  return coupon.benefit.type === 'DISCOUNT_RATE' ? 1 : 0;
 };

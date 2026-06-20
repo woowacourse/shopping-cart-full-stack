@@ -152,16 +152,17 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ### Coupon Condition / Benefit
 
-현재 단계의 쿠폰은 고정된 정책을 가진다. 최상위 `code`는 쿠폰을 식별하는 문자열이며, `condition.type`과 `benefit.type`은 각각 조건과 혜택의 해석 방식을 나타낸다.
+현재 단계의 쿠폰은 고정된 정책을 가진다. 최상위 `code`는 쿠폰을 식별하는 문자열이며, `condition.type`은 조건, `benefit.target`은 할인 대상, `benefit.type`은 혜택 계산 방식을 나타낸다.
 
 | Code | condition | benefit |
 | --- | --- | --- |
-| `FIXED5000` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 100000 }` | `{ "type": "DISCOUNT_AMOUNT", "discountAmount": 5000 }` |
-| `BOGO` | `{ "type": "MIN_SAME_PRODUCT_QUANTITY", "minSameProductQuantity": 2 }` | `{ "type": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "discountQuantity": 1 }` |
-| `FREESHIPPING` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 50000 }` | `{ "type": "FREE_SHIPPING", "includesRemoteAreaFee": true }` |
-| `MIRACLESALE` | `{ "type": "TIME_RANGE", "start": "04:00", "end": "07:00" }` | `{ "type": "DISCOUNT_RATE", "discountRate": 0.3, "applyAfterFixedDiscount": true }` |
+| `FIXED5000` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 100000 }` | `{ "target": "PRODUCT", "type": "DISCOUNT_AMOUNT", "discountAmount": 5000 }` |
+| `BOGO` | `{ "type": "MIN_SAME_PRODUCT_QUANTITY", "minSameProductQuantity": 2 }` | `{ "target": "PRODUCT", "type": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "discountQuantity": 1 }` |
+| `FREESHIPPING` | `{ "type": "MIN_ORDER_AMOUNT", "minOrderAmount": 50000 }` | `{ "target": "SHIPPING", "type": "FREE_SHIPPING", "includesRemoteAreaFee": true }` |
+| `MIRACLESALE` | `{ "type": "TIME_RANGE", "start": "04:00", "end": "07:00" }` | `{ "target": "PRODUCT", "type": "DISCOUNT_RATE", "discountRate": 0.3, "applyAfterFixedDiscount": true }` |
 
-- `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.type`과 `benefit.type`을 기준으로 해석한다.
+- `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.type`, `benefit.target`, `benefit.type`을 기준으로 해석한다.
+- `benefit.target`은 할인 대상을 나타낸다. `PRODUCT`는 상품 금액 할인, `SHIPPING`은 배송비 할인이다.
 - `expirationDate`는 ISO 8601 datetime string으로 전달한다.
 - `MIN_ORDER_AMOUNT`는 쿠폰 적용 전 주문 금액을 기준으로 판단한다.
 - `MIN_SAME_PRODUCT_QUANTITY`는 동일 상품을 2개 이상 구매했는지 판단할 때 사용한다.
@@ -185,6 +186,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "minOrderAmount": 100000
       },
       "benefit": {
+        "target": "PRODUCT",
         "type": "DISCOUNT_AMOUNT",
         "discountAmount": 5000
       },
@@ -201,6 +203,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "minSameProductQuantity": 2
       },
       "benefit": {
+        "target": "PRODUCT",
         "type": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM",
         "discountQuantity": 1
       },
@@ -217,6 +220,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "minOrderAmount": 50000
       },
       "benefit": {
+        "target": "SHIPPING",
         "type": "FREE_SHIPPING",
         "includesRemoteAreaFee": true
       },
@@ -234,6 +238,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "end": "07:00"
       },
       "benefit": {
+        "target": "PRODUCT",
         "type": "DISCOUNT_RATE",
         "discountRate": 0.3,
         "applyAfterFixedDiscount": true

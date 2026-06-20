@@ -1,11 +1,11 @@
 import {HttpError} from '../middlewares/errorHandler.js';
 import {coupons} from '../repositories/index.js';
-import type {Coupon} from '../types/coupon.js';
+import type {Coupon, CouponResponse} from '../types/coupon.js';
 
 import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {preorderService} from './PreorderService.js';
 
-const toCouponResponse = (coupon: Coupon, disabledReason: string | null) => {
+const createCouponResponse = (coupon: Coupon, disabledReason: string | null): CouponResponse => {
   return {
     couponId: coupon.id,
     code: coupon.code,
@@ -19,8 +19,8 @@ const toCouponResponse = (coupon: Coupon, disabledReason: string | null) => {
 };
 
 export const couponService = {
-  getCoupons(preorderId: unknown) {
-    if (typeof preorderId !== 'string' || preorderId.length === 0) {
+  getCoupons(preorderId: unknown): CouponResponse[] {
+    if (typeof preorderId !== 'string' || preorderId.trim().length === 0) {
       throw new HttpError(400, 'preorderId를 올바르게 입력해주세요.');
     }
 
@@ -29,7 +29,7 @@ export const couponService = {
     return coupons.map((coupon) => {
       const disabledReason = getCouponDisabledReason(coupon, preorder);
 
-      return toCouponResponse(coupon, disabledReason);
+      return createCouponResponse(coupon, disabledReason);
     });
   },
 };
