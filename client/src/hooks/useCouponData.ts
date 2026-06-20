@@ -14,5 +14,5 @@ export default function useCouponData(orderId: number) {
     setCouponData(state.data);
   }, [state]);
 
-  return { state, fetchData, couponData };
+  return { couponState: state, fetchData, couponData };
 }

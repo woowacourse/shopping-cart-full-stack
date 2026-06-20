@@ -29,5 +29,5 @@ export default function useOrderData(orderId: number) {
     } catch (error) {}
   };
 
-  return { state, orderData, onDelete, updateAppliedCoupon };
+  return { orderState: state, orderData, onDelete, updateAppliedCoupon };
 }

@@ -1,25 +1,31 @@
 import styled from "styled-components";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 
 import BackButton from "../button/BackButton";
 import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
+import useOrderData from "../../hooks/useOrderData";
+import useCouponData from "../../hooks/useCouponData";
 
 export default function OrderConfirmPage() {
   const location = useLocation();
   if (!location.state) {
     return <Navigate to="/cart" replace />;
   }
+  const { orderId } = useParams();
+  const { orderState, orderData, onDelete, updateAppliedCoupon } = useOrderData(
+    Number(orderId),
+  );
+  const { couponState, fetchData, couponData } = useCouponData(Number(orderId));
 
-  // const { state, orderItems, ... } = useOrderData(); <- contextAPI로 해볼까?
   return (
     <MainContainer>
-      {state.status === "loading" && <ShoppingCartSkeleton />}
-      {state.status === "error" && (
+      {orderState.status === "loading" && <ShoppingCartSkeleton />}
+      {orderState.status === "error" && (
         <ErrorMessage>
           주문 확인 페이지를 불러오는 데 실패했습니다.
         </ErrorMessage>
       )}
-      {state.status === "success" && (
+      {orderState.status === "success" && (
         <Body>
           <Nav>
             <BackButton />
