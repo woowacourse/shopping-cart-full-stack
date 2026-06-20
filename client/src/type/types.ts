@@ -11,9 +11,21 @@ export interface CartItem {
   };
 }
 
+export interface OrderItem {
+  productId: number;
+  quantity: number;
+  productData: {
+    productId: number;
+    name: string;
+    price: number;
+    thumbnailUrl: string;
+    totalQuantity: number;
+  };
+}
+
 export interface OrderData {
   orderId: number;
-  items: Array<{ productId: number; quantity: number }>;
+  items: OrderItem[];
   appliedCoupon: number[];
   remoteArea: boolean; //제주도, 도서산간 지역
   orderAmount: number;
