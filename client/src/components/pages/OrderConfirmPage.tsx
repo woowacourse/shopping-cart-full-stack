@@ -5,6 +5,7 @@ import BackButton from "../button/BackButton";
 import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
 import useOrderData from "../../hooks/useOrderData";
 import useCouponData from "../../hooks/useCouponData";
+import OrderCartList from "../order/OrderCartList";
 
 export default function OrderConfirmPage() {
   const location = useLocation();
@@ -25,7 +26,7 @@ export default function OrderConfirmPage() {
           주문 확인 페이지를 불러오는 데 실패했습니다.
         </ErrorMessage>
       )}
-      {orderState.status === "success" && (
+      {orderState.status === "success" && orderData && (
         <Body>
           <Nav>
             <BackButton />
@@ -34,12 +35,15 @@ export default function OrderConfirmPage() {
             <TopSection>
               <Title> 주문 확인 </Title>
               <Label>
-                현재 {} 종류의 상품 {}개를 주문합니다. <br />
+                현재 {orderData.items.length} 종류의 상품{" "}
+                {orderData.items.reduce((acc, item) => acc + item.quantity, 0)}
+                개를 주문합니다. <br />
                 최종 결제 금액을 확인해주세요.
               </Label>
             </TopSection>
 
-            {/* <OrderCartList/> 장바구니에서 선택된 상품 리스트(이미지, 이름, 가격, 수량) */}
+            <OrderCartList items={orderData.items} />
+
             {/* <ApplyCouponButton/> 쿠폰 적용 버튼(쿠폰 모달 여는 버튼) */}
             {/* <ShippingInfo/> 배송 정보(제주도 및 도서 산간 지역 체크, PATCH/:orderId/address ) */}
             {/* <FinalResultOrder/>  주문금액, 쿠폰 할인 금액, 배송비, 총 결제 금액 */}
