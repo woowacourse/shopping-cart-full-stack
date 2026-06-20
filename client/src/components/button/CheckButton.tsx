@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { CartItem } from "../../type/types";
 import { useNavigate } from "react-router-dom";
 import { totalQuantity } from "../../util/getOrderPrice";
+import { orderApi } from "../../api/orderApi";
 
 interface Props {
   cartItems: CartItem[];
@@ -20,12 +21,20 @@ export default function CheckButton({
     cartItems.length === 0 ||
     [...selectedItems.values()].every((value) => value === false);
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    const checkedItems = cartItems
+      .filter((item) => selectedItems.get(item.cartItemId) === true)
+      .map(({ productData: { productId }, quantity }) => ({
+        productId,
+        quantity,
+      }));
+    const res = await orderApi.create({ items: checkedItems });
+    const { orderId } = await res.json();
     const itemCount = [...selectedItems.values()].filter(
       (value) => value === true,
     ).length;
 
-    navigate("/order-confirm", {
+    navigate(`/order/${orderId}`, {
       state: {
         itemCount,
         totalQuantity: totalQuantity({ cartItems, selectedItems }),
