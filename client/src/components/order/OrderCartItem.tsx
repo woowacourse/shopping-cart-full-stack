@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import type { CartItem } from "../../type/types";
+import type { OrderItem } from "../../type/types";
 
 interface Props {
-  cartItem: CartItem;
+  item: OrderItem;
 }
 
-export default function ShoppingCartItem({ cartItem }: Props) {
-  const { productData, quantity } = cartItem;
+export default function OrderCartItem({ item }: Props) {
+  const { productData, quantity } = item;
   return (
     <div>
       <Container>
