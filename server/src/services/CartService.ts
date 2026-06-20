@@ -15,7 +15,7 @@ export const cartService = {
     const updatedCartItem = cartItems.updateQuantity(id, quantity);
 
     if (!updatedCartItem) {
-      throw new HttpError(404);
+      throw new HttpError(404, '장바구니 항목을 찾을 수 없습니다.');
     }
 
     return updatedCartItem.getQuantity();
@@ -25,7 +25,7 @@ export const cartService = {
     const isDeleted = cartItems.deleteById(id);
 
     if (!isDeleted) {
-      throw new HttpError(404);
+      throw new HttpError(404, '장바구니 항목을 찾을 수 없습니다.');
     }
   },
 };
