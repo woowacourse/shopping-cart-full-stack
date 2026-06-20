@@ -1,6 +1,14 @@
 export const BASE_URL = import.meta.env.VITE_API_URL ?? "";
 
 export const orderApi = {
+  //POST/order
+  create: (body: { items: Array<{ productId: number; quantity: number }> }) =>
+    fetch(`${BASE_URL}/order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+
   // GET/order/:orderId
   get: (orderId: number) => fetch(`${BASE_URL}/order/${orderId}`),
 
