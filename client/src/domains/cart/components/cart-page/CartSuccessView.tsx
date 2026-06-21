@@ -1,4 +1,4 @@
-import {PageIntro} from '../../../../layout/PageIntro.js';
+import {PageIntro} from '../../../../shared/layout/PageIntro.js';
 import {useCart} from '../../hooks/useCart.js';
 import {CartSuccessContent} from './CartSuccessContent.js';
 

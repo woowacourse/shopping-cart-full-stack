@@ -24,7 +24,6 @@ shopping-cart-full-stack
 │   │   │   ├── order
 │   │   │   └── preorder
 │   │   ├── design-system
-│   │   ├── layout
 │   │   ├── shared
 │   │   └── test
 │   └── package.json
@@ -59,8 +58,7 @@ shopping-cart-full-stack
 - `order-preview`: 주문 확인 페이지, 결제 금액 미리보기, 쿠폰 모달 상태
 - `order`: 주문 생성 API, 주문 요약 조회, 결제 확인 페이지
 - `design-system`: 공통 버튼, 체크박스, 타이포, 피드백 상태 UI
-- `layout`: 화면 뼈대, 상품 행, 금액 요약 등 공통 레이아웃
-- `shared`: 공용 API 요청 유틸과 공통 정책 상수
+- `shared`: 공용 API 요청 유틸, 공통 정책 상수, 여러 도메인이 공유하는 레이아웃
 
 ## 서버 구조
 

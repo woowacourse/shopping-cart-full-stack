@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
 import {Checkbox, fontWeights, theme, typography} from '../../../design-system/index.js';
-import {ProductItemLayout} from '../../../layout/ProductItemLayout.js';
-import {SummaryLayout, SummaryRow} from '../../../layout/SummaryLayout.js';
+import {ProductItemLayout} from '../../../shared/layout/ProductItemLayout.js';
+import {SummaryLayout, SummaryRow} from '../../../shared/layout/SummaryLayout.js';
 import {FREE_SHIPPING_THRESHOLD} from '../../../shared/domain/shippingPolicy.js';
 import type {Preorder, PreorderItem} from '../../preorder/domain/types.js';
 import type {OrderPrice} from '../api/orderPreviewApi.js';

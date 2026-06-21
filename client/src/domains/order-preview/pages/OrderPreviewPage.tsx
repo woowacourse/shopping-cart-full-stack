@@ -1,6 +1,6 @@
 import {AsyncStateView, Button, ErrorState, LoadingState} from '../../../design-system/index.js';
 
-import {ScreenLayout} from '../../../layout/ScreenLayout.js';
+import {ScreenLayout} from '../../../shared/layout/ScreenLayout.js';
 
 import {OrderPreviewBackButton} from '../components/OrderPreviewBackButton.js';
 import {OrderPreviewCouponModal} from '../components/OrderPreviewCouponModal.js';

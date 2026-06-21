@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import {Checkbox, NumericSpinner, Typo, fontWeights, theme, typography} from '../../../../design-system/index.js';
-import {ProductItemLayout} from '../../../../layout/ProductItemLayout.js';
+import {ProductItemLayout} from '../../../../shared/layout/ProductItemLayout.js';
 import type {CartItem, CartItemId} from '../../domain/types.js';
 
 type CartItemRowProps = {

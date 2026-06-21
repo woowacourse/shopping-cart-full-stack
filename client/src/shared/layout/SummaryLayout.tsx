@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type {ReactNode} from 'react';
 
-import {Divider, Typo} from '../design-system/index.js';
+import {Divider, Typo} from '../../design-system/index.js';
 
 interface SummaryLayoutProps {
   children: ReactNode;

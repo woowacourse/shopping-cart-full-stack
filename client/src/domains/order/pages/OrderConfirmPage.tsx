@@ -10,7 +10,7 @@ import {
   theme,
   typography,
 } from '../../../design-system/index.js';
-import {ScreenLayout} from '../../../layout/ScreenLayout.js';
+import {ScreenLayout} from '../../../shared/layout/ScreenLayout.js';
 import type {OrderSummary} from '../api/orderApi.js';
 import {useOrderSummary} from '../hooks/useOrderSummary.js';
 

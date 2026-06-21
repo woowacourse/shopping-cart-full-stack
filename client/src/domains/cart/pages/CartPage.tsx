@@ -1,6 +1,6 @@
 import {AsyncStateView, EmptyState, ErrorState, LoadingState, Typo} from '../../../design-system/index.js';
 
-import {ScreenLayout} from '../../../layout/ScreenLayout.js';
+import {ScreenLayout} from '../../../shared/layout/ScreenLayout.js';
 
 import {CartOrderAction} from '../components/cart-page/CartOrderAction.js';
 import {CartSuccessView} from '../components/cart-page/CartSuccessView.js';

@@ -1,4 +1,4 @@
-import {PageIntro} from '../../../layout/PageIntro.js';
+import {PageIntro} from '../../../shared/layout/PageIntro.js';
 import {OrderPreviewSuccessContent} from './OrderPreviewSuccessContent.js';
 import {OrderSubmitErrorMessage} from './OrderSubmitErrorMessage.js';
 import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';

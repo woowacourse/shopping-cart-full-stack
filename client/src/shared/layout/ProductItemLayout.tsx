@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type {ReactNode} from 'react';
 
-import {Divider, theme} from '../design-system/index.js';
+import {Divider, theme} from '../../design-system/index.js';
 
 interface ProductItemLayoutProps {
   header?: ReactNode;
