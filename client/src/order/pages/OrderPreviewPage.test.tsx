@@ -54,7 +54,7 @@ describe('OrderPreviewPage', () => {
 
     renderOrderPreviewRoutes();
 
-    await user.click(screen.getByRole('button', {name: '장바구니로 돌아가기'}));
+    await user.click(screen.getByRole('button', {name: '뒤로가기'}));
 
     expect(screen.getByText('장바구니 화면')).toBeInTheDocument();
   });

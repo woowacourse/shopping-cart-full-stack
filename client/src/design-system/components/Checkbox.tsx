@@ -12,7 +12,7 @@ export const Checkbox = ({label, ...props}: CheckboxProps) => {
   return (
     <Label>
       <Input type='checkbox' {...props} />
-      <Box aria-hidden='true' />
+      <Box />
       {label && (
         <Typo variant='caption' weight='medium'>
           {label}

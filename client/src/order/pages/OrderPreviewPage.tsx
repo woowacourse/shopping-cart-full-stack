@@ -27,12 +27,12 @@ export const OrderPreviewPage = () => {
 
   return (
     <ScreenLayout
-      bottomButton={<Button onClick={() => navigate('/order-confirm')}>결제하기</Button>}
       header={
-        <BackButton aria-label='장바구니로 돌아가기' onClick={() => navigate('/cart')} type='button'>
-          <BackIcon alt='' aria-hidden='true' src={backArrowIconUrl} />
+        <BackButton onClick={() => navigate('/cart')} type='button'>
+          <BackIcon alt='뒤로가기' src={backArrowIconUrl} />
         </BackButton>
       }
+      bottomButton={<Button onClick={() => navigate('/order-confirm')}>결제하기</Button>}
     >
       <PageIntro
         title='주문 확인'
