@@ -132,6 +132,20 @@ function mockCreateOrder(requestBodies: unknown[] = []) {
   );
 }
 
+function mockGetOrderSummary() {
+  mockServer.use(
+    http.get(`${API_BASE_URL}/order/order-1`, () => {
+      return HttpResponse.json({
+        body: {
+          itemCount: 1,
+          totalQuantity: 2,
+          totalAmount: 73000,
+        },
+      });
+    })
+  );
+}
+
 function renderOrderPreviewPage(initialEntry = '/order-preview/preorder-1') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -249,6 +263,7 @@ describe('OrderPreviewPage', () => {
     mockGetCoupons();
     mockPreviewOrder();
     mockCreateOrder(requestBodies);
+    mockGetOrderSummary();
     renderOrderPreviewRoutes();
 
     await screen.findByText('상품이름A');
@@ -269,6 +284,7 @@ describe('OrderPreviewPage', () => {
     mockGetPreorder();
     mockGetCoupons();
     mockPreviewOrder();
+    mockGetOrderSummary();
     mockServer.use(
       http.post(`${API_BASE_URL}/order`, () => {
         return HttpResponse.json(
@@ -300,6 +316,7 @@ describe('OrderPreviewPage', () => {
     mockGetPreorder();
     mockGetCoupons();
     mockPreviewOrder();
+    mockGetOrderSummary();
     mockServer.use(
       http.post(`${API_BASE_URL}/order`, async ({request}) => {
         requestBodies.push(await request.json());

@@ -1,6 +1,6 @@
 import {http, HttpResponse} from 'msw';
 
-import {createOrder} from './orderApi.js';
+import {createOrder, getOrderSummary} from './orderApi.js';
 import {ApiError} from '../../shared/api/requestApi.js';
 import {mockServer} from '../../test/mockServer.js';
 
@@ -60,5 +60,30 @@ describe('orderApi', () => {
       '서버에서 다시 계산한 결제 금액이 화면에 표시된 금액과 일치하지 않습니다.'
     );
     expect(thrownError).toMatchObject({status: 409});
+  });
+
+  test('getOrderSummary는 orderId로 주문 요약 정보를 요청한다', async () => {
+    let requestedOrderId: string | null = null;
+
+    mockServer.use(
+      http.get(`${API_BASE_URL}/order/:orderId`, ({params}) => {
+        requestedOrderId = params.orderId as string;
+
+        return HttpResponse.json({
+          body: {
+            itemCount: 1,
+            totalQuantity: 2,
+            totalAmount: 70000,
+          },
+        });
+      })
+    );
+
+    await expect(getOrderSummary('order-1')).resolves.toEqual({
+      itemCount: 1,
+      totalQuantity: 2,
+      totalAmount: 70000,
+    });
+    expect(requestedOrderId).toBe('order-1');
   });
 });
