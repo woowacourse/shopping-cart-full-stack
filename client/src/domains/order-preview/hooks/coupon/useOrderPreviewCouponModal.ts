@@ -32,8 +32,7 @@ export function useOrderPreviewCouponModal(
     status: couponsStatus,
   } = useCoupons(preorderId, isRemoteArea);
   const {
-    errorMessage: modalPreviewErrorMessage,
-    errorType: modalPreviewErrorType,
+    error: modalPreviewError,
     loadOrderPreview: loadModalPreview,
     orderPreview: modalOrderPreview,
     resetOrderPreview: resetModalPreview,
@@ -50,7 +49,7 @@ export function useOrderPreviewCouponModal(
   };
   const {errorActionText, handleCouponModalError} = useOrderPreviewCouponErrorAction({
     couponErrorType,
-    modalPreviewErrorType,
+    modalPreviewErrorType: modalPreviewError?.type ?? 'default',
     onReturnToCart,
     retryCoupons,
   });
@@ -70,7 +69,7 @@ export function useOrderPreviewCouponModal(
       isOpen: isCouponModalOpen,
       coupons,
       discountAmount: modalOrderPreview?.price.totalDiscountAmount ?? 0,
-      errorMessage: getCouponModalErrorMessage(couponErrorMessage, modalPreviewErrorMessage, couponsStatus),
+      errorMessage: getCouponModalErrorMessage(couponErrorMessage, modalPreviewError?.message ?? '', couponsStatus),
       errorActionText,
       selectedCouponIds: draftCouponIds,
       status: getCouponModalStatus(couponsStatus, modalPreviewStatus),

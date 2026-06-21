@@ -4,6 +4,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {useOrderPreview} from './useOrderPreview.js';
 import {usePreorder} from '../../preorder/hooks/usePreorder.js';
 import {useOrderPreviewCouponModal} from './coupon/useOrderPreviewCouponModal.js';
+
 import {getPreorderSummary} from './page/orderPreviewPageSelectors.js';
 import {useOrderPreviewPageStatus} from './page/useOrderPreviewPageStatus.js';
 import {useOrderPreviewSubmission} from './page/useOrderPreviewSubmission.js';
@@ -11,24 +12,23 @@ import {useOrderPreviewSubmission} from './page/useOrderPreviewSubmission.js';
 export type OrderPreviewPageState = ReturnType<typeof useOrderPreviewPageState>;
 
 export function useOrderPreviewPageState() {
-  const navigate = useNavigate();
   const {preorderId} = useParams();
-  const [isRemoteArea, setIsRemoteArea] = useState(false);
-  const {
-    errorMessage: preorderErrorMessage,
-    errorType,
-    loadPreorder,
-    preorder,
-    status: preorderStatus,
-  } = usePreorder(preorderId);
+
+  const navigate = useNavigate();
   const navigateToCart = () => navigate('/cart');
+
+  const [isRemoteArea, setIsRemoteArea] = useState(false);
+
+  const {error: preorderError, loadPreorder, preorder, status: preorderStatus} = usePreorder(preorderId);
+
   const {appliedCouponIds, couponModal, couponModalActions} = useOrderPreviewCouponModal(
     preorderId,
     isRemoteArea,
     navigateToCart
   );
+
   const {
-    errorMessage: orderPreviewErrorMessage,
+    error: orderPreviewError,
     loadOrderPreview,
     orderPreview,
     status: orderPreviewStatus,
@@ -41,10 +41,10 @@ export function useOrderPreviewPageState() {
     loadOrderPreview,
     loadPreorder,
     navigateToCart,
-    preorderErrorMessage,
-    preorderErrorType: errorType,
+    preorderErrorMessage: preorderError?.message ?? '',
+    preorderErrorType: preorderError?.type ?? 'default',
     preorderStatus,
-    orderPreviewErrorMessage,
+    orderPreviewErrorMessage: orderPreviewError?.message ?? '',
     orderPreviewStatus,
   });
   const {orderSubmit, submitOrder} = useOrderPreviewSubmission({

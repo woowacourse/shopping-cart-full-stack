@@ -8,7 +8,7 @@ import type {PreviewOrder} from '../domain/types.js';
 export type OrderPreviewStatus = 'loading' | 'success' | 'error';
 export type OrderPreviewErrorType = 'default' | 'expired' | 'notFound';
 
-type OrderPreviewError = {
+export type OrderPreviewError = {
   message: string;
   type: OrderPreviewErrorType;
 };
@@ -89,8 +89,7 @@ export function useOrderPreview(
   return {
     orderPreview,
     status,
-    errorMessage: error?.message ?? '',
-    errorType: error?.type ?? 'default',
+    error,
     loadOrderPreview,
     resetOrderPreview,
   };

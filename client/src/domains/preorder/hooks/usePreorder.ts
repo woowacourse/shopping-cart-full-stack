@@ -7,7 +7,7 @@ import type {Preorder} from '../domain/types.js';
 export type PreorderStatus = 'loading' | 'success' | 'error';
 export type PreorderErrorType = 'default' | 'expired' | 'notFound';
 
-type PreorderError = {
+export type PreorderError = {
   message: string;
   type: PreorderErrorType;
 };
@@ -49,8 +49,7 @@ export function usePreorder(preorderId: string | undefined) {
   return {
     preorder,
     status,
-    errorMessage: error?.message ?? '',
-    errorType: error?.type ?? 'default',
+    error,
     loadPreorder,
   };
 }

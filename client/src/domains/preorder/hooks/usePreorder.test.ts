@@ -38,8 +38,7 @@ describe('usePreorder', () => {
     });
 
     expect(result.current.preorder?.preorderId).toBe('preorder-1');
-    expect(result.current.errorMessage).toBe('');
-    expect(result.current.errorType).toBe('default');
+    expect(result.current.error).toBeNull();
   });
 
   test('preorderId가 없으면 notFound 에러 타입으로 변경한다', async () => {
@@ -50,8 +49,10 @@ describe('usePreorder', () => {
     });
 
     expect(result.current.preorder).toBeNull();
-    expect(result.current.errorMessage).toBe('주문 확인 정보를 찾을 수 없습니다.');
-    expect(result.current.errorType).toBe('notFound');
+    expect(result.current.error).toEqual({
+      message: '주문 확인 정보를 찾을 수 없습니다.',
+      type: 'notFound',
+    });
   });
 
   test('주문 확인 정보가 만료되면 expired 에러 타입으로 변경한다', async () => {
@@ -68,7 +69,9 @@ describe('usePreorder', () => {
     });
 
     expect(result.current.preorder).toBeNull();
-    expect(result.current.errorMessage).toBe('주문 확인 시간이 만료되었습니다.');
-    expect(result.current.errorType).toBe('expired');
+    expect(result.current.error).toEqual({
+      message: '주문 확인 시간이 만료되었습니다.',
+      type: 'expired',
+    });
   });
 });
