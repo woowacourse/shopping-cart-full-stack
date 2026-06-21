@@ -18,6 +18,7 @@ const toAppliedCoupon = (coupon: Coupon, discountAmount: number): AppliedCoupon 
 
 const calculateProductDiscount = (coupons: Coupon[], items: PreorderItem[], orderAmount: number) => {
   let remainingProductAmount = orderAmount;
+  let benefitOrderAmount = 0;
   let productDiscountAmount = 0;
   const appliedCoupons: AppliedCoupon[] = [];
   const benefitItems: BenefitItem[] = [];
@@ -34,16 +35,20 @@ const calculateProductDiscount = (coupons: Coupon[], items: PreorderItem[], orde
     }
 
     productDiscountAmount += discountAmount;
-    remainingProductAmount -= discountAmount;
-    appliedCoupons.push(toAppliedCoupon(coupon, discountAmount));
 
     if (benefitItem) {
+      benefitOrderAmount += discountAmount;
+      remainingProductAmount += discountAmount;
       benefitItems.push(benefitItem);
     }
+
+    remainingProductAmount -= discountAmount;
+    appliedCoupons.push(toAppliedCoupon(coupon, discountAmount));
   });
 
   return {
     appliedCoupons,
+    benefitOrderAmount,
     benefitItems,
     productDiscountAmount,
   };
@@ -99,14 +104,15 @@ export const calculateOrderPricing = (
   const shippingDiscountAmount = shippingDiscount.shippingDiscountAmount;
   const productDiscountAmount = productDiscount.productDiscountAmount;
   const totalDiscountAmount = productDiscountAmount + shippingDiscountAmount;
+  const displayedOrderAmount = orderAmount + productDiscount.benefitOrderAmount;
 
   const price: OrderPrice = {
-    orderAmount,
+    orderAmount: displayedOrderAmount,
     productDiscountAmount,
     shippingDiscountAmount,
     totalDiscountAmount,
     shippingFee: shippingFee - shippingDiscountAmount,
-    totalPaymentAmount: orderAmount + shippingFee - totalDiscountAmount,
+    totalPaymentAmount: displayedOrderAmount + shippingFee - totalDiscountAmount,
   };
 
   return {
@@ -124,5 +130,11 @@ export const calculateBestOrderPricing = (
 ) => {
   return getCouponCombinations(applicableCoupons)
     .map((couponCombination) => calculateOrderPricing(couponCombination, items, orderAmount, shippingFee))
-    .sort((a, b) => a.price.totalPaymentAmount - b.price.totalPaymentAmount)[0];
+    .sort((a, b) => {
+      if (a.price.totalPaymentAmount !== b.price.totalPaymentAmount) {
+        return a.price.totalPaymentAmount - b.price.totalPaymentAmount;
+      }
+
+      return b.price.totalDiscountAmount - a.price.totalDiscountAmount;
+    })[0];
 };

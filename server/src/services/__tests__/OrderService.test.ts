@@ -135,12 +135,12 @@ describe('orderService.previewOrder', () => {
 
     expect(orderPreview).toEqual({
       price: {
-        orderAmount: 445000,
+        orderAmount: 534000,
         productDiscountAmount: 89000,
         shippingDiscountAmount: 0,
         totalDiscountAmount: 89000,
         shippingFee: 0,
-        totalPaymentAmount: 356000,
+        totalPaymentAmount: 445000,
       },
       appliedCoupons: [
         {
@@ -209,7 +209,7 @@ describe('orderService.createOrder', () => {
     expect(orderService.getOrderSummary(order.orderId)).toEqual({
       itemCount: 1,
       totalQuantity: 6,
-      totalAmount: 356000,
+      totalAmount: 445000,
     });
   });
 

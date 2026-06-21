@@ -137,12 +137,12 @@ describe('orderPricingPolicy.calculateOrderPricing', () => {
     const result = calculateOrderPricing([createBogoCoupon()], [{...items[0], quantity: 2}], 140000, 0);
 
     expect(result.price).toEqual({
-      orderAmount: 140000,
+      orderAmount: 210000,
       productDiscountAmount: 70000,
       shippingDiscountAmount: 0,
       totalDiscountAmount: 70000,
       shippingFee: 0,
-      totalPaymentAmount: 70000,
+      totalPaymentAmount: 140000,
     });
     expect(result.benefitItems).toEqual([
       {
