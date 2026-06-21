@@ -37,6 +37,27 @@ function mockGetCartItems(items: CartItem[]) {
   );
 }
 
+function mockGetPreorder() {
+  mockServer.use(
+    http.get(`${API_BASE_URL}/preorder/preorder-1`, () => {
+      return HttpResponse.json({
+        body: {
+          preorderId: 'preorder-1',
+          items: [
+            {
+              productId: 'product-a',
+              name: '상품이름A',
+              price: 35000,
+              imageUrl: '/product-a.png',
+              quantity: 2,
+            },
+          ],
+        },
+      });
+    })
+  );
+}
+
 function renderCartPage() {
   return render(
     <MemoryRouter>
@@ -194,6 +215,7 @@ describe('CartPage', () => {
         return HttpResponse.json({body: {preorderId: 'preorder-1'}}, {status: 201});
       })
     );
+    mockGetPreorder();
 
     renderCartRoutes();
 
@@ -202,11 +224,33 @@ describe('CartPage', () => {
     await user.click(screen.getByRole('button', {name: '주문 확인'}));
 
     expect(await screen.findByRole('heading', {name: '주문 확인'})).toBeInTheDocument();
-    expect(screen.getByText(/총 1종류의 상품 2개를 주문합니다/)).toBeInTheDocument();
+    expect(await screen.findByText(/총 1종류의 상품 2개를 주문합니다/)).toBeInTheDocument();
     expect(screen.getByText(/최종 결제 금액을 확인해 주세요/)).toBeInTheDocument();
     expect(screen.getByText('상품이름A')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: '결제하기'})).toBeInTheDocument();
     expect(requestBody).toEqual({selectedCartIds: ['cart-1', 'cart-2']});
     expect(requestCount).toBe(1);
+  });
+
+  test('주문 확인 정보를 생성하지 못하면 에러 메시지를 보여준다', async () => {
+    const user = userEvent.setup();
+
+    mockServer.use(
+      http.get(`${API_BASE_URL}/carts`, () => {
+        return HttpResponse.json({body: cartItems});
+      }),
+      http.post(`${API_BASE_URL}/preorder`, () => {
+        return HttpResponse.json({body: {message: '주문 확인 정보를 생성하지 못했습니다.'}}, {status: 500});
+      })
+    );
+
+    renderCartRoutes();
+
+    await screen.findByText('현재 2종류의 상품이 담겨있습니다.');
+
+    await user.click(screen.getByRole('button', {name: '주문 확인'}));
+
+    expect(await screen.findByText('주문 확인 정보를 생성하지 못했습니다.')).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: '주문 확인'})).toBeEnabled();
   });
 });
