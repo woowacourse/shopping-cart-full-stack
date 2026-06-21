@@ -6,6 +6,7 @@ import {Button, Checkbox, fontWeights, theme, typography} from '../../design-sys
 import {PageIntro} from '../../layout/PageIntro.js';
 import {ProductItemLayout} from '../../layout/ProductItemLayout.js';
 import {ScreenLayout} from '../../layout/ScreenLayout.js';
+import {SummaryLayout, SummaryRow} from '../../layout/SummaryLayout.js';
 
 const orderPreview = {
   itemCount: 1,
@@ -66,24 +67,20 @@ export const OrderPreviewPage = () => {
           <NoticeIcon alt='' src={noticeIconUrl} />
           <NoticeText>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</NoticeText>
         </FreeShippingNotice>
-        <SummaryDivider />
-        <SummaryRow>
-          <SummaryLabel>주문 금액</SummaryLabel>
-          <SummaryAmount>{orderPreview.price.orderAmount.toLocaleString('ko-KR')}원</SummaryAmount>
-        </SummaryRow>
-        <SummaryRow>
-          <SummaryLabel>쿠폰 할인 금액</SummaryLabel>
-          <SummaryAmount>-{orderPreview.price.couponDiscountAmount.toLocaleString('ko-KR')}원</SummaryAmount>
-        </SummaryRow>
-        <SummaryRow>
-          <SummaryLabel>배송비</SummaryLabel>
-          <SummaryAmount>{orderPreview.price.shippingFee.toLocaleString('ko-KR')}원</SummaryAmount>
-        </SummaryRow>
-        <SummaryDivider />
-        <TotalSummaryRow>
-          <SummaryLabel>총 결제 금액</SummaryLabel>
-          <SummaryAmount>{orderPreview.price.totalPaymentAmount.toLocaleString('ko-KR')}원</SummaryAmount>
-        </TotalSummaryRow>
+        <SummaryRows>
+          <SummaryRow left='주문 금액' right={`${orderPreview.price.orderAmount.toLocaleString('ko-KR')}원`} />
+          <SummaryRow
+            left='쿠폰 할인 금액'
+            right={`-${orderPreview.price.couponDiscountAmount.toLocaleString('ko-KR')}원`}
+          />
+          <SummaryRow left='배송비' right={`${orderPreview.price.shippingFee.toLocaleString('ko-KR')}원`} />
+        </SummaryRows>
+        <TotalSummaryRows>
+          <SummaryRow
+            left='총 결제 금액'
+            right={`${orderPreview.price.totalPaymentAmount.toLocaleString('ko-KR')}원`}
+          />
+        </TotalSummaryRows>
       </PriceSummary>
     </ScreenLayout>
   );
@@ -196,40 +193,10 @@ const NoticeText = styled.p`
   line-height: ${typography.caption.lineHeight};
 `;
 
-const SummaryDivider = styled.hr`
-  height: 1px;
-  margin: 12px 0 24px;
-  border: 0;
-  background: ${theme.colors.gray100};
+const SummaryRows = styled(SummaryLayout)`
+  margin-top: 12px;
 `;
 
-const SummaryRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-
-  & + & {
-    margin-top: 24px;
-  }
-`;
-
-const TotalSummaryRow = styled(SummaryRow)`
-  margin-top: 24px;
-`;
-
-const SummaryLabel = styled.span`
-  color: ${theme.colors.textPrimary};
-  font-size: ${typography.body.fontSize};
-  font-weight: ${fontWeights.bold};
-  line-height: ${typography.body.lineHeight};
-`;
-
-const SummaryAmount = styled.span`
-  color: ${theme.colors.black};
-  font-size: ${typography.display.fontSize};
-  font-weight: ${fontWeights.bold};
-  line-height: ${typography.display.lineHeight};
-  text-align: right;
-  white-space: nowrap;
+const TotalSummaryRows = styled(SummaryLayout)`
+  margin-top: 12px;
 `;
