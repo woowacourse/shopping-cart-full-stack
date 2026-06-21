@@ -1,7 +1,8 @@
 import {act, renderHook, waitFor} from '@testing-library/react';
 import {http, HttpResponse} from 'msw';
 
-import {CartProvider, useCart} from './useCart.js';
+import {CartProvider} from '../providers/CartProvider.js';
+import {useCart} from './useCart.js';
 import type {CartItem} from '../domain/types.js';
 import {mockServer} from '../../test/mockServer.js';
 
