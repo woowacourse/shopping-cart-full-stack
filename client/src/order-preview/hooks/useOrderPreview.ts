@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 
 import type {CouponId} from '../../coupon/domain/types.js';
-import {previewOrder, type PreviewOrderResponse} from '../api/orderApi.js';
+import {previewOrder, type PreviewOrderResponse} from '../api/orderPreviewApi.js';
 
 export type OrderPreviewStatus = 'loading' | 'success' | 'error';
 
@@ -17,6 +17,7 @@ export function useOrderPreview(preorderId: string | undefined, isRemoteArea: bo
     }
 
     setErrorMessage('');
+    setOrderPreview(null);
 
     try {
       const orderPreview = await previewOrder({

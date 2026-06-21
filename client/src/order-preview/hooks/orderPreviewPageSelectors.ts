@@ -1,7 +1,7 @@
 import type {AsyncStatus} from '../../design-system/feedback/AsyncStateView.js';
-import type {PreorderItem} from '../api/orderApi.js';
+import type {PreorderItem} from '../../preorder/domain/types.js';
 import type {OrderPreviewStatus} from './useOrderPreview.js';
-import type {PreorderErrorType, PreorderStatus} from './usePreorder.js';
+import type {PreorderErrorType, PreorderStatus} from '../../preorder/hooks/usePreorder.js';
 
 interface PageErrorMessageParams {
   orderPreviewErrorMessage: string;

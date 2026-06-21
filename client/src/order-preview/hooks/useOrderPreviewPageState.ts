@@ -4,7 +4,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import type {CouponId} from '../../coupon/domain/types.js';
 import {useCoupons} from '../../coupon/hooks/useCoupons.js';
 import {useOrderPreview} from './useOrderPreview.js';
-import {usePreorder, type PreorderStatus} from './usePreorder.js';
+import {usePreorder, type PreorderStatus} from '../../preorder/hooks/usePreorder.js';
 import {
   getOrderPreviewPageErrorMessage,
   getOrderPreviewPageStatus,
