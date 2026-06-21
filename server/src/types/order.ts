@@ -27,6 +27,11 @@ export interface AppliedCoupon {
   discountAmount: number;
 }
 
+export interface BenefitItem {
+  productId: string;
+  quantity: number;
+}
+
 export interface OrderPrice {
   orderAmount: number;
   productDiscountAmount: number;
@@ -40,6 +45,7 @@ export interface PreviewOrderResponse {
   price: OrderPrice;
   appliedCoupons: AppliedCoupon[];
   excludedCoupons: ExcludedCoupon[];
+  benefitItems: BenefitItem[];
 }
 
 export interface CreateOrderResponse {

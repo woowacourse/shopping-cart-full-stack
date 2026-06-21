@@ -2,7 +2,7 @@ import {Order} from '../Order.js';
 import {Orders} from '../Orders.js';
 
 const createOrder = (id: string) => {
-  return new Order(id, [], 0);
+  return new Order(id, [], [], 0);
 };
 
 describe('Orders', () => {

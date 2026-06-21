@@ -19,6 +19,12 @@ const createOrder = () => {
         quantity: 3,
       },
     ],
+    [
+      {
+        productId: '1',
+        quantity: 1,
+      },
+    ],
     8000
   );
 };
@@ -33,7 +39,7 @@ describe('Order', () => {
   test('getTotalQuantity는 주문 상품 총 수량을 반환한다', () => {
     const order = createOrder();
 
-    expect(order.getTotalQuantity()).toBe(5);
+    expect(order.getTotalQuantity()).toBe(6);
   });
 
   test('getTotalAmount는 주문 총 결제 금액을 반환한다', () => {

@@ -59,6 +59,7 @@ describe('orderService.previewOrder', () => {
         },
       ],
       excludedCoupons: [],
+      benefitItems: [],
     });
   });
 
@@ -119,6 +120,43 @@ describe('orderService.previewOrder', () => {
           excludedReason: '이미 무료 배송이 적용된 주문입니다.',
         },
       ],
+      benefitItems: [],
+    });
+  });
+
+  test('2+1 쿠폰이 적용되면 무료 증정 상품 정보를 포함한다', async () => {
+    const {preorderId, orderService} = await createPreorder();
+
+    const orderPreview = orderService.previewOrder({
+      preorderId,
+      isRemoteArea: false,
+      couponIds: [2],
+    });
+
+    expect(orderPreview).toEqual({
+      price: {
+        orderAmount: 445000,
+        productDiscountAmount: 89000,
+        shippingDiscountAmount: 0,
+        totalDiscountAmount: 89000,
+        shippingFee: 0,
+        totalPaymentAmount: 356000,
+      },
+      appliedCoupons: [
+        {
+          couponId: 2,
+          code: 'BOGO',
+          name: '2개 구매 시 1개 무료 쿠폰',
+          discountAmount: 89000,
+        },
+      ],
+      excludedCoupons: [],
+      benefitItems: [
+        {
+          productId: '6',
+          quantity: 1,
+        },
+      ],
     });
   });
 
@@ -153,6 +191,26 @@ describe('orderService.createOrder', () => {
     });
     expect(cartItems.findById('6')).toBeUndefined();
     expect(() => preorderService.getPreorder(preorderId)).toThrow('주문 확인 정보를 찾을 수 없습니다.');
+  });
+
+  test('2+1 쿠폰으로 생성된 주문은 무료 증정 수량을 주문 요약에 포함한다', async () => {
+    const {preorderId, orderService} = await createPreorder();
+    const orderPreview = orderService.previewOrder({
+      preorderId,
+      isRemoteArea: false,
+      couponIds: [2],
+    });
+
+    const order = orderService.createOrder({
+      preorderId,
+      expectedTotalPaymentAmount: orderPreview.price.totalPaymentAmount,
+    });
+
+    expect(orderService.getOrderSummary(order.orderId)).toEqual({
+      itemCount: 1,
+      totalQuantity: 6,
+      totalAmount: 356000,
+    });
   });
 
   test('요청 값이 유효하지 않으면 에러를 던진다', async () => {

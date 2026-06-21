@@ -36,7 +36,7 @@ const calculateOrder = (preorderId: string, couponIds: number[], isRemoteArea: b
   const orderAmount = calculateOrderAmount(preorder.items);
   const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
   const {applicableCoupons, excludedCoupons} = getPreviewCoupons(couponIds, preorderId, preorder.items, isRemoteArea);
-  const {price, appliedCoupons} = calculateBestOrderPricing(
+  const {price, appliedCoupons, benefitItems} = calculateBestOrderPricing(
     applicableCoupons,
     preorder.items,
     orderAmount,
@@ -48,6 +48,7 @@ const calculateOrder = (preorderId: string, couponIds: number[], isRemoteArea: b
     price,
     appliedCoupons,
     excludedCoupons,
+    benefitItems,
   };
 };
 
@@ -59,7 +60,7 @@ export const orderService = {
 
     const {preorderId, couponIds, isRemoteArea} = body;
 
-    const {price, appliedCoupons, excludedCoupons} = calculateOrder(preorderId, couponIds, isRemoteArea);
+    const {price, appliedCoupons, excludedCoupons, benefitItems} = calculateOrder(preorderId, couponIds, isRemoteArea);
 
     const isSaved = preorderCache.savePreview(preorderId, {
       couponIds: appliedCoupons.map((coupon) => coupon.couponId),
@@ -74,6 +75,7 @@ export const orderService = {
       price,
       appliedCoupons,
       excludedCoupons,
+      benefitItems,
     };
   },
 
@@ -84,7 +86,11 @@ export const orderService = {
 
     const {preorderId, expectedTotalPaymentAmount} = body;
     const preview = getPreorderPreview(preorderId);
-    const {preorder, price, excludedCoupons} = calculateOrder(preorderId, preview.couponIds, preview.isRemoteArea);
+    const {preorder, price, excludedCoupons, benefitItems} = calculateOrder(
+      preorderId,
+      preview.couponIds,
+      preview.isRemoteArea
+    );
 
     if (excludedCoupons.length > 0) {
       throw new HttpError(409, '적용할 수 없는 쿠폰이 포함되어 있습니다.');
@@ -95,7 +101,7 @@ export const orderService = {
     }
 
     const orderId = randomUUID();
-    const order = new Order(orderId, preorder.items, price.totalPaymentAmount);
+    const order = new Order(orderId, preorder.items, benefitItems, price.totalPaymentAmount);
     const preorderSession = preorderCache.findById(preorderId);
 
     if (!preorderSession) {
