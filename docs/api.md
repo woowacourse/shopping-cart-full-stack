@@ -133,7 +133,7 @@ preorder 주문 세션에 저장된 `productId`, `quantity`, 상품 이름, 상�
 
 ### GET `/coupons?preorderId={preorderId}`
 
-coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일, 쿠폰 condition, 쿠폰 benefit을 조회한다. 서버에서 쿠폰 적용 가능 여부를 계산하여 `disabled`와 `disabledReason`을 함께 전달해야 한다.
+coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일, 쿠폰 condition, 쿠폰 benefit을 조회한다. 서버에서 쿠폰 적용 가능 여부를 계산하여 `disabled`와 `disabledReason`을 함께 전달해야 한다. 쿠폰 조건의 화면 표시 문구는 서버가 condition `params`를 기준으로 계산하여 응답의 `condition.description`으로 함께 전달한다.
 
 ### Query Parameters
 
@@ -168,10 +168,10 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 | Code | condition | benefit |
 | --- | --- | --- |
-| `FIXED5000` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 100000 } }` | `{ "target": "PRODUCT", "discountType": "FIXED", "rule": "DISCOUNT_AMOUNT", "params": { "discountAmount": 5000 } }` |
-| `BOGO` | `{ "target": "PRODUCT", "rule": "MIN_SAME_PRODUCT_QUANTITY", "params": { "minSameProductQuantity": 2 } }` | `{ "target": "PRODUCT", "discountType": "FIXED", "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "params": { "discountQuantity": 1 } }` |
-| `FREESHIPPING` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 50000 } }` | `{ "target": "SHIPPING", "rule": "FREE_SHIPPING", "params": {} }` |
-| `MIRACLESALE` | `{ "target": "TIME", "rule": "TIME_RANGE", "params": { "start": "04:00", "end": "07:00" } }` | `{ "target": "PRODUCT", "discountType": "RATE", "rule": "DISCOUNT_RATE", "params": { "discountRate": 0.3, "applyAfterFixedDiscount": true } }` |
+| `FIXED5000` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "description": "최소 주문 금액: 100,000원", "params": { "minOrderAmount": 100000 } }` | `{ "target": "PRODUCT", "discountType": "FIXED", "rule": "DISCOUNT_AMOUNT", "params": { "discountAmount": 5000 } }` |
+| `BOGO` | `{ "target": "PRODUCT", "rule": "MIN_SAME_PRODUCT_QUANTITY", "description": null, "params": { "minSameProductQuantity": 2 } }` | `{ "target": "PRODUCT", "discountType": "FIXED", "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "params": { "discountQuantity": 1 } }` |
+| `FREESHIPPING` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "description": "최소 주문 금액: 50,000원", "params": { "minOrderAmount": 50000 } }` | `{ "target": "SHIPPING", "rule": "FREE_SHIPPING", "params": {} }` |
+| `MIRACLESALE` | `{ "target": "TIME", "rule": "TIME_RANGE", "description": "사용 가능 시간: 오전 4시부터 오전 7시까지", "params": { "start": "04:00", "end": "07:00" } }` | `{ "target": "PRODUCT", "discountType": "RATE", "rule": "DISCOUNT_RATE", "params": { "discountRate": 0.3, "applyAfterFixedDiscount": true } }` |
 
 - `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.target`, `condition.rule`, `benefit.target`, `benefit.rule`을 기준으로 해석한다.
 - `condition.target`은 조건 판단 대상을 나타낸다. `ORDER`는 주문, `PRODUCT`는 상품, `TIME`은 서버 시간 기준이다.
@@ -185,6 +185,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 - `FREE_SHIPPING`은 기본 배송비와 제주도 및 도서산간 추가 배송비를 모두 무료 처리한다.
 - `TIME_RANGE`는 서버 시간을 기준으로 판단하며, `start`는 포함하고 `end`는 포함하지 않는다.
 - `DISCOUNT_RATE`의 `discountRate`는 0 이상 1 이하의 소수로 표현한다.
+- `condition.description`은 쿠폰 조건을 화면에 표시하기 위한 응답 문구다. 서버는 `condition.params`를 기준으로 이 문구를 생성한다. 쿠폰 이름 자체에 조건이 포함되어 별도 노출이 필요 없는 경우 `null`을 전달한다.
 
 ### Response Example
 
@@ -200,6 +201,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "condition": {
           "target": "ORDER",
           "rule": "MIN_ORDER_AMOUNT",
+          "description": "최소 주문 금액: 100,000원",
           "params": {
             "minOrderAmount": 100000
           }
@@ -223,6 +225,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "condition": {
           "target": "PRODUCT",
           "rule": "MIN_SAME_PRODUCT_QUANTITY",
+          "description": null,
           "params": {
             "minSameProductQuantity": 2
           }
@@ -246,6 +249,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "condition": {
           "target": "ORDER",
           "rule": "MIN_ORDER_AMOUNT",
+          "description": "최소 주문 금액: 50,000원",
           "params": {
             "minOrderAmount": 50000
           }
@@ -266,6 +270,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "condition": {
           "target": "TIME",
           "rule": "TIME_RANGE",
+          "description": "사용 가능 시간: 오전 4시부터 오전 7시까지",
           "params": {
             "start": "04:00",
             "end": "07:00"
