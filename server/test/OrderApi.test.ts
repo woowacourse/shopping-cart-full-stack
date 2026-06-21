@@ -104,6 +104,7 @@ describe('Order API', () => {
           },
         ],
         excludedCoupons: [],
+        benefitItems: [],
       },
     });
   });

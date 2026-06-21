@@ -47,5 +47,9 @@ export default app;
 function createAllowedOrigins() {
   if (!process.env.CLIENT_ORIGIN) return localAllowedOrigins;
 
-  return [...localAllowedOrigins, process.env.CLIENT_ORIGIN];
+  const deployedAllowedOrigins = process.env.CLIENT_ORIGIN.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return [...localAllowedOrigins, ...deployedAllowedOrigins];
 }
