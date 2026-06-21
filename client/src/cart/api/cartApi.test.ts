@@ -38,7 +38,7 @@ describe('cartApi', () => {
       })
     );
 
-    await expect(getCartItems()).rejects.toThrow('장바구니 요청에 실패했습니다.');
+    await expect(getCartItems()).rejects.toThrow('요청에 실패했습니다.');
   });
 
   test('에러 응답을 파싱할 수 없으면 기본 Error 메시지를 전달한다', async () => {
@@ -48,6 +48,6 @@ describe('cartApi', () => {
       })
     );
 
-    await expect(getCartItems()).rejects.toThrow('장바구니 요청에 실패했습니다.');
+    await expect(getCartItems()).rejects.toThrow('요청에 실패했습니다.');
   });
 });
