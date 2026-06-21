@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import {Button, Typo, theme} from '../../../design-system/index.js';
-import {createPreorder} from '../../../order/api/orderApi.js';
+import {createPreorder} from '../../../preorder/api/preorderApi.js';
 import {getTotalPrice} from '../../domain/cartSelectors.js';
 import {useCart} from '../../hooks/useCart.js';
 
