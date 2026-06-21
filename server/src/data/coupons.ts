@@ -25,7 +25,7 @@ export const couponData: Coupon[] = [
   {
     id: 2,
     code: 'BOGO',
-    name: '2+1 쿠폰',
+    name: '2개 구매 시 1개 무료 쿠폰',
     expirationDate: new Date('2026-06-30T23:59:59+09:00'),
     condition: {
       target: 'PRODUCT',
@@ -46,7 +46,7 @@ export const couponData: Coupon[] = [
   {
     id: 3,
     code: 'FREESHIPPING',
-    name: '무료 배송 쿠폰',
+    name: '5만원 이상 구매 시 무료 배송 쿠폰',
     expirationDate: new Date('2026-08-31T23:59:59+09:00'),
     condition: {
       target: 'ORDER',
@@ -64,7 +64,7 @@ export const couponData: Coupon[] = [
   {
     id: 4,
     code: 'MIRACLESALE',
-    name: '30% 시간제 할인 쿠폰',
+    name: '미라클모닝 30% 할인 쿠폰',
     expirationDate: new Date('2026-07-31T23:59:59+09:00'),
     condition: {
       target: 'TIME',

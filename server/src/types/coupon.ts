@@ -59,6 +59,10 @@ export type ShippingDiscountBenefit = {
 
 export type CouponBenefit = ProductDiscountBenefit | ShippingDiscountBenefit;
 
+export type CouponConditionResponse = CouponCondition & {
+  description: string | null;
+};
+
 export interface Coupon {
   id: number;
   code: string;
@@ -73,7 +77,7 @@ export interface CouponResponse {
   code: string;
   name: string;
   expirationDate: string;
-  condition: CouponCondition;
+  condition: CouponConditionResponse;
   benefit: CouponBenefit;
   disabled: boolean;
   disabledReason: string | null;

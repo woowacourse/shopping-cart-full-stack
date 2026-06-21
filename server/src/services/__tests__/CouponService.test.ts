@@ -35,6 +35,9 @@ describe('couponService', () => {
         couponId: 1,
         code: 'FIXED5000',
         name: '5000원 할인 쿠폰',
+        condition: expect.objectContaining({
+          description: '최소 주문 금액: 100,000원',
+        }),
         disabled: false,
         disabledReason: null,
       })
@@ -48,6 +51,22 @@ describe('couponService', () => {
     const coupons = couponService.getCoupons(preorder);
 
     expect(coupons[0].expirationDate).toBe('2026-11-30T14:59:59.000Z');
+  });
+
+  test('getCoupons는 화면에 표시할 조건 설명을 반환한다', async () => {
+    const {couponService} = await loadCouponService();
+    const preorder = createPreorder(100000, 2);
+
+    const coupons = couponService.getCoupons(preorder);
+    const fixedCoupon = coupons.find((coupon) => coupon.code === 'FIXED5000');
+    const bogoCoupon = coupons.find((coupon) => coupon.code === 'BOGO');
+    const freeShippingCoupon = coupons.find((coupon) => coupon.code === 'FREESHIPPING');
+    const miracleSaleCoupon = coupons.find((coupon) => coupon.code === 'MIRACLESALE');
+
+    expect(fixedCoupon?.condition.description).toBe('최소 주문 금액: 100,000원');
+    expect(bogoCoupon?.condition.description).toBeNull();
+    expect(freeShippingCoupon?.condition.description).toBe('최소 주문 금액: 50,000원');
+    expect(miracleSaleCoupon?.condition.description).toBe('사용 가능 시간: 오전 4시부터 오전 7시까지');
   });
 
   test('getCoupons는 사용 불가능한 쿠폰에 disabledReason을 포함한다', async () => {
