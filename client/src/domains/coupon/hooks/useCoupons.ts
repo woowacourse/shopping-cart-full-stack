@@ -7,7 +7,7 @@ import type {Coupon, CouponId} from '../domain/types.js';
 type CouponsStatus = 'loading' | 'success' | 'error';
 export type CouponsErrorType = 'default' | 'expired' | 'notFound';
 
-type CouponsError = {
+export type CouponsError = {
   message: string;
   type: CouponsErrorType;
 };
@@ -59,8 +59,7 @@ export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean
     coupons,
     recommendedCouponIds,
     status,
-    errorMessage: error?.message ?? '',
-    errorType: error?.type ?? 'default',
+    error,
     loadCoupons,
   };
 }

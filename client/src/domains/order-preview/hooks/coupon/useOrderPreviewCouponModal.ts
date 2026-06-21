@@ -25,8 +25,7 @@ export function useOrderPreviewCouponModal(
   } = useCouponDraftSelection();
   const {
     coupons,
-    errorMessage: couponErrorMessage,
-    errorType: couponErrorType,
+    error: couponError,
     loadCoupons,
     recommendedCouponIds,
     status: couponsStatus,
@@ -48,7 +47,7 @@ export function useOrderPreviewCouponModal(
     void loadModalPreview();
   };
   const {errorActionText, handleCouponModalError} = useOrderPreviewCouponErrorAction({
-    couponErrorType,
+    couponErrorType: couponError?.type ?? 'default',
     modalPreviewErrorType: modalPreviewError?.type ?? 'default',
     onReturnToCart,
     retryCoupons,
@@ -69,7 +68,7 @@ export function useOrderPreviewCouponModal(
       isOpen: isCouponModalOpen,
       coupons,
       discountAmount: modalOrderPreview?.price.totalDiscountAmount ?? 0,
-      errorMessage: getCouponModalErrorMessage(couponErrorMessage, modalPreviewError?.message ?? '', couponsStatus),
+      errorMessage: getCouponModalErrorMessage(couponError?.message ?? '', modalPreviewError?.message ?? '', couponsStatus),
       errorActionText,
       selectedCouponIds: draftCouponIds,
       status: getCouponModalStatus(couponsStatus, modalPreviewStatus),
