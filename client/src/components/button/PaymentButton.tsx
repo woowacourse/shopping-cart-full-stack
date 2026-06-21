@@ -13,7 +13,7 @@ export default function PaymentButton({ orderId }: Props) {
     const res = await orderApi.post(orderId, {});
     if (!res.ok) return;
     const data = await res.json();
-    navigate("/order-success", { state: data });
+    navigate("/payment", { state: data });
   };
 
   return <Button onClick={handlePayment}>결제하기</Button>;
