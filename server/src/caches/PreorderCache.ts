@@ -1,6 +1,6 @@
 import {randomUUID} from 'node:crypto';
 
-const PREORDER_TTL_MS = 0.5 * 60 * 1000; // 30초
+const PREORDER_TTL_MS = 10 * 60 * 1000; // 10분
 
 export interface PreorderItemSnapshot {
   cartItemId: string;
