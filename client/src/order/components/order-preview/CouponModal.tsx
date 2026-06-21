@@ -5,12 +5,12 @@ import type {Coupon, CouponId} from '../../../coupon/domain/types.js';
 import {CouponModalItem} from './CouponModalItem.js';
 
 const MAX_COUPON_COUNT = 2;
-const COUPON_DISCOUNT_AMOUNT = 0;
 
 type CouponsStatus = 'loading' | 'success' | 'error';
 
 interface CouponModalProps {
   coupons: Coupon[];
+  discountAmount: number;
   errorMessage: string;
   selectedCouponIds: CouponId[];
   status: CouponsStatus;
@@ -22,6 +22,7 @@ interface CouponModalProps {
 
 export const CouponModal = ({
   coupons,
+  discountAmount,
   errorMessage,
   selectedCouponIds,
   status,
@@ -81,7 +82,7 @@ export const CouponModal = ({
               })}
             </CouponList>
 
-            <ApplyButton onClick={onApply}>{getApplyButtonText(COUPON_DISCOUNT_AMOUNT)}</ApplyButton>
+            <ApplyButton onClick={onApply}>{getApplyButtonText(discountAmount)}</ApplyButton>
           </>
         )}
       </Panel>

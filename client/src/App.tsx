@@ -3,6 +3,7 @@ import {Navigate, Route, Routes} from 'react-router-dom';
 
 import {theme} from './design-system/index.js';
 import {CartProvider} from './cart/providers/CartProvider.js';
+import {OrderPreviewProvider} from './order/providers/OrderPreviewProvider.js';
 
 import {CartPage} from './cart/pages/CartPage.js';
 import {OrderConfirmPage} from './order/pages/OrderConfirmPage.js';
@@ -21,7 +22,14 @@ export const App = () => {
             </CartProvider>
           }
         />
-        <Route path='order-preview/:preorderId' element={<OrderPreviewPage />} />
+        <Route
+          path='order-preview/:preorderId'
+          element={
+            <OrderPreviewProvider>
+              <OrderPreviewPage />
+            </OrderPreviewProvider>
+          }
+        />
         <Route path='order-confirm' element={<OrderConfirmPage />} />
       </Routes>
     </PhoneView>

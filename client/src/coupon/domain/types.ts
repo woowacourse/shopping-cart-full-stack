@@ -13,3 +13,8 @@ export interface Coupon {
   disabled: boolean;
   disabledReason: string | null;
 }
+
+export interface CouponList {
+  coupons: Coupon[];
+  recommendedCouponIds: CouponId[];
+}

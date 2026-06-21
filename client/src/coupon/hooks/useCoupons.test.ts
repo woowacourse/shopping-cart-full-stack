@@ -26,6 +26,7 @@ function mockGetCoupons() {
       return HttpResponse.json({
         body: {
           coupons,
+          recommendedCouponIds: [1],
         },
       });
     })
@@ -36,24 +37,26 @@ describe('useCoupons', () => {
   test('preorderId 기준으로 쿠폰 목록을 조회한다', async () => {
     mockGetCoupons();
 
-    const {result} = renderHook(() => useCoupons('preorder-1'));
+    const {result} = renderHook(() => useCoupons('preorder-1', false));
 
     await waitFor(() => {
       expect(result.current.status).toBe('success');
     });
 
     expect(result.current.coupons).toEqual(coupons);
+    expect(result.current.recommendedCouponIds).toEqual([1]);
     expect(result.current.errorMessage).toBe('');
   });
 
   test('preorderId가 없으면 에러 상태로 변경한다', async () => {
-    const {result} = renderHook(() => useCoupons(undefined));
+    const {result} = renderHook(() => useCoupons(undefined, false));
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');
     });
 
     expect(result.current.coupons).toEqual([]);
+    expect(result.current.recommendedCouponIds).toEqual([]);
     expect(result.current.errorMessage).toBe('쿠폰 정보를 불러올 수 없습니다.');
   });
 
@@ -63,18 +66,20 @@ describe('useCoupons', () => {
         return HttpResponse.json({
           body: {
             coupons: [],
+            recommendedCouponIds: [],
           },
         });
       })
     );
 
-    const {result} = renderHook(() => useCoupons('preorder-1'));
+    const {result} = renderHook(() => useCoupons('preorder-1', false));
 
     await waitFor(() => {
       expect(result.current.status).toBe('success');
     });
 
     expect(result.current.coupons).toEqual([]);
+    expect(result.current.recommendedCouponIds).toEqual([]);
     expect(result.current.errorMessage).toBe('');
   });
 
@@ -85,13 +90,14 @@ describe('useCoupons', () => {
       })
     );
 
-    const {result} = renderHook(() => useCoupons('preorder-1'));
+    const {result} = renderHook(() => useCoupons('preorder-1', false));
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');
     });
 
     expect(result.current.coupons).toEqual([]);
+    expect(result.current.recommendedCouponIds).toEqual([]);
     expect(result.current.errorMessage).toBe('쿠폰 정보를 불러오지 못했습니다.');
   });
 });

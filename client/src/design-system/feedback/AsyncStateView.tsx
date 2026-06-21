@@ -1,6 +1,6 @@
 import type {ReactNode} from 'react';
 
-type AsyncStatus = 'loading' | 'error' | 'empty' | 'success';
+export type AsyncStatus = 'loading' | 'error' | 'empty' | 'success';
 
 type AsyncStateViewProps = {
   children: ReactNode;

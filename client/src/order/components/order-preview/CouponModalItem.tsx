@@ -27,7 +27,7 @@ export const CouponModalItem = ({checked, coupon, disabled, onChange}: CouponMod
             만료일: {formatDate(coupon.expirationDate)}
           </CouponDescription>
           <ConditionDescription as='p' $hidden={!coupon.condition.description} variant='caption' weight='medium'>
-            {coupon.condition.description ?? '조건 없음'}
+            {coupon.condition.description ?? ''}
           </ConditionDescription>
         </DescriptionList>
       </Content>

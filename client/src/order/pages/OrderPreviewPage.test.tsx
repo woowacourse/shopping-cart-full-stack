@@ -5,6 +5,7 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
 import OrderPreviewPage from './OrderPreviewPage.js';
 import {OrderConfirmPage} from './OrderConfirmPage.js';
+import {OrderPreviewProvider} from '../providers/OrderPreviewProvider.js';
 import {mockServer} from '../../test/mockServer.js';
 
 const API_BASE_URL = 'https://paradi-easter.up.railway.app';
@@ -81,6 +82,7 @@ function mockGetCoupons() {
               disabledReason: null,
             },
           ],
+          recommendedCouponIds: [1, 3],
         },
       });
     })
@@ -123,7 +125,14 @@ function renderOrderPreviewPage(initialEntry = '/order-preview/preorder-1') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
-        <Route path='/order-preview/:preorderId' element={<OrderPreviewPage />} />
+        <Route
+          path='/order-preview/:preorderId'
+          element={
+            <OrderPreviewProvider>
+              <OrderPreviewPage />
+            </OrderPreviewProvider>
+          }
+        />
       </Routes>
     </MemoryRouter>
   );
@@ -134,7 +143,14 @@ function renderOrderPreviewRoutes() {
     <MemoryRouter initialEntries={['/order-preview/preorder-1']}>
       <Routes>
         <Route path='/cart' element={<div>장바구니 화면</div>} />
-        <Route path='/order-preview/:preorderId' element={<OrderPreviewPage />} />
+        <Route
+          path='/order-preview/:preorderId'
+          element={
+            <OrderPreviewProvider>
+              <OrderPreviewPage />
+            </OrderPreviewProvider>
+          }
+        />
         <Route path='/order-confirm' element={<OrderConfirmPage />} />
       </Routes>
     </MemoryRouter>
@@ -284,7 +300,7 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByRole('checkbox', {name: '2개 구매 시 1개 무료 쿠폰'})).toBeDisabled();
   });
 
-  test('쿠폰은 최대 2개까지 선택할 수 있다', async () => {
+  test('쿠폰 모달을 처음 열면 추천 쿠폰이 자동 선택된다', async () => {
     const user = userEvent.setup();
     const requestBodies: unknown[] = [];
 
@@ -296,13 +312,11 @@ describe('OrderPreviewPage', () => {
 
     await screen.findByText('상품이름A');
     await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
-    await user.click(screen.getByRole('checkbox', {name: '5,000원 할인 쿠폰'}));
-    await user.click(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'}));
 
-    expect(screen.getByRole('checkbox', {name: '5,000원 할인 쿠폰'})).toBeChecked();
-    expect(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).toBeChecked();
+    expect(await screen.findByRole('checkbox', {name: '5,000원 할인 쿠폰'})).toBeChecked();
+    expect(await screen.findByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).toBeChecked();
     expect(screen.getByRole('checkbox', {name: '미라클모닝 30% 할인 쿠폰'})).toBeDisabled();
-    expect(screen.getByRole('button', {name: '총 0원 할인 쿠폰 사용하기'})).toBeInTheDocument();
+    expect(await screen.findByRole('button', {name: '총 8,000원 할인 쿠폰 사용하기'})).toBeInTheDocument();
     expect(requestBodies).toContainEqual({
       preorderId: 'preorder-1',
       isRemoteArea: false,

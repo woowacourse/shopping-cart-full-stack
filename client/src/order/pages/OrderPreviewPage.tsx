@@ -1,137 +1,50 @@
-import {useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-
 import {AsyncStateView, Button, ErrorState, LoadingState} from '../../design-system/index.js';
+
 import {PageIntro} from '../../layout/PageIntro.js';
 import {ScreenLayout} from '../../layout/ScreenLayout.js';
-import {useCoupons} from '../../coupon/hooks/useCoupons.js';
-import type {CouponId} from '../../coupon/domain/types.js';
+
 import {OrderPreviewBackButton} from '../components/order-preview/OrderPreviewBackButton.js';
-import {CouponModal} from '../components/order-preview/CouponModal.js';
-import {OrderPreviewContent} from '../components/order-preview/OrderPreviewContent.js';
-import {useOrderPreview, type OrderPreviewStatus} from '../hooks/useOrderPreview.js';
-import {usePreorder, type PreorderStatus} from '../hooks/usePreorder.js';
-import type {PreorderItem} from '../api/orderApi.js';
+import {OrderPreviewSuccessContent} from '../components/order-preview/OrderPreviewSuccessContent.js';
+import {OrderPreviewCouponModal} from '../components/order-preview/OrderPreviewCouponModal.js';
+
+import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewPage = () => {
-  const navigate = useNavigate();
-  const {preorderId} = useParams();
-  const {
-    errorMessage: preorderErrorMessage,
-    errorType,
-    loadPreorder,
-    preorder,
-    status: preorderStatus,
-  } = usePreorder(preorderId);
-  const {coupons, errorMessage: couponErrorMessage, loadCoupons, status: couponsStatus} = useCoupons(preorderId);
-  const [isRemoteArea, setIsRemoteArea] = useState(false);
-  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
-  const [selectedCouponIds, setSelectedCouponIds] = useState<CouponId[]>([]);
-  const {
-    errorMessage: orderPreviewErrorMessage,
-    loadOrderPreview,
-    orderPreview,
-    status: orderPreviewStatus,
-  } = useOrderPreview(preorderId, isRemoteArea, selectedCouponIds);
-  const itemCount = preorder?.items.length ?? 0;
-  const quantity = preorder ? getTotalQuantity(preorder.items) : 0;
-  const shouldReturnToCart = errorType === 'expired' || errorType === 'notFound';
-  const pageStatus = getOrderPreviewPageStatus(preorderStatus, orderPreviewStatus);
-  const pageErrorMessage = preorderStatus === 'error' ? preorderErrorMessage : orderPreviewErrorMessage;
-  const handleErrorAction = getErrorAction({
-    loadOrderPreview,
-    loadPreorder,
-    navigateToCart: () => navigate('/cart'),
-    preorderStatus,
-    shouldReturnToCart,
-  });
+  const {actions, intro, page} = useOrderPreviewPage();
 
   return (
     <ScreenLayout
-      header={<OrderPreviewBackButton onClick={() => navigate('/cart')} />}
+      header={<OrderPreviewBackButton onClick={actions.navigateToCart} />}
       bottomButton={<Button disabled>결제하기</Button>}
     >
       <PageIntro
         title='주문 확인'
         description={
-          preorder && (
-            <>
-              총 {itemCount}종류의 상품 {quantity}개를 주문합니다.
-              <br />
-              최종 결제 금액을 확인해 주세요.
-            </>
-          )
+          <>
+            총 {intro.itemCount}종류의 상품 {intro.quantity}개를 주문합니다.
+            <br />
+            최종 결제 금액을 확인해 주세요.
+          </>
         }
       />
 
       <AsyncStateView
         errorFallback={
           <ErrorState
-            actionText={shouldReturnToCart ? '장바구니로 돌아가기' : undefined}
-            message={pageErrorMessage}
-            onAction={handleErrorAction}
+            actionText={page.shouldReturnToCart ? '장바구니로 돌아가기' : undefined}
+            message={page.errorMessage}
+            onAction={actions.errorAction}
           />
         }
         loadingFallback={<LoadingState />}
-        status={pageStatus}
+        status={page.status}
       >
-        {preorder && orderPreview && (
-          <OrderPreviewContent
-            isRemoteArea={isRemoteArea}
-            price={orderPreview.price}
-            preorder={preorder}
-            onChangeRemoteArea={setIsRemoteArea}
-            onOpenCouponModal={() => setIsCouponModalOpen(true)}
-          />
-        )}
+        <OrderPreviewSuccessContent />
       </AsyncStateView>
 
-      {isCouponModalOpen && (
-        <CouponModal
-          coupons={coupons}
-          errorMessage={couponErrorMessage}
-          selectedCouponIds={selectedCouponIds}
-          status={couponsStatus}
-          onApply={() => setIsCouponModalOpen(false)}
-          onChangeSelectedCouponIds={setSelectedCouponIds}
-          onClose={() => setIsCouponModalOpen(false)}
-          onRetry={() => void loadCoupons()}
-        />
-      )}
+      <OrderPreviewCouponModal />
     </ScreenLayout>
   );
 };
 
 export default OrderPreviewPage;
-
-function getTotalQuantity(items: PreorderItem[]) {
-  return items.reduce((totalQuantity, item) => totalQuantity + item.quantity, 0);
-}
-
-function getOrderPreviewPageStatus(preorderStatus: PreorderStatus, orderPreviewStatus: OrderPreviewStatus) {
-  if (preorderStatus === 'error' || orderPreviewStatus === 'error') return 'error';
-  if (preorderStatus === 'loading' || orderPreviewStatus === 'loading') return 'loading';
-
-  return 'success';
-}
-
-interface ErrorActionParams {
-  loadOrderPreview: () => Promise<void>;
-  loadPreorder: () => Promise<void>;
-  navigateToCart: () => void;
-  preorderStatus: PreorderStatus;
-  shouldReturnToCart: boolean;
-}
-
-function getErrorAction({
-  loadOrderPreview,
-  loadPreorder,
-  navigateToCart,
-  preorderStatus,
-  shouldReturnToCart,
-}: ErrorActionParams) {
-  if (shouldReturnToCart) return navigateToCart;
-  if (preorderStatus === 'error') return () => void loadPreorder();
-
-  return () => void loadOrderPreview();
-}

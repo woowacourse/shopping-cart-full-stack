@@ -1,12 +1,13 @@
 import {useCallback, useEffect, useState} from 'react';
 
 import {getCoupons} from '../api/couponApi.js';
-import type {Coupon} from '../domain/types.js';
+import type {Coupon, CouponId} from '../domain/types.js';
 
 type CouponsStatus = 'loading' | 'success' | 'error';
 
-export function useCoupons(preorderId: string | undefined) {
+export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [recommendedCouponIds, setRecommendedCouponIds] = useState<CouponId[]>([]);
   const [status, setStatus] = useState<CouponsStatus>('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -15,6 +16,7 @@ export function useCoupons(preorderId: string | undefined) {
       setStatus('error');
       setErrorMessage('쿠폰 정보를 불러올 수 없습니다.');
       setCoupons([]);
+      setRecommendedCouponIds([]);
       return;
     }
 
@@ -22,16 +24,18 @@ export function useCoupons(preorderId: string | undefined) {
     setErrorMessage('');
 
     try {
-      const coupons = await getCoupons(preorderId);
+      const couponList = await getCoupons(preorderId, isRemoteArea);
 
-      setCoupons(coupons);
+      setCoupons(couponList.coupons);
+      setRecommendedCouponIds(couponList.recommendedCouponIds ?? []);
       setStatus('success');
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
       setCoupons([]);
+      setRecommendedCouponIds([]);
       setStatus('error');
     }
-  }, [preorderId]);
+  }, [preorderId, isRemoteArea]);
 
   useEffect(() => {
     void loadCoupons();
@@ -39,6 +43,7 @@ export function useCoupons(preorderId: string | undefined) {
 
   return {
     coupons,
+    recommendedCouponIds,
     status,
     errorMessage,
     loadCoupons,
