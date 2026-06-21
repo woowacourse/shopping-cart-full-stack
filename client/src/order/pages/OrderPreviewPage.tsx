@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import {backArrowIconUrl, noticeIconUrl} from '../../design-system/assets/icons/index.js';
 import {Button, Checkbox, fontWeights, theme, typography} from '../../design-system/index.js';
 import {PageIntro} from '../../layout/PageIntro.js';
+import {ProductItemLayout} from '../../layout/ProductItemLayout.js';
 import {ScreenLayout} from '../../layout/ScreenLayout.js';
 
 const orderPreview = {
@@ -45,14 +46,13 @@ export const OrderPreviewPage = () => {
         }
       />
 
-      <ProductSection>
-        <ProductImage alt={orderPreview.product.name} src={orderPreview.product.imageUrl} />
+      <PreviewProductItemRoot image={<img alt={orderPreview.product.name} src={orderPreview.product.imageUrl} />}>
         <ProductInfo>
           <ProductName>{orderPreview.product.name}</ProductName>
           <ProductPrice>{orderPreview.product.price.toLocaleString('ko-KR')}원</ProductPrice>
           <ProductQuantity>{orderPreview.quantity}개</ProductQuantity>
         </ProductInfo>
-      </ProductSection>
+      </PreviewProductItemRoot>
 
       <CouponButton type='button'>쿠폰 적용</CouponButton>
 
@@ -61,9 +61,9 @@ export const OrderPreviewPage = () => {
         <Checkbox checked label='제주도 및 도서 산간 지역' readOnly />
       </ShippingSection>
 
-      <PriceSummary aria-label='결제 요약'>
+      <PriceSummary>
         <FreeShippingNotice>
-          <NoticeIcon alt='' aria-hidden='true' src={noticeIconUrl} />
+          <NoticeIcon alt='' src={noticeIconUrl} />
           <NoticeText>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</NoticeText>
         </FreeShippingNotice>
         <SummaryDivider />
@@ -109,23 +109,8 @@ const BackIcon = styled.img`
   object-fit: contain;
 `;
 
-const ProductSection = styled.section`
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 24px;
-  align-items: center;
+const PreviewProductItemRoot = styled(ProductItemLayout)`
   margin-top: 36px;
-  padding-top: 12px;
-  border-top: 1px solid ${theme.colors.gray100};
-`;
-
-const ProductImage = styled.img`
-  display: block;
-  width: 112px;
-  height: 112px;
-  border-radius: ${theme.radius[8]};
-  background: ${theme.colors.gray100};
-  object-fit: cover;
 `;
 
 const ProductInfo = styled.div`

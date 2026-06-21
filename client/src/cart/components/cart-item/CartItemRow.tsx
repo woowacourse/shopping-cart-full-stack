@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 
 import {Checkbox, NumericSpinner, Typo, fontWeights, theme, typography} from '../../../design-system/index.js';
+import {ProductItemLayout} from '../../../layout/ProductItemLayout.js';
 import type {CartItem, CartItemId} from '../../domain/types.js';
 
 type CartItemRowProps = {
   cartItem: CartItem;
   checked: boolean;
   onChangeQuantity: (cartItemId: CartItemId, quantity: CartItem['quantity']) => void | Promise<void>;
-  onDelete: (cartItemId: CartItemId) => void | Promise<void>;
+  onDelete: (cartItemId: CartItemId) => void;
   onToggle: (cartItemId: CartItemId) => void;
 };
 
@@ -15,63 +16,52 @@ export const CartItemRow = ({cartItem, checked, onChangeQuantity, onDelete, onTo
   const {id, productInfo, quantity} = cartItem;
 
   return (
-    <Row>
-      <ActionArea>
-        <Checkbox aria-label='선택' checked={checked} onChange={() => onToggle(id)} />
-        <DeleteButton
-          aria-label='삭제'
-          onClick={() => {
-            void onDelete(id);
-          }}
-          type='button'
-        >
-          삭제
-        </DeleteButton>
-      </ActionArea>
-      <Content>
-        <ProductImage alt={productInfo.name} src={productInfo.imageUrl} />
-        <ProductInfo>
-          <TextGroup>
-            <Typo as='strong' variant='caption' weight='medium'>
-              {productInfo.name}
-            </Typo>
-            <Typo as='strong' color='black' variant='display' weight='bold'>
-              {productInfo.price.toLocaleString('ko-KR')}원
-            </Typo>
-          </TextGroup>
-          <NumericSpinner
-            max={99}
-            min={1}
-            onChange={(nextQuantity) => {
-              void onChangeQuantity(id, nextQuantity);
+    <CartProductItemLayout
+      header={
+        <CartItemHeader>
+          <Checkbox checked={checked} onChange={() => onToggle(id)} />
+          <DeleteButton
+            onClick={() => {
+              onDelete(id);
             }}
-            value={quantity}
-          />
-        </ProductInfo>
-      </Content>
-    </Row>
+            type='button'
+          >
+            삭제
+          </DeleteButton>
+        </CartItemHeader>
+      }
+      image={<img alt={productInfo.name} src={productInfo.imageUrl} />}
+    >
+      <ProductInfo>
+        <TextGroup>
+          <Typo as='strong' variant='caption' weight='medium'>
+            {productInfo.name}
+          </Typo>
+          <Typo as='strong' color='black' variant='display' weight='bold'>
+            {productInfo.price.toLocaleString('ko-KR')}원
+          </Typo>
+        </TextGroup>
+        <NumericSpinner
+          max={99}
+          min={1}
+          onChange={(nextQuantity) => {
+            void onChangeQuantity(id, nextQuantity);
+          }}
+          value={quantity}
+        />
+      </ProductInfo>
+    </CartProductItemLayout>
   );
 };
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px 0 20px;
-  border-top: 1px solid ${theme.colors.gray100};
+const CartProductItemLayout = styled(ProductItemLayout)`
+  padding-bottom: 20px;
 `;
 
-const ActionArea = styled.div`
+const CartItemHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const Content = styled.div`
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 24px;
-  align-items: center;
 `;
 
 const ProductInfo = styled.div`
@@ -86,15 +76,6 @@ const TextGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-`;
-
-const ProductImage = styled.img`
-  display: block;
-  width: 112px;
-  height: 112px;
-  border-radius: ${theme.radius[8]};
-  background: ${theme.colors.gray100};
-  object-fit: cover;
 `;
 
 const DeleteButton = styled.button`
