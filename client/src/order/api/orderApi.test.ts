@@ -1,6 +1,6 @@
 import {http, HttpResponse} from 'msw';
 
-import {createPreorder, getPreorder} from './orderApi.js';
+import {createPreorder, getPreorder, previewOrder} from './orderApi.js';
 import {ApiError} from '../../shared/api/requestApi.js';
 import {mockServer} from '../../test/mockServer.js';
 
@@ -79,5 +79,68 @@ describe('orderApi', () => {
     expect(thrownError).toBeInstanceOf(ApiError);
     expect((thrownError as Error).message).toBe('주문 확인 시간이 만료되었습니다.');
     expect(thrownError).toMatchObject({status: 410});
+  });
+
+  test('previewOrder는 쿠폰과 배송 조건으로 결제 예상 금액을 요청한다', async () => {
+    let requestBody: unknown;
+
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order/preview`, async ({request}) => {
+        requestBody = await request.json();
+
+        return HttpResponse.json({
+          body: {
+            price: {
+              orderAmount: 70000,
+              productDiscountAmount: 5000,
+              shippingDiscountAmount: 3000,
+              totalDiscountAmount: 8000,
+              shippingFee: 0,
+              totalPaymentAmount: 65000,
+            },
+            appliedCoupons: [
+              {
+                couponId: 1,
+                code: 'FIXED5000',
+                name: '5,000원 할인 쿠폰',
+                discountAmount: 5000,
+              },
+            ],
+            excludedCoupons: [],
+          },
+        });
+      })
+    );
+
+    await expect(
+      previewOrder({
+        preorderId: 'preorder-1',
+        isRemoteArea: true,
+        couponIds: [1],
+      })
+    ).resolves.toEqual({
+      price: {
+        orderAmount: 70000,
+        productDiscountAmount: 5000,
+        shippingDiscountAmount: 3000,
+        totalDiscountAmount: 8000,
+        shippingFee: 0,
+        totalPaymentAmount: 65000,
+      },
+      appliedCoupons: [
+        {
+          couponId: 1,
+          code: 'FIXED5000',
+          name: '5,000원 할인 쿠폰',
+          discountAmount: 5000,
+        },
+      ],
+      excludedCoupons: [],
+    });
+    expect(requestBody).toEqual({
+      preorderId: 'preorder-1',
+      isRemoteArea: true,
+      couponIds: [1],
+    });
   });
 });
