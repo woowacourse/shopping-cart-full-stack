@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
 import {Typo} from '../../../design-system/index.js';
 import {SummaryLayout, SummaryRow} from '../../../layout/SummaryLayout.js';
-import {FREE_SHIPPING_THRESHOLD} from '../../domain/cartSelectors.js';
+import {FREE_SHIPPING_THRESHOLD} from '../../domain/cartPolicy.js';
 
 type PaymentSummaryProps = {
   selectedOrderAmount: number;

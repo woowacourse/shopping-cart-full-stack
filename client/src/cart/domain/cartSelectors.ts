@@ -1,7 +1,5 @@
+import {FREE_SHIPPING_THRESHOLD, SHIPPING_FEE} from './cartPolicy.js';
 import type {CartItem, CartItemId} from './types.js';
-
-export const FREE_SHIPPING_THRESHOLD = 100000;
-const SHIPPING_FEE = 3000;
 
 type CartSelectionInput = {
   items: CartItem[];
