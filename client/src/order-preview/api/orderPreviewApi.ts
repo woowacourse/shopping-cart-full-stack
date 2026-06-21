@@ -1,25 +1,7 @@
-import type {CartItemId} from '../../cart/domain/types.js';
 import type {CouponId} from '../../coupon/domain/types.js';
 import {requestApi} from '../../shared/api/requestApi.js';
 
-const ORDER_API_ERROR_MESSAGE = '주문 요청에 실패했습니다.';
-
-type CreatePreorderResponse = {
-  preorderId: string;
-};
-
-export type PreorderItem = {
-  productId: string;
-  price: number;
-  name: string;
-  imageUrl: string;
-  quantity: number;
-};
-
-export type Preorder = {
-  preorderId: string;
-  items: PreorderItem[];
-};
+const ORDER_PREVIEW_API_ERROR_MESSAGE = '결제 금액 미리보기 요청에 실패했습니다.';
 
 export interface PreviewOrderRequestBody {
   preorderId: string;
@@ -56,23 +38,9 @@ export interface PreviewOrderResponse {
   excludedCoupons: ExcludedCoupon[];
 }
 
-export async function createPreorder(selectedCartIds: CartItemId[]): Promise<CreatePreorderResponse> {
-  return requestApi<CreatePreorderResponse>('/preorder', {
-    errorMessage: ORDER_API_ERROR_MESSAGE,
-    method: 'POST',
-    body: JSON.stringify({selectedCartIds}),
-  });
-}
-
-export async function getPreorder(preorderId: string): Promise<Preorder> {
-  return requestApi<Preorder>(`/preorder/${encodeURIComponent(preorderId)}`, {
-    errorMessage: ORDER_API_ERROR_MESSAGE,
-  });
-}
-
 export async function previewOrder(body: PreviewOrderRequestBody): Promise<PreviewOrderResponse> {
   return requestApi<PreviewOrderResponse>('/order/preview', {
-    errorMessage: ORDER_API_ERROR_MESSAGE,
+    errorMessage: ORDER_PREVIEW_API_ERROR_MESSAGE,
     method: 'POST',
     body: JSON.stringify(body),
   });
