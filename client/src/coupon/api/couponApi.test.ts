@@ -22,6 +22,9 @@ describe('couponApi', () => {
                 code: 'FIXED5000',
                 name: '5000원 할인 쿠폰',
                 expirationDate: '2026-11-30T14:59:59.000Z',
+                condition: {
+                  description: '최소 주문 금액: 100,000원',
+                },
                 disabled: false,
                 disabledReason: null,
               },
@@ -37,6 +40,9 @@ describe('couponApi', () => {
         code: 'FIXED5000',
         name: '5000원 할인 쿠폰',
         expirationDate: '2026-11-30T14:59:59.000Z',
+        condition: {
+          description: '최소 주문 금액: 100,000원',
+        },
         disabled: false,
         disabledReason: null,
       },
