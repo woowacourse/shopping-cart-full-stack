@@ -12,7 +12,7 @@ interface ErrorStateProps {
 export const ErrorState = ({message, onAction}: ErrorStateProps) => {
   return (
     <Container>
-      <ErrorMessage as='p' color='gray900' role='alert' variant='body' weight='medium'>
+      <ErrorMessage as='p' color='gray900' variant='body' weight='medium'>
         {message}
       </ErrorMessage>
       <Button onClick={onAction}>다시 시도</Button>

@@ -12,9 +12,9 @@ type PaymentSummaryProps = {
 
 export const PaymentSummary = ({selectedOrderAmount, shippingFee, totalPrice}: PaymentSummaryProps) => {
   return (
-    <SummaryArea aria-label='결제 요약'>
+    <SummaryArea>
       <FreeShippingNotice>
-        <NoticeIcon alt='' aria-hidden='true' src={noticeIconUrl} />
+        <NoticeIcon alt='' src={noticeIconUrl} />
         <NoticeText as='p' variant='caption' weight='medium'>
           총 주문 금액이 {FREE_SHIPPING_THRESHOLD.toLocaleString('ko-KR')}원 이상일 경우 무료 배송됩니다.
         </NoticeText>

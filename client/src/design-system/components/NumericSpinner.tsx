@@ -16,7 +16,7 @@ export const NumericSpinner = ({disabled = false, max, min, onChange, value}: Nu
   const isIncreaseDisabled = disabled || value >= max;
 
   return (
-    <Container role='group'>
+    <Container>
       <ControlButton disabled={isDecreaseDisabled} onClick={() => onChange(value - 1)} type='button'>
         -
       </ControlButton>

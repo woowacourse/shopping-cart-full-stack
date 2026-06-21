@@ -4,7 +4,7 @@ import {theme} from '../foundation/theme.js';
 
 export const LoadingState = () => {
   return (
-    <Container role='status'>
+    <Container>
       <LoadingSpinner />
     </Container>
   );
