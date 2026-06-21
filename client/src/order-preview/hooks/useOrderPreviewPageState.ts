@@ -3,6 +3,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 
 import type {CouponId} from '../../coupon/domain/types.js';
 import {useCoupons} from '../../coupon/hooks/useCoupons.js';
+import {useCreateOrder} from '../../order/hooks/useCreateOrder.js';
 import {useOrderPreview} from './useOrderPreview.js';
 import {usePreorder, type PreorderStatus} from '../../preorder/hooks/usePreorder.js';
 import {
@@ -21,6 +22,11 @@ export function useOrderPreviewPageState() {
   const [isRemoteArea, setIsRemoteArea] = useState(false);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [selectedCouponIds, setSelectedCouponIds] = useState<CouponId[]>([]);
+  const {
+    errorMessage: orderSubmitErrorMessage,
+    isSubmitting: isOrderSubmitting,
+    submitOrder,
+  } = useCreateOrder();
   const {
     errorMessage: preorderErrorMessage,
     errorType,
@@ -43,6 +49,18 @@ export function useOrderPreviewPageState() {
   } = useOrderPreview(preorderId, isRemoteArea, selectedCouponIds);
 
   const navigateToCart = () => navigate('/cart');
+  const submitCurrentOrder = async () => {
+    if (!preorderId || !orderPreview) return;
+
+    const order = await submitOrder({
+      preorderId,
+      expectedTotalPaymentAmount: orderPreview.price.totalPaymentAmount,
+    });
+
+    if (!order) return;
+
+    navigate(`/order-confirm/${order.orderId}`);
+  };
   const preorderSummary = getPreorderSummary(preorder?.items);
   const shouldReturnToCart = getShouldReturnToCart(errorType);
   const pageStatus = getOrderPreviewPageStatus(preorderStatus, orderPreviewStatus);
@@ -87,9 +105,15 @@ export function useOrderPreviewPageState() {
       selectedCouponIds,
       status: couponsStatus,
     },
+    orderSubmit: {
+      errorMessage: orderSubmitErrorMessage,
+      isSubmitting: isOrderSubmitting,
+      canSubmit: pageStatus === 'success' && orderPreview !== null && !isOrderSubmitting,
+    },
     actions: {
       navigateToCart,
       errorAction,
+      submitOrder: () => void submitCurrentOrder(),
       changeRemoteArea: setIsRemoteArea,
       changeSelectedCouponIds: setSelectedCouponIds,
       closeCouponModal: () => setIsCouponModalOpen(false),

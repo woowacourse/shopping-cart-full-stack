@@ -30,7 +30,7 @@ export const App = () => {
             </OrderPreviewProvider>
           }
         />
-        <Route path='order-confirm' element={<OrderConfirmPage />} />
+        <Route path='order-confirm/:orderId' element={<OrderConfirmPage />} />
       </Routes>
     </PhoneView>
   );
