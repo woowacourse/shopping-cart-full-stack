@@ -1,4 +1,4 @@
-import {Order} from './Order.js';
+import {Order} from '../Order.js';
 
 const createOrder = () => {
   return new Order(

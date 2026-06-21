@@ -1,5 +1,5 @@
-import {Product} from './Product.js';
-import {Products} from './Products.js';
+import {Product} from '../Product.js';
+import {Products} from '../Products.js';
 
 const createProducts = () => {
   return new Products([

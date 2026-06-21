@@ -1,6 +1,6 @@
-import {isValidQuantity} from '../domain/cartPolicy.js';
-import {CartItem} from './CartItem.js';
-import {Product} from './Product.js';
+import {isValidQuantity} from '../../domain/cartPolicy.js';
+import {CartItem} from '../CartItem.js';
+import {Product} from '../Product.js';
 
 const createCartItem = () => {
   const product = new Product('1', '상품', 1000, '/image.png');

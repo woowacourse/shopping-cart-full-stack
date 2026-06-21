@@ -1,5 +1,5 @@
-import {Coupon} from './Coupon.js';
-import {Coupons} from './Coupons.js';
+import {Coupon} from '../Coupon.js';
+import {Coupons} from '../Coupons.js';
 
 const createCoupon = (id: number) => {
   return new Coupon(

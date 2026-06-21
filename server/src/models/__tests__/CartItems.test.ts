@@ -1,6 +1,6 @@
-import {CartItem} from './CartItem.js';
-import {CartItems} from './CartItems.js';
-import {Product} from './Product.js';
+import {CartItem} from '../CartItem.js';
+import {CartItems} from '../CartItems.js';
+import {Product} from '../Product.js';
 
 const createCartItems = () => {
   const product1 = new Product('1', '상품1', 1000, '/image1.png');

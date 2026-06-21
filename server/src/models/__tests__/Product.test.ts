@@ -1,4 +1,4 @@
-import {Product} from './Product.js';
+import {Product} from '../Product.js';
 
 describe('Product', () => {
   test('hasName은 같은 이름이면 true를 반환한다', () => {

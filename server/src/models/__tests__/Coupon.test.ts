@@ -1,4 +1,4 @@
-import {Coupon} from './Coupon.js';
+import {Coupon} from '../Coupon.js';
 
 const createProductDiscountCoupon = (discountType: 'FIXED' | 'RATE' = 'FIXED') => {
   return new Coupon(
