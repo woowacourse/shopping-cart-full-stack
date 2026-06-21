@@ -4,21 +4,24 @@ const loadOrderServices = async () => {
   jest.resetModules();
   const {preorderService} = await import('../PreorderService.js');
   const {orderService} = await import('../OrderService.js');
+  const {cartItems} = await import('../../repositories/index.js');
 
   return {
     preorderService,
     orderService,
+    cartItems,
   };
 };
 
 const createPreorder = async () => {
-  const {preorderService, orderService} = await loadOrderServices();
+  const {preorderService, orderService, cartItems} = await loadOrderServices();
   const preorderId = preorderService.createPreorder({selectedCartIds: ['6']});
 
   return {
     preorderId,
     preorderService,
     orderService,
+    cartItems,
   };
 };
 
@@ -100,7 +103,7 @@ describe('orderService.previewOrder', () => {
 
 describe('orderService.createOrder', () => {
   test('마지막 결제 금액 미리보기 조건으로 주문을 생성하고 preorder를 삭제한다', async () => {
-    const {preorderId, preorderService, orderService} = await createPreorder();
+    const {preorderId, preorderService, orderService, cartItems} = await createPreorder();
     const orderPreview = orderService.previewOrder({
       preorderId,
       isRemoteArea: true,
@@ -118,6 +121,7 @@ describe('orderService.createOrder', () => {
       totalQuantity: 5,
       totalAmount: 440000,
     });
+    expect(cartItems.findById('6')).toBeUndefined();
     expect(() => preorderService.getPreorder(preorderId)).toThrow('주문 확인 정보를 찾을 수 없습니다.');
   });
 

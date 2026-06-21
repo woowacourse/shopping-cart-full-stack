@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 
 import {preorderCache} from '../caches/PreorderCache.js';
-import {coupons, orders} from '../repositories/index.js';
+import {cartItems, coupons, orders} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 import {preorderService} from './PreorderService.js';
 import {Order} from '../models/Order.js';
@@ -102,6 +102,18 @@ const getPreorderPreview = (preorderId: string) => {
   return preorderSession.preview;
 };
 
+const deleteSelectedCartItems = (preorderId: string) => {
+  const preorderSession = preorderCache.findById(preorderId);
+
+  if (!preorderSession) {
+    throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
+  }
+
+  preorderSession.items.forEach(({cartItemId}) => {
+    cartItems.deleteById(cartItemId);
+  });
+};
+
 const calculateOrder = (preorderId: string, couponIds: number[], isRemoteArea: boolean) => {
   const preorder = preorderService.getPreorder(preorderId);
   const orderAmount = calculateOrderAmount(preorder.items);
@@ -168,6 +180,7 @@ export const orderService = {
     const orderId = randomUUID();
     const order = new Order(orderId, preorder.items, price.totalPaymentAmount);
 
+    deleteSelectedCartItems(preorderId);
     orders.add(order);
     preorderCache.deleteById(preorderId);
 
