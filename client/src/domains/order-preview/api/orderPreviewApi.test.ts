@@ -32,6 +32,12 @@ describe('orderPreviewApi', () => {
               },
             ],
             excludedCoupons: [],
+            benefitItems: [
+              {
+                productId: 'product-a',
+                quantity: 1,
+              },
+            ],
           },
         });
       })
@@ -61,6 +67,12 @@ describe('orderPreviewApi', () => {
         },
       ],
       excludedCoupons: [],
+      benefitItems: [
+        {
+          productId: 'product-a',
+          quantity: 1,
+        },
+      ],
     });
     expect(requestBody).toEqual({
       preorderId: 'preorder-1',

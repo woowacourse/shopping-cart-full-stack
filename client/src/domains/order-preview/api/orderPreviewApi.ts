@@ -32,10 +32,16 @@ export interface OrderPrice {
   totalPaymentAmount: number;
 }
 
+export interface BenefitItem {
+  productId: string;
+  quantity: number;
+}
+
 export interface PreviewOrderResponse {
   price: OrderPrice;
   appliedCoupons: AppliedCoupon[];
   excludedCoupons: ExcludedCoupon[];
+  benefitItems: BenefitItem[];
 }
 
 export async function previewOrder(body: PreviewOrderRequestBody): Promise<PreviewOrderResponse> {

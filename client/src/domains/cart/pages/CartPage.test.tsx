@@ -87,6 +87,7 @@ function mockPreviewOrder() {
           },
           appliedCoupons: [],
           excludedCoupons: [],
+          benefitItems: [],
         },
       });
     })

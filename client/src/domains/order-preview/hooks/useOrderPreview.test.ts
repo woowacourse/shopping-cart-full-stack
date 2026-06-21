@@ -22,6 +22,7 @@ function mockPreviewOrder() {
           },
           appliedCoupons: [],
           excludedCoupons: [],
+          benefitItems: [],
         },
       });
     })
@@ -94,6 +95,7 @@ describe('useOrderPreview', () => {
             },
             appliedCoupons: [],
             excludedCoupons: [],
+            benefitItems: [],
           },
         });
       })
