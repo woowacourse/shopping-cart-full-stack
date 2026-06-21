@@ -10,6 +10,7 @@ export type CouponsErrorType = 'default' | 'expired' | 'notFound';
 export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [recommendedCouponIds, setRecommendedCouponIds] = useState<CouponId[]>([]);
+
   const [status, setStatus] = useState<CouponsStatus>('loading');
   const [errorMessage, setErrorMessage] = useState('');
   const [errorType, setErrorType] = useState<CouponsErrorType>('default');
