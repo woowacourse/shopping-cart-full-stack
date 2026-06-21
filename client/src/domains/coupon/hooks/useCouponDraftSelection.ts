@@ -8,7 +8,10 @@ export function useCouponDraftSelection() {
   const [draftCouponIds, setDraftCouponIds] = useState<CouponId[]>([]);
 
   const openCouponModal = () => {
-    setDraftCouponIds(appliedCouponIds);
+    if (draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
+      setDraftCouponIds(appliedCouponIds);
+    }
+
     setIsCouponModalOpen(true);
   };
 
