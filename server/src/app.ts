@@ -37,6 +37,7 @@ app.get('/preorder/:preorderId', asyncHandler(preorderController.getPreorder));
 app.get('/coupons', asyncHandler(couponController.getCoupons));
 
 app.post('/order/preview', asyncHandler(orderController.previewOrder));
+app.post('/order', asyncHandler(orderController.createOrder));
 
 app.use(errorHandler);
 
