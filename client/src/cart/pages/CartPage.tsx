@@ -9,6 +9,11 @@ import {CartSuccessContent} from '../components/cart-page/CartSuccessContent.js'
 import {useCart} from '../hooks/useCart.js';
 import type {CartItemsState} from '../domain/types.js';
 
+function getCartPageStatus(state: CartItemsState) {
+  if (state.status === 'success' && state.items.length === 0) return 'empty';
+  return state.status;
+}
+
 export const CartPage = () => {
   const {cartItemsState, loadCartItems} = useCart();
   const status = getCartPageStatus(cartItemsState);
@@ -37,9 +42,3 @@ export const CartPage = () => {
     </ScreenLayout>
   );
 };
-
-function getCartPageStatus(state: CartItemsState) {
-  if (state.status === 'success' && state.items.length === 0) return 'empty';
-
-  return state.status;
-}
