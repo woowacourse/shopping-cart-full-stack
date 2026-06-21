@@ -1,30 +1,30 @@
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useState} from 'react';
 
 import {createOrder, type CreateOrderRequestBody, type CreateOrderResponse} from '../api/orderApi.js';
 
 export function useCreateOrder() {
-  const isSubmittingRef = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const submitOrder = useCallback(async (body: CreateOrderRequestBody): Promise<CreateOrderResponse | null> => {
-    if (isSubmittingRef.current) return null;
+  const submitOrder = useCallback(
+    async (body: CreateOrderRequestBody): Promise<CreateOrderResponse | null> => {
+      if (isSubmitting) return null;
 
-    isSubmittingRef.current = true;
-    setIsSubmitting(true);
-    setErrorMessage('');
+      setIsSubmitting(true);
+      setErrorMessage('');
 
-    try {
-      return await createOrder(body);
-    } catch (error) {
-      setErrorMessage(getErrorMessage(error));
+      try {
+        return await createOrder(body);
+      } catch (error) {
+        setErrorMessage(getErrorMessage(error));
 
-      return null;
-    } finally {
-      isSubmittingRef.current = false;
-      setIsSubmitting(false);
-    }
-  }, []);
+        return null;
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [isSubmitting]
+  );
 
   return {
     errorMessage,
