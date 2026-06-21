@@ -1,9 +1,9 @@
-import {useState} from 'react';
-
-import type {CouponId} from '../../coupon/domain/types.js';
-import {useCoupons, type CouponsErrorType} from '../../coupon/hooks/useCoupons.js';
-import {useOrderPreview, type OrderPreviewErrorType, type OrderPreviewStatus} from './useOrderPreview.js';
+import {useCoupons} from '../../coupon/hooks/useCoupons.js';
 import {useCouponAutoSelection} from './useCouponAutoSelection.js';
+import {useCouponDraftSelection} from './useCouponDraftSelection.js';
+import {useCouponModalErrorAction} from './useCouponModalErrorAction.js';
+import {useCouponModalPreview} from './useCouponModalPreview.js';
+import type {OrderPreviewStatus} from './useOrderPreview.js';
 
 type CouponModalStatus = 'loading' | 'success' | 'error';
 type CouponsStatus = 'loading' | 'success' | 'error';
@@ -13,9 +13,15 @@ export function useCouponModalState(
   isRemoteArea: boolean,
   onReturnToCart: () => void
 ) {
-  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
-  const [appliedCouponIds, setAppliedCouponIds] = useState<CouponId[]>([]);
-  const [draftCouponIds, setDraftCouponIds] = useState<CouponId[]>([]);
+  const {
+    appliedCouponIds,
+    draftCouponIds,
+    isCouponModalOpen,
+    applyDraftCouponIds,
+    closeCouponModal,
+    openCouponModal: openDraftCouponModal,
+    setDraftCouponIds,
+  } = useCouponDraftSelection();
   const {
     coupons,
     errorMessage: couponErrorMessage,
@@ -31,28 +37,22 @@ export function useCouponModalState(
     orderPreview: modalOrderPreview,
     resetOrderPreview: resetModalPreview,
     status: modalPreviewStatus,
-  } = useOrderPreview(preorderId, isRemoteArea, draftCouponIds, {
-    enabled: isCouponModalOpen,
-    keepPrevious: true,
-  });
+  } = useCouponModalPreview(preorderId, isRemoteArea, draftCouponIds, isCouponModalOpen);
 
   const openCouponModal = () => {
     resetModalPreview();
-    setDraftCouponIds(appliedCouponIds);
-    setIsCouponModalOpen(true);
-  };
-  const closeCouponModal = () => {
-    setIsCouponModalOpen(false);
-  };
-  const applyDraftCouponIds = () => {
-    setAppliedCouponIds(draftCouponIds);
-    setIsCouponModalOpen(false);
+    openDraftCouponModal();
   };
   const retryCoupons = () => {
     void loadCoupons();
     void loadModalPreview();
   };
-  const shouldReturnToCart = getShouldReturnToCart(couponErrorType, modalPreviewErrorType);
+  const {errorActionText, handleCouponModalError} = useCouponModalErrorAction({
+    couponErrorType,
+    modalPreviewErrorType,
+    onReturnToCart,
+    retryCoupons,
+  });
 
   useCouponAutoSelection({
     couponsStatus,
@@ -69,7 +69,7 @@ export function useCouponModalState(
       coupons,
       discountAmount: modalOrderPreview?.price.totalDiscountAmount ?? 0,
       errorMessage: getCouponModalErrorMessage(couponErrorMessage, modalPreviewErrorMessage, couponsStatus),
-      errorActionText: shouldReturnToCart ? '장바구니로 돌아가기' : '다시 시도',
+      errorActionText,
       selectedCouponIds: draftCouponIds,
       status: getCouponModalStatus(couponsStatus, modalPreviewStatus),
     },
@@ -78,7 +78,7 @@ export function useCouponModalState(
       applyCouponSelection: applyDraftCouponIds,
       closeCouponModal,
       openCouponModal,
-      handleCouponModalError: shouldReturnToCart ? onReturnToCart : retryCoupons,
+      handleCouponModalError,
       retryCoupons,
     },
   };
@@ -102,13 +102,4 @@ function getCouponModalErrorMessage(
   if (couponsStatus === 'error') return couponErrorMessage;
 
   return modalPreviewErrorMessage;
-}
-
-function getShouldReturnToCart(couponErrorType: CouponsErrorType, modalPreviewErrorType: OrderPreviewErrorType) {
-  return (
-    couponErrorType === 'expired' ||
-    couponErrorType === 'notFound' ||
-    modalPreviewErrorType === 'expired' ||
-    modalPreviewErrorType === 'notFound'
-  );
 }
