@@ -5,11 +5,23 @@ import {previewOrder, type PreviewOrderResponse} from '../api/orderPreviewApi.js
 
 export type OrderPreviewStatus = 'loading' | 'success' | 'error';
 
-export function useOrderPreview(preorderId: string | undefined, isRemoteArea: boolean, couponIds: CouponId[]) {
+interface UseOrderPreviewOptions {
+  enabled?: boolean;
+  keepPrevious?: boolean;
+}
+
+export function useOrderPreview(
+  preorderId: string | undefined,
+  isRemoteArea: boolean,
+  couponIds: CouponId[],
+  {enabled = true, keepPrevious = false}: UseOrderPreviewOptions = {}
+) {
   const [orderPreview, setOrderPreview] = useState<PreviewOrderResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   const loadOrderPreview = useCallback(async () => {
+    if (!enabled) return;
+
     if (!preorderId) {
       setErrorMessage('주문 확인 정보를 찾을 수 없습니다.');
       setOrderPreview(null);
@@ -17,7 +29,10 @@ export function useOrderPreview(preorderId: string | undefined, isRemoteArea: bo
     }
 
     setErrorMessage('');
-    setOrderPreview(null);
+
+    if (!keepPrevious) {
+      setOrderPreview(null);
+    }
 
     try {
       const orderPreview = await previewOrder({
@@ -31,17 +46,23 @@ export function useOrderPreview(preorderId: string | undefined, isRemoteArea: bo
       setErrorMessage(getErrorMessage(error));
       setOrderPreview(null);
     }
-  }, [preorderId, isRemoteArea, couponIds]);
+  }, [preorderId, isRemoteArea, couponIds, enabled, keepPrevious]);
 
   useEffect(() => {
     void loadOrderPreview();
   }, [loadOrderPreview]);
+
+  const resetOrderPreview = useCallback(() => {
+    setOrderPreview(null);
+    setErrorMessage('');
+  }, []);
 
   return {
     orderPreview,
     status: getOrderPreviewStatus(orderPreview, errorMessage),
     errorMessage,
     loadOrderPreview,
+    resetOrderPreview,
   };
 }
 

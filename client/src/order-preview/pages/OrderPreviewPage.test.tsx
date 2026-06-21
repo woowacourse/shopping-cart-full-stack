@@ -431,6 +431,7 @@ describe('OrderPreviewPage', () => {
     expect(await screen.findByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).toBeChecked();
     expect(screen.getByRole('checkbox', {name: '미라클모닝 30% 할인 쿠폰'})).toBeDisabled();
     expect(await screen.findByRole('button', {name: '총 8,000원 할인 쿠폰 사용하기'})).toBeInTheDocument();
+    expect(screen.getByText('73,000원')).toBeInTheDocument();
     expect(requestBodies).toContainEqual({
       preorderId: 'preorder-1',
       isRemoteArea: false,
@@ -438,7 +439,7 @@ describe('OrderPreviewPage', () => {
     });
   });
 
-  test('쿠폰 선택 적용 버튼을 누르면 모달을 닫는다', async () => {
+  test('쿠폰 선택 적용 버튼을 누르면 모달을 닫고 주문 금액에 반영한다', async () => {
     const user = userEvent.setup();
 
     mockGetPreorder();
@@ -449,8 +450,9 @@ describe('OrderPreviewPage', () => {
 
     await screen.findByText('상품이름A');
     await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
-    await user.click(screen.getByRole('button', {name: '×'}));
+    await user.click(await screen.findByRole('button', {name: '총 8,000원 할인 쿠폰 사용하기'}));
 
     expect(screen.queryByRole('heading', {name: '쿠폰을 선택해 주세요'})).not.toBeInTheDocument();
+    expect(await screen.findByText('65,000원')).toBeInTheDocument();
   });
 });

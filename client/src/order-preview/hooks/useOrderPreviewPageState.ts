@@ -4,7 +4,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import type {CouponId} from '../../coupon/domain/types.js';
 import {useCoupons} from '../../coupon/hooks/useCoupons.js';
 import {useCreateOrder} from '../../order/hooks/useCreateOrder.js';
-import {useOrderPreview} from './useOrderPreview.js';
+import {useOrderPreview, type OrderPreviewStatus} from './useOrderPreview.js';
 import {usePreorder, type PreorderStatus} from '../../preorder/hooks/usePreorder.js';
 import {
   getOrderPreviewPageErrorMessage,
@@ -15,13 +15,16 @@ import {
 import {useCouponAutoSelection} from './useCouponAutoSelection.js';
 
 export type OrderPreviewPageState = ReturnType<typeof useOrderPreviewPageState>;
+type CouponModalStatus = 'loading' | 'success' | 'error';
+type CouponsStatus = 'loading' | 'success' | 'error';
 
 export function useOrderPreviewPageState() {
   const navigate = useNavigate();
   const {preorderId} = useParams();
   const [isRemoteArea, setIsRemoteArea] = useState(false);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
-  const [selectedCouponIds, setSelectedCouponIds] = useState<CouponId[]>([]);
+  const [appliedCouponIds, setAppliedCouponIds] = useState<CouponId[]>([]);
+  const [draftCouponIds, setDraftCouponIds] = useState<CouponId[]>([]);
   const {
     errorMessage: orderSubmitErrorMessage,
     isSubmitting: isOrderSubmitting,
@@ -46,9 +49,31 @@ export function useOrderPreviewPageState() {
     loadOrderPreview,
     orderPreview,
     status: orderPreviewStatus,
-  } = useOrderPreview(preorderId, isRemoteArea, selectedCouponIds);
+  } = useOrderPreview(preorderId, isRemoteArea, appliedCouponIds);
+  const {
+    errorMessage: modalPreviewErrorMessage,
+    loadOrderPreview: loadModalPreview,
+    orderPreview: modalOrderPreview,
+    resetOrderPreview: resetModalPreview,
+    status: modalPreviewStatus,
+  } = useOrderPreview(preorderId, isRemoteArea, draftCouponIds, {
+    enabled: isCouponModalOpen,
+    keepPrevious: true,
+  });
 
   const navigateToCart = () => navigate('/cart');
+  const openCouponModal = () => {
+    resetModalPreview();
+    setDraftCouponIds(appliedCouponIds);
+    setIsCouponModalOpen(true);
+  };
+  const closeCouponModal = () => {
+    setIsCouponModalOpen(false);
+  };
+  const applyDraftCouponIds = () => {
+    setAppliedCouponIds(draftCouponIds);
+    setIsCouponModalOpen(false);
+  };
   const submitCurrentOrder = async () => {
     if (!preorderId || !orderPreview) return;
 
@@ -80,9 +105,9 @@ export function useOrderPreviewPageState() {
   useCouponAutoSelection({
     couponsStatus,
     isCouponModalOpen,
-    onSelectCoupons: setSelectedCouponIds,
+    onSelectCoupons: setDraftCouponIds,
     recommendedCouponIds,
-    selectedCouponIds,
+    selectedCouponIds: draftCouponIds,
   });
 
   return {
@@ -100,10 +125,10 @@ export function useOrderPreviewPageState() {
     couponModal: {
       isOpen: isCouponModalOpen,
       coupons,
-      discountAmount: orderPreview?.price.totalDiscountAmount ?? 0,
-      errorMessage: couponErrorMessage,
-      selectedCouponIds,
-      status: couponsStatus,
+      discountAmount: modalOrderPreview?.price.totalDiscountAmount ?? 0,
+      errorMessage: getCouponModalErrorMessage(couponErrorMessage, modalPreviewErrorMessage, couponsStatus),
+      selectedCouponIds: draftCouponIds,
+      status: getCouponModalStatus(couponsStatus, modalPreviewStatus),
     },
     orderSubmit: {
       errorMessage: orderSubmitErrorMessage,
@@ -115,12 +140,36 @@ export function useOrderPreviewPageState() {
       errorAction,
       submitOrder: () => void submitCurrentOrder(),
       changeRemoteArea: setIsRemoteArea,
-      changeSelectedCouponIds: setSelectedCouponIds,
-      closeCouponModal: () => setIsCouponModalOpen(false),
-      openCouponModal: () => setIsCouponModalOpen(true),
-      retryCoupons: () => void loadCoupons(),
+      changeSelectedCouponIds: setDraftCouponIds,
+      applyCouponSelection: applyDraftCouponIds,
+      closeCouponModal,
+      openCouponModal,
+      retryCoupons: () => {
+        void loadCoupons();
+        void loadModalPreview();
+      },
     },
   };
+}
+
+function getCouponModalStatus(
+  couponsStatus: CouponsStatus,
+  modalPreviewStatus: OrderPreviewStatus
+): CouponModalStatus {
+  if (couponsStatus === 'error' || modalPreviewStatus === 'error') return 'error';
+  if (couponsStatus === 'loading' || modalPreviewStatus === 'loading') return 'loading';
+
+  return 'success';
+}
+
+function getCouponModalErrorMessage(
+  couponErrorMessage: string,
+  modalPreviewErrorMessage: string,
+  couponsStatus: CouponsStatus
+) {
+  if (couponsStatus === 'error') return couponErrorMessage;
+
+  return modalPreviewErrorMessage;
 }
 
 interface ErrorActionParams {
