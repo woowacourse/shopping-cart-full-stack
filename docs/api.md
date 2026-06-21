@@ -14,6 +14,8 @@
 ## 공통 규칙
 
 - 요청과 응답 본문은 JSON 형식을 사용한다.
+- 성공 응답과 에러 응답은 모두 최상위 `body` 필드로 실제 응답 데이터를 감싼다.
+- 에러 응답은 `{ "body": { "message": "string" } }` 형식으로 실패 이유를 전달한다.
 - 쿠폰 데이터는 DB에 하드코딩된 초기 데이터로 관리하며, 쿠폰 등록/수정/삭제 API는 제공하지 않는다.
 - 결제 금액 계산과 주문 생성 검증은 서버가 전담하며, 프론트엔드는 서버 계산 결과를 화면에 표시한다.
 - 주문 확인 단계의 preorder는 서버 인메모리 Map 기반 PreorderStore에 TTL과 함께 저장한다.
@@ -47,7 +49,9 @@ preorder는 주문 확인, 쿠폰 조회, 결제 금액 미리보기, 주문 생
 
 ```json
 {
-  "preorderId": "string"
+  "body": {
+    "preorderId": "string"
+  }
 }
 ```
 
@@ -55,7 +59,9 @@ preorder는 주문 확인, 쿠폰 조회, 결제 금액 미리보기, 주문 생
 
 ```json
 {
-  "preorderId": "8400-e29b4-00"
+  "body": {
+    "preorderId": "8400-e29b4-00"
+  }
 }
 ```
 
@@ -80,16 +86,18 @@ preorder 주문 세션에 저장된 `productId`, `quantity`, 상품 이름, 상�
 
 ```json
 {
-  "preorderId": "string",
-  "items": [
-    {
-      "productId": "string",
-      "price": "number",
-      "name": "string",
-      "imageUrl": "string",
-      "quantity": "number"
-    }
-  ]
+  "body": {
+    "preorderId": "string",
+    "items": [
+      {
+        "productId": "string",
+        "price": "number",
+        "name": "string",
+        "imageUrl": "string",
+        "quantity": "number"
+      }
+    ]
+  }
 }
 ```
 
@@ -97,16 +105,18 @@ preorder 주문 세션에 저장된 `productId`, `quantity`, 상품 이름, 상�
 
 ```json
 {
-  "preorderId": "8400-e29b4-00",
-  "items": [
-    {
-      "productId": "11001123",
-      "price": 35000,
-      "name": "무지 반팔티",
-      "imageUrl": "https://test.s3/products/tee.png",
-      "quantity": 2
-    }
-  ]
+  "body": {
+    "preorderId": "8400-e29b4-00",
+    "items": [
+      {
+        "productId": "11001123",
+        "price": 35000,
+        "name": "무지 반팔티",
+        "imageUrl": "https://test.s3/products/tee.png",
+        "quantity": 2
+      }
+    ]
+  }
 }
 ```
 
@@ -135,18 +145,20 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "coupons": [
-    {
-      "couponId": "number",
-      "code": "string",
-      "name": "string",
-      "expirationDate": "ISO 8601 datetime string",
-      "condition": "object",
-      "benefit": "object",
-      "disabled": "boolean",
-      "disabledReason": "string | null"
-    }
-  ]
+  "body": {
+    "coupons": [
+      {
+        "couponId": "number",
+        "code": "string",
+        "name": "string",
+        "expirationDate": "ISO 8601 datetime string",
+        "condition": "object",
+        "benefit": "object",
+        "disabled": "boolean",
+        "disabledReason": "string | null"
+      }
+    ]
+  }
 }
 ```
 
@@ -178,99 +190,101 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "coupons": [
-    {
-      "couponId": 1,
-      "code": "FIXED5000",
-      "name": "5000원 할인 쿠폰",
-      "expirationDate": "2026-11-30T14:59:59.000Z",
-      "condition": {
-        "target": "ORDER",
-        "rule": "MIN_ORDER_AMOUNT",
-        "params": {
-          "minOrderAmount": 100000
-        }
+  "body": {
+    "coupons": [
+      {
+        "couponId": 1,
+        "code": "FIXED5000",
+        "name": "5000원 할인 쿠폰",
+        "expirationDate": "2026-11-30T14:59:59.000Z",
+        "condition": {
+          "target": "ORDER",
+          "rule": "MIN_ORDER_AMOUNT",
+          "params": {
+            "minOrderAmount": 100000
+          }
+        },
+        "benefit": {
+          "target": "PRODUCT",
+          "discountType": "FIXED",
+          "rule": "DISCOUNT_AMOUNT",
+          "params": {
+            "discountAmount": 5000
+          }
+        },
+        "disabled": false,
+        "disabledReason": null
       },
-      "benefit": {
-        "target": "PRODUCT",
-        "discountType": "FIXED",
-        "rule": "DISCOUNT_AMOUNT",
-        "params": {
-          "discountAmount": 5000
-        }
+      {
+        "couponId": 2,
+        "code": "BOGO",
+        "name": "2+1 쿠폰",
+        "expirationDate": "2026-06-30T14:59:59.000Z",
+        "condition": {
+          "target": "PRODUCT",
+          "rule": "MIN_SAME_PRODUCT_QUANTITY",
+          "params": {
+            "minSameProductQuantity": 2
+          }
+        },
+        "benefit": {
+          "target": "PRODUCT",
+          "discountType": "FIXED",
+          "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM",
+          "params": {
+            "discountQuantity": 1
+          }
+        },
+        "disabled": true,
+        "disabledReason": "동일 상품을 2개 이상 구매해야 합니다."
       },
-      "disabled": false,
-      "disabledReason": null
-    },
-    {
-      "couponId": 2,
-      "code": "BOGO",
-      "name": "2+1 쿠폰",
-      "expirationDate": "2026-06-30T14:59:59.000Z",
-      "condition": {
-        "target": "PRODUCT",
-        "rule": "MIN_SAME_PRODUCT_QUANTITY",
-        "params": {
-          "minSameProductQuantity": 2
-        }
+      {
+        "couponId": 3,
+        "code": "FREESHIPPING",
+        "name": "무료 배송 쿠폰",
+        "expirationDate": "2026-08-31T14:59:59.000Z",
+        "condition": {
+          "target": "ORDER",
+          "rule": "MIN_ORDER_AMOUNT",
+          "params": {
+            "minOrderAmount": 50000
+          }
+        },
+        "benefit": {
+          "target": "SHIPPING",
+          "rule": "FREE_SHIPPING",
+          "params": {}
+        },
+        "disabled": true,
+        "disabledReason": "주문 금액이 50,000원 미만입니다."
       },
-      "benefit": {
-        "target": "PRODUCT",
-        "discountType": "FIXED",
-        "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM",
-        "params": {
-          "discountQuantity": 1
-        }
-      },
-      "disabled": true,
-      "disabledReason": "동일 상품을 2개 이상 구매해야 합니다."
-    },
-    {
-      "couponId": 3,
-      "code": "FREESHIPPING",
-      "name": "무료 배송 쿠폰",
-      "expirationDate": "2026-08-31T14:59:59.000Z",
-      "condition": {
-        "target": "ORDER",
-        "rule": "MIN_ORDER_AMOUNT",
-        "params": {
-          "minOrderAmount": 50000
-        }
-      },
-      "benefit": {
-        "target": "SHIPPING",
-        "rule": "FREE_SHIPPING",
-        "params": {}
-      },
-      "disabled": true,
-      "disabledReason": "주문 금액이 50,000원 미만입니다."
-    },
-    {
-      "couponId": 4,
-      "code": "MIRACLESALE",
-      "name": "30% 시간제 할인 쿠폰",
-      "expirationDate": "2026-07-31T14:59:59.000Z",
-      "condition": {
-        "target": "TIME",
-        "rule": "TIME_RANGE",
-        "params": {
-          "start": "04:00",
-          "end": "07:00"
-        }
-      },
-      "benefit": {
-        "target": "PRODUCT",
-        "discountType": "RATE",
-        "rule": "DISCOUNT_RATE",
-        "params": {
-          "discountRate": 0.3,
-          "applyAfterFixedDiscount": true
-        }
-      },
-      "disabled": true,
-      "disabledReason": "현재 적용 가능한 시간이 아닙니다."
-    }
-  ]
+      {
+        "couponId": 4,
+        "code": "MIRACLESALE",
+        "name": "30% 시간제 할인 쿠폰",
+        "expirationDate": "2026-07-31T14:59:59.000Z",
+        "condition": {
+          "target": "TIME",
+          "rule": "TIME_RANGE",
+          "params": {
+            "start": "04:00",
+            "end": "07:00"
+          }
+        },
+        "benefit": {
+          "target": "PRODUCT",
+          "discountType": "RATE",
+          "rule": "DISCOUNT_RATE",
+          "params": {
+            "discountRate": 0.3,
+            "applyAfterFixedDiscount": true
+          }
+        },
+        "disabled": true,
+        "disabledReason": "현재 적용 가능한 시간이 아닙니다."
+      }
+    ]
+  }
 }
 ```
 
@@ -294,7 +308,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 프론트엔드는 매 요청마다 현재 선택 중인 쿠폰 ID 목록을 `couponIds`로 함께 보낸다. 선택한 쿠폰이 없으면 빈 배열을 보낸다.
 
-요청이 성공하면 서버는 실제 적용된 쿠폰 ID 목록과 배송 조건을 PreorderStore에 저장한다. 프론트엔드는 응답의 `price`, `appliedCoupons`, `excludedCoupons`를 화면에 표시한다.
+요청이 성공하면 서버는 실제 적용된 쿠폰 ID 목록과 배송 조건을 PreorderStore에 저장한다. 프론트엔드는 응답의 `body.price`, `body.appliedCoupons`, `body.excludedCoupons`를 화면에 표시한다.
 
 ### Request Body
 
@@ -338,30 +352,32 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "price": {
-    "orderAmount": "number",
-    "productDiscountAmount": "number",
-    "shippingDiscountAmount": "number",
-    "totalDiscountAmount": "number",
-    "shippingFee": "number",
-    "totalPaymentAmount": "number"
-  },
-  "appliedCoupons": [
-    {
-      "couponId": "number",
-      "code": "string",
-      "name": "string",
-      "discountAmount": "number"
-    }
-  ],
-  "excludedCoupons": [
-    {
-      "couponId": "number",
-      "code": "string",
-      "name": "string",
-      "excludedReason": "string"
-    }
-  ]
+  "body": {
+    "price": {
+      "orderAmount": "number",
+      "productDiscountAmount": "number",
+      "shippingDiscountAmount": "number",
+      "totalDiscountAmount": "number",
+      "shippingFee": "number",
+      "totalPaymentAmount": "number"
+    },
+    "appliedCoupons": [
+      {
+        "couponId": "number",
+        "code": "string",
+        "name": "string",
+        "discountAmount": "number"
+      }
+    ],
+    "excludedCoupons": [
+      {
+        "couponId": "number",
+        "code": "string",
+        "name": "string",
+        "excludedReason": "string"
+      }
+    ]
+  }
 }
 ```
 
@@ -369,29 +385,31 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "price": {
-    "orderAmount": 70000,
-    "productDiscountAmount": 5000,
-    "shippingDiscountAmount": 6000,
-    "totalDiscountAmount": 11000,
-    "shippingFee": 0,
-    "totalPaymentAmount": 65000
-  },
-  "appliedCoupons": [
-    {
-      "couponId": 1,
-      "code": "FIXED5000",
-      "name": "5000원 할인 쿠폰",
-      "discountAmount": 5000
+  "body": {
+    "price": {
+      "orderAmount": 70000,
+      "productDiscountAmount": 5000,
+      "shippingDiscountAmount": 6000,
+      "totalDiscountAmount": 11000,
+      "shippingFee": 0,
+      "totalPaymentAmount": 65000
     },
-    {
-      "couponId": 3,
-      "code": "FREESHIPPING",
-      "name": "무료 배송 쿠폰",
-      "discountAmount": 6000
-    }
-  ],
-  "excludedCoupons": []
+    "appliedCoupons": [
+      {
+        "couponId": 1,
+        "code": "FIXED5000",
+        "name": "5000원 할인 쿠폰",
+        "discountAmount": 5000
+      },
+      {
+        "couponId": 3,
+        "code": "FREESHIPPING",
+        "name": "무료 배송 쿠폰",
+        "discountAmount": 6000
+      }
+    ],
+    "excludedCoupons": []
+  }
 }
 ```
 
@@ -438,7 +456,9 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "orderId": "string"
+  "body": {
+    "orderId": "string"
+  }
 }
 ```
 
@@ -446,7 +466,9 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "orderId": "00-11-aa-bb"
+  "body": {
+    "orderId": "00-11-aa-bb"
+  }
 }
 ```
 
@@ -454,31 +476,9 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "message": "서버에서 다시 계산한 결제 금액이 화면에 표시된 금액과 일치하지 않습니다.",
-  "price": {
-    "orderAmount": 70000,
-    "productDiscountAmount": 5000,
-    "shippingDiscountAmount": 3000,
-    "totalDiscountAmount": 8000,
-    "shippingFee": 3000,
-    "totalPaymentAmount": 68000
-  },
-  "appliedCoupons": [
-    {
-      "couponId": 1,
-      "code": "FIXED5000",
-      "name": "5000원 할인 쿠폰",
-      "discountAmount": 5000
-    }
-  ],
-  "excludedCoupons": [
-    {
-      "couponId": 3,
-      "code": "FREESHIPPING",
-      "name": "무료 배송 쿠폰",
-      "excludedReason": "주문 금액이 50,000원 미만입니다."
-    }
-  ]
+  "body": {
+    "message": "서버에서 다시 계산한 결제 금액이 화면에 표시된 금액과 일치하지 않습니다."
+  }
 }
 ```
 
@@ -505,9 +505,11 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "itemCount": "number",
-  "totalQuantity": "number",
-  "totalAmount": "number"
+  "body": {
+    "itemCount": "number",
+    "totalQuantity": "number",
+    "totalAmount": "number"
+  }
 }
 ```
 
@@ -515,9 +517,11 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ```json
 {
-  "itemCount": 1,
-  "totalQuantity": 2,
-  "totalAmount": 100000
+  "body": {
+    "itemCount": 1,
+    "totalQuantity": 2,
+    "totalAmount": 100000
+  }
 }
 ```
 
