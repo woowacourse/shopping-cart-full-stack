@@ -1,6 +1,7 @@
 import React from "react";
 import { CouponData } from "../../type/types";
 import CouponItem from "./CouponItem";
+import styled from "styled-components";
 
 interface Props {
   couponData: CouponData[];
@@ -15,7 +16,7 @@ export default function CouponList({
   isDisabled,
 }: Props) {
   return (
-    <div>
+    <CouponListWrapper>
       {couponData.map((coupon) => (
         <CouponItem
           key={coupon.couponId}
@@ -25,6 +26,10 @@ export default function CouponList({
           onToggle={onToggle}
         />
       ))}
-    </div>
+    </CouponListWrapper>
   );
 }
+const CouponListWrapper = styled.div`
+  flex: 1;
+  overflow-y: auto;
+`;

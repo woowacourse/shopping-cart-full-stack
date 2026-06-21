@@ -56,7 +56,21 @@ export default function CouponItem({
 
 const Container = styled.div<{ isDisabled: boolean }>`
   opacity: ${({ isDisabled }) => (isDisabled ? 0.4 : 1)};
+  border-bottom: solid 1px #0000001a;
 `;
-const CouponName = styled.p``;
-const TopSection = styled.div``;
-const InfoLine = styled.p``;
+
+const TopSection = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const CouponName = styled.p`
+  font-size: 16px;
+  font-weight: 700;
+  font-family: sans-serif;
+`;
+const InfoLine = styled.p`
+  font-size: 12px;
+  font-weight: 500;
+  font-family: sans-serif;
+`;

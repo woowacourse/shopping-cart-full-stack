@@ -68,10 +68,13 @@ export default function CouponModal({
       <Container>
         <TopSection>
           <Text>쿠폰을 선택해 주세요</Text>
-          <button onClick={handleClose}>
-            <img src="/Xbutton.png" />
-          </button>
+
+          <CloseButton onClick={handleClose}> X </CloseButton>
         </TopSection>
+        <Notice>
+          <img src="/!_img.jpg" alt="느낌표" />
+          <p>쿠폰은 최대 2개까지 사용할 수 있습니다.</p>
+        </Notice>
         <CouponList
           couponData={couponData}
           selectedIds={selectedIds}
@@ -88,20 +91,65 @@ export default function CouponModal({
   );
 }
 
-const Overlay = styled.div``;
+const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: #00000059;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
+
 const Container = styled.div`
   width: 382px;
   height: 614px;
+  border-radius: 8px;
+  padding: 24px 32px;
+  gap: 32px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 `;
-const TopSection = styled.div``;
-const Text = styled.p``;
+
+const TopSection = styled.div`
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+`;
+const Notice = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #555;
+  border-bottom: solid 1px #0000001a;
+`;
+
+const Text = styled.p`
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+`;
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+`;
 const ApplyButton = styled.button`
-  width: 100%;
-  height: 52px;
+  width: 318px;
+  height: 44px;
   background: #000;
   color: #fff;
   font-size: 14px;
   font-weight: 700;
   border: none;
   cursor: pointer;
+  margin-top: auto;
 `;
