@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
 import {Typo, fontWeights, theme, typography} from '../../../design-system/index.js';
 import {FREE_SHIPPING_THRESHOLD} from '../../domain/cartSelectors.js';
-import {formatPrice} from '../../domain/priceFormatter.js';
 
 type PaymentSummaryProps = {
   selectedOrderAmount: number;
@@ -17,22 +16,22 @@ export const PaymentSummary = ({selectedOrderAmount, shippingFee, totalPrice}: P
       <FreeShippingNotice>
         <NoticeIcon alt='' aria-hidden='true' src={noticeIconUrl} />
         <NoticeText as='p' variant='caption' weight='medium'>
-          총 주문 금액이 {formatPrice(FREE_SHIPPING_THRESHOLD)}원 이상일 경우 무료 배송됩니다.
+          총 주문 금액이 {FREE_SHIPPING_THRESHOLD.toLocaleString('ko-KR')}원 이상일 경우 무료 배송됩니다.
         </NoticeText>
       </FreeShippingNotice>
       <SummaryDivider />
       <SummaryRow>
         <SummaryLabel>주문 금액</SummaryLabel>
-        <SummaryAmount>{formatPrice(selectedOrderAmount)}원</SummaryAmount>
+        <SummaryAmount>{selectedOrderAmount.toLocaleString('ko-KR')}원</SummaryAmount>
       </SummaryRow>
       <SummaryRow>
         <SummaryLabel>배송비</SummaryLabel>
-        <SummaryAmount>{formatPrice(shippingFee)}원</SummaryAmount>
+        <SummaryAmount>{shippingFee.toLocaleString('ko-KR')}원</SummaryAmount>
       </SummaryRow>
       <SummaryDivider />
       <TotalSummaryRow>
         <SummaryLabel>총 결제 금액</SummaryLabel>
-        <SummaryAmount>{formatPrice(totalPrice)}원</SummaryAmount>
+        <SummaryAmount>{totalPrice.toLocaleString('ko-KR')}원</SummaryAmount>
       </TotalSummaryRow>
     </SummaryArea>
   );

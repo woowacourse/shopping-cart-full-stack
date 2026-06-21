@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import {Checkbox, NumericSpinner, Typo, fontWeights, theme, typography} from '../../../design-system/index.js';
-import {formatPrice} from '../../domain/priceFormatter.js';
 import type {CartItem, CartItemId} from '../../domain/types.js';
 
 type CartItemRowProps = {
@@ -37,7 +36,7 @@ export const CartItemRow = ({cartItem, checked, onChangeQuantity, onDelete, onTo
               {productInfo.name}
             </Typo>
             <Typo as='strong' color='black' variant='display' weight='bold'>
-              {formatPrice(productInfo.price)}원
+              {productInfo.price.toLocaleString('ko-KR')}원
             </Typo>
           </TextGroup>
           <NumericSpinner
