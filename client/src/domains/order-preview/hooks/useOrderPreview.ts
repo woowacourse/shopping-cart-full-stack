@@ -28,13 +28,13 @@ export function useOrderPreview(
   const [error, setError] = useState<OrderPreviewError | null>(null);
   const [status, setStatus] = useState<OrderPreviewStatus>('loading');
   const couponIdsKey = couponIds.join(',');
-  const requestSequence = useRef(0);
+  const latestRequestId = useRef(0);
 
   const loadOrderPreview = useCallback(async () => {
     if (!enabled) return;
 
-    const requestId = requestSequence.current + 1;
-    requestSequence.current = requestId;
+    const requestId = latestRequestId.current + 1;
+    latestRequestId.current = requestId;
 
     if (!preorderId) {
       setError({
@@ -60,12 +60,12 @@ export function useOrderPreview(
         couponIds,
       });
 
-      if (requestId !== requestSequence.current) return;
+      if (requestId !== latestRequestId.current) return;
 
       setOrderPreview(orderPreview);
       setStatus('success');
     } catch (error) {
-      if (requestId !== requestSequence.current) return;
+      if (requestId !== latestRequestId.current) return;
 
       setError({
         message: getErrorMessage(error),
