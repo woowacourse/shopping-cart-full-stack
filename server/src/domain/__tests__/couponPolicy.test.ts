@@ -115,7 +115,7 @@ describe('couponPolicy.validateCoupon', () => {
   test('만료된 쿠폰이면 유효하지 않다', () => {
     const coupon = createFixedDiscountCoupon();
 
-    expect(validateCoupon(coupon, preorder, {now: new Date('2027-01-01T00:00:00+09:00')})).toEqual({
+    expect(validateCoupon(coupon, preorder, {isRemoteArea: false, now: new Date('2027-01-01T00:00:00+09:00')})).toEqual({
       valid: false,
       reason: '만료된 쿠폰입니다.',
     });
@@ -128,7 +128,7 @@ describe('couponPolicy.validateCoupon', () => {
       items: [{...preorderItems[0], price: 1000}],
     };
 
-    expect(validateCoupon(coupon, lowPricePreorder)).toEqual({
+    expect(validateCoupon(coupon, lowPricePreorder, {isRemoteArea: false})).toEqual({
       valid: false,
       reason: '주문 금액이 10,000원 미만입니다.',
     });

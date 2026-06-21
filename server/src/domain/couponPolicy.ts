@@ -6,7 +6,7 @@ import type {Preorder, PreorderItem} from '../types/preorder.js';
 type ValidationResult = {valid: true} | {valid: false; reason: string};
 type ValidateCouponOptions = {
   now?: Date;
-  isRemoteArea?: boolean;
+  isRemoteArea: boolean;
 };
 
 const COUPON_DISABLED_REASON = {
@@ -82,8 +82,8 @@ const validateCouponCondition = (coupon: Coupon, preorder: Preorder, now: Date):
   }
 };
 
-const validateCouponEffect = (coupon: Coupon, preorder: Preorder, isRemoteArea?: boolean): ValidationResult => {
-  if (!coupon.isShippingDiscount() || isRemoteArea === undefined) {
+const validateCouponEffect = (coupon: Coupon, preorder: Preorder, isRemoteArea: boolean): ValidationResult => {
+  if (!coupon.isShippingDiscount()) {
     return {valid: true};
   }
 
@@ -120,7 +120,7 @@ const calculateHighestUnitPriceItemDiscount = (
 export const validateCoupon = (
   coupon: Coupon,
   preorder: Preorder,
-  options: ValidateCouponOptions = {}
+  options: ValidateCouponOptions
 ): ValidationResult => {
   const now = options.now ?? new Date();
 
