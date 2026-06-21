@@ -5,18 +5,31 @@ type ApiResponse<T> = {
   body: T;
 };
 
-export async function requestApi<T>(path: string, options: RequestInit = {}): Promise<T> {
+interface RequestApiOptions extends RequestInit {
+  errorMessage?: string;
+}
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number
+  ) {
+    super(message);
+  }
+}
+
+export async function requestApi<T>(path: string, options: RequestApiOptions = {}): Promise<T> {
   const response = await requestApiResponse(path, options);
   const data = (await response.json()) as ApiResponse<T>;
 
   return data.body;
 }
 
-export async function requestApiWithoutBody(path: string, options: RequestInit = {}): Promise<void> {
+export async function requestApiWithoutBody(path: string, options: RequestApiOptions = {}): Promise<void> {
   await requestApiResponse(path, options);
 }
 
-async function requestApiResponse(path: string, options: RequestInit) {
+async function requestApiResponse(path: string, {errorMessage = DEFAULT_API_ERROR_MESSAGE, ...options}: RequestApiOptions) {
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...options,
     headers: {
@@ -26,13 +39,13 @@ async function requestApiResponse(path: string, options: RequestInit) {
   });
 
   if (!response.ok) {
-    throw new Error(await getApiErrorMessage(response));
+    throw new ApiError(await getApiErrorMessage(response, errorMessage), response.status);
   }
 
   return response;
 }
 
-async function getApiErrorMessage(response: Response) {
+async function getApiErrorMessage(response: Response, defaultErrorMessage: string) {
   try {
     const data = (await response.json()) as {body?: {message?: string}};
     const errorMessage = data.body?.message;
@@ -41,9 +54,9 @@ async function getApiErrorMessage(response: Response) {
       return errorMessage;
     }
 
-    return DEFAULT_API_ERROR_MESSAGE;
+    return defaultErrorMessage;
   } catch {
-    return DEFAULT_API_ERROR_MESSAGE;
+    return defaultErrorMessage;
   }
 }
 
