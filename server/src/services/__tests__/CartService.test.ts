@@ -2,7 +2,7 @@ import {jest} from '@jest/globals';
 
 const loadCartService = async () => {
   jest.resetModules();
-  return import('./CartService.js');
+  return import('../CartService.js');
 };
 
 describe('cartService', () => {

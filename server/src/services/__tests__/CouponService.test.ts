@@ -1,10 +1,10 @@
 import {jest} from '@jest/globals';
 
-import type {Preorder} from '../types/preorder.js';
+import type {Preorder} from '../../types/preorder.js';
 
 const loadCouponService = async () => {
   jest.resetModules();
-  return import('./CouponService.js');
+  return import('../CouponService.js');
 };
 
 const createPreorder = (price: number, quantity: number): Preorder => {

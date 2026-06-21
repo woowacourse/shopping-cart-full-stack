@@ -2,8 +2,8 @@ import {jest} from '@jest/globals';
 
 const loadOrderServices = async () => {
   jest.resetModules();
-  const {preorderService} = await import('./PreorderService.js');
-  const {orderService} = await import('./OrderService.js');
+  const {preorderService} = await import('../PreorderService.js');
+  const {orderService} = await import('../OrderService.js');
 
   return {
     preorderService,

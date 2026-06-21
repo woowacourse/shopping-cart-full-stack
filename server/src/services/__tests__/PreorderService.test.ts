@@ -2,7 +2,7 @@ import {jest} from '@jest/globals';
 
 const loadPreorderService = async () => {
   jest.resetModules();
-  return import('./PreorderService.js');
+  return import('../PreorderService.js');
 };
 
 describe('preorderService', () => {

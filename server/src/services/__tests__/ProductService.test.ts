@@ -2,7 +2,7 @@ import {jest} from '@jest/globals';
 
 const loadProductService = async () => {
   jest.resetModules();
-  return import('./ProductService.js');
+  return import('../ProductService.js');
 };
 
 describe('product validators', () => {
@@ -80,7 +80,7 @@ describe('productService', () => {
 
   test('deleteProduct는 상품과 연결된 장바구니 항목을 삭제한다', async () => {
     const {productService} = await loadProductService();
-    const {cartItems} = await import('../repositories/index.js');
+    const {cartItems} = await import('../../repositories/index.js');
 
     expect(productService.deleteProduct('1')).toBeUndefined();
     expect(productService.getProducts().some((product) => product.id === '1')).toBe(false);
