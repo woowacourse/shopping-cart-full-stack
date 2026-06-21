@@ -4,6 +4,11 @@ export interface PreviewOrderRequestBody {
   couponIds: number[];
 }
 
+export interface CreateOrderRequestBody {
+  preorderId: string;
+  expectedTotalPaymentAmount: number;
+}
+
 export interface ExcludedCoupon {
   couponId: number;
   code: string;
@@ -31,4 +36,8 @@ export interface PreviewOrderResponse {
   price: OrderPrice;
   appliedCoupons: AppliedCoupon[];
   excludedCoupons: ExcludedCoupon[];
+}
+
+export interface CreateOrderResponse {
+  orderId: string;
 }
