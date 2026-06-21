@@ -7,27 +7,32 @@ import type {Coupon, CouponId} from '../domain/types.js';
 type CouponsStatus = 'loading' | 'success' | 'error';
 export type CouponsErrorType = 'default' | 'expired' | 'notFound';
 
+type CouponsError = {
+  message: string;
+  type: CouponsErrorType;
+};
+
 export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [recommendedCouponIds, setRecommendedCouponIds] = useState<CouponId[]>([]);
 
   const [status, setStatus] = useState<CouponsStatus>('loading');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [errorType, setErrorType] = useState<CouponsErrorType>('default');
+  const [error, setError] = useState<CouponsError | null>(null);
 
   const loadCoupons = useCallback(async () => {
     if (!preorderId) {
       setStatus('error');
-      setErrorMessage('쿠폰 정보를 불러올 수 없습니다.');
-      setErrorType('notFound');
+      setError({
+        message: '쿠폰 정보를 불러올 수 없습니다.',
+        type: 'notFound',
+      });
       setCoupons([]);
       setRecommendedCouponIds([]);
       return;
     }
 
     setStatus('loading');
-    setErrorMessage('');
-    setErrorType('default');
+    setError(null);
 
     try {
       const couponList = await getCoupons(preorderId, isRemoteArea);
@@ -35,9 +40,11 @@ export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean
       setCoupons(couponList.coupons);
       setRecommendedCouponIds(couponList.recommendedCouponIds ?? []);
       setStatus('success');
-    } catch (error) {
-      setErrorMessage(getErrorMessage(error));
-      setErrorType(getCouponsErrorType(error));
+    } catch (requestError) {
+      setError({
+        message: getErrorMessage(requestError),
+        type: getCouponsErrorType(requestError),
+      });
       setCoupons([]);
       setRecommendedCouponIds([]);
       setStatus('error');
@@ -52,8 +59,8 @@ export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean
     coupons,
     recommendedCouponIds,
     status,
-    errorMessage,
-    errorType,
+    errorMessage: error?.message ?? '',
+    errorType: error?.type ?? 'default',
     loadCoupons,
   };
 }

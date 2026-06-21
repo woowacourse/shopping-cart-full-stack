@@ -7,29 +7,36 @@ import type {Preorder} from '../domain/types.js';
 export type PreorderStatus = 'loading' | 'success' | 'error';
 export type PreorderErrorType = 'default' | 'expired' | 'notFound';
 
+type PreorderError = {
+  message: string;
+  type: PreorderErrorType;
+};
+
 export function usePreorder(preorderId: string | undefined) {
   const [preorder, setPreorder] = useState<Preorder | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [errorType, setErrorType] = useState<PreorderErrorType>('default');
+  const [error, setError] = useState<PreorderError | null>(null);
 
   const loadPreorder = useCallback(async () => {
     if (!preorderId) {
-      setErrorMessage('주문 확인 정보를 찾을 수 없습니다.');
-      setErrorType('notFound');
+      setError({
+        message: '주문 확인 정보를 찾을 수 없습니다.',
+        type: 'notFound',
+      });
       return;
     }
 
-    setErrorMessage('');
-    setErrorType('default');
+    setError(null);
     setPreorder(null);
 
     try {
       const preorder = await getPreorder(preorderId);
 
       setPreorder(preorder);
-    } catch (error) {
-      setErrorMessage(getErrorMessage(error));
-      setErrorType(getPreorderErrorType(error));
+    } catch (requestError) {
+      setError({
+        message: getErrorMessage(requestError),
+        type: getPreorderErrorType(requestError),
+      });
     }
   }, [preorderId]);
 
@@ -37,19 +44,19 @@ export function usePreorder(preorderId: string | undefined) {
     void loadPreorder();
   }, [loadPreorder]);
 
-  const status = getPreorderStatus(preorder, errorMessage);
+  const status = getPreorderStatus(preorder, error);
 
   return {
     preorder,
     status,
-    errorMessage,
-    errorType,
+    errorMessage: error?.message ?? '',
+    errorType: error?.type ?? 'default',
     loadPreorder,
   };
 }
 
-function getPreorderStatus(preorder: Preorder | null, errorMessage: string): PreorderStatus {
-  if (errorMessage) return 'error';
+function getPreorderStatus(preorder: Preorder | null, error: PreorderError | null): PreorderStatus {
+  if (error) return 'error';
   if (preorder) return 'success';
 
   return 'loading';

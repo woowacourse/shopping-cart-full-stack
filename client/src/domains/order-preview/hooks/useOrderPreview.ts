@@ -2,10 +2,16 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 
 import {ApiError} from '../../../shared/api/requestApi.js';
 import type {CouponId} from '../../coupon/domain/types.js';
-import {previewOrder, type PreviewOrderResponse} from '../api/orderPreviewApi.js';
+import {previewOrder} from '../api/orderPreviewApi.js';
+import type {PreviewOrder} from '../domain/types.js';
 
 export type OrderPreviewStatus = 'loading' | 'success' | 'error';
 export type OrderPreviewErrorType = 'default' | 'expired' | 'notFound';
+
+type OrderPreviewError = {
+  message: string;
+  type: OrderPreviewErrorType;
+};
 
 interface UseOrderPreviewOptions {
   enabled?: boolean;
@@ -18,10 +24,10 @@ export function useOrderPreview(
   couponIds: CouponId[],
   {enabled = true, keepPrevious = false}: UseOrderPreviewOptions = {}
 ) {
-  const [orderPreview, setOrderPreview] = useState<PreviewOrderResponse | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [errorType, setErrorType] = useState<OrderPreviewErrorType>('default');
+  const [orderPreview, setOrderPreview] = useState<PreviewOrder | null>(null);
+  const [error, setError] = useState<OrderPreviewError | null>(null);
   const [status, setStatus] = useState<OrderPreviewStatus>('loading');
+  const couponIdsKey = couponIds.join(',');
   const requestSequence = useRef(0);
 
   const loadOrderPreview = useCallback(async () => {
@@ -31,15 +37,16 @@ export function useOrderPreview(
     requestSequence.current = requestId;
 
     if (!preorderId) {
-      setErrorMessage('주문 확인 정보를 찾을 수 없습니다.');
-      setErrorType('notFound');
+      setError({
+        message: '주문 확인 정보를 찾을 수 없습니다.',
+        type: 'notFound',
+      });
       setOrderPreview(null);
       setStatus('error');
       return;
     }
 
-    setErrorMessage('');
-    setErrorType('default');
+    setError(null);
     setStatus('loading');
 
     if (!keepPrevious) {
@@ -60,12 +67,14 @@ export function useOrderPreview(
     } catch (error) {
       if (requestId !== requestSequence.current) return;
 
-      setErrorMessage(getErrorMessage(error));
-      setErrorType(getOrderPreviewErrorType(error));
+      setError({
+        message: getErrorMessage(error),
+        type: getOrderPreviewErrorType(error),
+      });
       setOrderPreview(null);
       setStatus('error');
     }
-  }, [preorderId, isRemoteArea, couponIds, enabled, keepPrevious]);
+  }, [preorderId, isRemoteArea, couponIdsKey, enabled, keepPrevious]);
 
   useEffect(() => {
     void loadOrderPreview();
@@ -73,16 +82,15 @@ export function useOrderPreview(
 
   const resetOrderPreview = useCallback(() => {
     setOrderPreview(null);
-    setErrorMessage('');
-    setErrorType('default');
+    setError(null);
     setStatus('loading');
   }, []);
 
   return {
     orderPreview,
     status,
-    errorMessage,
-    errorType,
+    errorMessage: error?.message ?? '',
+    errorType: error?.type ?? 'default',
     loadOrderPreview,
     resetOrderPreview,
   };
