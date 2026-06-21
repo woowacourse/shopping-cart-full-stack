@@ -27,7 +27,7 @@ describe('couponService', () => {
     const {couponService} = await loadCouponService();
     const preorder = createPreorder(100000, 2);
 
-    const coupons = couponService.getCoupons(preorder);
+    const {coupons} = couponService.getCoupons(preorder, false);
 
     expect(coupons).toHaveLength(4);
     expect(coupons[0]).toEqual(
@@ -48,7 +48,7 @@ describe('couponService', () => {
     const {couponService} = await loadCouponService();
     const preorder = createPreorder(100000, 2);
 
-    const coupons = couponService.getCoupons(preorder);
+    const {coupons} = couponService.getCoupons(preorder, false);
 
     expect(coupons[0].expirationDate).toBe('2026-11-30T14:59:59.000Z');
   });
@@ -57,7 +57,7 @@ describe('couponService', () => {
     const {couponService} = await loadCouponService();
     const preorder = createPreorder(100000, 2);
 
-    const coupons = couponService.getCoupons(preorder);
+    const {coupons} = couponService.getCoupons(preorder, false);
     const fixedCoupon = coupons.find((coupon) => coupon.code === 'FIXED5000');
     const bogoCoupon = coupons.find((coupon) => coupon.code === 'BOGO');
     const freeShippingCoupon = coupons.find((coupon) => coupon.code === 'FREESHIPPING');
@@ -73,7 +73,7 @@ describe('couponService', () => {
     const {couponService} = await loadCouponService();
     const preorder = createPreorder(1000, 1);
 
-    const coupons = couponService.getCoupons(preorder);
+    const {coupons} = couponService.getCoupons(preorder, false);
     const fixedCoupon = coupons.find((coupon) => coupon.code === 'FIXED5000');
     const bogoCoupon = coupons.find((coupon) => coupon.code === 'BOGO');
 
@@ -89,5 +89,19 @@ describe('couponService', () => {
         disabledReason: '동일 상품을 2개 이상 구매해야 합니다.',
       })
     );
+  });
+
+  test('getCoupons는 적용 가능한 쿠폰 중 최대 할인 추천 쿠폰 ID를 반환한다', async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-06-22T12:00:00+09:00'));
+
+    const {couponService} = await loadCouponService();
+    const preorder = createPreorder(50000, 1);
+
+    const {recommendedCouponIds} = couponService.getCoupons(preorder, true);
+
+    expect(recommendedCouponIds).toEqual([3]);
+
+    jest.useRealTimers();
   });
 });

@@ -1,8 +1,10 @@
 import {coupons} from '../repositories/index.js';
 import {validateCoupon} from '../domain/couponPolicy.js';
+import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
+import {calculateBestOrderPricing} from '../domain/orderPricingPolicy.js';
 
 import type {Coupon} from '../models/Coupon.js';
-import type {CouponConditionResponse, CouponResponse} from '../types/coupon.js';
+import type {CouponCondition, CouponResponse} from '../types/coupon.js';
 import type {Preorder} from '../types/preorder.js';
 
 const formatTime = (time: string) => {
@@ -13,9 +15,7 @@ const formatTime = (time: string) => {
   return `${period} ${displayHour}시`;
 };
 
-const getConditionDescription = (coupon: Coupon): string | null => {
-  const {condition} = coupon;
-
+const getConditionDescription = (condition: CouponCondition): string | null => {
   switch (condition.rule) {
     case 'MIN_ORDER_AMOUNT':
       return `최소 주문 금액: ${condition.params.minOrderAmount.toLocaleString('ko-KR')}원`;
@@ -34,7 +34,7 @@ const createCouponResponse = (coupon: Coupon, disabledReason: string | null): Co
     expirationDate: coupon.expirationDate.toISOString(),
     condition: {
       ...coupon.condition,
-      description: getConditionDescription(coupon),
+      description: getConditionDescription(coupon.condition),
     },
     benefit: coupon.benefit,
     disabled: disabledReason !== null,
@@ -43,14 +43,30 @@ const createCouponResponse = (coupon: Coupon, disabledReason: string | null): Co
 };
 
 export const couponService = {
-  getCoupons(preorder: Preorder): CouponResponse[] {
+  getCoupons(preorder: Preorder, isRemoteArea: boolean) {
+    const applicableCoupons: Coupon[] = [];
     const couponResponses = coupons.findAll().map((coupon) => {
       const validationResult = validateCoupon(coupon, preorder);
       const disabledReason = validationResult.valid ? null : validationResult.reason;
 
+      if (validationResult.valid) {
+        applicableCoupons.push(coupon);
+      }
+
       return createCouponResponse(coupon, disabledReason);
     });
+    const orderAmount = calculateOrderAmount(preorder.items);
+    const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
+    const recommendedCouponIds = calculateBestOrderPricing(
+      applicableCoupons,
+      preorder.items,
+      orderAmount,
+      shippingFee
+    ).appliedCoupons.map((coupon) => coupon.couponId);
 
-    return couponResponses;
+    return {
+      coupons: couponResponses,
+      recommendedCouponIds,
+    };
   },
 };
