@@ -1,10 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-export default function BackButton() {
+export default function BackButton({ onBack }: { onBack?: () => void }) {
   const navigate = useNavigate();
   return (
-    <Button type="submit" onClick={() => navigate(-1)}>
+    <Button
+      type="submit"
+      onClick={() => {
+        onBack?.();
+        navigate(-1);
+      }}
+    >
       <img src="/backBtn.png" />
     </Button>
   );
