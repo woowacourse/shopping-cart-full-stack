@@ -2,12 +2,12 @@ import styled from '@emotion/styled';
 import {Navigate, Route, Routes} from 'react-router-dom';
 
 import {theme} from './design-system/index.js';
-import {CartProvider} from './cart/providers/CartProvider.js';
-import {OrderPreviewProvider} from './order-preview/providers/OrderPreviewProvider.js';
+import {CartProvider} from './domains/cart/providers/CartProvider.js';
+import {OrderPreviewProvider} from './domains/order-preview/providers/OrderPreviewProvider.js';
 
-import {CartPage} from './cart/pages/CartPage.js';
-import {OrderConfirmPage} from './order/pages/OrderConfirmPage.js';
-import {OrderPreviewPage} from './order-preview/pages/OrderPreviewPage.js';
+import {CartPage} from './domains/cart/pages/CartPage.js';
+import {OrderConfirmPage} from './domains/order/pages/OrderConfirmPage.js';
+import {OrderPreviewPage} from './domains/order-preview/pages/OrderPreviewPage.js';
 
 export const App = () => {
   return (
