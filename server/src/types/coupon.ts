@@ -54,9 +54,7 @@ export type ProductDiscountBenefit =
 export type ShippingDiscountBenefit = {
   target: 'SHIPPING';
   rule: 'FREE_SHIPPING';
-  params: {
-    includesRemoteAreaFee: boolean;
-  };
+  params: {};
 };
 
 export type CouponBenefit = ProductDiscountBenefit | ShippingDiscountBenefit;

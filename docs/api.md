@@ -158,7 +158,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 | --- | --- | --- |
 | `FIXED5000` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 100000 } }` | `{ "target": "PRODUCT", "discountType": "FIXED", "rule": "DISCOUNT_AMOUNT", "params": { "discountAmount": 5000 } }` |
 | `BOGO` | `{ "target": "PRODUCT", "rule": "MIN_SAME_PRODUCT_QUANTITY", "params": { "minSameProductQuantity": 2 } }` | `{ "target": "PRODUCT", "discountType": "FIXED", "rule": "DISCOUNT_HIGHEST_UNIT_PRICE_ITEM", "params": { "discountQuantity": 1 } }` |
-| `FREESHIPPING` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 50000 } }` | `{ "target": "SHIPPING", "rule": "FREE_SHIPPING", "params": { "includesRemoteAreaFee": true } }` |
+| `FREESHIPPING` | `{ "target": "ORDER", "rule": "MIN_ORDER_AMOUNT", "params": { "minOrderAmount": 50000 } }` | `{ "target": "SHIPPING", "rule": "FREE_SHIPPING", "params": {} }` |
 | `MIRACLESALE` | `{ "target": "TIME", "rule": "TIME_RANGE", "params": { "start": "04:00", "end": "07:00" } }` | `{ "target": "PRODUCT", "discountType": "RATE", "rule": "DISCOUNT_RATE", "params": { "discountRate": 0.3, "applyAfterFixedDiscount": true } }` |
 
 - `code`는 쿠폰 식별용 문자열이다. 같은 계산 방식의 쿠폰이 추가되어도 서버 계산 로직은 `condition.target`, `condition.rule`, `benefit.target`, `benefit.rule`을 기준으로 해석한다.
@@ -170,7 +170,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 - `MIN_ORDER_AMOUNT`는 쿠폰 적용 전 주문 금액을 기준으로 판단한다.
 - `MIN_SAME_PRODUCT_QUANTITY`는 동일 상품을 2개 이상 구매했는지 판단할 때 사용한다.
 - `DISCOUNT_HIGHEST_UNIT_PRICE_ITEM`은 적용 가능한 상품 중 단가가 가장 높은 상품 1개를 할인 대상으로 삼는다는 의미다.
-- `FREE_SHIPPING`은 기본 배송비를 무료 처리한다. `includesRemoteAreaFee: true`이면 제주도 및 도서산간 추가 배송비도 함께 무료 처리한다.
+- `FREE_SHIPPING`은 기본 배송비와 제주도 및 도서산간 추가 배송비를 모두 무료 처리한다.
 - `TIME_RANGE`는 서버 시간을 기준으로 판단하며, `start`는 포함하고 `end`는 포함하지 않는다.
 - `DISCOUNT_RATE`의 `discountRate`는 0 이상 1 이하의 소수로 표현한다.
 
@@ -240,9 +240,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
       "benefit": {
         "target": "SHIPPING",
         "rule": "FREE_SHIPPING",
-        "params": {
-          "includesRemoteAreaFee": true
-        }
+        "params": {}
       },
       "disabled": true,
       "disabledReason": "주문 금액이 50,000원 미만입니다."

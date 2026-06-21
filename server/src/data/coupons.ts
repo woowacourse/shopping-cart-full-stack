@@ -58,9 +58,7 @@ export const couponData: Coupon[] = [
     benefit: {
       target: 'SHIPPING',
       rule: 'FREE_SHIPPING',
-      params: {
-        includesRemoteAreaFee: true,
-      },
+      params: {},
     },
   },
   {
