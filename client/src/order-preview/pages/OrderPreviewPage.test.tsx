@@ -121,6 +121,17 @@ function mockPreviewOrder(requestBodies: unknown[] = []) {
   );
 }
 
+function mockCreateOrder(requestBodies: unknown[] = []) {
+  mockServer.use(
+    http.post(`${API_BASE_URL}/order`, async ({request}) => {
+      const requestBody = await request.json();
+      requestBodies.push(requestBody);
+
+      return HttpResponse.json({body: {orderId: 'order-1'}}, {status: 201});
+    })
+  );
+}
+
 function renderOrderPreviewPage(initialEntry = '/order-preview/preorder-1') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -151,7 +162,7 @@ function renderOrderPreviewRoutes() {
             </OrderPreviewProvider>
           }
         />
-        <Route path='/order-confirm' element={<OrderConfirmPage />} />
+        <Route path='/order-confirm/:orderId' element={<OrderConfirmPage />} />
       </Routes>
     </MemoryRouter>
   );
@@ -183,7 +194,7 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByText('0원')).toBeInTheDocument();
     expect(screen.getByText('3,000원')).toBeInTheDocument();
     expect(screen.getByText('73,000원')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: '결제하기'})).toBeDisabled();
+    expect(screen.getByRole('button', {name: '결제하기'})).toBeEnabled();
     expect(requestBodies).toContainEqual({
       preorderId: 'preorder-1',
       isRemoteArea: false,
@@ -230,6 +241,90 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByText('장바구니 화면')).toBeInTheDocument();
   });
 
+  test('결제하기 버튼을 누르면 현재 결제 금액으로 주문을 생성하고 결제 확인 페이지로 이동한다', async () => {
+    const user = userEvent.setup();
+    const requestBodies: unknown[] = [];
+
+    mockGetPreorder();
+    mockGetCoupons();
+    mockPreviewOrder();
+    mockCreateOrder(requestBodies);
+    renderOrderPreviewRoutes();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '결제하기'}));
+
+    expect(await screen.findByRole('heading', {name: '결제 확인'})).toBeInTheDocument();
+    expect(requestBodies).toEqual([
+      {
+        preorderId: 'preorder-1',
+        expectedTotalPaymentAmount: 73000,
+      },
+    ]);
+  });
+
+  test('주문 생성에 실패하면 서버 에러 메시지를 보여주고 다시 결제할 수 있다', async () => {
+    const user = userEvent.setup();
+
+    mockGetPreorder();
+    mockGetCoupons();
+    mockPreviewOrder();
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order`, () => {
+        return HttpResponse.json(
+          {
+            body: {
+              message: '서버에서 다시 계산한 결제 금액이 화면에 표시된 금액과 일치하지 않습니다.',
+            },
+          },
+          {status: 409}
+        );
+      })
+    );
+    renderOrderPreviewPage();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '결제하기'}));
+
+    expect(
+      await screen.findByText('서버에서 다시 계산한 결제 금액이 화면에 표시된 금액과 일치하지 않습니다.')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: '결제하기'})).toBeEnabled();
+  });
+
+  test('주문 생성 요청 중에는 결제 버튼을 잠가 중복 요청을 막는다', async () => {
+    const user = userEvent.setup();
+    const requestBodies: unknown[] = [];
+    let resolveOrder: (() => void) | undefined;
+
+    mockGetPreorder();
+    mockGetCoupons();
+    mockPreviewOrder();
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order`, async ({request}) => {
+        requestBodies.push(await request.json());
+
+        return new Promise((resolve) => {
+          resolveOrder = () => resolve(HttpResponse.json({body: {orderId: 'order-1'}}, {status: 201}));
+        });
+      })
+    );
+    renderOrderPreviewRoutes();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '결제하기'}));
+
+    expect(screen.getByRole('button', {name: '결제 중'})).toBeDisabled();
+
+    await user.click(screen.getByRole('button', {name: '결제 중'}));
+
+    expect(requestBodies).toHaveLength(1);
+
+    resolveOrder?.();
+
+    expect(await screen.findByRole('heading', {name: '결제 확인'})).toBeInTheDocument();
+  });
+
   test('주문 확인 정보가 만료되면 장바구니로 돌아갈 수 있다', async () => {
     const user = userEvent.setup();
 
@@ -263,6 +358,8 @@ describe('OrderPreviewPage', () => {
 
     expect(await screen.findByText('주문 확인 정보를 찾을 수 없습니다.')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: '장바구니로 돌아가기'})).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: '주문 확인'})).not.toBeInTheDocument();
+    expect(screen.queryByText(/총 0종류의 상품 0개를 주문합니다/)).not.toBeInTheDocument();
   });
 
   test('일시적인 오류면 다시 시도할 수 있다', async () => {
