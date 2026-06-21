@@ -4,6 +4,10 @@ import type {ReactNode} from 'react';
 import {theme} from '../foundation/theme.js';
 import {FeedbackStateLayout} from './FeedbackStateLayout.js';
 
+interface LoadingStateProps {
+  children?: ReactNode;
+}
+
 export const LoadingState = () => {
   return (
     <FeedbackStateLayout>
@@ -12,11 +16,7 @@ export const LoadingState = () => {
   );
 };
 
-interface LoadingOverlayProps {
-  children: ReactNode;
-}
-
-export const LoadingOverlay = ({children}: LoadingOverlayProps) => {
+export const LoadingOverlay = ({children}: LoadingStateProps) => {
   return <Overlay>{children}</Overlay>;
 };
 

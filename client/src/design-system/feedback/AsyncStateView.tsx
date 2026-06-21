@@ -28,12 +28,16 @@ export const AsyncStateView = ({
     return <>{emptyFallback}</>;
   }
 
-  return (
-    <Container>
-      {children}
-      {status === 'loading' && <LoadingOverlay>{loadingFallback}</LoadingOverlay>}
-    </Container>
-  );
+  if (status === 'loading') {
+    return (
+      <Container>
+        {children}
+        <LoadingOverlay>{loadingFallback}</LoadingOverlay>
+      </Container>
+    );
+  }
+
+  return <>{children}</>;
 };
 
 const Container = styled.div`
