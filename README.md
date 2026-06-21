@@ -69,7 +69,7 @@ app.ts
 - `DELETE /carts/:cartItemId`
 - `POST /preorder`
 - `GET /preorder/:preorderId`
-- `GET /coupons?preorderId={preorderId}`
+- `GET /coupons?preorderId={preorderId}&isRemoteArea={isRemoteArea}`
 - `POST /order/preview`
 
 ## 실행

@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- | --- |
 | preorder | POST | `/preorder` | 201 | 400 | 선택된 장바구니 항목으로 임시 주문서를 생성한다. |
 | preorder | GET | `/preorder/:preorderId` | 200 | 404 | 임시 주문서의 상품 정보를 조회한다. |
-| coupons | GET | `/coupons?preorderId={preorderId}` | 200 | 404 | 임시 주문 기준으로 쿠폰 목록과 사용 가능 여부를 조회한다. |
+| coupons | GET | `/coupons?preorderId={preorderId}&isRemoteArea={isRemoteArea}` | 200 | 404 | 임시 주문과 배송 조건 기준으로 쿠폰 목록, 사용 가능 여부, 추천 쿠폰을 조회한다. |
 | order | POST | `/order/preview` | 200 | 400, 404 | 쿠폰과 배송지 조건을 기준으로 결제 예상 금액을 계산한다. |
 | order | POST | `/order` | 201 | 400, 404, 409 | 클라이언트가 동의한 최종 결제 금액과 주문 정보를 검증한 뒤 주문을 생성한다. |
 | order | GET | `/order/:orderId` | 200 | 404 | 주문 요약 정보를 조회한다. |
@@ -131,21 +131,25 @@ preorder 주문 세션에 저장된 `productId`, `quantity`, 상품 이름, 상�
 
 ## Coupons
 
-### GET `/coupons?preorderId={preorderId}`
+### GET `/coupons?preorderId={preorderId}&isRemoteArea={isRemoteArea}`
 
 coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일, 쿠폰 condition, 쿠폰 benefit을 조회한다. 서버에서 쿠폰 적용 가능 여부를 계산하여 `disabled`와 `disabledReason`을 함께 전달해야 한다. 쿠폰 조건의 화면 표시 문구는 서버가 condition `params`를 기준으로 계산하여 응답의 `condition.description`으로 함께 전달한다.
+
+서버는 현재 preorder와 배송 조건을 기준으로 가장 할인 효과가 큰 쿠폰 조합을 계산하여 `recommendedCouponIds`로 함께 전달한다. 프론트엔드는 쿠폰 모달을 처음 열 때 이 값을 초기 선택값으로 사용할 수 있다.
 
 ### Query Parameters
 
 | Name | Type | Required | 설명 |
 |---|---|---:|---|
 | preorderId | string | Yes | 쿠폰 적용 가능 여부를 계산할 preorder ID |
+| isRemoteArea | boolean | No | 제주도 및 도서산간 지역 여부. 기본값은 `false`다. 추천 쿠폰 조합 계산에 사용한다. |
 
 ### Response
 
 ```json
 {
   "body": {
+    "recommendedCouponIds": ["number"],
     "coupons": [
       {
         "couponId": "number",
@@ -192,6 +196,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 ```json
 {
   "body": {
+    "recommendedCouponIds": [1, 3],
     "coupons": [
       {
         "couponId": 1,
