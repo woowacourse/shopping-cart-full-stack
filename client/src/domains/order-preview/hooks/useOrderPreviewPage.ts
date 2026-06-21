@@ -1,6 +1,6 @@
 import {useContext} from 'react';
 
-import {OrderPreviewContext} from '../contexts/OrderPreviewContext.js';
+import {OrderPreviewContext} from '../providers/OrderPreviewProvider.js';
 
 export function useOrderPreviewPage() {
   const orderPreview = useContext(OrderPreviewContext);

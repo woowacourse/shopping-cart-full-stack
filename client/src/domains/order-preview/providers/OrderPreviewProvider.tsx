@@ -1,7 +1,8 @@
-import type {PropsWithChildren} from 'react';
+import {createContext, type PropsWithChildren} from 'react';
 
-import {OrderPreviewContext} from '../contexts/OrderPreviewContext.js';
-import {useOrderPreviewPageState} from '../hooks/useOrderPreviewPageState.js';
+import {useOrderPreviewPageState, type OrderPreviewPageState} from '../hooks/useOrderPreviewPageState.js';
+
+export const OrderPreviewContext = createContext<OrderPreviewPageState | null>(null);
 
 export function OrderPreviewProvider({children}: PropsWithChildren) {
   const orderPreview = useOrderPreviewPageState();

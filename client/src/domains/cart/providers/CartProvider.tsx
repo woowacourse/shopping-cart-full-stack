@@ -1,7 +1,8 @@
-import type {PropsWithChildren} from 'react';
+import {createContext, type PropsWithChildren} from 'react';
 
-import {CartContext} from '../contexts/CartContext.js';
-import {useCartState} from '../hooks/useCartState.js';
+import {useCartState, type CartContextValue} from '../hooks/useCartState.js';
+
+export const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({children}: PropsWithChildren) {
   const cart = useCartState();
