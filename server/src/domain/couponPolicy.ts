@@ -1,6 +1,7 @@
 import {calculateOrderAmount, calculateShippingFee} from './orderPolicy.js';
 
 import type {Coupon, ProductDiscountCoupon} from '../models/Coupon.js';
+import type {BenefitItem} from '../types/order.js';
 import type {Preorder, PreorderItem} from '../types/preorder.js';
 
 type ValidationResult = {valid: true} | {valid: false; reason: string};
@@ -100,20 +101,22 @@ const validateCouponEffect = (coupon: Coupon, preorder: Preorder, isRemoteArea: 
   return {valid: true};
 };
 
-const calculateHighestUnitPriceItemDiscount = (
-  items: PreorderItem[],
-  minSameProductQuantity: number,
-  discountQuantity: number
-) => {
+type ProductCouponCalculation = {
+  discountAmount: number;
+  benefitItem: BenefitItem | null;
+};
+
+const EMPTY_PRODUCT_COUPON_CALCULATION: ProductCouponCalculation = {
+  discountAmount: 0,
+  benefitItem: null,
+};
+
+const findHighestUnitPriceEligibleItem = (items: PreorderItem[], minSameProductQuantity: number) => {
   const targetItem = items
     .filter((item) => item.quantity >= minSameProductQuantity)
     .sort((a, b) => b.price - a.price)[0];
 
-  if (!targetItem) {
-    return 0;
-  }
-
-  return targetItem.price * discountQuantity;
+  return targetItem;
 };
 
 // policies
@@ -140,40 +143,53 @@ export const validateCoupon = (
   return validateCouponEffect(coupon, preorder, options.isRemoteArea);
 };
 
-export const calculateProductCouponDiscount = (
+export const calculateProductCoupon = (
   coupon: ProductDiscountCoupon,
   items: PreorderItem[],
   remainingProductAmount: number
-): number => {
+): ProductCouponCalculation => {
   switch (coupon.benefit.rule) {
     case 'DISCOUNT_AMOUNT': {
       const discountAmount = coupon.benefit.params.discountAmount;
 
       if (discountAmount > remainingProductAmount) {
-        return remainingProductAmount;
+        return {
+          discountAmount: remainingProductAmount,
+          benefitItem: null,
+        };
       }
 
-      return discountAmount;
+      return {
+        discountAmount,
+        benefitItem: null,
+      };
     }
     case 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM': {
       if (coupon.condition.rule !== 'MIN_SAME_PRODUCT_QUANTITY') {
-        return 0;
+        return EMPTY_PRODUCT_COUPON_CALCULATION;
       }
 
-      const discountAmount = calculateHighestUnitPriceItemDiscount(
-        items,
-        coupon.condition.params.minSameProductQuantity,
-        coupon.benefit.params.discountQuantity
-      );
+      const targetItem = findHighestUnitPriceEligibleItem(items, coupon.condition.params.minSameProductQuantity);
 
-      if (discountAmount > remainingProductAmount) {
-        return remainingProductAmount;
+      if (!targetItem) {
+        return EMPTY_PRODUCT_COUPON_CALCULATION;
       }
 
-      return discountAmount;
+      const discountAmount = Math.min(targetItem.price * coupon.benefit.params.discountQuantity, remainingProductAmount);
+
+      return {
+        discountAmount,
+        benefitItem: {
+          productId: targetItem.productId,
+          quantity: coupon.benefit.params.discountQuantity,
+        },
+      };
     }
     case 'DISCOUNT_RATE':
-      return Math.floor(remainingProductAmount * coupon.benefit.params.discountRate);
+      return {
+        discountAmount: Math.floor(remainingProductAmount * coupon.benefit.params.discountRate),
+        benefitItem: null,
+      };
   }
 };
 

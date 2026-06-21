@@ -1,10 +1,10 @@
 import {
-  calculateProductCouponDiscount,
+  calculateProductCoupon,
   calculateShippingCouponDiscount,
 } from './couponPolicy.js';
 
 import type {Coupon, ProductDiscountCoupon} from '../models/Coupon.js';
-import type {AppliedCoupon, OrderPrice} from '../types/order.js';
+import type {AppliedCoupon, BenefitItem, OrderPrice} from '../types/order.js';
 import type {PreorderItem} from '../types/preorder.js';
 
 const toAppliedCoupon = (coupon: Coupon, discountAmount: number): AppliedCoupon => {
@@ -20,13 +20,14 @@ const calculateProductDiscount = (coupons: Coupon[], items: PreorderItem[], orde
   let remainingProductAmount = orderAmount;
   let productDiscountAmount = 0;
   const appliedCoupons: AppliedCoupon[] = [];
+  const benefitItems: BenefitItem[] = [];
 
   const productCoupons = coupons
     .filter((coupon): coupon is ProductDiscountCoupon => coupon.isProductDiscount())
     .sort((a, b) => a.getProductDiscountPriority() - b.getProductDiscountPriority());
 
   productCoupons.forEach((coupon) => {
-    const discountAmount = calculateProductCouponDiscount(coupon, items, remainingProductAmount);
+    const {benefitItem, discountAmount} = calculateProductCoupon(coupon, items, remainingProductAmount);
 
     if (discountAmount <= 0) {
       return;
@@ -35,10 +36,15 @@ const calculateProductDiscount = (coupons: Coupon[], items: PreorderItem[], orde
     productDiscountAmount += discountAmount;
     remainingProductAmount -= discountAmount;
     appliedCoupons.push(toAppliedCoupon(coupon, discountAmount));
+
+    if (benefitItem) {
+      benefitItems.push(benefitItem);
+    }
   });
 
   return {
     appliedCoupons,
+    benefitItems,
     productDiscountAmount,
   };
 };
@@ -106,6 +112,7 @@ export const calculateOrderPricing = (
   return {
     price,
     appliedCoupons: [...productDiscount.appliedCoupons, ...shippingDiscount.appliedCoupons],
+    benefitItems: productDiscount.benefitItems,
   };
 };
 

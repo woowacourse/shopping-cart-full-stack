@@ -79,6 +79,29 @@ const createFreeShippingCoupon = () =>
     }
   );
 
+const createBogoCoupon = () =>
+  new Coupon(
+    4,
+    'BOGO',
+    '2개 구매 시 1개 무료 쿠폰',
+    new Date('2026-12-31T23:59:59+09:00'),
+    {
+      target: 'PRODUCT',
+      rule: 'MIN_SAME_PRODUCT_QUANTITY',
+      params: {
+        minSameProductQuantity: 2,
+      },
+    },
+    {
+      target: 'PRODUCT',
+      discountType: 'FIXED',
+      rule: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM',
+      params: {
+        discountQuantity: 1,
+      },
+    }
+  );
+
 describe('orderPricingPolicy.calculateOrderPricing', () => {
   test('상품 할인과 배송비 할인을 결제 금액에 반영한다', () => {
     const result = calculateOrderPricing([createFixedDiscountCoupon(), createFreeShippingCoupon()], items, 70000, 3000);
@@ -106,7 +129,27 @@ describe('orderPricingPolicy.calculateOrderPricing', () => {
           discountAmount: 3000,
         },
       ],
+      benefitItems: [],
     });
+  });
+
+  test('2+1 쿠폰은 무료 증정 상품 정보를 함께 반환한다', () => {
+    const result = calculateOrderPricing([createBogoCoupon()], [{...items[0], quantity: 2}], 140000, 0);
+
+    expect(result.price).toEqual({
+      orderAmount: 140000,
+      productDiscountAmount: 70000,
+      shippingDiscountAmount: 0,
+      totalDiscountAmount: 70000,
+      shippingFee: 0,
+      totalPaymentAmount: 70000,
+    });
+    expect(result.benefitItems).toEqual([
+      {
+        productId: 'product-1',
+        quantity: 1,
+      },
+    ]);
   });
 });
 
@@ -128,5 +171,6 @@ describe('orderPricingPolicy.calculateBestOrderPricing', () => {
       totalPaymentAmount: 48500,
     });
     expect(result.appliedCoupons.map((coupon) => coupon.couponId)).toEqual([1, 2]);
+    expect(result.benefitItems).toEqual([]);
   });
 });

@@ -1,5 +1,5 @@
 import {
-  calculateProductCouponDiscount,
+  calculateProductCoupon,
   calculateShippingCouponDiscount,
   validateCoupon,
 } from '../couponPolicy.js';
@@ -152,11 +152,14 @@ describe('couponPolicy.validateCoupon', () => {
   });
 });
 
-describe('couponPolicy.calculateProductCouponDiscount', () => {
+describe('couponPolicy.calculateProductCoupon', () => {
   test('정액 할인 금액은 남은 상품 금액을 넘지 않는다', () => {
     const coupon = createFixedDiscountCoupon(10000);
 
-    expect(calculateProductCouponDiscount(coupon as ProductDiscountCoupon, preorderItems, 3000)).toBe(3000);
+    expect(calculateProductCoupon(coupon as ProductDiscountCoupon, preorderItems, 3000)).toEqual({
+      discountAmount: 3000,
+      benefitItem: null,
+    });
   });
 
   test('동일 상품 수량 조건을 만족하는 상품 중 가장 비싼 상품 가격을 할인한다', () => {
@@ -166,13 +169,22 @@ describe('couponPolicy.calculateProductCouponDiscount', () => {
       {...preorderItems[0], productId: 'product-2', price: 30000, quantity: 2},
     ];
 
-    expect(calculateProductCouponDiscount(coupon as ProductDiscountCoupon, items, 100000)).toBe(30000);
+    expect(calculateProductCoupon(coupon as ProductDiscountCoupon, items, 100000)).toEqual({
+      discountAmount: 30000,
+      benefitItem: {
+        productId: 'product-2',
+        quantity: 1,
+      },
+    });
   });
 
   test('정율 할인 금액은 남은 상품 금액 기준으로 계산한다', () => {
     const coupon = createRateDiscountCoupon();
 
-    expect(calculateProductCouponDiscount(coupon as ProductDiscountCoupon, preorderItems, 90000)).toBe(27000);
+    expect(calculateProductCoupon(coupon as ProductDiscountCoupon, preorderItems, 90000)).toEqual({
+      discountAmount: 27000,
+      benefitItem: null,
+    });
   });
 });
 
