@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import {Checkbox, Typo, fontWeights, theme, typography} from '../../../design-system/index.js';
-import type {Coupon} from '../../../coupon/domain/types.js';
+import {Checkbox, Typo, fontWeights, theme, typography} from '../../design-system/index.js';
+import type {Coupon} from '../../coupon/domain/types.js';
 
 interface CouponModalItemProps {
   checked: boolean;

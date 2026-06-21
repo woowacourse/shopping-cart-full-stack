@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import {Button, ErrorState, LoadingState, Typo, theme} from '../../../design-system/index.js';
-import type {Coupon, CouponId} from '../../../coupon/domain/types.js';
+import {Button, ErrorState, LoadingState, Typo, theme} from '../../design-system/index.js';
+import type {Coupon, CouponId} from '../../coupon/domain/types.js';
 import {CouponModalItem} from './CouponModalItem.js';
 
 const MAX_COUPON_COUNT = 2;
@@ -32,13 +32,14 @@ export const CouponModal = ({
   onRetry,
 }: CouponModalProps) => {
   const toggleCoupon = (coupon: Coupon) => {
-    if (coupon.disabled) return;
+    const isSelected = selectedCouponIds.includes(coupon.couponId);
 
-    if (selectedCouponIds.includes(coupon.couponId)) {
+    if (isSelected) {
       onChangeSelectedCouponIds(selectedCouponIds.filter((couponId) => couponId !== coupon.couponId));
       return;
     }
 
+    if (coupon.disabled) return;
     if (selectedCouponIds.length >= MAX_COUPON_COUNT) return;
 
     onChangeSelectedCouponIds([...selectedCouponIds, coupon.couponId]);
@@ -68,7 +69,7 @@ export const CouponModal = ({
               {coupons.map((coupon) => {
                 const isSelected = selectedCouponIds.includes(coupon.couponId);
                 const isSelectionFull = selectedCouponIds.length >= MAX_COUPON_COUNT;
-                const isDisabled = coupon.disabled || (!isSelected && isSelectionFull);
+                const isDisabled = !isSelected && (coupon.disabled || isSelectionFull);
 
                 return (
                   <CouponModalItem
