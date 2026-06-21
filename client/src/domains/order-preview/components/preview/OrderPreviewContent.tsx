@@ -2,13 +2,14 @@ import styled from '@emotion/styled';
 
 import {fontWeights, theme, typography} from '../../../../design-system/index.js';
 import type {Preorder} from '../../../preorder/domain/types.js';
-import type {OrderPrice} from '../../api/orderPreviewApi.js';
+import type {BenefitItem, OrderPrice} from '../../api/orderPreviewApi.js';
 import {OrderPreviewPriceSummary} from './OrderPreviewPriceSummary.js';
 import {OrderPreviewProductList} from './OrderPreviewProductList.js';
 import {OrderPreviewShippingSection} from './OrderPreviewShippingSection.js';
 
 interface OrderPreviewContentProps {
   isRemoteArea: boolean;
+  benefitItems: BenefitItem[];
   price: OrderPrice;
   preorder: Preorder;
   onChangeRemoteArea: (isRemoteArea: boolean) => void;
@@ -17,6 +18,7 @@ interface OrderPreviewContentProps {
 
 export const OrderPreviewContent = ({
   isRemoteArea,
+  benefitItems,
   price,
   preorder,
   onChangeRemoteArea,
@@ -24,7 +26,7 @@ export const OrderPreviewContent = ({
 }: OrderPreviewContentProps) => {
   return (
     <>
-      <OrderPreviewProductList items={preorder.items} />
+      <OrderPreviewProductList benefitItems={benefitItems} items={preorder.items} />
 
       <CouponButton type='button' onClick={onOpenCouponModal}>
         쿠폰 적용

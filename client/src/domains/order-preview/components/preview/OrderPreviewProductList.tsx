@@ -3,35 +3,47 @@ import styled from '@emotion/styled';
 import {fontWeights, theme, typography} from '../../../../design-system/index.js';
 import {ProductItemLayout} from '../../../../shared/layout/ProductItemLayout.js';
 import type {PreorderItem} from '../../../preorder/domain/types.js';
+import type {BenefitItem} from '../../api/orderPreviewApi.js';
 
 interface OrderPreviewProductListProps {
+  benefitItems: BenefitItem[];
   items: PreorderItem[];
 }
 
-export const OrderPreviewProductList = ({items}: OrderPreviewProductListProps) => {
+export const OrderPreviewProductList = ({benefitItems, items}: OrderPreviewProductListProps) => {
   return (
     <PreviewProductList>
-      {items.map((item) => (
-        <PreviewProductItem key={item.productId} item={item} />
-      ))}
+      {items.map((item) => {
+        const benefitQuantity = getBenefitQuantity(item.productId, benefitItems);
+
+        return <PreviewProductItem key={item.productId} benefitQuantity={benefitQuantity} item={item} />;
+      })}
     </PreviewProductList>
   );
 };
 
 interface PreviewProductItemProps {
+  benefitQuantity: number;
   item: PreorderItem;
 }
 
-const PreviewProductItem = ({item}: PreviewProductItemProps) => {
+const PreviewProductItem = ({benefitQuantity, item}: PreviewProductItemProps) => {
   return (
     <PreviewProductItemRoot image={<img alt={item.name} src={item.imageUrl} />}>
       <ProductInfo>
         <ProductName>{item.name}</ProductName>
         <ProductPrice>{item.price.toLocaleString('ko-KR')}원</ProductPrice>
         <ProductQuantity>{item.quantity}개</ProductQuantity>
+        {benefitQuantity > 0 && <BenefitQuantity>+ {benefitQuantity}개 무료</BenefitQuantity>}
       </ProductInfo>
     </PreviewProductItemRoot>
   );
+};
+
+const getBenefitQuantity = (productId: string, benefitItems: BenefitItem[]) => {
+  return benefitItems
+    .filter((benefitItem) => benefitItem.productId === productId)
+    .reduce((totalQuantity, benefitItem) => totalQuantity + benefitItem.quantity, 0);
 };
 
 const PreviewProductList = styled.div`
@@ -68,9 +80,17 @@ const ProductPrice = styled.strong`
 `;
 
 const ProductQuantity = styled.span`
-  margin-top: 28px;
+  margin-top: 16px;
   color: ${theme.colors.textPrimary};
   font-size: ${typography.caption.fontSize};
   font-weight: ${fontWeights.medium};
+  line-height: ${typography.caption.lineHeight};
+`;
+
+const BenefitQuantity = styled.span`
+  margin-top: 4px;
+  color: ${theme.colors.textPrimary};
+  font-size: ${typography.caption.fontSize};
+  font-weight: ${fontWeights.bold};
   line-height: ${typography.caption.lineHeight};
 `;

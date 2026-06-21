@@ -115,6 +115,7 @@ function mockPreviewOrder(requestBodies: unknown[] = []) {
           },
           appliedCoupons: [],
           excludedCoupons: [],
+          benefitItems: [],
         },
       });
     })
@@ -216,6 +217,48 @@ describe('OrderPreviewPage', () => {
     });
   });
 
+  test('무료 증정 상품 정보가 있으면 상품 행에 무료 수량을 표시한다', async () => {
+    mockGetPreorder();
+    mockGetCoupons();
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order/preview`, () => {
+        return HttpResponse.json({
+          body: {
+            price: {
+              orderAmount: 70000,
+              productDiscountAmount: 35000,
+              shippingDiscountAmount: 0,
+              totalDiscountAmount: 35000,
+              shippingFee: 3000,
+              totalPaymentAmount: 38000,
+            },
+            appliedCoupons: [
+              {
+                couponId: 2,
+                code: 'BOGO',
+                name: '2개 구매 시 1개 무료 쿠폰',
+                discountAmount: 35000,
+              },
+            ],
+            excludedCoupons: [],
+            benefitItems: [
+              {
+                productId: 'product-a',
+                quantity: 1,
+              },
+            ],
+          },
+        });
+      })
+    );
+
+    renderOrderPreviewPage();
+
+    expect(await screen.findByText('상품이름A')).toBeInTheDocument();
+    expect(screen.getByText('2개')).toBeInTheDocument();
+    expect(screen.getByText('+ 1개 무료')).toBeInTheDocument();
+  });
+
   test('도서산간 지역을 선택하면 배송비와 결제 금액을 다시 보여준다', async () => {
     const user = userEvent.setup();
     const requestBodies: unknown[] = [];
@@ -248,6 +291,7 @@ describe('OrderPreviewPage', () => {
             },
             appliedCoupons: [],
             excludedCoupons: [],
+            benefitItems: [],
           },
         });
       })
@@ -525,6 +569,7 @@ describe('OrderPreviewPage', () => {
             },
             appliedCoupons: [],
             excludedCoupons: [],
+            benefitItems: [],
           },
         });
       })

@@ -21,6 +21,7 @@ export const OrderPreviewSuccessView = () => {
       />
       {preorder && orderPreview && (
         <OrderPreviewContent
+          benefitItems={orderPreview.benefitItems}
           isRemoteArea={isRemoteArea}
           price={orderPreview.price}
           preorder={preorder}
