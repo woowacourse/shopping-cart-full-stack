@@ -9,6 +9,10 @@ export interface CreateOrderRequestBody {
   expectedTotalPaymentAmount: number;
 }
 
+export interface OrderIdParams {
+  orderId: string;
+}
+
 export interface ExcludedCoupon {
   couponId: number;
   code: string;
@@ -40,4 +44,10 @@ export interface PreviewOrderResponse {
 
 export interface CreateOrderResponse {
   orderId: string;
+}
+
+export interface OrderSummaryResponse {
+  itemCount: number;
+  totalQuantity: number;
+  totalAmount: number;
 }

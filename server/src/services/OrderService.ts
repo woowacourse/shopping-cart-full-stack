@@ -15,6 +15,7 @@ import type {
   CreateOrderRequestBody,
   CreateOrderResponse,
   ExcludedCoupon,
+  OrderSummaryResponse,
   PreviewOrderRequestBody,
   PreviewOrderResponse,
 } from '../types/order.js';
@@ -172,6 +173,20 @@ export const orderService = {
 
     return {
       orderId,
+    };
+  },
+
+  getOrderSummary(orderId: string): OrderSummaryResponse {
+    const order = orders.findById(orderId);
+
+    if (!order) {
+      throw new HttpError(404, '주문 정보를 찾을 수 없습니다.');
+    }
+
+    return {
+      itemCount: order.getItemCount(),
+      totalQuantity: order.getTotalQuantity(),
+      totalAmount: order.getTotalAmount(),
     };
   },
 };
