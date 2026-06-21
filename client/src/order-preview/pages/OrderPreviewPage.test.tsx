@@ -4,7 +4,7 @@ import {http, HttpResponse} from 'msw';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
 import OrderPreviewPage from './OrderPreviewPage.js';
-import {OrderConfirmPage} from './OrderConfirmPage.js';
+import {OrderConfirmPage} from '../../order/pages/OrderConfirmPage.js';
 import {OrderPreviewProvider} from '../providers/OrderPreviewProvider.js';
 import {mockServer} from '../../test/mockServer.js';
 

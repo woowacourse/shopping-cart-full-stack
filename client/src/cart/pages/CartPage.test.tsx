@@ -6,7 +6,8 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {CartPage} from './CartPage.js';
 import {CartProvider} from '../providers/CartProvider.js';
 import type {CartItem} from '../domain/types.js';
-import OrderPreviewPage from '../../order/pages/OrderPreviewPage.js';
+import OrderPreviewPage from '../../order-preview/pages/OrderPreviewPage.js';
+import {OrderPreviewProvider} from '../../order-preview/providers/OrderPreviewProvider.js';
 import {mockServer} from '../../test/mockServer.js';
 
 const API_BASE_URL = 'https://paradi-easter.up.railway.app';
@@ -58,6 +59,40 @@ function mockGetPreorder() {
   );
 }
 
+function mockGetCoupons() {
+  mockServer.use(
+    http.get(`${API_BASE_URL}/coupons`, () => {
+      return HttpResponse.json({
+        body: {
+          coupons: [],
+          recommendedCouponIds: [],
+        },
+      });
+    })
+  );
+}
+
+function mockPreviewOrder() {
+  mockServer.use(
+    http.post(`${API_BASE_URL}/order/preview`, () => {
+      return HttpResponse.json({
+        body: {
+          price: {
+            orderAmount: 70000,
+            productDiscountAmount: 0,
+            shippingDiscountAmount: 0,
+            totalDiscountAmount: 0,
+            shippingFee: 3000,
+            totalPaymentAmount: 73000,
+          },
+          appliedCoupons: [],
+          excludedCoupons: [],
+        },
+      });
+    })
+  );
+}
+
 function renderCartPage() {
   return render(
     <MemoryRouter>
@@ -74,7 +109,14 @@ function renderCartRoutes() {
       <CartProvider>
         <Routes>
           <Route path='/cart' element={<CartPage />} />
-          <Route path='/order-preview/:preorderId' element={<OrderPreviewPage />} />
+          <Route
+            path='/order-preview/:preorderId'
+            element={
+              <OrderPreviewProvider>
+                <OrderPreviewPage />
+              </OrderPreviewProvider>
+            }
+          />
         </Routes>
       </CartProvider>
     </MemoryRouter>
@@ -216,6 +258,8 @@ describe('CartPage', () => {
       })
     );
     mockGetPreorder();
+    mockGetCoupons();
+    mockPreviewOrder();
 
     renderCartRoutes();
 

@@ -3,11 +3,11 @@ import {Navigate, Route, Routes} from 'react-router-dom';
 
 import {theme} from './design-system/index.js';
 import {CartProvider} from './cart/providers/CartProvider.js';
-import {OrderPreviewProvider} from './order/providers/OrderPreviewProvider.js';
+import {OrderPreviewProvider} from './order-preview/providers/OrderPreviewProvider.js';
 
 import {CartPage} from './cart/pages/CartPage.js';
 import {OrderConfirmPage} from './order/pages/OrderConfirmPage.js';
-import {OrderPreviewPage} from './order/pages/OrderPreviewPage.js';
+import {OrderPreviewPage} from './order-preview/pages/OrderPreviewPage.js';
 
 export const App = () => {
   return (
