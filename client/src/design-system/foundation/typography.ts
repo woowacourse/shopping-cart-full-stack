@@ -17,6 +17,10 @@ export const typography = {
     fontSize: '16px',
     lineHeight: '24px',
   },
+  title: {
+    fontSize: '18px',
+    lineHeight: '24px',
+  },
   caption: {
     fontSize: '12px',
     lineHeight: '15px',
