@@ -16,6 +16,10 @@ export const GlobalStyle = () => {
           min-height: 100%;
         }
 
+        html {
+          scrollbar-gutter: stable;
+        }
+
         body {
           margin: 0;
           font-family: 'Noto Sans KR', sans-serif;
