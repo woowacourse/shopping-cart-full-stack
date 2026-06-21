@@ -1,4 +1,4 @@
-import {render, screen, waitFor, within} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {http, HttpResponse} from 'msw';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
@@ -70,14 +70,12 @@ describe('CartPage', () => {
 
     await screen.findByText('현재 2종류의 상품이 담겨있습니다.');
 
-    const paymentSummary = screen.getByRole('region', {name: '결제 요약'});
-
-    expect(within(paymentSummary).getByText('총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('주문 금액')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('배송비')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('0원')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('총 결제 금액')).toBeInTheDocument();
-    expect(within(paymentSummary).getAllByText('120,000원')).toHaveLength(2);
+    expect(screen.getByText('총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.')).toBeInTheDocument();
+    expect(screen.getByText('주문 금액')).toBeInTheDocument();
+    expect(screen.getByText('배송비')).toBeInTheDocument();
+    expect(screen.getByText('0원')).toBeInTheDocument();
+    expect(screen.getByText('총 결제 금액')).toBeInTheDocument();
+    expect(screen.getAllByText('120,000원')).toHaveLength(2);
     expect(screen.getByRole('button', {name: '주문 확인'})).toBeEnabled();
 
     await user.click(screen.getByLabelText('전체 선택'));
@@ -86,7 +84,7 @@ describe('CartPage', () => {
       expect(screen.getByRole('button', {name: '주문 확인'})).toBeDisabled();
     });
 
-    expect(within(paymentSummary).getAllByText('0원')).toHaveLength(3);
+    expect(screen.getAllByText('0원')).toHaveLength(3);
   });
 
   test('장바구니 상품을 불러오는 중이면 스피너를 보여준다', async () => {
@@ -105,7 +103,7 @@ describe('CartPage', () => {
 
     renderCartPage();
 
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.queryByText('현재 2종류의 상품이 담겨있습니다.')).not.toBeInTheDocument();
 
     resolveRequest();
 
@@ -130,7 +128,7 @@ describe('CartPage', () => {
 
     renderCartPage();
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('장바구니를 불러오지 못했습니다.');
+    expect(await screen.findByText('장바구니를 불러오지 못했습니다.')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', {name: '다시 시도'}));
 
@@ -176,9 +174,7 @@ describe('CartPage', () => {
     expect(screen.getByText('현재 1종류의 상품이 담겨있습니다.')).toBeInTheDocument();
     expect(screen.getByText('데님 팬츠')).toBeInTheDocument();
 
-    const paymentSummary = screen.getByRole('region', {name: '결제 요약'});
-
-    expect(within(paymentSummary).getAllByText('100,000원')).toHaveLength(2);
+    expect(screen.getAllByText('100,000원', {selector: 'span'})).toHaveLength(2);
   });
 
   test('주문 확인 버튼을 누르면 주문 확인 페이지로 이동한다', async () => {

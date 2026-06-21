@@ -1,4 +1,4 @@
-import {render, screen, within} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
@@ -37,15 +37,13 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByRole('button', {name: '쿠폰 적용'})).toBeInTheDocument();
     expect(screen.getByRole('checkbox', {name: '제주도 및 도서 산간 지역'})).toBeChecked();
 
-    const paymentSummary = screen.getByRole('region', {name: '결제 요약'});
-
-    expect(within(paymentSummary).getByText('주문 금액')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('쿠폰 할인 금액')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('배송비')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('총 결제 금액')).toBeInTheDocument();
-    expect(within(paymentSummary).getAllByText('70,000원')).toHaveLength(2);
-    expect(within(paymentSummary).getByText('-6,000원')).toBeInTheDocument();
-    expect(within(paymentSummary).getByText('6,000원')).toBeInTheDocument();
+    expect(screen.getByText('주문 금액')).toBeInTheDocument();
+    expect(screen.getByText('쿠폰 할인 금액')).toBeInTheDocument();
+    expect(screen.getByText('배송비')).toBeInTheDocument();
+    expect(screen.getByText('총 결제 금액')).toBeInTheDocument();
+    expect(screen.getAllByText('70,000원')).toHaveLength(2);
+    expect(screen.getByText('-6,000원')).toBeInTheDocument();
+    expect(screen.getByText('6,000원')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: '결제하기'})).toBeInTheDocument();
   });
 

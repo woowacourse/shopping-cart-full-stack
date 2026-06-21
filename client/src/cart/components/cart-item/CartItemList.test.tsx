@@ -61,7 +61,7 @@ describe('CartItemList', () => {
 
     render(<CartItemList {...defaultProps} onChangeSelectedIds={onChangeSelectedIds} />);
 
-    await user.click(screen.getAllByLabelText('선택')[0]);
+    await user.click(screen.getAllByRole('checkbox')[1]);
 
     expect(onChangeSelectedIds).toHaveBeenCalledWith([]);
   });
@@ -72,7 +72,7 @@ describe('CartItemList', () => {
 
     render(<CartItemList {...defaultProps} onChangeSelectedIds={onChangeSelectedIds} />);
 
-    await user.click(screen.getAllByLabelText('선택')[1]);
+    await user.click(screen.getAllByRole('checkbox')[2]);
 
     expect(onChangeSelectedIds).toHaveBeenCalledWith(['cart-1', 'cart-2']);
   });

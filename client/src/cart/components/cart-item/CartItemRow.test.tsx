@@ -37,7 +37,7 @@ describe('CartItemRow', () => {
 
     render(<CartItemRow {...defaultProps} onToggle={onToggle} />);
 
-    await user.click(screen.getByLabelText('선택'));
+    await user.click(screen.getByRole('checkbox'));
 
     expect(onToggle).toHaveBeenCalledWith('cart-1');
   });

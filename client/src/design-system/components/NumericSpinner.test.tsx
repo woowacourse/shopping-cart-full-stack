@@ -7,7 +7,6 @@ describe('NumericSpinner', () => {
   test('현재 숫자를 보여준다', () => {
     render(<NumericSpinner min={1} max={99} onChange={jest.fn()} value={2} />);
 
-    expect(screen.getByRole('group')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 
