@@ -7,78 +7,126 @@ import {CouponModalItem} from './CouponModalItem.js';
 
 type CouponsStatus = 'loading' | 'success' | 'error';
 
-interface CouponModalProps {
+interface CouponModalState {
   coupons: Coupon[];
   discountAmount: number;
   errorActionText: string;
   errorMessage: string;
   selectedCouponIds: CouponId[];
   status: CouponsStatus;
+}
+
+interface CouponModalActions {
   onApply: () => void;
   onChangeSelectedCouponIds: (couponIds: CouponId[]) => void;
   onClose: () => void;
   onRetry: () => void;
 }
 
-export const CouponModal = ({
-  coupons,
-  discountAmount,
-  errorActionText,
-  errorMessage,
-  selectedCouponIds,
-  status,
-  onApply,
-  onChangeSelectedCouponIds,
-  onClose,
-  onRetry,
-}: CouponModalProps) => {
+interface CouponModalProps {
+  actions: CouponModalActions;
+  state: CouponModalState;
+}
+
+export const CouponModal = ({actions, state}: CouponModalProps) => {
+  return (
+    <Overlay>
+      <Panel>
+        <CouponModalHeader onClose={actions.onClose} />
+        <CouponModalNotice />
+        <CouponModalContent actions={actions} state={state} />
+      </Panel>
+    </Overlay>
+  );
+};
+
+interface CouponModalHeaderProps {
+  onClose: () => void;
+}
+
+const CouponModalHeader = ({onClose}: CouponModalHeaderProps) => {
+  return (
+    <Header>
+      <Typo as='h2' variant='title' weight='bold'>
+        쿠폰을 선택해 주세요
+      </Typo>
+      <CloseButton type='button' onClick={onClose}>
+        ×
+      </CloseButton>
+    </Header>
+  );
+};
+
+const CouponModalNotice = () => {
+  return (
+    <Notice as='p' variant='caption' weight='medium'>
+      ⓘ 쿠폰은 최대 {MAX_SELECTED_COUPON_COUNT}개까지 사용할 수 있습니다.
+    </Notice>
+  );
+};
+
+interface CouponModalContentProps {
+  actions: CouponModalActions;
+  state: CouponModalState;
+}
+
+const CouponModalContent = ({actions, state}: CouponModalContentProps) => {
+  if (state.status === 'loading') {
+    return <LoadingState />;
+  }
+
+  if (state.status === 'error') {
+    return <ErrorState actionText={state.errorActionText} message={state.errorMessage} onAction={actions.onRetry} />;
+  }
+
+  return (
+    <>
+      <CouponModalList
+        coupons={state.coupons}
+        selectedCouponIds={state.selectedCouponIds}
+        onChangeSelectedCouponIds={actions.onChangeSelectedCouponIds}
+      />
+      <ApplyButton onClick={actions.onApply}>{getApplyButtonText(state.discountAmount)}</ApplyButton>
+    </>
+  );
+};
+
+interface CouponModalListProps {
+  coupons: Coupon[];
+  selectedCouponIds: CouponId[];
+  onChangeSelectedCouponIds: (couponIds: CouponId[]) => void;
+}
+
+const CouponModalList = ({coupons, selectedCouponIds, onChangeSelectedCouponIds}: CouponModalListProps) => {
   const toggleCoupon = (coupon: Coupon) => {
     onChangeSelectedCouponIds(getNextSelectedCouponIds({coupon, selectedCouponIds}));
   };
 
   return (
-    <Overlay>
-      <Panel>
-        <Header>
-          <Title as='h2' variant='title' weight='bold'>
-            쿠폰을 선택해 주세요
-          </Title>
-          <CloseButton type='button' onClick={onClose}>
-            ×
-          </CloseButton>
-        </Header>
-
-        <Notice as='p' variant='caption' weight='medium'>
-          ⓘ 쿠폰은 최대 {MAX_SELECTED_COUPON_COUNT}개까지 사용할 수 있습니다.
-        </Notice>
-
-        {status === 'loading' && <LoadingState />}
-        {status === 'error' && <ErrorState actionText={errorActionText} message={errorMessage} onAction={onRetry} />}
-        {status === 'success' && (
-          <>
-            <CouponList>
-              {coupons.map((coupon) => {
-                const isSelected = selectedCouponIds.includes(coupon.couponId);
-                const isDisabled = getCouponItemDisabled({coupon, selectedCouponIds});
-
-                return (
-                  <CouponModalItem
-                    key={coupon.couponId}
-                    checked={isSelected}
-                    coupon={coupon}
-                    disabled={isDisabled}
-                    onChange={() => toggleCoupon(coupon)}
-                  />
-                );
-              })}
-            </CouponList>
-
-            <ApplyButton onClick={onApply}>{getApplyButtonText(discountAmount)}</ApplyButton>
-          </>
-        )}
-      </Panel>
-    </Overlay>
+    <CouponList>
+      {coupons.map((coupon) => (
+        <CouponModalListItem
+          key={coupon.couponId}
+          coupon={coupon}
+          selectedCouponIds={selectedCouponIds}
+          onChange={() => toggleCoupon(coupon)}
+        />
+      ))}
+    </CouponList>
   );
+};
+
+interface CouponModalListItemProps {
+  coupon: Coupon;
+  selectedCouponIds: CouponId[];
+  onChange: () => void;
+}
+
+const CouponModalListItem = ({coupon, selectedCouponIds, onChange}: CouponModalListItemProps) => {
+  const checked = selectedCouponIds.includes(coupon.couponId);
+  const disabled = getCouponItemDisabled({coupon, selectedCouponIds});
+
+  return <CouponModalItem checked={checked} coupon={coupon} disabled={disabled} onChange={onChange} />;
 };
 
 function getApplyButtonText(discountAmount: number) {
@@ -116,8 +164,6 @@ const Header = styled.div`
   justify-content: space-between;
   gap: 16px;
 `;
-
-const Title = styled(Typo)``;
 
 const CloseButton = styled.button`
   border: 0;

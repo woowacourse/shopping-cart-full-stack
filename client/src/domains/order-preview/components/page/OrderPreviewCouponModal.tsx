@@ -8,16 +8,13 @@ export const OrderPreviewCouponModal = () => {
 
   return (
     <CouponModal
-      coupons={couponModal.coupons}
-      discountAmount={couponModal.discountAmount}
-      errorActionText={couponModal.errorActionText}
-      errorMessage={couponModal.errorMessage}
-      selectedCouponIds={couponModal.selectedCouponIds}
-      status={couponModal.status}
-      onApply={actions.applyCouponSelection}
-      onChangeSelectedCouponIds={actions.changeSelectedCouponIds}
-      onClose={actions.closeCouponModal}
-      onRetry={actions.handleCouponModalError}
+      actions={{
+        onApply: actions.applyCouponSelection,
+        onChangeSelectedCouponIds: actions.changeSelectedCouponIds,
+        onClose: actions.closeCouponModal,
+        onRetry: actions.handleCouponModalError,
+      }}
+      state={couponModal}
     />
   );
 };

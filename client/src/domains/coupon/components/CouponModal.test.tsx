@@ -25,16 +25,20 @@ describe('CouponModal', () => {
 
     render(
       <CouponModal
-        coupons={coupons}
-        discountAmount={5000}
-        errorActionText='다시 시도'
-        errorMessage=''
-        selectedCouponIds={[1]}
-        status='success'
-        onApply={jest.fn()}
-        onChangeSelectedCouponIds={onChangeSelectedCouponIds}
-        onClose={jest.fn()}
-        onRetry={jest.fn()}
+        actions={{
+          onApply: jest.fn(),
+          onChangeSelectedCouponIds,
+          onClose: jest.fn(),
+          onRetry: jest.fn(),
+        }}
+        state={{
+          coupons,
+          discountAmount: 5000,
+          errorActionText: '다시 시도',
+          errorMessage: '',
+          selectedCouponIds: [1],
+          status: 'success',
+        }}
       />
     );
 
