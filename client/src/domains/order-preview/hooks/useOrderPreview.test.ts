@@ -5,6 +5,7 @@ import {useOrderPreview} from './useOrderPreview.js';
 import {mockServer} from '../../../test/mockServer.js';
 
 const API_BASE_URL = 'https://paradi-easter.up.railway.app';
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function mockPreviewOrder() {
   mockServer.use(
@@ -69,5 +70,52 @@ describe('useOrderPreview', () => {
 
     expect(result.current.errorMessage).toBe('주문 확인 시간이 만료되었습니다.');
     expect(result.current.errorType).toBe('expired');
+  });
+
+  test('이전 요청이 늦게 끝나도 최신 주문 미리보기 결과를 유지한다', async () => {
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order/preview`, async ({request}) => {
+        const requestBody = (await request.json()) as {couponIds: number[]};
+        const hasCoupon = requestBody.couponIds.includes(1);
+
+        if (hasCoupon) {
+          await wait(50);
+        }
+
+        return HttpResponse.json({
+          body: {
+            price: {
+              orderAmount: 70000,
+              productDiscountAmount: hasCoupon ? 5000 : 0,
+              shippingDiscountAmount: 0,
+              totalDiscountAmount: hasCoupon ? 5000 : 0,
+              shippingFee: 3000,
+              totalPaymentAmount: hasCoupon ? 68000 : 73000,
+            },
+            appliedCoupons: [],
+            excludedCoupons: [],
+          },
+        });
+      })
+    );
+
+    const {result, rerender} = renderHook(
+      ({couponIds}: {couponIds: number[]}) => useOrderPreview('preorder-1', false, couponIds),
+      {
+        initialProps: {
+          couponIds: [1],
+        },
+      }
+    );
+
+    rerender({couponIds: []});
+
+    await waitFor(() => {
+      expect(result.current.orderPreview?.price.totalPaymentAmount).toBe(73000);
+    });
+
+    await wait(60);
+
+    expect(result.current.orderPreview?.price.totalPaymentAmount).toBe(73000);
   });
 });

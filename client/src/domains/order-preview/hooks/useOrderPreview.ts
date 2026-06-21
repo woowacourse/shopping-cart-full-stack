@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 import {ApiError} from '../../../shared/api/requestApi.js';
 import type {CouponId} from '../../coupon/domain/types.js';
@@ -22,9 +22,13 @@ export function useOrderPreview(
   const [errorMessage, setErrorMessage] = useState('');
   const [errorType, setErrorType] = useState<OrderPreviewErrorType>('default');
   const [status, setStatus] = useState<OrderPreviewStatus>('loading');
+  const requestSequence = useRef(0);
 
   const loadOrderPreview = useCallback(async () => {
     if (!enabled) return;
+
+    const requestId = requestSequence.current + 1;
+    requestSequence.current = requestId;
 
     if (!preorderId) {
       setErrorMessage('주문 확인 정보를 찾을 수 없습니다.');
@@ -49,9 +53,13 @@ export function useOrderPreview(
         couponIds,
       });
 
+      if (requestId !== requestSequence.current) return;
+
       setOrderPreview(orderPreview);
       setStatus('success');
     } catch (error) {
+      if (requestId !== requestSequence.current) return;
+
       setErrorMessage(getErrorMessage(error));
       setErrorType(getOrderPreviewErrorType(error));
       setOrderPreview(null);
