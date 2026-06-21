@@ -25,7 +25,7 @@ export const SummaryLayout = ({children, className}: SummaryLayoutProps) => {
 export const SummaryRow = ({left, right}: SummaryRowProps) => {
   return (
     <Row>
-      <Left variant='body' weight='bold'>
+      <Left color='textPrimary' variant='body' weight='bold'>
         {left}
       </Left>
       <Right color='black' variant='display' weight='bold'>
@@ -39,6 +39,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  margin-top: 12px;
   padding-bottom: 24px;
 `;
 

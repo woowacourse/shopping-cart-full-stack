@@ -20,13 +20,13 @@ export const PaymentSummary = ({selectedOrderAmount, shippingFee, totalPrice}: P
           총 주문 금액이 {FREE_SHIPPING_THRESHOLD.toLocaleString('ko-KR')}원 이상일 경우 무료 배송됩니다.
         </NoticeText>
       </FreeShippingNotice>
-      <SummaryRows>
+      <SummaryLayout>
         <SummaryRow left='주문 금액' right={`${selectedOrderAmount.toLocaleString('ko-KR')}원`} />
         <SummaryRow left='배송비' right={`${shippingFee.toLocaleString('ko-KR')}원`} />
-      </SummaryRows>
-      <TotalSummaryRows>
+      </SummaryLayout>
+      <SummaryLayout>
         <SummaryRow left='총 결제 금액' right={`${totalPrice.toLocaleString('ko-KR')}원`} />
-      </TotalSummaryRows>
+      </SummaryLayout>
     </SummaryArea>
   );
 };
@@ -52,12 +52,4 @@ const NoticeIcon = styled.img`
 const NoticeText = styled(Typo)`
   flex: 1;
   min-width: 0;
-`;
-
-const SummaryRows = styled(SummaryLayout)`
-  margin-top: 12px;
-`;
-
-const TotalSummaryRows = styled(SummaryLayout)`
-  margin-top: 12px;
 `;

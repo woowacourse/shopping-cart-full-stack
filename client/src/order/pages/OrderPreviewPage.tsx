@@ -26,6 +26,13 @@ const orderPreview = {
 
 export const OrderPreviewPage = () => {
   const navigate = useNavigate();
+  const {itemCount, price, product, quantity} = orderPreview;
+
+  const productPrice = `${product.price.toLocaleString('ko-KR')}원`;
+  const orderAmount = `${price.orderAmount.toLocaleString('ko-KR')}원`;
+  const couponDiscountAmount = `-${price.couponDiscountAmount.toLocaleString('ko-KR')}원`;
+  const shippingFee = `${price.shippingFee.toLocaleString('ko-KR')}원`;
+  const totalPaymentAmount = `${price.totalPaymentAmount.toLocaleString('ko-KR')}원`;
 
   return (
     <ScreenLayout
@@ -40,18 +47,18 @@ export const OrderPreviewPage = () => {
         title='주문 확인'
         description={
           <>
-            총 {orderPreview.itemCount}종류의 상품 {orderPreview.quantity}개를 주문합니다.
+            총 {itemCount}종류의 상품 {quantity}개를 주문합니다.
             <br />
             최종 결제 금액을 확인해 주세요.
           </>
         }
       />
 
-      <PreviewProductItemRoot image={<img alt={orderPreview.product.name} src={orderPreview.product.imageUrl} />}>
+      <PreviewProductItemRoot image={<img alt={product.name} src={product.imageUrl} />}>
         <ProductInfo>
-          <ProductName>{orderPreview.product.name}</ProductName>
-          <ProductPrice>{orderPreview.product.price.toLocaleString('ko-KR')}원</ProductPrice>
-          <ProductQuantity>{orderPreview.quantity}개</ProductQuantity>
+          <ProductName>{product.name}</ProductName>
+          <ProductPrice>{productPrice}</ProductPrice>
+          <ProductQuantity>{quantity}개</ProductQuantity>
         </ProductInfo>
       </PreviewProductItemRoot>
 
@@ -67,20 +74,14 @@ export const OrderPreviewPage = () => {
           <NoticeIcon alt='' src={noticeIconUrl} />
           <NoticeText>총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.</NoticeText>
         </FreeShippingNotice>
-        <SummaryRows>
-          <SummaryRow left='주문 금액' right={`${orderPreview.price.orderAmount.toLocaleString('ko-KR')}원`} />
-          <SummaryRow
-            left='쿠폰 할인 금액'
-            right={`-${orderPreview.price.couponDiscountAmount.toLocaleString('ko-KR')}원`}
-          />
-          <SummaryRow left='배송비' right={`${orderPreview.price.shippingFee.toLocaleString('ko-KR')}원`} />
-        </SummaryRows>
-        <TotalSummaryRows>
-          <SummaryRow
-            left='총 결제 금액'
-            right={`${orderPreview.price.totalPaymentAmount.toLocaleString('ko-KR')}원`}
-          />
-        </TotalSummaryRows>
+        <SummaryLayout>
+          <SummaryRow left='주문 금액' right={orderAmount} />
+          <SummaryRow left='쿠폰 할인 금액' right={couponDiscountAmount} />
+          <SummaryRow left='배송비' right={shippingFee} />
+        </SummaryLayout>
+        <SummaryLayout>
+          <SummaryRow left='총 결제 금액' right={totalPaymentAmount} />
+        </SummaryLayout>
       </PriceSummary>
     </ScreenLayout>
   );
@@ -191,12 +192,4 @@ const NoticeText = styled.p`
   font-size: ${typography.caption.fontSize};
   font-weight: ${fontWeights.medium};
   line-height: ${typography.caption.lineHeight};
-`;
-
-const SummaryRows = styled(SummaryLayout)`
-  margin-top: 12px;
-`;
-
-const TotalSummaryRows = styled(SummaryLayout)`
-  margin-top: 12px;
 `;
