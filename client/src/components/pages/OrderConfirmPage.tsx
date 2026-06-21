@@ -6,12 +6,9 @@ import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
 import useOrderData from "../../hooks/useOrderData";
 import useCouponData from "../../hooks/useCouponData";
 import OrderCartList from "../order/OrderCartList";
+import ApplyCouponButton from "../button/ApplyCouponButton";
 
 export default function OrderConfirmPage() {
-  // const location = useLocation();
-  // if (!location.state) {
-  //   return <Navigate to="/cart" replace />;
-  // }
   const { orderId } = useParams();
   const { orderState, orderData, onDelete, updateAppliedCoupon } = useOrderData(
     Number(orderId),
@@ -43,7 +40,12 @@ export default function OrderConfirmPage() {
             </TopSection>
 
             <OrderCartList items={orderData.items} />
-
+            <ApplyCouponButton
+              orderId={orderData.orderId}
+              couponData={couponData}
+              orderData={orderData}
+              updateAppliedCoupon={updateAppliedCoupon}
+            />
             {/* <ApplyCouponButton/> 쿠폰 적용 버튼(쿠폰 모달 여는 버튼) */}
             {/* <ShippingInfo/> 배송 정보(제주도 및 도서 산간 지역 체크, PATCH/:orderId/address ) */}
             {/* <FinalResultOrder/>  주문금액, 쿠폰 할인 금액, 배송비, 총 결제 금액 */}

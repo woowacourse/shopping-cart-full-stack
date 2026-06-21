@@ -30,9 +30,6 @@ export default function CheckButton({
       }));
     const res = await orderApi.create({ items: checkedItems });
     const { orderId } = await res.json();
-    const itemCount = [...selectedItems.values()].filter(
-      (value) => value === true,
-    ).length;
 
     navigate(`/order/${orderId}`);
   };
