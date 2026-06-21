@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CouponData, OrderData } from "../type/types";
+import { CouponData, OrderData } from "../../type/types";
 
 export default function useCouponModal(orderData: OrderData) {
   // 체크박스로 표시중인 쿠폰 ID 목록/ 초기값 = 현재 적용되어있는 쿠폰

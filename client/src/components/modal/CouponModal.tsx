@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CouponData, OrderData } from "../../type/types";
 import CouponList from "./CouponList";
 import styled from "styled-components";
-import useCouponModal from "../../hooks/useCouponModal";
+import useCouponModal from "./useCouponModal";
 
 interface Props {
   orderId: number;
