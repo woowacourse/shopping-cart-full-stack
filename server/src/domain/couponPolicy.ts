@@ -13,6 +13,11 @@ const COUPON_DISABLED_REASON = {
   timeRange: '현재 적용 가능한 시간이 아닙니다.',
 } as const;
 
+const PRODUCT_DISCOUNT_TYPE_PRIORITY = {
+  FIXED: 0,
+  RATE: 1,
+} as const;
+
 // utils
 const getTimeRangeMinutes = (time: string) => {
   const [hour, minute] = time.split(':').map(Number);
@@ -25,14 +30,6 @@ const isInTimeRange = (time: Date, start: string, end: string) => {
   const endMinutes = getTimeRangeMinutes(end);
 
   return currentMinutes >= startMinutes && currentMinutes < endMinutes;
-};
-
-export const isProductDiscountCoupon = (coupon: Coupon): coupon is ProductDiscountCoupon => {
-  return coupon.benefit.target === 'PRODUCT';
-};
-
-export const isShippingDiscountCoupon = (coupon: Coupon): coupon is ShippingDiscountCoupon => {
-  return coupon.benefit.target === 'SHIPPING';
 };
 
 // logics
@@ -78,6 +75,14 @@ const getHighestUnitPriceDiscount = (
   }
 
   return targetItem.price * discountQuantity;
+};
+
+export const isProductDiscountCoupon = (coupon: Coupon): coupon is ProductDiscountCoupon => {
+  return coupon.benefit.target === 'PRODUCT';
+};
+
+export const isShippingDiscountCoupon = (coupon: Coupon): coupon is ShippingDiscountCoupon => {
+  return coupon.benefit.target === 'SHIPPING';
 };
 
 // policies
@@ -126,5 +131,5 @@ export const calculateProductCouponDiscount = (
 };
 
 export const getProductCouponPriority = (coupon: ProductDiscountCoupon) => {
-  return coupon.benefit.rule === 'DISCOUNT_RATE' ? 1 : 0;
+  return PRODUCT_DISCOUNT_TYPE_PRIORITY[coupon.benefit.discountType];
 };

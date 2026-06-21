@@ -15,6 +15,7 @@ export const couponData: Coupon[] = [
     },
     benefit: {
       target: 'PRODUCT',
+      discountType: 'FIXED',
       rule: 'DISCOUNT_AMOUNT',
       params: {
         discountAmount: 5000,
@@ -35,6 +36,7 @@ export const couponData: Coupon[] = [
     },
     benefit: {
       target: 'PRODUCT',
+      discountType: 'FIXED',
       rule: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM',
       params: {
         discountQuantity: 1,
@@ -76,6 +78,7 @@ export const couponData: Coupon[] = [
     },
     benefit: {
       target: 'PRODUCT',
+      discountType: 'RATE',
       rule: 'DISCOUNT_RATE',
       params: {
         discountRate: 0.3,

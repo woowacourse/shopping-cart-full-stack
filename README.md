@@ -1,6 +1,6 @@
 # 장바구니 풀스택 미션
 
-상품 목록과 장바구니 항목을 관리하는 풀스택 미션 프로젝트입니다. 현재 구현 범위는 Express 기반 서버이며, 상품 조회/추가/삭제와 장바구니 조회/수량 변경/삭제 API를 제공합니다.
+상품 목록과 장바구니 항목을 관리하는 풀스택 미션 프로젝트입니다. 현재 구현 범위는 Express 기반 서버이며, 상품/장바구니 API와 주문 확인 단계의 preorder, 쿠폰 조회, 결제 금액 미리보기 API를 제공합니다.
 
 ## 프로젝트 구성
 
@@ -67,6 +67,10 @@ app.ts
 - `GET /carts`
 - `PATCH /carts/:cartItemId`
 - `DELETE /carts/:cartItemId`
+- `POST /preorder`
+- `GET /preorder/:preorderId`
+- `GET /coupons?preorderId={preorderId}`
+- `POST /order/preview`
 
 ## 실행
 

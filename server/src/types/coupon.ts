@@ -22,9 +22,12 @@ export type CouponCondition =
       };
     };
 
+export type ProductDiscountType = 'FIXED' | 'RATE';
+
 export type ProductDiscountBenefit =
   | {
       target: 'PRODUCT';
+      discountType: 'FIXED';
       rule: 'DISCOUNT_AMOUNT';
       params: {
         discountAmount: number;
@@ -32,6 +35,7 @@ export type ProductDiscountBenefit =
     }
   | {
       target: 'PRODUCT';
+      discountType: 'FIXED';
       rule: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM';
       params: {
         discountQuantity: number;
@@ -39,6 +43,7 @@ export type ProductDiscountBenefit =
     }
   | {
       target: 'PRODUCT';
+      discountType: 'RATE';
       rule: 'DISCOUNT_RATE';
       params: {
         discountRate: number;

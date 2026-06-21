@@ -70,6 +70,20 @@ const calculateShippingDiscount = (coupons: Coupon[], shippingFee: number) => {
   };
 };
 
+const getCouponCombinations = (coupons: Coupon[]) => {
+  const combinations: Coupon[][] = [[]];
+
+  coupons.forEach((coupon, index) => {
+    combinations.push([coupon]);
+
+    coupons.slice(index + 1).forEach((nextCoupon) => {
+      combinations.push([coupon, nextCoupon]);
+    });
+  });
+
+  return combinations;
+};
+
 export const calculateOrderPricing = (
   applicableCoupons: Coupon[],
   items: PreorderItem[],
@@ -95,4 +109,15 @@ export const calculateOrderPricing = (
     price,
     appliedCoupons: [...productDiscount.appliedCoupons, ...shippingDiscount.appliedCoupons],
   };
+};
+
+export const calculateBestOrderPricing = (
+  applicableCoupons: Coupon[],
+  items: PreorderItem[],
+  orderAmount: number,
+  shippingFee: number
+) => {
+  return getCouponCombinations(applicableCoupons)
+    .map((couponCombination) => calculateOrderPricing(couponCombination, items, orderAmount, shippingFee))
+    .sort((a, b) => a.price.totalPaymentAmount - b.price.totalPaymentAmount)[0];
 };

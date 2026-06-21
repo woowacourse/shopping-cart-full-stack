@@ -4,7 +4,7 @@ import {HttpError} from '../middlewares/errorHandler.js';
 
 import {getCouponDisabledReason} from '../domain/couponPolicy.js';
 import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
-import {calculateOrderPricing} from '../domain/orderPricingPolicy.js';
+import {calculateBestOrderPricing} from '../domain/orderPricingPolicy.js';
 
 import type {Coupon} from '../types/coupon.js';
 import type {ExcludedCoupon, PreviewOrderRequestBody, PreviewOrderResponse} from '../types/order.js';
@@ -85,7 +85,7 @@ export const orderService = {
     const orderAmount = calculateOrderAmount(preorder.items);
     const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
     const {applicableCoupons, excludedCoupons} = getPreviewCoupons(couponIds, preorderId, preorder.items);
-    const {price, appliedCoupons} = calculateOrderPricing(
+    const {price, appliedCoupons} = calculateBestOrderPricing(
       applicableCoupons,
       preorder.items,
       orderAmount,
