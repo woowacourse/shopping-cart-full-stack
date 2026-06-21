@@ -29,7 +29,10 @@ export async function requestApiWithoutBody(path: string, options: RequestApiOpt
   await requestApiResponse(path, options);
 }
 
-async function requestApiResponse(path: string, {errorMessage = DEFAULT_API_ERROR_MESSAGE, ...options}: RequestApiOptions) {
+async function requestApiResponse(
+  path: string,
+  {errorMessage = DEFAULT_API_ERROR_MESSAGE, ...options}: RequestApiOptions
+) {
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...options,
     headers: {
