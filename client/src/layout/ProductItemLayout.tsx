@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type {ReactNode} from 'react';
 
-import {theme} from '../design-system/index.js';
+import {Divider, theme} from '../design-system/index.js';
 
 interface ProductItemLayoutProps {
   header?: ReactNode;
@@ -13,6 +13,7 @@ interface ProductItemLayoutProps {
 export const ProductItemLayout = ({header, image, children, className}: ProductItemLayoutProps) => {
   return (
     <Root className={className}>
+      <Divider />
       {header}
       <Content>
         <Image>{image}</Image>
@@ -26,8 +27,6 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid ${theme.colors.gray100};
 `;
 
 const Content = styled.div`

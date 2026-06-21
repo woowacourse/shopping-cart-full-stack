@@ -1,5 +1,6 @@
 export {Button} from './components/Button.js';
 export {Checkbox} from './components/Checkbox.js';
+export {Divider} from './components/Divider.js';
 export {NumericSpinner} from './components/NumericSpinner.js';
 export {Typo} from './components/Typo.js';
 export {AsyncStateView} from './feedback/AsyncStateView.js';
