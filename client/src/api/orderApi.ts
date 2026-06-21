@@ -12,6 +12,14 @@ export const orderApi = {
   // GET/order/:orderId
   get: (orderId: number) => fetch(`${BASE_URL}/order/${orderId}`),
 
+  // PATCH/order/:orderId/address
+  patchAddress: (orderId: number, remoteArea: boolean) =>
+    fetch(`${BASE_URL}/order/${orderId}/address`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ remoteArea }),
+    }),
+
   // POST/order/:orderId/payment
   post: (orderId: number, body: {}) =>
     fetch(`${BASE_URL}/order/${orderId}/payment`, {
