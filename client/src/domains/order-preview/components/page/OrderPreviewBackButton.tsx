@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import {backArrowIconUrl} from '../../../design-system/assets/icons/index.js';
+import {backArrowIconUrl} from '../../../../design-system/assets/icons/index.js';
 
 interface OrderPreviewBackButtonProps {
   onClick: () => void;

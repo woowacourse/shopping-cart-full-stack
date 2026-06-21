@@ -2,9 +2,9 @@ import {AsyncStateView, Button, ErrorState} from '../../../design-system/index.j
 
 import {ScreenLayout} from '../../../shared/layout/ScreenLayout.js';
 
-import {OrderPreviewBackButton} from '../components/OrderPreviewBackButton.js';
-import {OrderPreviewCouponModal} from '../components/OrderPreviewCouponModal.js';
-import {OrderPreviewSuccessView} from '../components/OrderPreviewSuccessView.js';
+import {OrderPreviewBackButton} from '../components/page/OrderPreviewBackButton.js';
+import {OrderPreviewCouponModal} from '../components/page/OrderPreviewCouponModal.js';
+import {OrderPreviewSuccessView} from '../components/page/OrderPreviewSuccessView.js';
 
 import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
 

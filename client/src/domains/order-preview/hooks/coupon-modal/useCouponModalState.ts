@@ -1,9 +1,9 @@
-import {useCoupons} from '../../coupon/hooks/useCoupons.js';
+import {useCoupons} from '../../../coupon/hooks/useCoupons.js';
 import {useCouponAutoSelection} from './useCouponAutoSelection.js';
 import {useCouponDraftSelection} from './useCouponDraftSelection.js';
 import {useCouponModalErrorAction} from './useCouponModalErrorAction.js';
 import {useCouponModalPreview} from './useCouponModalPreview.js';
-import type {OrderPreviewStatus} from './useOrderPreview.js';
+import type {OrderPreviewStatus} from '../useOrderPreview.js';
 
 type CouponModalStatus = 'loading' | 'success' | 'error';
 type CouponsStatus = 'loading' | 'success' | 'error';

@@ -3,10 +3,10 @@ import {useNavigate, useParams} from 'react-router-dom';
 
 import {useOrderPreview} from './useOrderPreview.js';
 import {usePreorder} from '../../preorder/hooks/usePreorder.js';
-import {getPreorderSummary} from './orderPreviewPageSelectors.js';
-import {useCouponModalState} from './useCouponModalState.js';
-import {useOrderPreviewPageStatus} from './useOrderPreviewPageStatus.js';
-import {useOrderPreviewSubmission} from './useOrderPreviewSubmission.js';
+import {useCouponModalState} from './coupon-modal/useCouponModalState.js';
+import {getPreorderSummary} from './page/orderPreviewPageSelectors.js';
+import {useOrderPreviewPageStatus} from './page/useOrderPreviewPageStatus.js';
+import {useOrderPreviewSubmission} from './page/useOrderPreviewSubmission.js';
 
 export type OrderPreviewPageState = ReturnType<typeof useOrderPreviewPageState>;
 

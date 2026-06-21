@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import {Button, ErrorState, LoadingState, Typo, theme} from '../../../design-system/index.js';
-import type {Coupon, CouponId} from '../../coupon/domain/types.js';
-import {MAX_SELECTED_COUPON_COUNT, getCouponItemDisabled, getNextSelectedCouponIds} from '../domain/couponSelection.js';
+import {Button, ErrorState, LoadingState, Typo, theme} from '../../../../design-system/index.js';
+import type {Coupon, CouponId} from '../../../coupon/domain/types.js';
+import {MAX_SELECTED_COUPON_COUNT, getCouponItemDisabled, getNextSelectedCouponIds} from '../../domain/couponSelection.js';
 import {CouponModalItem} from './CouponModalItem.js';
 
 type CouponsStatus = 'loading' | 'success' | 'error';

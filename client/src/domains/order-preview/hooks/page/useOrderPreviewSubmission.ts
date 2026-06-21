@@ -1,7 +1,7 @@
 import {useNavigate} from 'react-router-dom';
 
-import {useCreateOrder} from '../../order/hooks/useCreateOrder.js';
-import type {PreviewOrderResponse} from '../api/orderPreviewApi.js';
+import {useCreateOrder} from '../../../order/hooks/useCreateOrder.js';
+import type {PreviewOrderResponse} from '../../api/orderPreviewApi.js';
 
 interface UseOrderPreviewSubmissionParams {
   preorderId: string | undefined;

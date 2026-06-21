@@ -4,7 +4,7 @@ import {
   getPreorderSummary,
   getShouldReturnToCart,
 } from './orderPreviewPageSelectors.js';
-import type {PreorderItem} from '../../preorder/domain/types.js';
+import type {PreorderItem} from '../../../preorder/domain/types.js';
 
 const preorderItems: PreorderItem[] = [
   {

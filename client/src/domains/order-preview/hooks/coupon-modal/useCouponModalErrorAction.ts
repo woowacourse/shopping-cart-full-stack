@@ -1,5 +1,5 @@
-import type {CouponsErrorType} from '../../coupon/hooks/useCoupons.js';
-import type {OrderPreviewErrorType} from './useOrderPreview.js';
+import type {CouponsErrorType} from '../../../coupon/hooks/useCoupons.js';
+import type {OrderPreviewErrorType} from '../useOrderPreview.js';
 
 interface UseCouponModalErrorActionParams {
   couponErrorType: CouponsErrorType;

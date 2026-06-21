@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import {Typo} from '../../../design-system/index.js';
-import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
+import {Typo} from '../../../../design-system/index.js';
+import {useOrderPreviewPage} from '../../hooks/useOrderPreviewPage.js';
 
 export const OrderSubmitErrorMessage = () => {
   const {orderSubmit} = useOrderPreviewPage();

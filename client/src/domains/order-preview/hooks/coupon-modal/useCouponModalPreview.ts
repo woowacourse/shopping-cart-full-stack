@@ -1,5 +1,5 @@
-import type {CouponId} from '../../coupon/domain/types.js';
-import {useOrderPreview} from './useOrderPreview.js';
+import type {CouponId} from '../../../coupon/domain/types.js';
+import {useOrderPreview} from '../useOrderPreview.js';
 
 export function useCouponModalPreview(
   preorderId: string | undefined,

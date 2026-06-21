@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import {Checkbox, fontWeights, theme, typography} from '../../../design-system/index.js';
+import {Checkbox, fontWeights, theme, typography} from '../../../../design-system/index.js';
 
 interface OrderPreviewShippingSectionProps {
   isRemoteArea: boolean;

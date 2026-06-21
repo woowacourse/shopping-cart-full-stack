@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
-import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
-import {fontWeights, theme, typography} from '../../../design-system/index.js';
-import {FREE_SHIPPING_THRESHOLD} from '../../../shared/domain/shippingPolicy.js';
-import {SummaryLayout, SummaryRow} from '../../../shared/layout/SummaryLayout.js';
-import type {OrderPrice} from '../api/orderPreviewApi.js';
+import {noticeIconUrl} from '../../../../design-system/assets/icons/index.js';
+import {fontWeights, theme, typography} from '../../../../design-system/index.js';
+import {FREE_SHIPPING_THRESHOLD} from '../../../../shared/domain/shippingPolicy.js';
+import {SummaryLayout, SummaryRow} from '../../../../shared/layout/SummaryLayout.js';
+import type {OrderPrice} from '../../api/orderPreviewApi.js';
 
 interface OrderPreviewPriceSummaryProps {
   price: OrderPrice;

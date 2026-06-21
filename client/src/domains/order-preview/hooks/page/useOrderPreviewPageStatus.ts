@@ -1,5 +1,5 @@
-import type {PreorderErrorType, PreorderStatus} from '../../preorder/hooks/usePreorder.js';
-import type {OrderPreviewStatus} from './useOrderPreview.js';
+import type {PreorderErrorType, PreorderStatus} from '../../../preorder/hooks/usePreorder.js';
+import type {OrderPreviewStatus} from '../useOrderPreview.js';
 import {
   getOrderPreviewPageErrorMessage,
   getOrderPreviewPageStatus,

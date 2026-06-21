@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import {fontWeights, theme, typography} from '../../../design-system/index.js';
-import type {Preorder} from '../../preorder/domain/types.js';
-import type {OrderPrice} from '../api/orderPreviewApi.js';
+import {fontWeights, theme, typography} from '../../../../design-system/index.js';
+import type {Preorder} from '../../../preorder/domain/types.js';
+import type {OrderPrice} from '../../api/orderPreviewApi.js';
 import {OrderPreviewPriceSummary} from './OrderPreviewPriceSummary.js';
 import {OrderPreviewProductList} from './OrderPreviewProductList.js';
 import {OrderPreviewShippingSection} from './OrderPreviewShippingSection.js';
