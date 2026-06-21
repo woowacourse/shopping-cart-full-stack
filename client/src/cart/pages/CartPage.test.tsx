@@ -4,9 +4,9 @@ import {http, HttpResponse} from 'msw';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 
 import {CartPage} from './CartPage.js';
-import {OrderConfirmPage} from './OrderConfirmPage.js';
-import {CartProvider} from '../hooks/useCart.js';
+import {CartProvider} from '../providers/CartProvider.js';
 import type {CartItem} from '../domain/types.js';
+import OrderPreviewPage from '../../order/pages/OrderPreviewPage.js';
 import {mockServer} from '../../test/mockServer.js';
 
 const API_BASE_URL = 'https://paradi-easter.up.railway.app';
@@ -53,7 +53,7 @@ function renderCartRoutes() {
       <CartProvider>
         <Routes>
           <Route path='/cart' element={<CartPage />} />
-          <Route path='/order-confirm' element={<OrderConfirmPage />} />
+          <Route path='/order-preview' element={<OrderPreviewPage />} />
         </Routes>
       </CartProvider>
     </MemoryRouter>
@@ -200,10 +200,10 @@ describe('CartPage', () => {
     await user.click(screen.getByRole('button', {name: '주문 확인'}));
 
     expect(await screen.findByRole('heading', {name: '주문 확인'})).toBeInTheDocument();
-    expect(screen.getByText(/총 2종류의 상품 3개를 주문합니다/)).toBeInTheDocument();
+    expect(screen.getByText(/총 1종류의 상품 2개를 주문합니다/)).toBeInTheDocument();
     expect(screen.getByText(/최종 결제 금액을 확인해 주세요/)).toBeInTheDocument();
-    expect(screen.getByText('120,000원')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: '결제하기'})).toBeDisabled();
+    expect(screen.getByText('상품이름A')).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: '결제하기'})).toBeInTheDocument();
     expect(requestCount).toBe(1);
   });
 });
