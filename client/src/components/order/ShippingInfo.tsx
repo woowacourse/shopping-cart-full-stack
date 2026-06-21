@@ -4,14 +4,17 @@ import { orderApi } from "../../api/orderApi";
 
 interface Props {
   orderData: OrderData;
+  onRemoteAreaChange: () => void;
 }
-export default function ShippingInfo({ orderData }: Props) {
+export default function ShippingInfo({ orderData, onRemoteAreaChange }: Props) {
   const [isChecked, setIsChecked] = useState(orderData.remoteArea);
   const handleRemoteArea = async () => {
     const toggledRemoteArea = !isChecked;
     setIsChecked(toggledRemoteArea);
     await orderApi.patchAddress(orderData.orderId, toggledRemoteArea);
+    onRemoteAreaChange();
   };
+
   return (
     <div>
       <p>배송 정보</p>

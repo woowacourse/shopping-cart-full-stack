@@ -7,13 +7,20 @@ import useOrderData from "../../hooks/useOrderData";
 import useCouponData from "../../hooks/useCouponData";
 import OrderCartList from "../order/OrderCartList";
 import ApplyCouponButton from "../button/ApplyCouponButton";
+import ShippingInfo from "../order/ShippingInfo";
 
 export default function OrderConfirmPage() {
   const { orderId } = useParams();
-  const { orderState, orderData, onDelete, updateAppliedCoupon } = useOrderData(
+  const {
+    orderState,
+    orderData,
+    onDelete,
+    updateAppliedCoupon,
+    orderFetchData,
+  } = useOrderData(Number(orderId));
+  const { couponState, couponFetchData, couponData } = useCouponData(
     Number(orderId),
   );
-  const { couponState, fetchData, couponData } = useCouponData(Number(orderId));
 
   return (
     <MainContainer>
@@ -46,8 +53,11 @@ export default function OrderConfirmPage() {
               orderData={orderData}
               updateAppliedCoupon={updateAppliedCoupon}
             />
-            {/* <ApplyCouponButton/> 쿠폰 적용 버튼(쿠폰 모달 여는 버튼) */}
-            {/* <ShippingInfo/> 배송 정보(제주도 및 도서 산간 지역 체크, PATCH/:orderId/address ) */}
+            <ShippingInfo
+              orderData={orderData}
+              onRemoteAreaChange={orderFetchData}
+            />
+
             {/* <FinalResultOrder/>  주문금액, 쿠폰 할인 금액, 배송비, 총 결제 금액 */}
             {/* <paymentButton/> 결제하기 버튼(POST/order/:orderid/payment) */}
           </SubContainer>
