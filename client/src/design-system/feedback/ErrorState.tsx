@@ -3,6 +3,7 @@ import type {MouseEventHandler, ReactNode} from 'react';
 
 import {Button} from '../components/Button.js';
 import {Typo} from '../components/Typo.js';
+import {FeedbackStateLayout} from './FeedbackStateLayout.js';
 
 interface ErrorStateProps {
   actionText?: string;
@@ -12,23 +13,14 @@ interface ErrorStateProps {
 
 export const ErrorState = ({actionText = '다시 시도', message, onAction}: ErrorStateProps) => {
   return (
-    <Container>
+    <FeedbackStateLayout>
       <ErrorMessage as='p' color='gray900' variant='body' weight='medium'>
         {message}
       </ErrorMessage>
       <Button onClick={onAction}>{actionText}</Button>
-    </Container>
+    </FeedbackStateLayout>
   );
 };
-
-const Container = styled.div`
-  display: flex;
-  min-height: 220px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-`;
 
 const ErrorMessage = styled(Typo)`
   text-align: center;

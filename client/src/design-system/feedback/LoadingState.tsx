@@ -1,23 +1,15 @@
 import styled from '@emotion/styled';
 
 import {theme} from '../foundation/theme.js';
+import {FeedbackStateLayout} from './FeedbackStateLayout.js';
 
 export const LoadingState = () => {
   return (
-    <Container>
+    <FeedbackStateLayout>
       <LoadingSpinner />
-    </Container>
+    </FeedbackStateLayout>
   );
 };
-
-const Container = styled.div`
-  display: flex;
-  min-height: 220px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-`;
 
 const LoadingSpinner = styled.span`
   width: 32px;

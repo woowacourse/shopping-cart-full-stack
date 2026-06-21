@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
 import type {ReactNode} from 'react';
 
 import {Typo} from '../components/Typo.js';
+import {FeedbackStateLayout} from './FeedbackStateLayout.js';
 
 interface EmptyStateProps {
   message: ReactNode;
@@ -9,18 +9,10 @@ interface EmptyStateProps {
 
 export const EmptyState = ({message}: EmptyStateProps) => {
   return (
-    <Container>
+    <FeedbackStateLayout>
       <Typo as='p' color='gray900' variant='body' weight='medium'>
         {message}
       </Typo>
-    </Container>
+    </FeedbackStateLayout>
   );
 };
-
-const Container = styled.div`
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-`;
