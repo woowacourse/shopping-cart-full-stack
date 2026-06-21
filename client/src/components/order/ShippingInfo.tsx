@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { OrderData } from "../../type/types";
 import { orderApi } from "../../api/orderApi";
 
@@ -8,6 +8,10 @@ interface Props {
 }
 export default function ShippingInfo({ orderData, onRemoteAreaChange }: Props) {
   const [isChecked, setIsChecked] = useState(orderData.remoteArea);
+  useEffect(() => {
+    setIsChecked(orderData.remoteArea);
+  }, [orderData.remoteArea]);
+
   const handleRemoteArea = async () => {
     const toggledRemoteArea = !isChecked;
     setIsChecked(toggledRemoteArea);
