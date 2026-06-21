@@ -318,7 +318,7 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 프론트엔드는 매 요청마다 현재 선택 중인 쿠폰 ID 목록을 `couponIds`로 함께 보낸다. 선택한 쿠폰이 없으면 빈 배열을 보낸다.
 
-요청이 성공하면 서버는 실제 적용된 쿠폰 ID 목록과 배송 조건을 PreorderStore에 저장한다. 프론트엔드는 응답의 `body.price`, `body.appliedCoupons`, `body.excludedCoupons`를 화면에 표시한다.
+요청이 성공하면 서버는 실제 적용된 쿠폰 ID 목록과 배송 조건을 PreorderStore에 저장한다. 프론트엔드는 응답의 `body.price`, `body.appliedCoupons`, `body.excludedCoupons`, `body.benefitItems`를 화면에 표시한다.
 
 ### Request Body
 
@@ -360,6 +360,8 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
 
 ### Response
 
+`benefitItems`는 2+1 쿠폰처럼 결제 금액 할인과 함께 무료 증정 수량을 화면에 표시해야 하는 경우 서버가 계산해서 내려준다. 프론트엔드는 이 값을 계산하지 않고 같은 `productId`의 주문 상품 행에 표시만 한다.
+
 ```json
 {
   "body": {
@@ -385,6 +387,12 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "code": "string",
         "name": "string",
         "excludedReason": "string"
+      }
+    ],
+    "benefitItems": [
+      {
+        "productId": "string",
+        "quantity": "number"
       }
     ]
   }
@@ -418,7 +426,8 @@ coupon DB에 저장된 쿠폰 ID, 쿠폰 코드, 쿠폰 이름, 쿠폰 만료일
         "discountAmount": 6000
       }
     ],
-    "excludedCoupons": []
+    "excludedCoupons": [],
+    "benefitItems": []
   }
 }
 ```
