@@ -8,6 +8,7 @@ import useCouponData from "../../hooks/useCouponData";
 import OrderCartList from "../order/OrderCartList";
 import ApplyCouponButton from "../button/ApplyCouponButton";
 import ShippingInfo from "../order/ShippingInfo";
+import FinalResultOrder from "../order/FinalResultOrder";
 
 export default function OrderConfirmPage() {
   const { orderId } = useParams();
@@ -58,7 +59,7 @@ export default function OrderConfirmPage() {
               onRemoteAreaChange={orderFetchData}
             />
 
-            {/* <FinalResultOrder/>  주문금액, 쿠폰 할인 금액, 배송비, 총 결제 금액 */}
+            <FinalResultOrder orderData={orderData} />
             {/* <paymentButton/> 결제하기 버튼(POST/order/:orderid/payment) */}
           </SubContainer>
         </Body>
