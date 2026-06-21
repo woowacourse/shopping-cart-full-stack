@@ -9,6 +9,7 @@ describe('useCouponAutoSelection', () => {
     renderHook(() =>
       useCouponAutoSelection({
         couponsStatus: 'success',
+        hasCouponSelectionHistory: false,
         isCouponModalOpen: true,
         recommendedCouponIds: [1, 3],
         selectedCouponIds: [],
@@ -25,6 +26,7 @@ describe('useCouponAutoSelection', () => {
     renderHook(() =>
       useCouponAutoSelection({
         couponsStatus: 'success',
+        hasCouponSelectionHistory: false,
         isCouponModalOpen: true,
         recommendedCouponIds: [1, 3],
         selectedCouponIds: [1],
@@ -42,6 +44,7 @@ describe('useCouponAutoSelection', () => {
       ({couponsStatus, isCouponModalOpen}: {couponsStatus: 'loading' | 'success'; isCouponModalOpen: boolean}) =>
         useCouponAutoSelection({
           couponsStatus,
+          hasCouponSelectionHistory: false,
           isCouponModalOpen,
           recommendedCouponIds: [1, 3],
           selectedCouponIds: [],
@@ -69,6 +72,7 @@ describe('useCouponAutoSelection', () => {
     const {rerender} = renderHook(() =>
       useCouponAutoSelection({
         couponsStatus: 'success',
+        hasCouponSelectionHistory: false,
         isCouponModalOpen: true,
         recommendedCouponIds: [1, 3],
         selectedCouponIds: [],
@@ -79,5 +83,22 @@ describe('useCouponAutoSelection', () => {
     rerender();
 
     expect(onSelectCoupons).toHaveBeenCalledTimes(1);
+  });
+
+  test('이전 쿠폰 선택 이력이 있으면 선택이 비어 있어도 추천 쿠폰으로 덮어쓰지 않는다', () => {
+    const onSelectCoupons = jest.fn();
+
+    renderHook(() =>
+      useCouponAutoSelection({
+        couponsStatus: 'success',
+        hasCouponSelectionHistory: true,
+        isCouponModalOpen: true,
+        recommendedCouponIds: [1, 3],
+        selectedCouponIds: [],
+        onSelectCoupons,
+      })
+    );
+
+    expect(onSelectCoupons).not.toHaveBeenCalled();
   });
 });

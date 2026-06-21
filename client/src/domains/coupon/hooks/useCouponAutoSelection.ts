@@ -5,6 +5,7 @@ import type {CouponId} from '../domain/types.js';
 
 interface UseCouponAutoSelectionParams {
   couponsStatus: AsyncStatus;
+  hasCouponSelectionHistory: boolean;
   isCouponModalOpen: boolean;
   recommendedCouponIds: CouponId[];
   selectedCouponIds: CouponId[];
@@ -13,6 +14,7 @@ interface UseCouponAutoSelectionParams {
 
 export function useCouponAutoSelection({
   couponsStatus,
+  hasCouponSelectionHistory,
   isCouponModalOpen,
   onSelectCoupons,
   recommendedCouponIds,
@@ -20,7 +22,11 @@ export function useCouponAutoSelection({
 }: UseCouponAutoSelectionParams) {
   const [hasAutoSelectedCoupons, setHasAutoSelectedCoupons] = useState(false);
   const shouldAutoSelectCoupons =
-    isCouponModalOpen && !hasAutoSelectedCoupons && couponsStatus === 'success' && selectedCouponIds.length === 0;
+    isCouponModalOpen &&
+    !hasAutoSelectedCoupons &&
+    !hasCouponSelectionHistory &&
+    couponsStatus === 'success' &&
+    selectedCouponIds.length === 0;
 
   useEffect(() => {
     if (!shouldAutoSelectCoupons) return;

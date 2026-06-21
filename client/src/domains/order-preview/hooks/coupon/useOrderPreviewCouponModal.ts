@@ -16,6 +16,7 @@ export function useOrderPreviewCouponModal(
   const {
     appliedCouponIds,
     draftCouponIds,
+    hasCouponSelectionHistory,
     isCouponModalOpen,
     applyDraftCouponIds,
     closeCouponModal,
@@ -56,6 +57,7 @@ export function useOrderPreviewCouponModal(
 
   useCouponAutoSelection({
     couponsStatus,
+    hasCouponSelectionHistory,
     isCouponModalOpen,
     onSelectCoupons: setDraftCouponIds,
     recommendedCouponIds,

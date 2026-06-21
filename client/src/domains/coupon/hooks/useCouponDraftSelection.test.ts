@@ -25,7 +25,7 @@ describe('useCouponDraftSelection', () => {
     expect(result.current.draftCouponIds).toEqual([1, 3]);
   });
 
-  test('draft가 비어 있으면 적용된 쿠폰을 기준으로 모달을 연다', () => {
+  test('사용자가 쿠폰을 전부 해제하면 적용된 쿠폰으로 다시 복원하지 않는다', () => {
     const {result} = renderHook(() => useCouponDraftSelection());
 
     act(() => {
@@ -48,6 +48,6 @@ describe('useCouponDraftSelection', () => {
       result.current.openCouponModal();
     });
 
-    expect(result.current.draftCouponIds).toEqual([1]);
+    expect(result.current.draftCouponIds).toEqual([]);
   });
 });

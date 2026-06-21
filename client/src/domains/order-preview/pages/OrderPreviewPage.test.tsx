@@ -592,6 +592,34 @@ describe('OrderPreviewPage', () => {
     expect(await screen.findByRole('button', {name: '총 5,000원 할인 쿠폰 사용하기'})).toBeInTheDocument();
   });
 
+  test('쿠폰 모달을 닫았다가 다시 열면 추천 쿠폰이 아니라 이전 선택 상태를 유지한다', async () => {
+    const user = userEvent.setup();
+
+    mockGetPreorder();
+    mockGetCoupons();
+    mockPreviewOrder();
+
+    renderOrderPreviewPage();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+
+    const fixedAmountCoupon = await screen.findByRole('checkbox', {name: '5,000원 할인 쿠폰'});
+    const freeShippingCoupon = await screen.findByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'});
+
+    expect(fixedAmountCoupon).toBeChecked();
+    expect(freeShippingCoupon).toBeChecked();
+
+    await user.click(fixedAmountCoupon);
+    await user.click(freeShippingCoupon);
+    await user.click(screen.getByRole('button', {name: '×'}));
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+
+    expect(await screen.findByRole('checkbox', {name: '5,000원 할인 쿠폰'})).not.toBeChecked();
+    expect(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).not.toBeChecked();
+    expect(await screen.findByRole('button', {name: '총 0원 할인 쿠폰 사용하기'})).toBeInTheDocument();
+  });
+
   test('쿠폰 선택 적용 버튼을 누르면 모달을 닫고 주문 금액에 반영한다', async () => {
     const user = userEvent.setup();
 

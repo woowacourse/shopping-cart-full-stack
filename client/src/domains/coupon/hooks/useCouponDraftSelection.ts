@@ -6,9 +6,10 @@ export function useCouponDraftSelection() {
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [appliedCouponIds, setAppliedCouponIds] = useState<CouponId[]>([]);
   const [draftCouponIds, setDraftCouponIds] = useState<CouponId[]>([]);
+  const [hasCouponSelectionHistory, setHasCouponSelectionHistory] = useState(false);
 
   const openCouponModal = () => {
-    if (draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
+    if (!hasCouponSelectionHistory && draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
       setDraftCouponIds(appliedCouponIds);
     }
 
@@ -21,16 +22,23 @@ export function useCouponDraftSelection() {
 
   const applyDraftCouponIds = () => {
     setAppliedCouponIds(draftCouponIds);
+    setHasCouponSelectionHistory(true);
     setIsCouponModalOpen(false);
+  };
+
+  const changeDraftCouponIds = (couponIds: CouponId[]) => {
+    setDraftCouponIds(couponIds);
+    setHasCouponSelectionHistory(true);
   };
 
   return {
     appliedCouponIds,
     draftCouponIds,
+    hasCouponSelectionHistory,
     isCouponModalOpen,
     applyDraftCouponIds,
     closeCouponModal,
     openCouponModal,
-    setDraftCouponIds,
+    setDraftCouponIds: changeDraftCouponIds,
   };
 }
