@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 
-import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
-import {Checkbox, fontWeights, theme, typography} from '../../../design-system/index.js';
-import {ProductItemLayout} from '../../../layout/ProductItemLayout.js';
-import {SummaryLayout, SummaryRow} from '../../../layout/SummaryLayout.js';
-import {FREE_SHIPPING_THRESHOLD} from '../../../shared/domain/shippingPolicy.js';
-import type {OrderPrice, Preorder, PreorderItem} from '../../api/orderApi.js';
+import {noticeIconUrl} from '../../design-system/assets/icons/index.js';
+import {Checkbox, fontWeights, theme, typography} from '../../design-system/index.js';
+import {ProductItemLayout} from '../../layout/ProductItemLayout.js';
+import {SummaryLayout, SummaryRow} from '../../layout/SummaryLayout.js';
+import {FREE_SHIPPING_THRESHOLD} from '../../shared/domain/shippingPolicy.js';
+import type {Preorder, PreorderItem} from '../../preorder/domain/types.js';
+import type {OrderPrice} from '../api/orderPreviewApi.js';
 
 interface OrderPreviewContentProps {
   isRemoteArea: boolean;
