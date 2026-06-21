@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
 import {Button, ErrorState, LoadingState, Typo, theme} from '../../../design-system/index.js';
 import {MAX_SELECTED_COUPON_COUNT, getCouponItemDisabled, getNextSelectedCouponIds} from '../domain/couponSelection.js';
 import type {Coupon, CouponId} from '../domain/types.js';
@@ -59,8 +60,11 @@ const CouponModalHeader = ({onClose}: CouponModalHeaderProps) => {
 
 const CouponModalNotice = () => {
   return (
-    <Notice as='p' variant='caption' weight='medium'>
-      ⓘ 쿠폰은 최대 {MAX_SELECTED_COUPON_COUNT}개까지 사용할 수 있습니다.
+    <Notice>
+      <NoticeIcon alt='' src={noticeIconUrl} />
+      <NoticeText as='p' variant='caption' weight='medium'>
+        쿠폰은 최대 {MAX_SELECTED_COUPON_COUNT}개까지 사용할 수 있습니다.
+      </NoticeText>
     </Notice>
   );
 };
@@ -175,8 +179,24 @@ const CloseButton = styled.button`
   line-height: 1;
 `;
 
-const Notice = styled(Typo)`
+const Notice = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 28px 0 0;
+`;
+
+const NoticeIcon = styled.img`
+  flex: 0 0 auto;
+
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+`;
+
+const NoticeText = styled(Typo)`
+  flex: 1;
+  min-width: 0;
 `;
 
 const CouponList = styled.ul`
