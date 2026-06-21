@@ -1,7 +1,6 @@
 export {AsyncStateView} from './components/AsyncStateView.js';
 export {Button} from './components/Button.js';
 export {Checkbox} from './components/Checkbox.js';
-export {FixedBottomAction} from './components/FixedBottomAction.js';
 export {NumericSpinner} from './components/NumericSpinner.js';
 export {Spinner} from './components/Spinner.js';
 export {Typo} from './components/Typo.js';
