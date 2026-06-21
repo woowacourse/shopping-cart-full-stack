@@ -7,10 +7,7 @@ interface OrderPreviewShippingSectionProps {
   onChangeRemoteArea: (isRemoteArea: boolean) => void;
 }
 
-export const OrderPreviewShippingSection = ({
-  isRemoteArea,
-  onChangeRemoteArea,
-}: OrderPreviewShippingSectionProps) => {
+export const OrderPreviewShippingSection = ({isRemoteArea, onChangeRemoteArea}: OrderPreviewShippingSectionProps) => {
   return (
     <ShippingSection>
       <SectionTitle>배송 정보</SectionTitle>

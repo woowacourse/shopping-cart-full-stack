@@ -23,7 +23,7 @@ export const OrderPreviewPage = () => {
       <AsyncStateView
         errorFallback={
           <ErrorState
-            actionText={page.shouldReturnToCart ? '장바구니로 돌아가기' : undefined}
+            actionText={page.shouldReturnToCart ? '장바구니로 돌아가기' : '다시 시도'}
             message={page.errorMessage}
             onAction={actions.errorAction}
           />
