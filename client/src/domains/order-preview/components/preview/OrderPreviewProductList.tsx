@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import {fontWeights, theme, typography} from '../../../../design-system/index.js';
 import {ProductItemLayout} from '../../../../shared/layout/ProductItemLayout.js';
 import type {PreorderItem} from '../../../preorder/domain/types.js';
-import type {BenefitItem} from '../../api/orderPreviewApi.js';
+import type {BenefitItem} from '../../domain/types.js';
 
 interface OrderPreviewProductListProps {
   benefitItems: BenefitItem[];
