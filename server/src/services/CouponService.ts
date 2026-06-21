@@ -1,9 +1,9 @@
-import {HttpError} from '../middlewares/errorHandler.js';
 import {coupons} from '../repositories/index.js';
-import type {Coupon, CouponResponse} from '../types/coupon.js';
+import {validateCoupon} from '../domain/couponPolicy.js';
 
-import {getCouponDisabledReason} from '../domain/couponPolicy.js';
-import {preorderService} from './PreorderService.js';
+import type {Coupon} from '../models/Coupon.js';
+import type {CouponResponse} from '../types/coupon.js';
+import type {Preorder} from '../types/preorder.js';
 
 const createCouponResponse = (coupon: Coupon, disabledReason: string | null): CouponResponse => {
   return {
@@ -19,17 +19,14 @@ const createCouponResponse = (coupon: Coupon, disabledReason: string | null): Co
 };
 
 export const couponService = {
-  getCoupons(preorderId: unknown): CouponResponse[] {
-    if (typeof preorderId !== 'string' || preorderId.trim().length === 0) {
-      throw new HttpError(400, 'preorderId를 올바르게 입력해주세요.');
-    }
-
-    const preorder = preorderService.getPreorder(preorderId);
-
-    return coupons.map((coupon) => {
-      const disabledReason = getCouponDisabledReason(coupon, preorder);
+  getCoupons(preorder: Preorder): CouponResponse[] {
+    const couponResponses = coupons.findAll().map((coupon) => {
+      const validationResult = validateCoupon(coupon, preorder);
+      const disabledReason = validationResult.valid ? null : validationResult.reason;
 
       return createCouponResponse(coupon, disabledReason);
     });
+
+    return couponResponses;
   },
 };

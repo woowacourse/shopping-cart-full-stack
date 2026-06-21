@@ -42,7 +42,11 @@ const createPreorderItem = (cartId: string) => {
 };
 
 export const preorderService = {
-  getPreorder(preorderId: string): Preorder {
+  getPreorder(preorderId: unknown): Preorder {
+    if (typeof preorderId !== 'string' || preorderId.trim().length === 0) {
+      throw new HttpError(400, 'preorderId를 올바르게 입력해주세요.');
+    }
+
     const preorderItems = preorderCache.findById(preorderId);
 
     if (!preorderItems) {

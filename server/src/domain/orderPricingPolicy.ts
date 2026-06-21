@@ -1,11 +1,9 @@
 import {
   calculateProductCouponDiscount,
-  getProductCouponPriority,
-  isProductDiscountCoupon,
-  isShippingDiscountCoupon,
+  calculateShippingCouponDiscount,
 } from './couponPolicy.js';
 
-import type {Coupon} from '../types/coupon.js';
+import type {Coupon, ProductDiscountCoupon} from '../models/Coupon.js';
 import type {AppliedCoupon, OrderPrice} from '../types/order.js';
 import type {PreorderItem} from '../types/preorder.js';
 
@@ -24,8 +22,8 @@ const calculateProductDiscount = (coupons: Coupon[], items: PreorderItem[], orde
   const appliedCoupons: AppliedCoupon[] = [];
 
   const productCoupons = coupons
-    .filter(isProductDiscountCoupon)
-    .sort((a, b) => getProductCouponPriority(a) - getProductCouponPriority(b));
+    .filter((coupon): coupon is ProductDiscountCoupon => coupon.isProductDiscount())
+    .sort((a, b) => a.getProductDiscountPriority() - b.getProductDiscountPriority());
 
   productCoupons.forEach((coupon) => {
     const discountAmount = calculateProductCouponDiscount(coupon, items, remainingProductAmount);
@@ -50,11 +48,11 @@ const calculateShippingDiscount = (coupons: Coupon[], shippingFee: number) => {
   const appliedCoupons: AppliedCoupon[] = [];
 
   coupons.forEach((coupon) => {
-    if (!isShippingDiscountCoupon(coupon)) {
+    if (!coupon.isShippingDiscount()) {
       return;
     }
 
-    const discountAmount = coupon.benefit.params.includesRemoteAreaFee ? shippingFee : 0;
+    const discountAmount = calculateShippingCouponDiscount(shippingFee);
 
     if (discountAmount <= 0) {
       return;

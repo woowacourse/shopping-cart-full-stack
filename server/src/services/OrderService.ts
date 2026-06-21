@@ -1,12 +1,13 @@
 import {preorderCache} from '../caches/PreorderCache.js';
 import {coupons} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
+import {preorderService} from './PreorderService.js';
 
-import {getCouponDisabledReason} from '../domain/couponPolicy.js';
+import {validateCoupon} from '../domain/couponPolicy.js';
 import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
 import {calculateBestOrderPricing} from '../domain/orderPricingPolicy.js';
 
-import type {Coupon} from '../types/coupon.js';
+import type {Coupon} from '../models/Coupon.js';
 import type {ExcludedCoupon, PreviewOrderRequestBody, PreviewOrderResponse} from '../types/order.js';
 import type {PreorderItem} from '../types/preorder.js';
 
@@ -20,18 +21,13 @@ const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody
   const {preorderId, isRemoteArea, couponIds} = body as PreviewOrderRequestBody;
 
   return (
+    typeof isRemoteArea === 'boolean' &&
     typeof preorderId === 'string' &&
     preorderId.trim().length > 0 &&
-    typeof isRemoteArea === 'boolean' &&
     Array.isArray(couponIds) &&
     couponIds.length <= MAX_COUPON_COUNT &&
-    couponIds.every((couponId) => Number.isInteger(couponId) && couponId > 0) &&
-    new Set(couponIds).size === couponIds.length
+    couponIds.every(Number.isInteger)
   );
-};
-
-const findCouponById = (couponId: number) => {
-  return coupons.find((coupon) => coupon.id === couponId);
 };
 
 const toExcludedCoupon = (couponId: number, excludedReason: string, coupon?: Coupon): ExcludedCoupon => {
@@ -48,17 +44,17 @@ const getPreviewCoupons = (couponIds: number[], preorderId: string, items: Preor
   const excludedCoupons: ExcludedCoupon[] = [];
 
   couponIds.forEach((couponId) => {
-    const coupon = findCouponById(couponId);
+    const coupon = coupons.findById(couponId);
 
     if (!coupon) {
       excludedCoupons.push(toExcludedCoupon(couponId, '존재하지 않는 쿠폰입니다.'));
       return;
     }
 
-    const disabledReason = getCouponDisabledReason(coupon, {preorderId, items});
+    const validationResult = validateCoupon(coupon, {preorderId, items});
 
-    if (disabledReason) {
-      excludedCoupons.push(toExcludedCoupon(coupon.id, disabledReason, coupon));
+    if (!validationResult.valid) {
+      excludedCoupons.push(toExcludedCoupon(coupon.id, validationResult.reason, coupon));
       return;
     }
 
@@ -76,11 +72,7 @@ export const orderService = {
 
     const {preorderId, couponIds, isRemoteArea} = body;
 
-    const preorder = preorderCache.findById(preorderId);
-
-    if (!preorder) {
-      throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
-    }
+    const preorder = preorderService.getPreorder(preorderId);
 
     const orderAmount = calculateOrderAmount(preorder.items);
     const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);

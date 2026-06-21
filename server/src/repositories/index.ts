@@ -6,6 +6,8 @@ import {Product} from '../models/Product.js';
 import {Products} from '../models/Products.js';
 import {CartItem} from '../models/CartItem.js';
 import {CartItems} from '../models/CartItems.js';
+import {Coupon} from '../models/Coupon.js';
+import {Coupons} from '../models/Coupons.js';
 
 const productList = productData.map(({id, name, price, imageUrl}) => new Product(id, name, price, imageUrl));
 
@@ -22,4 +24,10 @@ const cartItemList = cartItemData.map(({id, productId, quantity}) => {
 });
 
 export const cartItems = new CartItems(cartItemList);
-export const coupons = couponData;
+
+const couponList = couponData.map(
+  ({id, code, name, expirationDate, condition, benefit}) =>
+    new Coupon(id, code, name, expirationDate, condition, benefit)
+);
+
+export const coupons = new Coupons(couponList);
