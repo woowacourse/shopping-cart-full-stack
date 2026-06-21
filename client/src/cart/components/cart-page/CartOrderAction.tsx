@@ -1,6 +1,6 @@
 import {useNavigate} from 'react-router-dom';
 
-import {Button, FixedBottomAction} from '../../../design-system/index.js';
+import {Button} from '../../../design-system/index.js';
 import {getTotalPrice} from '../../domain/cartSelectors.js';
 import {useCart} from '../../hooks/useCart.js';
 
@@ -11,10 +11,8 @@ export const CartOrderAction = () => {
   const isPaymentButtonDisabled = totalPrice === 0;
 
   return (
-    <FixedBottomAction>
-      <Button disabled={isPaymentButtonDisabled} onClick={() => navigate('/order-confirm')}>
-        주문 확인
-      </Button>
-    </FixedBottomAction>
+    <Button disabled={isPaymentButtonDisabled} onClick={() => navigate('/order-preview')}>
+      주문 확인
+    </Button>
   );
 };
