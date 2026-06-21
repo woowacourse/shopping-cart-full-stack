@@ -38,6 +38,7 @@ app.get('/coupons', asyncHandler(couponController.getCoupons));
 
 app.post('/order/preview', asyncHandler(orderController.previewOrder));
 app.post('/order', asyncHandler(orderController.createOrder));
+app.get('/order/:orderId', asyncHandler(orderController.getOrderSummary));
 
 app.use(errorHandler);
 
