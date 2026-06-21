@@ -54,7 +54,7 @@ describe('orderService.previewOrder', () => {
         {
           couponId: 3,
           code: 'FREESHIPPING',
-          name: '무료 배송 쿠폰',
+          name: '5만원 이상 구매 시 무료 배송 쿠폰',
           discountAmount: 3000,
         },
       ],
@@ -90,6 +90,36 @@ describe('orderService.previewOrder', () => {
         excludedReason: '존재하지 않는 쿠폰입니다.',
       },
     ]);
+  });
+
+  test('이미 무료 배송이면 무료 배송 쿠폰은 excludedCoupons에 포함한다', async () => {
+    const {preorderId, orderService} = await createPreorder();
+
+    const orderPreview = orderService.previewOrder({
+      preorderId,
+      isRemoteArea: false,
+      couponIds: [3],
+    });
+
+    expect(orderPreview).toEqual({
+      price: {
+        orderAmount: 445000,
+        productDiscountAmount: 0,
+        shippingDiscountAmount: 0,
+        totalDiscountAmount: 0,
+        shippingFee: 0,
+        totalPaymentAmount: 445000,
+      },
+      appliedCoupons: [],
+      excludedCoupons: [
+        {
+          couponId: 3,
+          code: 'FREESHIPPING',
+          name: '5만원 이상 구매 시 무료 배송 쿠폰',
+          excludedReason: '이미 무료 배송이 적용된 주문입니다.',
+        },
+      ],
+    });
   });
 
   test('preorder를 찾을 수 없으면 에러를 던진다', async () => {

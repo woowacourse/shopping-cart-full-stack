@@ -46,7 +46,7 @@ export const couponService = {
   getCoupons(preorder: Preorder, isRemoteArea: boolean) {
     const applicableCoupons: Coupon[] = [];
     const couponResponses = coupons.findAll().map((coupon) => {
-      const validationResult = validateCoupon(coupon, preorder);
+      const validationResult = validateCoupon(coupon, preorder, {isRemoteArea});
       const disabledReason = validationResult.valid ? null : validationResult.reason;
 
       if (validationResult.valid) {

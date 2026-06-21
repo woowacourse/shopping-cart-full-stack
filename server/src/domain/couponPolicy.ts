@@ -1,12 +1,17 @@
-import {calculateOrderAmount} from './orderPolicy.js';
+import {calculateOrderAmount, calculateShippingFee} from './orderPolicy.js';
 
 import type {Coupon, ProductDiscountCoupon} from '../models/Coupon.js';
 import type {Preorder, PreorderItem} from '../types/preorder.js';
 
 type ValidationResult = {valid: true} | {valid: false; reason: string};
+type ValidateCouponOptions = {
+  now?: Date;
+  isRemoteArea?: boolean;
+};
 
 const COUPON_DISABLED_REASON = {
   expired: '만료된 쿠폰입니다.',
+  freeShippingAlreadyApplied: '이미 무료 배송이 적용된 주문입니다.',
   minOrderAmount: (minAmount: number) => `주문 금액이 ${minAmount.toLocaleString('ko-KR')}원 미만입니다.`,
   minSameProductQuantity: (minQuantity: number) => `동일 상품을 ${minQuantity}개 이상 구매해야 합니다.`,
   timeRange: '현재 적용 가능한 시간이 아닙니다.',
@@ -64,6 +69,37 @@ const validateTimeRange = (time: Date, start: string, end: string): ValidationRe
   return {valid: true};
 };
 
+const validateCouponCondition = (coupon: Coupon, preorder: Preorder, now: Date): ValidationResult => {
+  const {condition} = coupon;
+
+  switch (condition.rule) {
+    case 'MIN_ORDER_AMOUNT':
+      return validateMinOrderAmount(preorder, condition.params.minOrderAmount);
+    case 'MIN_SAME_PRODUCT_QUANTITY':
+      return validateSameProductQuantity(preorder, condition.params.minSameProductQuantity);
+    case 'TIME_RANGE':
+      return validateTimeRange(now, condition.params.start, condition.params.end);
+  }
+};
+
+const validateCouponEffect = (coupon: Coupon, preorder: Preorder, isRemoteArea?: boolean): ValidationResult => {
+  if (!coupon.isShippingDiscount() || isRemoteArea === undefined) {
+    return {valid: true};
+  }
+
+  const orderAmount = calculateOrderAmount(preorder.items);
+  const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
+
+  if (shippingFee === 0) {
+    return {
+      valid: false,
+      reason: COUPON_DISABLED_REASON.freeShippingAlreadyApplied,
+    };
+  }
+
+  return {valid: true};
+};
+
 const calculateHighestUnitPriceItemDiscount = (
   items: PreorderItem[],
   minSameProductQuantity: number,
@@ -81,8 +117,12 @@ const calculateHighestUnitPriceItemDiscount = (
 };
 
 // policies
-export const validateCoupon = (coupon: Coupon, preorder: Preorder, now = new Date()): ValidationResult => {
-  const {condition} = coupon;
+export const validateCoupon = (
+  coupon: Coupon,
+  preorder: Preorder,
+  options: ValidateCouponOptions = {}
+): ValidationResult => {
+  const now = options.now ?? new Date();
 
   if (coupon.isExpired(now)) {
     return {
@@ -91,14 +131,13 @@ export const validateCoupon = (coupon: Coupon, preorder: Preorder, now = new Dat
     };
   }
 
-  switch (condition.rule) {
-    case 'MIN_ORDER_AMOUNT':
-      return validateMinOrderAmount(preorder, condition.params.minOrderAmount);
-    case 'MIN_SAME_PRODUCT_QUANTITY':
-      return validateSameProductQuantity(preorder, condition.params.minSameProductQuantity);
-    case 'TIME_RANGE':
-      return validateTimeRange(now, condition.params.start, condition.params.end);
+  const conditionValidation = validateCouponCondition(coupon, preorder, now);
+
+  if (!conditionValidation.valid) {
+    return conditionValidation;
   }
+
+  return validateCouponEffect(coupon, preorder, options.isRemoteArea);
 };
 
 export const calculateProductCouponDiscount = (

@@ -99,7 +99,7 @@ describe('Order API', () => {
           {
             couponId: 3,
             code: 'FREESHIPPING',
-            name: '무료 배송 쿠폰',
+            name: '5만원 이상 구매 시 무료 배송 쿠폰',
             discountAmount: 3000,
           },
         ],

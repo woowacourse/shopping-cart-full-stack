@@ -91,6 +91,36 @@ describe('couponService', () => {
     );
   });
 
+  test('getCoupons는 이미 무료 배송이면 무료 배송 쿠폰을 비활성화한다', async () => {
+    const {couponService} = await loadCouponService();
+    const preorder = createPreorder(100000, 1);
+
+    const {coupons} = couponService.getCoupons(preorder, false);
+    const freeShippingCoupon = coupons.find((coupon) => coupon.code === 'FREESHIPPING');
+
+    expect(freeShippingCoupon).toEqual(
+      expect.objectContaining({
+        disabled: true,
+        disabledReason: '이미 무료 배송이 적용된 주문입니다.',
+      })
+    );
+  });
+
+  test('getCoupons는 도서산간 배송비가 남아 있으면 무료 배송 쿠폰을 활성화한다', async () => {
+    const {couponService} = await loadCouponService();
+    const preorder = createPreorder(100000, 1);
+
+    const {coupons} = couponService.getCoupons(preorder, true);
+    const freeShippingCoupon = coupons.find((coupon) => coupon.code === 'FREESHIPPING');
+
+    expect(freeShippingCoupon).toEqual(
+      expect.objectContaining({
+        disabled: false,
+        disabledReason: null,
+      })
+    );
+  });
+
   test('getCoupons는 적용 가능한 쿠폰 중 최대 할인 추천 쿠폰 ID를 반환한다', async () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-06-22T12:00:00+09:00'));

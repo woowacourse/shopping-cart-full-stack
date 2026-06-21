@@ -63,7 +63,7 @@ const toExcludedCoupon = (couponId: number, excludedReason: string, coupon?: Cou
   };
 };
 
-const getPreviewCoupons = (couponIds: number[], preorderId: string, items: PreorderItem[]) => {
+const getPreviewCoupons = (couponIds: number[], preorderId: string, items: PreorderItem[], isRemoteArea: boolean) => {
   const applicableCoupons: Coupon[] = [];
   const excludedCoupons: ExcludedCoupon[] = [];
 
@@ -75,7 +75,7 @@ const getPreviewCoupons = (couponIds: number[], preorderId: string, items: Preor
       return;
     }
 
-    const validationResult = validateCoupon(coupon, {preorderId, items});
+    const validationResult = validateCoupon(coupon, {preorderId, items}, {isRemoteArea});
 
     if (!validationResult.valid) {
       excludedCoupons.push(toExcludedCoupon(coupon.id, validationResult.reason, coupon));
@@ -118,7 +118,7 @@ const calculateOrder = (preorderId: string, couponIds: number[], isRemoteArea: b
   const preorder = preorderService.getPreorder(preorderId);
   const orderAmount = calculateOrderAmount(preorder.items);
   const shippingFee = calculateShippingFee(orderAmount, isRemoteArea);
-  const {applicableCoupons, excludedCoupons} = getPreviewCoupons(couponIds, preorderId, preorder.items);
+  const {applicableCoupons, excludedCoupons} = getPreviewCoupons(couponIds, preorderId, preorder.items, isRemoteArea);
   const {price, appliedCoupons} = calculateBestOrderPricing(
     applicableCoupons,
     preorder.items,
