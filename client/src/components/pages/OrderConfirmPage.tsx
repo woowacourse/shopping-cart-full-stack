@@ -9,6 +9,7 @@ import OrderCartList from "../order/OrderCartList";
 import ApplyCouponButton from "../button/ApplyCouponButton";
 import ShippingInfo from "../order/ShippingInfo";
 import FinalResultOrder from "../order/FinalResultOrder";
+import PaymentButton from "../button/PaymentButton";
 
 export default function OrderConfirmPage() {
   const { orderId } = useParams();
@@ -60,7 +61,7 @@ export default function OrderConfirmPage() {
             />
 
             <FinalResultOrder orderData={orderData} />
-            {/* <paymentButton/> 결제하기 버튼(POST/order/:orderid/payment) */}
+            <PaymentButton orderId={orderData.orderId} />
           </SubContainer>
         </Body>
       )}
