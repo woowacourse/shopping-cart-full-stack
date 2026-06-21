@@ -1,92 +1,21 @@
 import {randomUUID} from 'node:crypto';
 
 import {preorderCache} from '../caches/PreorderCache.js';
-import {cartItems, coupons, orders} from '../repositories/index.js';
+import {cartItems, orders} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 import {preorderService} from './PreorderService.js';
 import {Order} from '../models/Order.js';
 
-import {validateCoupon} from '../domain/couponPolicy.js';
 import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
 import {calculateBestOrderPricing} from '../domain/orderPricingPolicy.js';
+import {getPreviewCoupons} from './orderCouponService.js';
+import {isValidCreateOrderBody, isValidPreviewOrderBody} from './orderRequestValidator.js';
 
-import type {Coupon} from '../models/Coupon.js';
 import type {
-  CreateOrderRequestBody,
   CreateOrderResponse,
-  ExcludedCoupon,
   OrderSummaryResponse,
-  PreviewOrderRequestBody,
   PreviewOrderResponse,
 } from '../types/order.js';
-import type {PreorderItem} from '../types/preorder.js';
-
-const MAX_COUPON_COUNT = 2;
-
-const isValidPreviewOrderBody = (body: unknown): body is PreviewOrderRequestBody => {
-  if (!body || typeof body !== 'object') {
-    return false;
-  }
-
-  const {preorderId, isRemoteArea, couponIds} = body as PreviewOrderRequestBody;
-
-  return (
-    typeof isRemoteArea === 'boolean' &&
-    typeof preorderId === 'string' &&
-    preorderId.trim().length > 0 &&
-    Array.isArray(couponIds) &&
-    couponIds.length <= MAX_COUPON_COUNT &&
-    couponIds.every(Number.isInteger)
-  );
-};
-
-const isValidCreateOrderBody = (body: unknown): body is CreateOrderRequestBody => {
-  if (!body || typeof body !== 'object') {
-    return false;
-  }
-
-  const {preorderId, expectedTotalPaymentAmount} = body as CreateOrderRequestBody;
-
-  return (
-    typeof preorderId === 'string' &&
-    preorderId.trim().length > 0 &&
-    typeof expectedTotalPaymentAmount === 'number'
-  );
-};
-
-const toExcludedCoupon = (couponId: number, excludedReason: string, coupon?: Coupon): ExcludedCoupon => {
-  return {
-    couponId,
-    code: coupon?.code ?? '',
-    name: coupon?.name ?? '',
-    excludedReason,
-  };
-};
-
-const getPreviewCoupons = (couponIds: number[], preorderId: string, items: PreorderItem[], isRemoteArea: boolean) => {
-  const applicableCoupons: Coupon[] = [];
-  const excludedCoupons: ExcludedCoupon[] = [];
-
-  couponIds.forEach((couponId) => {
-    const coupon = coupons.findById(couponId);
-
-    if (!coupon) {
-      excludedCoupons.push(toExcludedCoupon(couponId, '존재하지 않는 쿠폰입니다.'));
-      return;
-    }
-
-    const validationResult = validateCoupon(coupon, {preorderId, items}, {isRemoteArea});
-
-    if (!validationResult.valid) {
-      excludedCoupons.push(toExcludedCoupon(coupon.id, validationResult.reason, coupon));
-      return;
-    }
-
-    applicableCoupons.push(coupon);
-  });
-
-  return {applicableCoupons, excludedCoupons};
-};
 
 const getPreorderPreview = (preorderId: string) => {
   const preorderSession = preorderCache.findById(preorderId);
@@ -100,18 +29,6 @@ const getPreorderPreview = (preorderId: string) => {
   }
 
   return preorderSession.preview;
-};
-
-const deleteSelectedCartItems = (preorderId: string) => {
-  const preorderSession = preorderCache.findById(preorderId);
-
-  if (!preorderSession) {
-    throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
-  }
-
-  preorderSession.items.forEach(({cartItemId}) => {
-    cartItems.deleteById(cartItemId);
-  });
 };
 
 const calculateOrder = (preorderId: string, couponIds: number[], isRemoteArea: boolean) => {
@@ -179,8 +96,15 @@ export const orderService = {
 
     const orderId = randomUUID();
     const order = new Order(orderId, preorder.items, price.totalPaymentAmount);
+    const preorderSession = preorderCache.findById(preorderId);
 
-    deleteSelectedCartItems(preorderId);
+    if (!preorderSession) {
+      throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
+    }
+
+    preorderSession.items.forEach(({cartItemId}) => {
+      cartItems.deleteById(cartItemId);
+    });
     orders.add(order);
     preorderCache.deleteById(preorderId);
 
