@@ -3,7 +3,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {ApiError} from '../../shared/api/requestApi.js';
 import {getPreorder, type Preorder} from '../api/orderApi.js';
 
-type PreorderStatus = 'loading' | 'success' | 'error';
+export type PreorderStatus = 'loading' | 'success' | 'error';
 export type PreorderErrorType = 'default' | 'expired' | 'notFound';
 
 export function usePreorder(preorderId: string | undefined) {

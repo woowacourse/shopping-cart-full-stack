@@ -4,13 +4,12 @@ import {noticeIconUrl} from '../../../design-system/assets/icons/index.js';
 import {Checkbox, fontWeights, theme, typography} from '../../../design-system/index.js';
 import {ProductItemLayout} from '../../../layout/ProductItemLayout.js';
 import {SummaryLayout, SummaryRow} from '../../../layout/SummaryLayout.js';
-import {FREE_SHIPPING_THRESHOLD, SHIPPING_FEE} from '../../../shared/domain/shippingPolicy.js';
-import type {Preorder, PreorderItem} from '../../api/orderApi.js';
-
-const COUPON_DISCOUNT_AMOUNT = 0;
+import {FREE_SHIPPING_THRESHOLD} from '../../../shared/domain/shippingPolicy.js';
+import type {OrderPrice, Preorder, PreorderItem} from '../../api/orderApi.js';
 
 interface OrderPreviewContentProps {
   isRemoteArea: boolean;
+  price: OrderPrice;
   preorder: Preorder;
   onChangeRemoteArea: (isRemoteArea: boolean) => void;
   onOpenCouponModal: () => void;
@@ -18,14 +17,11 @@ interface OrderPreviewContentProps {
 
 export const OrderPreviewContent = ({
   isRemoteArea,
+  price,
   preorder,
   onChangeRemoteArea,
   onOpenCouponModal,
 }: OrderPreviewContentProps) => {
-  const orderAmount = getOrderAmount(preorder.items);
-  const shippingFee = getShippingFee(orderAmount, isRemoteArea);
-  const totalPaymentAmount = orderAmount - COUPON_DISCOUNT_AMOUNT + shippingFee;
-
   return (
     <>
       <PreviewProductList>
@@ -55,12 +51,12 @@ export const OrderPreviewContent = ({
           </NoticeText>
         </FreeShippingNotice>
         <SummaryLayout>
-          <SummaryRow left='주문 금액' right={`${orderAmount.toLocaleString('ko-KR')}원`} />
-          <SummaryRow left='쿠폰 할인 금액' right={getDiscountAmountText(COUPON_DISCOUNT_AMOUNT)} />
-          <SummaryRow left='배송비' right={`${shippingFee.toLocaleString('ko-KR')}원`} />
+          <SummaryRow left='주문 금액' right={`${price.orderAmount.toLocaleString('ko-KR')}원`} />
+          <SummaryRow left='쿠폰 할인 금액' right={getDiscountAmountText(price.totalDiscountAmount)} />
+          <SummaryRow left='배송비' right={`${price.shippingFee.toLocaleString('ko-KR')}원`} />
         </SummaryLayout>
         <SummaryLayout>
-          <SummaryRow left='총 결제 금액' right={`${totalPaymentAmount.toLocaleString('ko-KR')}원`} />
+          <SummaryRow left='총 결제 금액' right={`${price.totalPaymentAmount.toLocaleString('ko-KR')}원`} />
         </SummaryLayout>
       </PriceSummary>
     </>
@@ -175,19 +171,6 @@ const NoticeText = styled.p`
   font-weight: ${fontWeights.medium};
   line-height: ${typography.caption.lineHeight};
 `;
-
-function getOrderAmount(items: PreorderItem[]) {
-  return items.reduce((orderAmount, item) => orderAmount + item.price * item.quantity, 0);
-}
-
-function getShippingFee(orderAmount: number, isRemoteArea: boolean) {
-  if (orderAmount === 0) return 0;
-
-  const defaultShippingFee = orderAmount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-  const remoteAreaFee = isRemoteArea ? SHIPPING_FEE : 0;
-
-  return defaultShippingFee + remoteAreaFee;
-}
 
 function getDiscountAmountText(discountAmount: number) {
   if (discountAmount === 0) return '0원';

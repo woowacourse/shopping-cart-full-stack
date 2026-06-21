@@ -87,6 +87,38 @@ function mockGetCoupons() {
   );
 }
 
+function mockPreviewOrder(requestBodies: unknown[] = []) {
+  mockServer.use(
+    http.post(`${API_BASE_URL}/order/preview`, async ({request}) => {
+      const requestBody = await request.json();
+      requestBodies.push(requestBody);
+
+      const {couponIds, isRemoteArea} = requestBody as {couponIds: number[]; isRemoteArea: boolean};
+      const orderAmount = 70000;
+      const productDiscountAmount = couponIds.includes(1) ? 5000 : 0;
+      const shippingFeeBeforeDiscount = isRemoteArea ? 6000 : 3000;
+      const shippingDiscountAmount = couponIds.includes(3) ? shippingFeeBeforeDiscount : 0;
+      const shippingFee = shippingFeeBeforeDiscount - shippingDiscountAmount;
+      const totalDiscountAmount = productDiscountAmount + shippingDiscountAmount;
+
+      return HttpResponse.json({
+        body: {
+          price: {
+            orderAmount,
+            productDiscountAmount,
+            shippingDiscountAmount,
+            totalDiscountAmount,
+            shippingFee,
+            totalPaymentAmount: orderAmount - productDiscountAmount + shippingFee,
+          },
+          appliedCoupons: [],
+          excludedCoupons: [],
+        },
+      });
+    })
+  );
+}
+
 function renderOrderPreviewPage(initialEntry = '/order-preview/preorder-1') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -111,8 +143,11 @@ function renderOrderPreviewRoutes() {
 
 describe('OrderPreviewPage', () => {
   test('preorderId 기준으로 주문 확인 정보를 보여준다', async () => {
+    const requestBodies: unknown[] = [];
+
     mockGetPreorder();
     mockGetCoupons();
+    mockPreviewOrder(requestBodies);
 
     renderOrderPreviewPage();
 
@@ -133,13 +168,20 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByText('3,000원')).toBeInTheDocument();
     expect(screen.getByText('73,000원')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: '결제하기'})).toBeDisabled();
+    expect(requestBodies).toContainEqual({
+      preorderId: 'preorder-1',
+      isRemoteArea: false,
+      couponIds: [],
+    });
   });
 
   test('도서산간 지역을 선택하면 배송비와 결제 금액을 다시 보여준다', async () => {
     const user = userEvent.setup();
+    const requestBodies: unknown[] = [];
 
     mockGetPreorder();
     mockGetCoupons();
+    mockPreviewOrder(requestBodies);
 
     renderOrderPreviewPage();
 
@@ -148,8 +190,13 @@ describe('OrderPreviewPage', () => {
     await user.click(screen.getByRole('checkbox', {name: '제주도 및 도서 산간 지역'}));
 
     expect(screen.getByRole('checkbox', {name: '제주도 및 도서 산간 지역'})).toBeChecked();
-    expect(screen.getByText('6,000원')).toBeInTheDocument();
+    expect(await screen.findByText('6,000원')).toBeInTheDocument();
     expect(screen.getByText('76,000원')).toBeInTheDocument();
+    expect(requestBodies).toContainEqual({
+      preorderId: 'preorder-1',
+      isRemoteArea: true,
+      couponIds: [],
+    });
   });
 
   test('뒤로가기 버튼을 누르면 장바구니 페이지로 이동한다', async () => {
@@ -157,6 +204,7 @@ describe('OrderPreviewPage', () => {
 
     mockGetPreorder();
     mockGetCoupons();
+    mockPreviewOrder();
     renderOrderPreviewRoutes();
 
     await screen.findByText('상품이름A');
@@ -175,6 +223,7 @@ describe('OrderPreviewPage', () => {
       })
     );
     mockGetCoupons();
+    mockPreviewOrder();
 
     renderOrderPreviewRoutes();
 
@@ -192,6 +241,7 @@ describe('OrderPreviewPage', () => {
       })
     );
     mockGetCoupons();
+    mockPreviewOrder();
 
     renderOrderPreviewRoutes();
 
@@ -206,6 +256,7 @@ describe('OrderPreviewPage', () => {
       })
     );
     mockGetCoupons();
+    mockPreviewOrder();
 
     renderOrderPreviewPage();
 
@@ -218,6 +269,7 @@ describe('OrderPreviewPage', () => {
 
     mockGetPreorder();
     mockGetCoupons();
+    mockPreviewOrder();
 
     renderOrderPreviewPage();
 
@@ -234,9 +286,11 @@ describe('OrderPreviewPage', () => {
 
   test('쿠폰은 최대 2개까지 선택할 수 있다', async () => {
     const user = userEvent.setup();
+    const requestBodies: unknown[] = [];
 
     mockGetPreorder();
     mockGetCoupons();
+    mockPreviewOrder(requestBodies);
 
     renderOrderPreviewPage();
 
@@ -249,6 +303,11 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).toBeChecked();
     expect(screen.getByRole('checkbox', {name: '미라클모닝 30% 할인 쿠폰'})).toBeDisabled();
     expect(screen.getByRole('button', {name: '총 0원 할인 쿠폰 사용하기'})).toBeInTheDocument();
+    expect(requestBodies).toContainEqual({
+      preorderId: 'preorder-1',
+      isRemoteArea: false,
+      couponIds: [1, 3],
+    });
   });
 
   test('쿠폰 선택 적용 버튼을 누르면 모달을 닫는다', async () => {
@@ -256,6 +315,7 @@ describe('OrderPreviewPage', () => {
 
     mockGetPreorder();
     mockGetCoupons();
+    mockPreviewOrder();
 
     renderOrderPreviewPage();
 

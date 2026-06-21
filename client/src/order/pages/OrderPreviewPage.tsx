@@ -9,20 +9,42 @@ import type {CouponId} from '../../coupon/domain/types.js';
 import {OrderPreviewBackButton} from '../components/order-preview/OrderPreviewBackButton.js';
 import {CouponModal} from '../components/order-preview/CouponModal.js';
 import {OrderPreviewContent} from '../components/order-preview/OrderPreviewContent.js';
-import {usePreorder} from '../hooks/usePreorder.js';
+import {useOrderPreview, type OrderPreviewStatus} from '../hooks/useOrderPreview.js';
+import {usePreorder, type PreorderStatus} from '../hooks/usePreorder.js';
 import type {PreorderItem} from '../api/orderApi.js';
 
 export const OrderPreviewPage = () => {
   const navigate = useNavigate();
   const {preorderId} = useParams();
-  const {errorMessage, errorType, loadPreorder, preorder, status} = usePreorder(preorderId);
+  const {
+    errorMessage: preorderErrorMessage,
+    errorType,
+    loadPreorder,
+    preorder,
+    status: preorderStatus,
+  } = usePreorder(preorderId);
   const {coupons, errorMessage: couponErrorMessage, loadCoupons, status: couponsStatus} = useCoupons(preorderId);
   const [isRemoteArea, setIsRemoteArea] = useState(false);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [selectedCouponIds, setSelectedCouponIds] = useState<CouponId[]>([]);
+  const {
+    errorMessage: orderPreviewErrorMessage,
+    loadOrderPreview,
+    orderPreview,
+    status: orderPreviewStatus,
+  } = useOrderPreview(preorderId, isRemoteArea, selectedCouponIds);
   const itemCount = preorder?.items.length ?? 0;
   const quantity = preorder ? getTotalQuantity(preorder.items) : 0;
   const shouldReturnToCart = errorType === 'expired' || errorType === 'notFound';
+  const pageStatus = getOrderPreviewPageStatus(preorderStatus, orderPreviewStatus);
+  const pageErrorMessage = preorderStatus === 'error' ? preorderErrorMessage : orderPreviewErrorMessage;
+  const handleErrorAction = getErrorAction({
+    loadOrderPreview,
+    loadPreorder,
+    navigateToCart: () => navigate('/cart'),
+    preorderStatus,
+    shouldReturnToCart,
+  });
 
   return (
     <ScreenLayout
@@ -46,16 +68,17 @@ export const OrderPreviewPage = () => {
         errorFallback={
           <ErrorState
             actionText={shouldReturnToCart ? '장바구니로 돌아가기' : undefined}
-            message={errorMessage}
-            onAction={shouldReturnToCart ? () => navigate('/cart') : () => void loadPreorder()}
+            message={pageErrorMessage}
+            onAction={handleErrorAction}
           />
         }
         loadingFallback={<LoadingState />}
-        status={status}
+        status={pageStatus}
       >
-        {preorder && (
+        {preorder && orderPreview && (
           <OrderPreviewContent
             isRemoteArea={isRemoteArea}
+            price={orderPreview.price}
             preorder={preorder}
             onChangeRemoteArea={setIsRemoteArea}
             onOpenCouponModal={() => setIsCouponModalOpen(true)}
@@ -83,4 +106,32 @@ export default OrderPreviewPage;
 
 function getTotalQuantity(items: PreorderItem[]) {
   return items.reduce((totalQuantity, item) => totalQuantity + item.quantity, 0);
+}
+
+function getOrderPreviewPageStatus(preorderStatus: PreorderStatus, orderPreviewStatus: OrderPreviewStatus) {
+  if (preorderStatus === 'error' || orderPreviewStatus === 'error') return 'error';
+  if (preorderStatus === 'loading' || orderPreviewStatus === 'loading') return 'loading';
+
+  return 'success';
+}
+
+interface ErrorActionParams {
+  loadOrderPreview: () => Promise<void>;
+  loadPreorder: () => Promise<void>;
+  navigateToCart: () => void;
+  preorderStatus: PreorderStatus;
+  shouldReturnToCart: boolean;
+}
+
+function getErrorAction({
+  loadOrderPreview,
+  loadPreorder,
+  navigateToCart,
+  preorderStatus,
+  shouldReturnToCart,
+}: ErrorActionParams) {
+  if (shouldReturnToCart) return navigateToCart;
+  if (preorderStatus === 'error') return () => void loadPreorder();
+
+  return () => void loadOrderPreview();
 }
