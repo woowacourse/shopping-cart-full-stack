@@ -1,4 +1,7 @@
+import styled from '@emotion/styled';
 import type {ReactNode} from 'react';
+
+import {LoadingOverlay} from './LoadingState.js';
 
 export type AsyncStatus = 'loading' | 'error' | 'empty' | 'success';
 
@@ -17,10 +20,6 @@ export const AsyncStateView = ({
   loadingFallback,
   status,
 }: AsyncStateViewProps) => {
-  if (status === 'loading') {
-    return <>{loadingFallback}</>;
-  }
-
   if (status === 'error') {
     return <>{errorFallback}</>;
   }
@@ -29,5 +28,18 @@ export const AsyncStateView = ({
     return <>{emptyFallback}</>;
   }
 
-  return <>{children}</>;
+  return (
+    <Container>
+      {children}
+      {status === 'loading' && <LoadingOverlay>{loadingFallback}</LoadingOverlay>}
+    </Container>
+  );
 };
+
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+`;

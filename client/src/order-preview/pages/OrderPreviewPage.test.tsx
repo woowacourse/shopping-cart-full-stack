@@ -219,18 +219,52 @@ describe('OrderPreviewPage', () => {
   test('도서산간 지역을 선택하면 배송비와 결제 금액을 다시 보여준다', async () => {
     const user = userEvent.setup();
     const requestBodies: unknown[] = [];
+    let resolveRemoteAreaPreview: (() => void) | undefined;
 
     mockGetPreorder();
     mockGetCoupons();
-    mockPreviewOrder(requestBodies);
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order/preview`, async ({request}) => {
+        const requestBody = await request.json();
+        requestBodies.push(requestBody);
+
+        const {isRemoteArea} = requestBody as {isRemoteArea: boolean};
+
+        if (isRemoteArea) {
+          await new Promise<void>((resolve) => {
+            resolveRemoteAreaPreview = resolve;
+          });
+        }
+
+        return HttpResponse.json({
+          body: {
+            price: {
+              orderAmount: 70000,
+              productDiscountAmount: 0,
+              shippingDiscountAmount: 0,
+              totalDiscountAmount: 0,
+              shippingFee: isRemoteArea ? 6000 : 3000,
+              totalPaymentAmount: isRemoteArea ? 76000 : 73000,
+            },
+            appliedCoupons: [],
+            excludedCoupons: [],
+          },
+        });
+      })
+    );
 
     renderOrderPreviewPage();
 
     await screen.findByText('상품이름A');
+    expect(screen.getByText('73,000원')).toBeInTheDocument();
 
     await user.click(screen.getByRole('checkbox', {name: '제주도 및 도서 산간 지역'}));
 
     expect(screen.getByRole('checkbox', {name: '제주도 및 도서 산간 지역'})).toBeChecked();
+    expect(screen.getByText('73,000원')).toBeInTheDocument();
+
+    resolveRemoteAreaPreview?.();
+
     expect(await screen.findByText('6,000원')).toBeInTheDocument();
     expect(screen.getByText('76,000원')).toBeInTheDocument();
     expect(requestBodies).toContainEqual({
@@ -437,6 +471,57 @@ describe('OrderPreviewPage', () => {
       isRemoteArea: false,
       couponIds: [1, 3],
     });
+  });
+
+  test('쿠폰 선택을 바꾸는 동안에도 모달 내용을 유지한다', async () => {
+    const user = userEvent.setup();
+    let resolveCouponPreview: (() => void) | undefined;
+
+    mockGetPreorder();
+    mockGetCoupons();
+    mockServer.use(
+      http.post(`${API_BASE_URL}/order/preview`, async ({request}) => {
+        const requestBody = await request.json();
+        const {couponIds} = requestBody as {couponIds: number[]};
+
+        if (couponIds.length === 1 && couponIds[0] === 1) {
+          await new Promise<void>((resolve) => {
+            resolveCouponPreview = resolve;
+          });
+        }
+
+        return HttpResponse.json({
+          body: {
+            price: {
+              orderAmount: 70000,
+              productDiscountAmount: couponIds.includes(1) ? 5000 : 0,
+              shippingDiscountAmount: couponIds.includes(3) ? 3000 : 0,
+              totalDiscountAmount: (couponIds.includes(1) ? 5000 : 0) + (couponIds.includes(3) ? 3000 : 0),
+              shippingFee: couponIds.includes(3) ? 0 : 3000,
+              totalPaymentAmount: 70000 - (couponIds.includes(1) ? 5000 : 0) + (couponIds.includes(3) ? 0 : 3000),
+            },
+            appliedCoupons: [],
+            excludedCoupons: [],
+          },
+        });
+      })
+    );
+
+    renderOrderPreviewPage();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+    await screen.findByRole('button', {name: '총 8,000원 할인 쿠폰 사용하기'});
+
+    await user.click(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'}));
+
+    expect(screen.getByRole('heading', {name: '쿠폰을 선택해 주세요'})).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', {name: '5,000원 할인 쿠폰'})).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).toBeInTheDocument();
+
+    resolveCouponPreview?.();
+
+    expect(await screen.findByRole('button', {name: '총 5,000원 할인 쿠폰 사용하기'})).toBeInTheDocument();
   });
 
   test('쿠폰 선택 적용 버튼을 누르면 모달을 닫고 주문 금액에 반영한다', async () => {

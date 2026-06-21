@@ -18,6 +18,7 @@ export function useOrderPreview(
 ) {
   const [orderPreview, setOrderPreview] = useState<PreviewOrderResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [status, setStatus] = useState<OrderPreviewStatus>('loading');
 
   const loadOrderPreview = useCallback(async () => {
     if (!enabled) return;
@@ -25,10 +26,12 @@ export function useOrderPreview(
     if (!preorderId) {
       setErrorMessage('주문 확인 정보를 찾을 수 없습니다.');
       setOrderPreview(null);
+      setStatus('error');
       return;
     }
 
     setErrorMessage('');
+    setStatus('loading');
 
     if (!keepPrevious) {
       setOrderPreview(null);
@@ -42,9 +45,11 @@ export function useOrderPreview(
       });
 
       setOrderPreview(orderPreview);
+      setStatus('success');
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
       setOrderPreview(null);
+      setStatus('error');
     }
   }, [preorderId, isRemoteArea, couponIds, enabled, keepPrevious]);
 
@@ -55,22 +60,16 @@ export function useOrderPreview(
   const resetOrderPreview = useCallback(() => {
     setOrderPreview(null);
     setErrorMessage('');
+    setStatus('loading');
   }, []);
 
   return {
     orderPreview,
-    status: getOrderPreviewStatus(orderPreview, errorMessage),
+    status,
     errorMessage,
     loadOrderPreview,
     resetOrderPreview,
   };
-}
-
-function getOrderPreviewStatus(orderPreview: PreviewOrderResponse | null, errorMessage: string): OrderPreviewStatus {
-  if (errorMessage) return 'error';
-  if (orderPreview) return 'success';
-
-  return 'loading';
 }
 
 function getErrorMessage(error: unknown) {

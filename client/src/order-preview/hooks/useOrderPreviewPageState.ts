@@ -49,7 +49,9 @@ export function useOrderPreviewPageState() {
     loadOrderPreview,
     orderPreview,
     status: orderPreviewStatus,
-  } = useOrderPreview(preorderId, isRemoteArea, appliedCouponIds);
+  } = useOrderPreview(preorderId, isRemoteArea, appliedCouponIds, {
+    keepPrevious: true,
+  });
   const {
     errorMessage: modalPreviewErrorMessage,
     loadOrderPreview: loadModalPreview,
@@ -157,7 +159,7 @@ function getCouponModalStatus(
   modalPreviewStatus: OrderPreviewStatus
 ): CouponModalStatus {
   if (couponsStatus === 'error' || modalPreviewStatus === 'error') return 'error';
-  if (couponsStatus === 'loading' || modalPreviewStatus === 'loading') return 'loading';
+  if (couponsStatus === 'loading') return 'loading';
 
   return 'success';
 }
