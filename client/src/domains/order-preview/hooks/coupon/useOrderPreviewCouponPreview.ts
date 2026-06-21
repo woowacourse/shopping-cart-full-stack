@@ -9,6 +9,5 @@ export function useOrderPreviewCouponPreview(
 ) {
   return useOrderPreview(preorderId, isRemoteArea, couponIds, {
     enabled: isEnabled,
-    keepPrevious: true,
   });
 }

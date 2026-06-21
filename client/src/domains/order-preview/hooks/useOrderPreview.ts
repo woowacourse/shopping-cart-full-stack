@@ -22,7 +22,7 @@ export function useOrderPreview(
   preorderId: string | undefined,
   isRemoteArea: boolean,
   couponIds: CouponId[],
-  {enabled = true, keepPrevious = false}: UseOrderPreviewOptions = {}
+  {enabled = true, keepPrevious = true}: UseOrderPreviewOptions = {}
 ) {
   const [orderPreview, setOrderPreview] = useState<PreviewOrder | null>(null);
   const [error, setError] = useState<OrderPreviewError | null>(null);

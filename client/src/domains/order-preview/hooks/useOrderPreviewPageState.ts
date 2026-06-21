@@ -32,9 +32,7 @@ export function useOrderPreviewPageState() {
     loadOrderPreview,
     orderPreview,
     status: orderPreviewStatus,
-  } = useOrderPreview(preorderId, isRemoteArea, appliedCouponIds, {
-    keepPrevious: true,
-  });
+  } = useOrderPreview(preorderId, isRemoteArea, appliedCouponIds);
 
   const preorderSummary = getPreorderSummary(preorder?.items);
   const {errorAction, page} = useOrderPreviewPageStatus({
