@@ -1,4 +1,4 @@
-import {AsyncStateView, Button, ErrorState, LoadingState} from '../../../design-system/index.js';
+import {AsyncStateView, Button, ErrorState} from '../../../design-system/index.js';
 
 import {ScreenLayout} from '../../../shared/layout/ScreenLayout.js';
 
@@ -28,7 +28,6 @@ export const OrderPreviewPage = () => {
             onAction={actions.errorAction}
           />
         }
-        loadingFallback={<LoadingState />}
         status={page.status}
       >
         <OrderPreviewSuccessView />

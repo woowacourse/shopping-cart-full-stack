@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type {ReactNode} from 'react';
 
-import {LoadingOverlay} from './LoadingState.js';
+import {LoadingOverlay, LoadingState} from './LoadingState.js';
 
 export type AsyncStatus = 'loading' | 'error' | 'empty' | 'success';
 
@@ -17,7 +17,7 @@ export const AsyncStateView = ({
   children,
   emptyFallback,
   errorFallback,
-  loadingFallback,
+  loadingFallback = <LoadingState />,
   status,
 }: AsyncStateViewProps) => {
   if (status === 'error') {

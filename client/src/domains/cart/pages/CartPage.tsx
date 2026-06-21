@@ -1,4 +1,4 @@
-import {AsyncStateView, EmptyState, ErrorState, LoadingState, Typo} from '../../../design-system/index.js';
+import {AsyncStateView, EmptyState, ErrorState, Typo} from '../../../design-system/index.js';
 
 import {ScreenLayout} from '../../../shared/layout/ScreenLayout.js';
 
@@ -29,7 +29,6 @@ export const CartPage = () => {
       <AsyncStateView
         emptyFallback={<EmptyState message='장바구니에 담은 상품이 없습니다.' />}
         errorFallback={<ErrorState message={cartItemsState.errorMessage} onAction={loadCartItems} />}
-        loadingFallback={<LoadingState />}
         status={status}
       >
         <CartSuccessView />
