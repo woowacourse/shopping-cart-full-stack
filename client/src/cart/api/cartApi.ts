@@ -6,7 +6,7 @@ const CART_API_ERROR_MESSAGE = '장바구니 요청에 실패했습니다.';
 type UpdatedCartItemQuantityResponse = Pick<CartItem, 'id' | 'quantity'>;
 
 export async function getCartItems(): Promise<CartItem[]> {
-  return requestApi('/carts', {
+  return requestApi<CartItem[]>('/carts', {
     errorMessage: CART_API_ERROR_MESSAGE,
   });
 }
@@ -15,7 +15,7 @@ export async function updateCartItemQuantity(
   cartItemId: CartItemId,
   quantity: CartItem['quantity']
 ): Promise<UpdatedCartItemQuantityResponse> {
-  return requestApi(`/carts/${cartItemId}`, {
+  return requestApi<UpdatedCartItemQuantityResponse>(`/carts/${cartItemId}`, {
     errorMessage: CART_API_ERROR_MESSAGE,
     method: 'PATCH',
     body: JSON.stringify({quantity}),

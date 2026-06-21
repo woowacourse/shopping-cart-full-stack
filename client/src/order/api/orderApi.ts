@@ -21,7 +21,7 @@ export type Preorder = {
 };
 
 export async function createPreorder(selectedCartIds: CartItemId[]): Promise<CreatePreorderResponse> {
-  return requestApi('/preorder', {
+  return requestApi<CreatePreorderResponse>('/preorder', {
     errorMessage: ORDER_API_ERROR_MESSAGE,
     method: 'POST',
     body: JSON.stringify({selectedCartIds}),
@@ -29,7 +29,7 @@ export async function createPreorder(selectedCartIds: CartItemId[]): Promise<Cre
 }
 
 export async function getPreorder(preorderId: string): Promise<Preorder> {
-  return requestApi(`/preorder/${encodeURIComponent(preorderId)}`, {
+  return requestApi<Preorder>(`/preorder/${encodeURIComponent(preorderId)}`, {
     errorMessage: ORDER_API_ERROR_MESSAGE,
   });
 }
