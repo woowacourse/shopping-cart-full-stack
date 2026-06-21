@@ -1,5 +1,5 @@
-import {FREE_SHIPPING_THRESHOLD, SHIPPING_FEE} from './cartPolicy.js';
 import type {CartItem, CartItemId} from './types.js';
+import {FREE_SHIPPING_THRESHOLD, SHIPPING_FEE} from '../../shared/domain/shippingPolicy.js';
 
 type CartSelectionInput = {
   items: CartItem[];
