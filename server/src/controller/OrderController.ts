@@ -20,8 +20,7 @@ import { productRepository } from "../repositories/ProductRepository";
 const getOrder = (request: Request, response: Response): void => {
   try {
     const orderId = Number(request.params.orderId);
-    const order = getOrdersService(orderId);
-    if (order.appliedCoupon.length === 0) applyCouponsService(orderId);
+    applySelectedCouponsService(orderId);
     const updatedOrder = getOrdersService(orderId);
     const couponCombinations = getCouponCombinationsService(orderId);
     const itemsWithProductData = updatedOrder.items.map(
@@ -31,13 +30,11 @@ const getOrder = (request: Request, response: Response): void => {
         productData: productRepository.findById(productId),
       }),
     );
-    response
-      .status(200)
-      .json({
-        ...updatedOrder,
-        items: itemsWithProductData,
-        couponCombinations,
-      });
+    response.status(200).json({
+      ...updatedOrder,
+      items: itemsWithProductData,
+      couponCombinations,
+    });
   } catch (error) {
     handleError(response, error);
   }
@@ -47,6 +44,7 @@ const postOrder = (request: Request, response: Response): void => {
   try {
     const newOrder = request.body;
     const addedOrder = postOrderService(newOrder);
+    applyCouponsService(addedOrder.orderId);
     response.status(201).json(addedOrder);
   } catch (error) {
     handleError(response, error);
@@ -58,6 +56,7 @@ const patchOrder = (request: Request, response: Response): void => {
     const orderId = Number(request.params.orderId);
     const remoteArea = Boolean(request.body.remoteArea);
     updateRemoteAreaService(orderId, remoteArea);
+    applySelectedCouponsService(orderId);
     response.status(204).send();
   } catch (error) {
     handleError(response, error);
