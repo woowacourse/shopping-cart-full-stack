@@ -48,8 +48,8 @@ describe('CartItemRow', () => {
 
     render(<CartItemRow {...defaultProps} onChangeQuantity={onChangeQuantity} />);
 
-    await user.click(screen.getByRole('button', {name: '숫자 증가'}));
-    await user.click(screen.getByRole('button', {name: '숫자 감소'}));
+    await user.click(screen.getByRole('button', {name: '+'}));
+    await user.click(screen.getByRole('button', {name: '-'}));
 
     expect(onChangeQuantity).toHaveBeenNthCalledWith(1, 'cart-1', 3);
     expect(onChangeQuantity).toHaveBeenNthCalledWith(2, 'cart-1', 1);
