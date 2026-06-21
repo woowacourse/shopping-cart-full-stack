@@ -47,15 +47,19 @@ export const preorderService = {
       throw new HttpError(400, 'preorderId를 올바르게 입력해주세요.');
     }
 
-    const preorderItems = preorderCache.findById(preorderId);
+    const preorderResult = preorderCache.findByIdWithStatus(preorderId);
 
-    if (!preorderItems) {
+    if (preorderResult.status === 'expired') {
+      throw new HttpError(410, '주문 확인 시간이 만료되었습니다.');
+    }
+
+    if (preorderResult.status === 'notFound') {
       throw new HttpError(404, '주문 확인 정보를 찾을 수 없습니다.');
     }
 
     return {
       preorderId,
-      items: preorderItems.items.map(({productId, price, name, imageUrl, quantity}) => ({
+      items: preorderResult.preorder.items.map(({productId, price, name, imageUrl, quantity}) => ({
         productId,
         price,
         name,

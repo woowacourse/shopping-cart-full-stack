@@ -66,4 +66,30 @@ describe('preorderService', () => {
 
     expect(() => preorderService.getPreorder('unknown')).toThrow('주문 확인 정보를 찾을 수 없습니다.');
   });
+
+  test('getPreorder는 만료된 preorder이면 만료 에러를 던진다', async () => {
+    const nowSpy = jest.spyOn(Date, 'now');
+    const {preorderService} = await loadPreorderService();
+
+    try {
+      nowSpy.mockReturnValue(0);
+      const preorderId = preorderService.createPreorder({selectedCartIds: ['6']});
+
+      nowSpy.mockReturnValue(Number.MAX_SAFE_INTEGER);
+
+      let thrownError: unknown;
+
+      try {
+        preorderService.getPreorder(preorderId);
+      } catch (error) {
+        thrownError = error;
+      }
+
+      expect(thrownError).toBeInstanceOf(Error);
+      expect((thrownError as Error).message).toBe('주문 확인 시간이 만료되었습니다.');
+      expect(thrownError).toMatchObject({statusCode: 410});
+    } finally {
+      nowSpy.mockRestore();
+    }
+  });
 });

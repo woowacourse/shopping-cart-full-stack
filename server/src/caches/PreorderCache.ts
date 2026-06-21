@@ -1,6 +1,6 @@
 import {randomUUID} from 'node:crypto';
 
-const PREORDER_TTL_MS = 10 * 60 * 1000; //10분
+const PREORDER_TTL_MS = 0.5 * 60 * 1000; // 30초
 
 export interface PreorderItemSnapshot {
   cartItemId: string;
@@ -22,6 +22,18 @@ interface PreorderCacheSession {
   preview?: PreorderPreviewSnapshot;
 }
 
+type PreorderCacheFindResult =
+  | {
+      status: 'found';
+      preorder: PreorderCacheSession;
+    }
+  | {
+      status: 'expired';
+    }
+  | {
+      status: 'notFound';
+    };
+
 const preorders = new Map<string, PreorderCacheSession>();
 
 export const preorderCache = {
@@ -38,18 +50,31 @@ export const preorderCache = {
   },
 
   findById(preorderId: string) {
+    const result = this.findByIdWithStatus(preorderId);
+
+    if (result.status !== 'found') {
+      return undefined;
+    }
+
+    return result.preorder;
+  },
+
+  findByIdWithStatus(preorderId: string): PreorderCacheFindResult {
     const preorder = preorders.get(preorderId);
 
     if (!preorder) {
-      return undefined;
+      return {status: 'notFound'};
     }
 
     if (preorder.expiresAt < Date.now()) {
       preorders.delete(preorderId);
-      return undefined;
+      return {status: 'expired'};
     }
 
-    return preorder;
+    return {
+      status: 'found',
+      preorder,
+    };
   },
 
   deleteById(preorderId: string) {
