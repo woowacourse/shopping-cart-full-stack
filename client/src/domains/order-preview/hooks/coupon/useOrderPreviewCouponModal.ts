@@ -1,14 +1,14 @@
 import {useCoupons} from '../../../coupon/hooks/useCoupons.js';
-import {useCouponAutoSelection} from './useCouponAutoSelection.js';
-import {useCouponDraftSelection} from './useCouponDraftSelection.js';
-import {useCouponModalErrorAction} from './useCouponModalErrorAction.js';
-import {useCouponModalPreview} from './useCouponModalPreview.js';
+import {useCouponAutoSelection} from '../../../coupon/hooks/useCouponAutoSelection.js';
+import {useCouponDraftSelection} from '../../../coupon/hooks/useCouponDraftSelection.js';
 import type {OrderPreviewStatus} from '../useOrderPreview.js';
+import {useOrderPreviewCouponErrorAction} from './useOrderPreviewCouponErrorAction.js';
+import {useOrderPreviewCouponPreview} from './useOrderPreviewCouponPreview.js';
 
 type CouponModalStatus = 'loading' | 'success' | 'error';
 type CouponsStatus = 'loading' | 'success' | 'error';
 
-export function useCouponModalState(
+export function useOrderPreviewCouponModal(
   preorderId: string | undefined,
   isRemoteArea: boolean,
   onReturnToCart: () => void
@@ -37,7 +37,7 @@ export function useCouponModalState(
     orderPreview: modalOrderPreview,
     resetOrderPreview: resetModalPreview,
     status: modalPreviewStatus,
-  } = useCouponModalPreview(preorderId, isRemoteArea, draftCouponIds, isCouponModalOpen);
+  } = useOrderPreviewCouponPreview(preorderId, isRemoteArea, draftCouponIds, isCouponModalOpen);
 
   const openCouponModal = () => {
     resetModalPreview();
@@ -47,7 +47,7 @@ export function useCouponModalState(
     void loadCoupons();
     void loadModalPreview();
   };
-  const {errorActionText, handleCouponModalError} = useCouponModalErrorAction({
+  const {errorActionText, handleCouponModalError} = useOrderPreviewCouponErrorAction({
     couponErrorType,
     modalPreviewErrorType,
     onReturnToCart,

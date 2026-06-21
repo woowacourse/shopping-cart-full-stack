@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-import type {CouponId} from '../../../coupon/domain/types.js';
+import type {CouponId} from '../domain/types.js';
 
 export function useCouponDraftSelection() {
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);

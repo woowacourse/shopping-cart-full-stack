@@ -1,4 +1,4 @@
-import {CouponModal} from '../coupon-modal/CouponModal.js';
+import {CouponModal} from '../../../coupon/components/CouponModal.js';
 import {useOrderPreviewPage} from '../../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewCouponModal = () => {

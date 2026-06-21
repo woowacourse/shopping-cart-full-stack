@@ -1,4 +1,4 @@
-import type {Coupon} from '../../coupon/domain/types.js';
+import type {Coupon} from './types.js';
 import {getCouponItemDisabled, getNextSelectedCouponIds} from './couponSelection.js';
 
 function createCoupon(couponId: number, disabled = false): Coupon {

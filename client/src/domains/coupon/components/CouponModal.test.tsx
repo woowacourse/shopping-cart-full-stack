@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import {CouponModal} from './CouponModal.js';
-import type {Coupon, CouponId} from '../../../coupon/domain/types.js';
+import type {Coupon, CouponId} from '../domain/types.js';
 
 const coupons: Coupon[] = [
   {

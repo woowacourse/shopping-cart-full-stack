@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 
-import type {AsyncStatus} from '../../../../design-system/feedback/AsyncStateView.js';
-import type {CouponId} from '../../../coupon/domain/types.js';
+import type {AsyncStatus} from '../../../design-system/feedback/AsyncStateView.js';
+import type {CouponId} from '../domain/types.js';
 
 interface UseCouponAutoSelectionParams {
   couponsStatus: AsyncStatus;

@@ -1,19 +1,19 @@
 import type {CouponsErrorType} from '../../../coupon/hooks/useCoupons.js';
 import type {OrderPreviewErrorType} from '../useOrderPreview.js';
 
-interface UseCouponModalErrorActionParams {
+interface UseOrderPreviewCouponErrorActionParams {
   couponErrorType: CouponsErrorType;
   modalPreviewErrorType: OrderPreviewErrorType;
   onReturnToCart: () => void;
   retryCoupons: () => void;
 }
 
-export function useCouponModalErrorAction({
+export function useOrderPreviewCouponErrorAction({
   couponErrorType,
   modalPreviewErrorType,
   onReturnToCart,
   retryCoupons,
-}: UseCouponModalErrorActionParams) {
+}: UseOrderPreviewCouponErrorActionParams) {
   const shouldReturnToCart = getShouldReturnToCart(couponErrorType, modalPreviewErrorType);
 
   return {

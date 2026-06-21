@@ -1,4 +1,4 @@
-import type {Coupon, CouponId} from '../../coupon/domain/types.js';
+import type {Coupon, CouponId} from './types.js';
 
 export const MAX_SELECTED_COUPON_COUNT = 2;
 

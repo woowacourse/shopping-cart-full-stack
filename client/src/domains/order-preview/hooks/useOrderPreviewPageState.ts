@@ -3,7 +3,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 
 import {useOrderPreview} from './useOrderPreview.js';
 import {usePreorder} from '../../preorder/hooks/usePreorder.js';
-import {useCouponModalState} from './coupon-modal/useCouponModalState.js';
+import {useOrderPreviewCouponModal} from './coupon/useOrderPreviewCouponModal.js';
 import {getPreorderSummary} from './page/orderPreviewPageSelectors.js';
 import {useOrderPreviewPageStatus} from './page/useOrderPreviewPageStatus.js';
 import {useOrderPreviewSubmission} from './page/useOrderPreviewSubmission.js';
@@ -22,7 +22,7 @@ export function useOrderPreviewPageState() {
     status: preorderStatus,
   } = usePreorder(preorderId);
   const navigateToCart = () => navigate('/cart');
-  const {appliedCouponIds, couponModal, couponModalActions} = useCouponModalState(
+  const {appliedCouponIds, couponModal, couponModalActions} = useOrderPreviewCouponModal(
     preorderId,
     isRemoteArea,
     navigateToCart
