@@ -5,17 +5,18 @@ import {Button} from '../components/Button.js';
 import {Typo} from '../components/Typo.js';
 
 interface ErrorStateProps {
+  actionText?: string;
   message: ReactNode;
   onAction: MouseEventHandler<HTMLButtonElement>;
 }
 
-export const ErrorState = ({message, onAction}: ErrorStateProps) => {
+export const ErrorState = ({actionText = '다시 시도', message, onAction}: ErrorStateProps) => {
   return (
     <Container>
       <ErrorMessage as='p' color='gray900' variant='body' weight='medium'>
         {message}
       </ErrorMessage>
-      <Button onClick={onAction}>다시 시도</Button>
+      <Button onClick={onAction}>{actionText}</Button>
     </Container>
   );
 };
