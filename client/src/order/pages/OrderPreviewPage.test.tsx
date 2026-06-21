@@ -30,6 +30,63 @@ function mockGetPreorder() {
   );
 }
 
+function mockGetCoupons() {
+  mockServer.use(
+    http.get(`${API_BASE_URL}/coupons`, () => {
+      return HttpResponse.json({
+        body: {
+          coupons: [
+            {
+              couponId: 1,
+              code: 'FIXED5000',
+              name: '5,000원 할인 쿠폰',
+              expirationDate: '2026-11-30T14:59:59.000Z',
+              condition: {
+                description: '최소 주문 금액: 100,000원',
+              },
+              disabled: false,
+              disabledReason: null,
+            },
+            {
+              couponId: 2,
+              code: 'BOGO',
+              name: '2개 구매 시 1개 무료 쿠폰',
+              expirationDate: '2026-06-30T14:59:59.000Z',
+              condition: {
+                description: null,
+              },
+              disabled: true,
+              disabledReason: '동일 상품을 2개 이상 구매해야 합니다.',
+            },
+            {
+              couponId: 3,
+              code: 'FREESHIPPING',
+              name: '5만원 이상 구매 시 무료 배송 쿠폰',
+              expirationDate: '2026-08-31T14:59:59.000Z',
+              condition: {
+                description: '최소 주문 금액: 50,000원',
+              },
+              disabled: false,
+              disabledReason: null,
+            },
+            {
+              couponId: 4,
+              code: 'MIRACLESALE',
+              name: '미라클모닝 30% 할인 쿠폰',
+              expirationDate: '2026-07-31T14:59:59.000Z',
+              condition: {
+                description: '사용 가능 시간: 오전 4시부터 오전 7시까지',
+              },
+              disabled: false,
+              disabledReason: null,
+            },
+          ],
+        },
+      });
+    })
+  );
+}
+
 function renderOrderPreviewPage(initialEntry = '/order-preview/preorder-1') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -55,6 +112,7 @@ function renderOrderPreviewRoutes() {
 describe('OrderPreviewPage', () => {
   test('preorderId 기준으로 주문 확인 정보를 보여준다', async () => {
     mockGetPreorder();
+    mockGetCoupons();
 
     renderOrderPreviewPage();
 
@@ -81,6 +139,7 @@ describe('OrderPreviewPage', () => {
     const user = userEvent.setup();
 
     mockGetPreorder();
+    mockGetCoupons();
 
     renderOrderPreviewPage();
 
@@ -97,6 +156,7 @@ describe('OrderPreviewPage', () => {
     const user = userEvent.setup();
 
     mockGetPreorder();
+    mockGetCoupons();
     renderOrderPreviewRoutes();
 
     await screen.findByText('상품이름A');
@@ -114,6 +174,7 @@ describe('OrderPreviewPage', () => {
         return HttpResponse.json({body: {message: '주문 확인 시간이 만료되었습니다.'}}, {status: 410});
       })
     );
+    mockGetCoupons();
 
     renderOrderPreviewRoutes();
 
@@ -130,6 +191,7 @@ describe('OrderPreviewPage', () => {
         return HttpResponse.json({body: {message: '주문 확인 정보를 찾을 수 없습니다.'}}, {status: 404});
       })
     );
+    mockGetCoupons();
 
     renderOrderPreviewRoutes();
 
@@ -143,10 +205,64 @@ describe('OrderPreviewPage', () => {
         return HttpResponse.json({body: {message: '주문 확인 정보를 불러오지 못했습니다.'}}, {status: 500});
       })
     );
+    mockGetCoupons();
 
     renderOrderPreviewPage();
 
     expect(await screen.findByText('주문 확인 정보를 불러오지 못했습니다.')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: '다시 시도'})).toBeInTheDocument();
+  });
+
+  test('쿠폰 적용 버튼을 누르면 쿠폰 모달을 보여준다', async () => {
+    const user = userEvent.setup();
+
+    mockGetPreorder();
+    mockGetCoupons();
+
+    renderOrderPreviewPage();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+
+    expect(screen.getByRole('heading', {name: '쿠폰을 선택해 주세요'})).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', {name: '5,000원 할인 쿠폰'})).toBeInTheDocument();
+    expect(screen.getByText('최소 주문 금액: 100,000원')).toBeInTheDocument();
+    expect(screen.getByText('사용 가능 시간: 오전 4시부터 오전 7시까지')).toBeInTheDocument();
+    expect(screen.queryByText('동일 상품 2개 이상 구매')).not.toBeInTheDocument();
+    expect(screen.getByRole('checkbox', {name: '2개 구매 시 1개 무료 쿠폰'})).toBeDisabled();
+  });
+
+  test('쿠폰은 최대 2개까지 선택할 수 있다', async () => {
+    const user = userEvent.setup();
+
+    mockGetPreorder();
+    mockGetCoupons();
+
+    renderOrderPreviewPage();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+    await user.click(screen.getByRole('checkbox', {name: '5,000원 할인 쿠폰'}));
+    await user.click(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'}));
+
+    expect(screen.getByRole('checkbox', {name: '5,000원 할인 쿠폰'})).toBeChecked();
+    expect(screen.getByRole('checkbox', {name: '5만원 이상 구매 시 무료 배송 쿠폰'})).toBeChecked();
+    expect(screen.getByRole('checkbox', {name: '미라클모닝 30% 할인 쿠폰'})).toBeDisabled();
+    expect(screen.getByRole('button', {name: '총 0원 할인 쿠폰 사용하기'})).toBeInTheDocument();
+  });
+
+  test('쿠폰 선택 적용 버튼을 누르면 모달을 닫는다', async () => {
+    const user = userEvent.setup();
+
+    mockGetPreorder();
+    mockGetCoupons();
+
+    renderOrderPreviewPage();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+    await user.click(screen.getByRole('button', {name: '×'}));
+
+    expect(screen.queryByRole('heading', {name: '쿠폰을 선택해 주세요'})).not.toBeInTheDocument();
   });
 });

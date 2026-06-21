@@ -13,9 +13,15 @@ interface OrderPreviewContentProps {
   isRemoteArea: boolean;
   preorder: Preorder;
   onChangeRemoteArea: (isRemoteArea: boolean) => void;
+  onOpenCouponModal: () => void;
 }
 
-export const OrderPreviewContent = ({isRemoteArea, preorder, onChangeRemoteArea}: OrderPreviewContentProps) => {
+export const OrderPreviewContent = ({
+  isRemoteArea,
+  preorder,
+  onChangeRemoteArea,
+  onOpenCouponModal,
+}: OrderPreviewContentProps) => {
   const orderAmount = getOrderAmount(preorder.items);
   const shippingFee = getShippingFee(orderAmount, isRemoteArea);
   const totalPaymentAmount = orderAmount - COUPON_DISCOUNT_AMOUNT + shippingFee;
@@ -28,7 +34,9 @@ export const OrderPreviewContent = ({isRemoteArea, preorder, onChangeRemoteArea}
         ))}
       </PreviewProductList>
 
-      <CouponButton type='button'>쿠폰 적용</CouponButton>
+      <CouponButton type='button' onClick={onOpenCouponModal}>
+        쿠폰 적용
+      </CouponButton>
 
       <ShippingSection>
         <SectionTitle>배송 정보</SectionTitle>
@@ -42,7 +50,9 @@ export const OrderPreviewContent = ({isRemoteArea, preorder, onChangeRemoteArea}
       <PriceSummary>
         <FreeShippingNotice>
           <NoticeIcon alt='' src={noticeIconUrl} />
-          <NoticeText>총 주문 금액이 {FREE_SHIPPING_THRESHOLD.toLocaleString('ko-KR')}원 이상일 경우 무료 배송됩니다.</NoticeText>
+          <NoticeText>
+            총 주문 금액이 {FREE_SHIPPING_THRESHOLD.toLocaleString('ko-KR')}원 이상일 경우 무료 배송됩니다.
+          </NoticeText>
         </FreeShippingNotice>
         <SummaryLayout>
           <SummaryRow left='주문 금액' right={`${orderAmount.toLocaleString('ko-KR')}원`} />
@@ -80,7 +90,6 @@ const PreviewProductItemRoot = styled(ProductItemLayout)`
 const PreviewProductList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
   margin-top: 36px;
 `;
 
@@ -118,7 +127,7 @@ const ProductQuantity = styled.span`
 const CouponButton = styled.button`
   width: 100%;
   height: 48px;
-  margin-top: 32px;
+  margin-top: 12px;
   border: 1px solid ${theme.colors.gray300};
   border-radius: ${theme.radius[4]};
   background: ${theme.colors.white};
