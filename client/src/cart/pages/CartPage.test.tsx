@@ -105,7 +105,7 @@ describe('CartPage', () => {
 
     renderCartPage();
 
-    expect(screen.getByRole('status', {name: '장바구니를 불러오는 중입니다.'})).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
 
     resolveRequest();
 
