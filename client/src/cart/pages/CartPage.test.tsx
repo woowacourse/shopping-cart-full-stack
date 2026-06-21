@@ -192,6 +192,7 @@ describe('CartPage', () => {
     renderCartPage();
 
     expect(await screen.findByText('장바구니를 불러오지 못했습니다.')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: '장바구니'})).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', {name: '다시 시도'}));
 
