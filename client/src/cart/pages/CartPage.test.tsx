@@ -53,7 +53,7 @@ function renderCartRoutes() {
       <CartProvider>
         <Routes>
           <Route path='/cart' element={<CartPage />} />
-          <Route path='/order-preview' element={<OrderPreviewPage />} />
+          <Route path='/order-preview/:preorderId' element={<OrderPreviewPage />} />
         </Routes>
       </CartProvider>
     </MemoryRouter>
@@ -180,12 +180,18 @@ describe('CartPage', () => {
   test('주문 확인 버튼을 누르면 주문 확인 페이지로 이동한다', async () => {
     const user = userEvent.setup();
     let requestCount = 0;
+    let requestBody: unknown;
 
     mockServer.use(
       http.get(`${API_BASE_URL}/carts`, () => {
         requestCount += 1;
 
         return HttpResponse.json({body: cartItems});
+      }),
+      http.post(`${API_BASE_URL}/preorder`, async ({request}) => {
+        requestBody = await request.json();
+
+        return HttpResponse.json({body: {preorderId: 'preorder-1'}}, {status: 201});
       })
     );
 
@@ -200,6 +206,7 @@ describe('CartPage', () => {
     expect(screen.getByText(/최종 결제 금액을 확인해 주세요/)).toBeInTheDocument();
     expect(screen.getByText('상품이름A')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: '결제하기'})).toBeInTheDocument();
+    expect(requestBody).toEqual({selectedCartIds: ['cart-1', 'cart-2']});
     expect(requestCount).toBe(1);
   });
 });

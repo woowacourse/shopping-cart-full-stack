@@ -15,10 +15,10 @@ function renderOrderPreviewPage() {
 
 function renderOrderPreviewRoutes() {
   return render(
-    <MemoryRouter initialEntries={['/order-preview']}>
+    <MemoryRouter initialEntries={['/order-preview/preorder-1']}>
       <Routes>
         <Route path='/cart' element={<div>장바구니 화면</div>} />
-        <Route path='/order-preview' element={<OrderPreviewPage />} />
+        <Route path='/order-preview/:preorderId' element={<OrderPreviewPage />} />
         <Route path='/order-confirm' element={<OrderConfirmPage />} />
       </Routes>
     </MemoryRouter>

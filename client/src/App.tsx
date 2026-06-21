@@ -21,7 +21,7 @@ export const App = () => {
             </CartProvider>
           }
         />
-        <Route path='order-preview' element={<OrderPreviewPage />} />
+        <Route path='order-preview/:preorderId' element={<OrderPreviewPage />} />
         <Route path='order-confirm' element={<OrderConfirmPage />} />
       </Routes>
     </PhoneView>
