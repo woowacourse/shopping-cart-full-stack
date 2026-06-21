@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Navigate, useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import BackButton from "../button/BackButton";
 import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
@@ -10,6 +10,7 @@ import ApplyCouponButton from "../button/ApplyCouponButton";
 import ShippingInfo from "../order/ShippingInfo";
 import FinalResultOrder from "../order/FinalResultOrder";
 import PaymentButton from "../button/PaymentButton";
+import { useEffect } from "react";
 
 export default function OrderConfirmPage() {
   const { orderId } = useParams();
@@ -20,9 +21,13 @@ export default function OrderConfirmPage() {
     updateAppliedCoupon,
     orderFetchData,
   } = useOrderData(Number(orderId));
-  const { couponState, couponFetchData, couponData } = useCouponData(
-    Number(orderId),
-  );
+  const { couponData } = useCouponData(Number(orderId));
+
+  useEffect(() => {
+    return () => {
+      onDelete(Number(orderId));
+    };
+  }, []);
 
   return (
     <MainContainer>
