@@ -20,10 +20,7 @@ export function useCouponAutoSelection({
 }: UseCouponAutoSelectionParams) {
   const [hasAutoSelectedCoupons, setHasAutoSelectedCoupons] = useState(false);
   const shouldAutoSelectCoupons =
-    isCouponModalOpen &&
-    !hasAutoSelectedCoupons &&
-    couponsStatus === 'success' &&
-    selectedCouponIds.length === 0;
+    isCouponModalOpen && !hasAutoSelectedCoupons && couponsStatus === 'success' && selectedCouponIds.length === 0;
 
   useEffect(() => {
     if (!shouldAutoSelectCoupons) return;

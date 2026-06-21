@@ -66,15 +66,14 @@ describe('useCouponAutoSelection', () => {
   test('한 번 자동 선택한 뒤 다시 렌더링되어도 중복 선택하지 않는다', () => {
     const onSelectCoupons = jest.fn();
 
-    const {rerender} = renderHook(
-      () =>
-        useCouponAutoSelection({
-          couponsStatus: 'success',
-          isCouponModalOpen: true,
-          recommendedCouponIds: [1, 3],
-          selectedCouponIds: [],
-          onSelectCoupons,
-        })
+    const {rerender} = renderHook(() =>
+      useCouponAutoSelection({
+        couponsStatus: 'success',
+        isCouponModalOpen: true,
+        recommendedCouponIds: [1, 3],
+        selectedCouponIds: [],
+        onSelectCoupons,
+      })
     );
 
     rerender();
