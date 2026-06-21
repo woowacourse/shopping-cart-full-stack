@@ -46,6 +46,7 @@ describe('useCoupons', () => {
     expect(result.current.coupons).toEqual(coupons);
     expect(result.current.recommendedCouponIds).toEqual([1]);
     expect(result.current.errorMessage).toBe('');
+    expect(result.current.errorType).toBe('default');
   });
 
   test('preorderId가 없으면 에러 상태로 변경한다', async () => {
@@ -58,6 +59,7 @@ describe('useCoupons', () => {
     expect(result.current.coupons).toEqual([]);
     expect(result.current.recommendedCouponIds).toEqual([]);
     expect(result.current.errorMessage).toBe('쿠폰 정보를 불러올 수 없습니다.');
+    expect(result.current.errorType).toBe('notFound');
   });
 
   test('쿠폰 목록이 비어 있어도 조회에 성공하면 성공 상태로 변경한다', async () => {
@@ -99,5 +101,23 @@ describe('useCoupons', () => {
     expect(result.current.coupons).toEqual([]);
     expect(result.current.recommendedCouponIds).toEqual([]);
     expect(result.current.errorMessage).toBe('쿠폰 정보를 불러오지 못했습니다.');
+    expect(result.current.errorType).toBe('default');
+  });
+
+  test('쿠폰 조회 중 주문 확인 정보가 만료되면 expired 에러 타입으로 변경한다', async () => {
+    mockServer.use(
+      http.get(`${API_BASE_URL}/coupons`, () => {
+        return HttpResponse.json({body: {message: '주문 확인 시간이 만료되었습니다.'}}, {status: 410});
+      })
+    );
+
+    const {result} = renderHook(() => useCoupons('preorder-1', false));
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('error');
+    });
+
+    expect(result.current.errorMessage).toBe('주문 확인 시간이 만료되었습니다.');
+    expect(result.current.errorType).toBe('expired');
   });
 });
