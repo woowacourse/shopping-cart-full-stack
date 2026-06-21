@@ -2,14 +2,10 @@ import {useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 
 import {useOrderPreview} from './useOrderPreview.js';
-import {usePreorder, type PreorderStatus} from '../../preorder/hooks/usePreorder.js';
-import {
-  getOrderPreviewPageErrorMessage,
-  getOrderPreviewPageStatus,
-  getPreorderSummary,
-  getShouldReturnToCart,
-} from './orderPreviewPageSelectors.js';
+import {usePreorder} from '../../preorder/hooks/usePreorder.js';
+import {getPreorderSummary} from './orderPreviewPageSelectors.js';
 import {useCouponModalState} from './useCouponModalState.js';
+import {useOrderPreviewPageStatus} from './useOrderPreviewPageStatus.js';
 import {useOrderPreviewSubmission} from './useOrderPreviewSubmission.js';
 
 export type OrderPreviewPageState = ReturnType<typeof useOrderPreviewPageState>;
@@ -25,7 +21,12 @@ export function useOrderPreviewPageState() {
     preorder,
     status: preorderStatus,
   } = usePreorder(preorderId);
-  const {appliedCouponIds, couponModal, couponModalActions} = useCouponModalState(preorderId, isRemoteArea);
+  const navigateToCart = () => navigate('/cart');
+  const {appliedCouponIds, couponModal, couponModalActions} = useCouponModalState(
+    preorderId,
+    isRemoteArea,
+    navigateToCart
+  );
   const {
     errorMessage: orderPreviewErrorMessage,
     loadOrderPreview,
@@ -35,34 +36,25 @@ export function useOrderPreviewPageState() {
     keepPrevious: true,
   });
 
-  const navigateToCart = () => navigate('/cart');
   const preorderSummary = getPreorderSummary(preorder?.items);
-  const shouldReturnToCart = getShouldReturnToCart(errorType);
-  const pageStatus = getOrderPreviewPageStatus(preorderStatus, orderPreviewStatus);
-  const pageErrorMessage = getOrderPreviewPageErrorMessage({
-    orderPreviewErrorMessage,
-    preorderErrorMessage,
-    preorderStatus,
-  });
-  const errorAction = getErrorAction({
+  const {errorAction, page} = useOrderPreviewPageStatus({
     loadOrderPreview,
     loadPreorder,
     navigateToCart,
+    preorderErrorMessage,
+    preorderErrorType: errorType,
     preorderStatus,
-    shouldReturnToCart,
+    orderPreviewErrorMessage,
+    orderPreviewStatus,
   });
   const {orderSubmit, submitOrder} = useOrderPreviewSubmission({
     preorderId,
     orderPreview,
-    canSubmit: pageStatus === 'success' && orderPreview !== null,
+    canSubmit: page.status === 'success' && orderPreview !== null,
   });
 
   return {
-    page: {
-      status: pageStatus,
-      errorMessage: pageErrorMessage,
-      shouldReturnToCart,
-    },
+    page,
     intro: preorderSummary,
     content: {
       preorder,
@@ -79,25 +71,4 @@ export function useOrderPreviewPageState() {
       ...couponModalActions,
     },
   };
-}
-
-interface ErrorActionParams {
-  loadOrderPreview: () => Promise<void>;
-  loadPreorder: () => Promise<void>;
-  navigateToCart: () => void;
-  preorderStatus: PreorderStatus;
-  shouldReturnToCart: boolean;
-}
-
-function getErrorAction({
-  loadOrderPreview,
-  loadPreorder,
-  navigateToCart,
-  preorderStatus,
-  shouldReturnToCart,
-}: ErrorActionParams) {
-  if (shouldReturnToCart) return navigateToCart;
-  if (preorderStatus === 'error') return () => void loadPreorder();
-
-  return () => void loadOrderPreview();
 }

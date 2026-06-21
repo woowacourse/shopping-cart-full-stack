@@ -2,15 +2,15 @@ import styled from '@emotion/styled';
 
 import {Button, ErrorState, LoadingState, Typo, theme} from '../../../design-system/index.js';
 import type {Coupon, CouponId} from '../../coupon/domain/types.js';
+import {MAX_SELECTED_COUPON_COUNT, getCouponItemDisabled, getNextSelectedCouponIds} from '../domain/couponSelection.js';
 import {CouponModalItem} from './CouponModalItem.js';
-
-const MAX_COUPON_COUNT = 2;
 
 type CouponsStatus = 'loading' | 'success' | 'error';
 
 interface CouponModalProps {
   coupons: Coupon[];
   discountAmount: number;
+  errorActionText: string;
   errorMessage: string;
   selectedCouponIds: CouponId[];
   status: CouponsStatus;
@@ -23,6 +23,7 @@ interface CouponModalProps {
 export const CouponModal = ({
   coupons,
   discountAmount,
+  errorActionText,
   errorMessage,
   selectedCouponIds,
   status,
@@ -32,17 +33,7 @@ export const CouponModal = ({
   onRetry,
 }: CouponModalProps) => {
   const toggleCoupon = (coupon: Coupon) => {
-    const isSelected = selectedCouponIds.includes(coupon.couponId);
-
-    if (isSelected) {
-      onChangeSelectedCouponIds(selectedCouponIds.filter((couponId) => couponId !== coupon.couponId));
-      return;
-    }
-
-    if (coupon.disabled) return;
-    if (selectedCouponIds.length >= MAX_COUPON_COUNT) return;
-
-    onChangeSelectedCouponIds([...selectedCouponIds, coupon.couponId]);
+    onChangeSelectedCouponIds(getNextSelectedCouponIds({coupon, selectedCouponIds}));
   };
 
   return (
@@ -58,18 +49,17 @@ export const CouponModal = ({
         </Header>
 
         <Notice as='p' variant='caption' weight='medium'>
-          ⓘ 쿠폰은 최대 {MAX_COUPON_COUNT}개까지 사용할 수 있습니다.
+          ⓘ 쿠폰은 최대 {MAX_SELECTED_COUPON_COUNT}개까지 사용할 수 있습니다.
         </Notice>
 
         {status === 'loading' && <LoadingState />}
-        {status === 'error' && <ErrorState message={errorMessage} onAction={onRetry} />}
+        {status === 'error' && <ErrorState actionText={errorActionText} message={errorMessage} onAction={onRetry} />}
         {status === 'success' && (
           <>
             <CouponList>
               {coupons.map((coupon) => {
                 const isSelected = selectedCouponIds.includes(coupon.couponId);
-                const isSelectionFull = selectedCouponIds.length >= MAX_COUPON_COUNT;
-                const isDisabled = !isSelected && (coupon.disabled || isSelectionFull);
+                const isDisabled = getCouponItemDisabled({coupon, selectedCouponIds});
 
                 return (
                   <CouponModalItem

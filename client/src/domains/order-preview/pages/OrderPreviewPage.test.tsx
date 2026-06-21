@@ -448,6 +448,29 @@ describe('OrderPreviewPage', () => {
     expect(screen.getByRole('checkbox', {name: '2개 구매 시 1개 무료 쿠폰'})).toBeDisabled();
   });
 
+  test('쿠폰 조회 중 주문 확인 정보가 만료되면 장바구니로 돌아갈 수 있다', async () => {
+    const user = userEvent.setup();
+
+    mockGetPreorder();
+    mockPreviewOrder();
+    mockServer.use(
+      http.get(`${API_BASE_URL}/coupons`, () => {
+        return HttpResponse.json({body: {message: '주문 확인 시간이 만료되었습니다.'}}, {status: 410});
+      })
+    );
+
+    renderOrderPreviewRoutes();
+
+    await screen.findByText('상품이름A');
+    await user.click(screen.getByRole('button', {name: '쿠폰 적용'}));
+
+    expect(await screen.findByText('주문 확인 시간이 만료되었습니다.')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', {name: '장바구니로 돌아가기'}));
+
+    expect(screen.getByText('장바구니 화면')).toBeInTheDocument();
+  });
+
   test('쿠폰 모달을 처음 열면 추천 쿠폰이 자동 선택된다', async () => {
     const user = userEvent.setup();
     const requestBodies: unknown[] = [];

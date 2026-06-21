@@ -27,6 +27,7 @@ describe('CouponModal', () => {
       <CouponModal
         coupons={coupons}
         discountAmount={5000}
+        errorActionText='다시 시도'
         errorMessage=''
         selectedCouponIds={[1]}
         status='success'
