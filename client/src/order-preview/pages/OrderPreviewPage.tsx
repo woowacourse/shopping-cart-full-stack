@@ -3,9 +3,9 @@ import {AsyncStateView, Button, ErrorState, LoadingState} from '../../design-sys
 import {PageIntro} from '../../layout/PageIntro.js';
 import {ScreenLayout} from '../../layout/ScreenLayout.js';
 
-import {OrderPreviewBackButton} from '../components/order-preview/OrderPreviewBackButton.js';
-import {OrderPreviewSuccessContent} from '../components/order-preview/OrderPreviewSuccessContent.js';
-import {OrderPreviewCouponModal} from '../components/order-preview/OrderPreviewCouponModal.js';
+import {OrderPreviewBackButton} from '../components/OrderPreviewBackButton.js';
+import {OrderPreviewSuccessContent} from '../components/OrderPreviewSuccessContent.js';
+import {OrderPreviewCouponModal} from '../components/OrderPreviewCouponModal.js';
 
 import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
 

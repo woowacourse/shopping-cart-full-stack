@@ -1,5 +1,5 @@
 import {OrderPreviewContent} from './OrderPreviewContent.js';
-import {useOrderPreviewPage} from '../../hooks/useOrderPreviewPage.js';
+import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewSuccessContent = () => {
   const {actions, content} = useOrderPreviewPage();

@@ -1,5 +1,5 @@
 import {CouponModal} from './CouponModal.js';
-import {useOrderPreviewPage} from '../../hooks/useOrderPreviewPage.js';
+import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewCouponModal = () => {
   const {actions, couponModal} = useOrderPreviewPage();
