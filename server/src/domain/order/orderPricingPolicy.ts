@@ -1,11 +1,11 @@
 import {
   calculateProductCoupon,
   calculateShippingCouponDiscount,
-} from './couponPolicy.js';
+} from '../coupon/couponPolicy.js';
 
-import type {Coupon, ProductDiscountCoupon} from '../models/Coupon.js';
-import type {AppliedCoupon, BenefitItem, OrderPrice} from '../types/order.js';
-import type {PreorderItem} from '../types/preorder.js';
+import type {Coupon, ProductDiscountCoupon} from '../../models/Coupon.js';
+import type {AppliedCoupon, BenefitItem, OrderPrice} from '../../types/order.js';
+import type {PreorderItem} from '../../types/preorder.js';
 
 const toAppliedCoupon = (coupon: Coupon, discountAmount: number): AppliedCoupon => {
   return {

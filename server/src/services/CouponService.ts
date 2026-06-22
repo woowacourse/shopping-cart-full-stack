@@ -1,8 +1,8 @@
 import {coupons} from '../repositories/index.js';
-import {validateCoupon} from '../domain/couponPolicy.js';
-import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
-import {calculateBestOrderPricing} from '../domain/orderPricingPolicy.js';
-import {createCouponResponse} from './couponResponseMapper.js';
+import {validateCoupon} from '../domain/coupon/couponPolicy.js';
+import {createCouponResponse} from '../domain/coupon/couponResponseMapper.js';
+import {calculateOrderAmount, calculateShippingFee} from '../domain/order/orderPolicy.js';
+import {calculateBestOrderPricing} from '../domain/order/orderPricingPolicy.js';
 
 import type {Coupon} from '../models/Coupon.js';
 import type {Preorder} from '../types/preorder.js';

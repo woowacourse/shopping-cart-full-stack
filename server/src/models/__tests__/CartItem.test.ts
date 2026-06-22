@@ -1,4 +1,4 @@
-import {isValidQuantity} from '../../domain/cartPolicy.js';
+import {isValidQuantity} from '../../domain/cart/cartPolicy.js';
 import {CartItem} from '../CartItem.js';
 import {Product} from '../Product.js';
 

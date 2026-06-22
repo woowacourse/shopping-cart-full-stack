@@ -1,9 +1,9 @@
-import {validateCoupon} from '../domain/couponPolicy.js';
-import {coupons} from '../repositories/index.js';
+import {validateCoupon} from '../coupon/couponPolicy.js';
+import {coupons} from '../../repositories/index.js';
 
-import type {Coupon} from '../models/Coupon.js';
-import type {ExcludedCoupon} from '../types/order.js';
-import type {PreorderItem} from '../types/preorder.js';
+import type {Coupon} from '../../models/Coupon.js';
+import type {ExcludedCoupon} from '../../types/order.js';
+import type {PreorderItem} from '../../types/preorder.js';
 
 const toExcludedCoupon = (couponId: number, excludedReason: string, coupon?: Coupon): ExcludedCoupon => {
   return {

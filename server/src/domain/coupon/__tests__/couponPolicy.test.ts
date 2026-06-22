@@ -3,8 +3,8 @@ import {
   calculateShippingCouponDiscount,
   validateCoupon,
 } from '../couponPolicy.js';
-import {Coupon, type ProductDiscountCoupon} from '../../models/Coupon.js';
-import type {Preorder, PreorderItem} from '../../types/preorder.js';
+import {Coupon, type ProductDiscountCoupon} from '../../../models/Coupon.js';
+import type {Preorder, PreorderItem} from '../../../types/preorder.js';
 
 const preorderItems: PreorderItem[] = [
   {

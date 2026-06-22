@@ -1,5 +1,5 @@
 import {calculateOrderAmount, calculateShippingFee} from '../orderPolicy.js';
-import type {PreorderItem} from '../../types/preorder.js';
+import type {PreorderItem} from '../../../types/preorder.js';
 
 const items: PreorderItem[] = [
   {

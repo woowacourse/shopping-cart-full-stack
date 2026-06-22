@@ -1,6 +1,6 @@
 import {calculateBestOrderPricing, calculateOrderPricing} from '../orderPricingPolicy.js';
-import {Coupon} from '../../models/Coupon.js';
-import type {PreorderItem} from '../../types/preorder.js';
+import {Coupon} from '../../../models/Coupon.js';
+import type {PreorderItem} from '../../../types/preorder.js';
 
 const items: PreorderItem[] = [
   {

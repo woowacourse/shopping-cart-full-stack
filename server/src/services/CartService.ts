@@ -1,6 +1,6 @@
 import {cartItems} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
-import {INVALID_QUANTITY_MESSAGE, isValidQuantity} from '../domain/cartPolicy.js';
+import {INVALID_QUANTITY_MESSAGE, isValidQuantity} from '../domain/cart/cartPolicy.js';
 
 export const cartService = {
   getCartItems() {

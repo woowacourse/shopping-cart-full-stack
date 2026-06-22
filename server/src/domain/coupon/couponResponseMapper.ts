@@ -1,7 +1,7 @@
-import {getConditionDescription} from '../domain/couponConditionDescription.js';
+import {getConditionDescription} from './couponConditionDescription.js';
 
-import type {Coupon} from '../models/Coupon.js';
-import type {CouponResponse} from '../types/coupon.js';
+import type {Coupon} from '../../models/Coupon.js';
+import type {CouponResponse} from '../../types/coupon.js';
 
 export const createCouponResponse = (coupon: Coupon, disabledReason: string | null): CouponResponse => {
   return {

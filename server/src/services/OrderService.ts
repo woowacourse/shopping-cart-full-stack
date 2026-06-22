@@ -6,10 +6,10 @@ import {HttpError} from '../middlewares/errorHandler.js';
 import {preorderService} from './PreorderService.js';
 import {Order} from '../models/Order.js';
 
-import {calculateOrderAmount, calculateShippingFee} from '../domain/orderPolicy.js';
-import {calculateBestOrderPricing} from '../domain/orderPricingPolicy.js';
-import {getPreviewCoupons} from './orderCouponService.js';
-import {isValidCreateOrderBody, isValidPreviewOrderBody} from './orderRequestValidator.js';
+import {calculateOrderAmount, calculateShippingFee} from '../domain/order/orderPolicy.js';
+import {getPreviewCoupons} from '../domain/order/orderCouponPolicy.js';
+import {calculateBestOrderPricing} from '../domain/order/orderPricingPolicy.js';
+import {isValidCreateOrderBody, isValidPreviewOrderBody} from '../domain/order/orderRequestValidator.js';
 
 import type {
   CreateOrderResponse,

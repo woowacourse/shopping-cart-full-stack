@@ -1,4 +1,4 @@
-import type {CreateOrderRequestBody, PreviewOrderRequestBody} from '../types/order.js';
+import type {CreateOrderRequestBody, PreviewOrderRequestBody} from '../../types/order.js';
 
 const MAX_COUPON_COUNT = 2;
 

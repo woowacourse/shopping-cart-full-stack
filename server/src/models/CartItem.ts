@@ -1,4 +1,4 @@
-import {INVALID_QUANTITY_MESSAGE, isValidQuantity} from '../domain/cartPolicy.js';
+import {INVALID_QUANTITY_MESSAGE, isValidQuantity} from '../domain/cart/cartPolicy.js';
 import {Product} from './Product.js';
 
 export class CartItem {

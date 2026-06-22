@@ -1,8 +1,8 @@
-import {calculateOrderAmount, calculateShippingFee} from './orderPolicy.js';
+import {calculateOrderAmount, calculateShippingFee} from '../order/orderPolicy.js';
 
-import type {Coupon, ProductDiscountCoupon} from '../models/Coupon.js';
-import type {BenefitItem} from '../types/order.js';
-import type {Preorder, PreorderItem} from '../types/preorder.js';
+import type {Coupon, ProductDiscountCoupon} from '../../models/Coupon.js';
+import type {BenefitItem} from '../../types/order.js';
+import type {Preorder, PreorderItem} from '../../types/preorder.js';
 
 type ValidationResult = {valid: true} | {valid: false; reason: string};
 type ValidateCouponOptions = {

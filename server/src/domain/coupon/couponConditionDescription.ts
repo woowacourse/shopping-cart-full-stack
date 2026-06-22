@@ -1,4 +1,4 @@
-import type {CouponCondition} from '../types/coupon.js';
+import type {CouponCondition} from '../../types/coupon.js';
 
 const formatTime = (time: string) => {
   const [hour] = time.split(':').map(Number);
