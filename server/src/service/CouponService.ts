@@ -104,7 +104,7 @@ export const isMiracleSaleAvailable = (): boolean => {
 };
 
 // 적용 가능한 쿠폰 좁히기
-const getAvailableCouponIds = (orderId: number): number[] => {
+export const getAvailableCouponIds = (orderId: number): number[] => {
   const available: number[] = [];
   if (isFixed5000Available(orderId)) available.push(1);
   if (isBtgoAvailable(orderId)) available.push(2);
