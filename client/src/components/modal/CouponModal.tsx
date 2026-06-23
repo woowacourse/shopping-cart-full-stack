@@ -19,16 +19,11 @@ export default function CouponModal({
   updateAppliedCoupon,
   onClose,
 }: Props) {
-  const {
-    selectedIds,
-    setSelectedIds,
-    expectedDiscount,
-    handleToggle,
-    isDisabled,
-  } = useCouponModal(orderData);
+  const { selectedIds, expectedDiscount, handleToggle, isDisabled, reset } =
+    useCouponModal(orderData);
 
   const handleClose = () => {
-    setSelectedIds(orderData.appliedCoupon);
+    reset();
     onClose();
   };
 

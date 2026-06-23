@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CouponData, OrderData } from "../../type/types";
 
 export default function useCouponModal(orderData: OrderData) {
@@ -36,11 +36,16 @@ export default function useCouponModal(orderData: OrderData) {
       return true;
     return false;
   };
+
+  const reset = () => {
+    setSelectedIds(orderData.appliedCoupon);
+    setExpectedDiscount(orderData.couponDiscountAmount);
+  };
   return {
     selectedIds,
-    setSelectedIds,
     expectedDiscount,
     handleToggle,
     isDisabled,
+    reset,
   };
 }
