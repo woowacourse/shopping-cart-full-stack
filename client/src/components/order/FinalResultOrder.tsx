@@ -20,7 +20,7 @@ export default function FinalResultOrder({ orderData }: Props) {
           </PriceRow>
           <PriceRow>
             <td>쿠폰 할인 금액</td>
-            <td>{orderData.couponDiscountAmount.toLocaleString()}원원</td>
+            <td>{orderData.couponDiscountAmount.toLocaleString()}원</td>
           </PriceRow>
           <PriceRow>
             <td>배송비</td>
