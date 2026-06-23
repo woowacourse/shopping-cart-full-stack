@@ -2,9 +2,12 @@ import { isAllCartItemsSelected } from '../../../entities/cart/selector';
 import type { CartItem } from '../../../entities/cart/types';
 import CartItemCard from '../../../entities/cart/ui/CartItemCard';
 import Checkbox from '../../../shared/ui/CheckBox';
+import List from '../../../shared/layout/List';
 import { useCartItemActions } from '../hooks/useCartItemActions';
 import { useCartQuantityActions } from '../hooks/useCartQuantityActions';
 import { useCartSelectionActions } from '../hooks/useCartSelectionActions';
+import Flex from '../../../shared/layout/Flex';
+import Txt from '../../../shared/ui/Txt';
 
 type CartListProps = {
   cartItems: CartItem[];
@@ -19,25 +22,16 @@ export default function CartList({ cartItems }: CartListProps) {
   const isAllSelected = isAllCartItemsSelected(cartItems);
 
   return (
-    <section
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-      }}
-    >
+    <Flex as="section" direction="column" gap={20}>
       <Checkbox
         checked={isAllSelected}
-        label="전체선택"
         onChange={changeAllCartItemsSelection}
-      />
-      <ul
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-        }}
       >
+        <Txt variant="label" color="text">
+          전체선택
+        </Txt>
+      </Checkbox>
+      <List>
         {cartItems.map((cartItem) => {
           return (
             <CartItemCard
@@ -50,7 +44,7 @@ export default function CartList({ cartItems }: CartListProps) {
             />
           );
         })}
-      </ul>
-    </section>
+      </List>
+    </Flex>
   );
 }

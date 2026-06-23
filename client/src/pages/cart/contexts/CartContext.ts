@@ -2,15 +2,18 @@ import { createContext, useContext } from 'react';
 
 import type { CartAction } from '../../../entities/cart/cartReducer';
 import type { CartItem } from '../../../entities/cart/types';
+import type { Mutate } from '../../../shared/hooks/useMutation';
 
 export type CartContextValue = {
   cartItems: CartItem[];
-  isLoading: boolean;
+  isPending: boolean;
   error: Error | null;
   mutationError: Error | null;
   isMutationLoading: boolean;
-  mutate: (mutationFn: () => Promise<void>) => Promise<void>;
+  mutate: Mutate;
   updateItemQuantity: (id: string, quantity: number) => Promise<void>;
+  updateItemSelection: (id: string, isSelected: boolean) => Promise<void>;
+  updateAllItemsSelection: (isSelected: boolean) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   dispatchCartAction: (action: CartAction) => void;
 };

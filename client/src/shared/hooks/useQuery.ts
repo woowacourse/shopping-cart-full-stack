@@ -1,30 +1,50 @@
-import { useEffect, useEffectEvent, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 
-const cache = new Map<string, unknown>();
+import { queryClient } from '../query/QueryClient';
 
 type UseQueryResult<T> = {
   data: T | null;
-  isLoading: boolean;
+  isPending: boolean;
   error: Error | null;
 };
 
-type QueryState<T> = UseQueryResult<T> & {
+type QueryStatus = {
   queryKey: string;
+  isPending: boolean;
+  error: Error | null;
 };
+
+function getError(error: unknown) {
+  return error instanceof Error
+    ? error
+    : new Error('알 수 없는 에러가 발생했습니다.');
+}
 
 export function useQuery<T>(
   queryKey: string,
   queryFn: () => Promise<T>,
 ): UseQueryResult<T> {
-  const hasCachedData = cache.has(queryKey);
-  const cachedData = cache.get(queryKey) as T | undefined;
-
-  const [state, setState] = useState<QueryState<T>>({
+  const subscribe = useCallback(
+    (listener: () => void) => queryClient.subscribe(queryKey, listener),
+    [queryKey],
+  );
+  const getSnapshot = useCallback(
+    () => queryClient.getQueryState<T>(queryKey),
+    [queryKey],
+  );
+  const cachedQuery = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const hasCachedQuery = cachedQuery !== undefined;
+  const [status, setStatus] = useState<QueryStatus>(() => ({
     queryKey,
-    data: cachedData ?? null,
-    isLoading: !hasCachedData,
+    isPending: !hasCachedQuery,
     error: null,
-  });
+  }));
 
   const executeQuery = useEffectEvent(async () => {
     return queryFn();
@@ -32,34 +52,30 @@ export function useQuery<T>(
 
   useEffect(() => {
     let ignore = false;
+    const query = queryClient.getQueryState<T>(queryKey);
 
-    if (cache.has(queryKey)) {
+    if (query) {
       return;
     }
 
-    executeQuery()
-      .then((response) => {
+    queryClient
+      .fetchQuery(queryKey, executeQuery)
+      .then(() => {
         if (ignore) return;
 
-        cache.set(queryKey, response);
-        setState({
+        setStatus({
           queryKey,
-          data: response,
-          isLoading: false,
+          isPending: false,
           error: null,
         });
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         if (ignore) return;
 
-        setState({
+        setStatus({
           queryKey,
-          data: null,
-          isLoading: false,
-          error:
-            error instanceof Error
-              ? error
-              : new Error('알 수 없는 에러가 발생했습니다.'),
+          isPending: false,
+          error: getError(error),
         });
       });
 
@@ -68,36 +84,28 @@ export function useQuery<T>(
     };
   }, [queryKey]);
 
-  if (hasCachedData) {
+  if (status.queryKey !== queryKey) {
     return {
-      data: cachedData ?? null,
-      isLoading: false,
-      error: null,
-    };
-  }
-
-  if (state.queryKey !== queryKey) {
-    return {
-      data: null,
-      isLoading: true,
+      data: cachedQuery?.data ?? null,
+      isPending: !cachedQuery,
       error: null,
     };
   }
 
   return {
-    data: state.data,
-    isLoading: state.isLoading,
-    error: state.error,
+    data: cachedQuery?.data ?? null,
+    isPending: !hasCachedQuery && status.isPending,
+    error: status.error,
   };
 }
 
 export function setQueryData<T>(queryKey: string, updateFn: (data: T) => T) {
-  const cachedData = cache.get(queryKey) as T | undefined;
-  if (!cachedData) return;
+  const cachedData = queryClient.getQueryData<T>(queryKey);
+  if (cachedData === undefined) return;
 
-  cache.set(queryKey, updateFn(cachedData));
+  queryClient.setQueryData(queryKey, updateFn(cachedData));
 }
 
 export function clearQueryCache() {
-  cache.clear();
+  queryClient.reset();
 }

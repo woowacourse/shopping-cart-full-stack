@@ -1,5 +1,9 @@
 import CheckBox from '../../../shared/ui/CheckBox';
-import { colors, typography } from '../../../shared/styles/theme';
+import Image from '../../../shared/ui/Image';
+import Txt from '../../../shared/ui/Txt';
+import { DeleteButton, QuantityButton } from '../../../shared/ui/Button';
+import Row from '../../../shared/layout/Row';
+import Flex from '../../../shared/layout/Flex';
 import type { CartItem } from '../types';
 
 type CartItemCardProps = {
@@ -8,17 +12,6 @@ type CartItemCardProps = {
   onDecrease: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   onToggleItem: (id: string, checked: boolean) => void;
-};
-
-const quantityButtonStyle = {
-  width: '24px',
-  height: '24px',
-  border: '1px solid #e5e5e5',
-  borderRadius: '8px',
-  backgroundColor: colors.white,
-  color: colors.text,
-  fontSize: '16px',
-  padding: 0,
 };
 
 export default function CartItemCard({
@@ -31,116 +24,62 @@ export default function CartItemCard({
   return (
     <li
       css={{
-        position: 'relative',
-        display: 'flex',
-        gap: '12px',
+        padding: '20px 0',
         borderTop: '1px solid #eeeeee',
       }}
     >
-      <div
-        css={{
-          position: 'absolute',
-          top: '12px',
-          left: 0,
-        }}
-      >
-        <CheckBox
-          checked={cartItem.isSelected}
-          onChange={(checked) => onToggleItem(cartItem.product.id, checked)}
-        />
-      </div>
+      <Row
+        left={
+          <Flex direction="column" gap={12}>
+            <CheckBox
+              checked={cartItem.isSelected}
+              onChange={(checked) => onToggleItem(cartItem.product.id, checked)}
+            />
+            <Image
+              src={cartItem.product.image ?? undefined}
+              width={112}
+              height={112}
+              alt="상품 이미지"
+              styles={{ borderRadius: '8px' }}
+            />
+          </Flex>
+        }
+        center={
+          <Flex
+            direction="column"
+            gap={20}
+            justify="center"
+            styles={{ paddingTop: '36px' }}
+          >
+            <Flex direction="column" gap={4}>
+              <Txt variant="label" color="black">
+                {cartItem.product.name}
+              </Txt>
 
-      <button
-        type="button"
-        css={{
-          position: 'absolute',
-          top: '12px',
-          right: 0,
-          width: '40px',
-          height: '24px',
-          border: '1px solid #e5e5e5',
-          borderRadius: '4px',
-          backgroundColor: colors.white,
-          color: colors.text,
-          ...typography.label,
-        }}
-        onClick={() => onDelete(cartItem.product.id)}
-      >
-        삭제
-      </button>
+              <Txt variant="title" color="black">
+                {cartItem.product.price.toLocaleString()}원
+              </Txt>
+            </Flex>
 
-      <img
-        css={{
-          marginTop: '48px',
-          borderRadius: '8px',
-        }}
-        src={cartItem.product.image ?? undefined}
-        width={112}
-        height={112}
-        alt="상품 이미지"
+            <Flex direction="row" gap={12} align="center">
+              <QuantityButton onClick={() => onDecrease(cartItem.product.id)}>
+                -
+              </QuantityButton>
+              <Txt variant="label" color="black">
+                {cartItem.quantity}
+              </Txt>
+              <QuantityButton onClick={() => onIncrease(cartItem.product.id)}>
+                +
+              </QuantityButton>
+            </Flex>
+          </Flex>
+        }
+        right={
+          <DeleteButton onClick={() => onDelete(cartItem.product.id)}>
+            삭제
+          </DeleteButton>
+        }
       />
-
-      <div
-        css={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          gap: '20px',
-          paddingTop: '48px',
-        }}
-      >
-        <div>
-          <p
-            css={{
-              marginBottom: '4px',
-              color: colors.black,
-              ...typography.label,
-            }}
-          >
-            {cartItem.product.name}
-          </p>
-
-          <p
-            css={{
-              ...typography.title,
-              color: colors.black,
-            }}
-          >
-            {cartItem.product.price.toLocaleString()}원
-          </p>
-        </div>
-
-        <div
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-          }}
-        >
-          <button
-            type="button"
-            css={quantityButtonStyle}
-            onClick={() => onDecrease(cartItem.product.id)}
-          >
-            -
-          </button>
-          <span
-            css={{
-              color: colors.black,
-              ...typography.label,
-            }}
-          >
-            {cartItem.quantity}
-          </span>
-          <button
-            type="button"
-            css={quantityButtonStyle}
-            onClick={() => onIncrease(cartItem.product.id)}
-          >
-            +
-          </button>
-        </div>
-      </div>
     </li>
   );
 }

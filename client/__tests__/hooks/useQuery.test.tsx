@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { setQueryData, useQuery } from '../../src/shared/hooks/useQuery';
 
@@ -8,9 +8,9 @@ type TestQueryProps = {
 };
 
 function TestQuery({ queryKey, queryFn }: TestQueryProps) {
-  const { data, isLoading, error } = useQuery(queryKey, queryFn);
+  const { data, isPending, error } = useQuery(queryKey, queryFn);
 
-  if (isLoading) return <p>loading</p>;
+  if (isPending) return <p>loading</p>;
   if (error) return <p>{error.message}</p>;
 
   return <p>{data}</p>;
@@ -56,18 +56,49 @@ describe('useQuery', () => {
   test('setQueryData로 캐시 데이터를 갱신한다.', async () => {
     const queryFn = jest.fn().mockResolvedValue('old data');
 
-    const { unmount } = render(
-      <TestQuery queryKey="testQuery" queryFn={queryFn} />,
-    );
+    render(<TestQuery queryKey="testQuery" queryFn={queryFn} />);
 
     expect(await screen.findByText('old data')).toBeInTheDocument();
 
-    setQueryData<string>('testQuery', () => 'new data');
-    unmount();
-
-    render(<TestQuery queryKey="testQuery" queryFn={queryFn} />);
+    act(() => {
+      setQueryData<string>('testQuery', () => 'new data');
+    });
 
     expect(screen.getByText('new data')).toBeInTheDocument();
     expect(queryFn).toHaveBeenCalledTimes(1);
+  });
+
+  test('같은 queryKey의 동시 요청은 하나의 요청을 공유한다.', async () => {
+    const queryFn = jest.fn().mockResolvedValue('shared data');
+
+    render(
+      <>
+        <TestQuery queryKey="sharedQuery" queryFn={queryFn} />
+        <TestQuery queryKey="sharedQuery" queryFn={queryFn} />
+      </>,
+    );
+
+    expect(await screen.findAllByText('shared data')).toHaveLength(2);
+    expect(queryFn).toHaveBeenCalledTimes(1);
+  });
+
+  test('falsy 캐시 데이터도 setQueryData로 갱신한다.', async () => {
+    function NumberQuery() {
+      const { data, isPending } = useQuery('numberQuery', async () => 0);
+
+      if (isPending) return <p>loading</p>;
+
+      return <p>{data}</p>;
+    }
+
+    render(<NumberQuery />);
+
+    expect(await screen.findByText('0')).toBeInTheDocument();
+
+    act(() => {
+      setQueryData<number>('numberQuery', () => 1);
+    });
+
+    expect(screen.getByText('1')).toBeInTheDocument();
   });
 });

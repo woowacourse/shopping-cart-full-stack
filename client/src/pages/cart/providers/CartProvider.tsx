@@ -1,12 +1,6 @@
-import {
-  useEffect,
-  useReducer,
-  useEffectEvent,
-  type ReactNode,
-} from 'react';
+import { useEffect, useReducer, type ReactNode } from 'react';
 
 import { cartReducer, type CartAction } from '../../../entities/cart/cartReducer';
-import { getSelectedItemIds } from '../../../entities/cart/selector';
 import type { CartItem } from '../../../entities/cart/types';
 import { useMutation } from '../../../shared/hooks/useMutation';
 import { useQuery } from '../../../shared/hooks/useQuery';
@@ -16,53 +10,43 @@ type CartProviderProps = {
   children: ReactNode;
   fetchItems: () => Promise<CartItem[]>;
   updateItemQuantity: (id: string, quantity: number) => Promise<void>;
+  updateItemSelection: (id: string, isSelected: boolean) => Promise<void>;
+  updateAllItemsSelection: (isSelected: boolean) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
-  loadSelectedItemIds: () => string[] | null;
-  saveSelectedItemIds: (ids: string[]) => void;
 };
 
 export default function CartProvider({
   children,
   fetchItems,
   updateItemQuantity,
+  updateItemSelection,
+  updateAllItemsSelection,
   removeItem,
-  loadSelectedItemIds,
-  saveSelectedItemIds,
 }: CartProviderProps) {
   const [cartItems, dispatch] = useReducer(cartReducer, []);
 
   const {
     data: fetchedCartItems,
-    isLoading,
+    isPending,
     error,
   } = useQuery('cartItems', fetchItems);
 
-  const { mutate, isMutationLoading, error: mutationError } = useMutation();
+  const {
+    mutate,
+    isPending: isMutationLoading,
+    error: mutationError,
+  } = useMutation();
 
   const dispatchCartAction = (action: CartAction) => {
-    const nextCartItems = cartReducer(cartItems, action);
-
     dispatch(action);
-    saveSelectedItemIds(getSelectedItemIds(nextCartItems));
   };
-
-  const loadSelectedIds = useEffectEvent(() => {
-    return loadSelectedItemIds();
-  });
 
   useEffect(() => {
     if (!fetchedCartItems) return;
 
-    const selectedCartItemIds = loadSelectedIds();
-
     dispatch({
       type: 'SET_ITEMS',
-      items: fetchedCartItems.map((item) => ({
-        ...item,
-        isSelected: selectedCartItemIds
-          ? selectedCartItemIds.includes(item.product.id)
-          : true,
-      })),
+      items: fetchedCartItems,
     });
   }, [fetchedCartItems]);
 
@@ -70,12 +54,14 @@ export default function CartProvider({
     <CartContext.Provider
       value={{
         cartItems,
-        isLoading,
+        isPending,
         error,
         mutationError,
         isMutationLoading,
         mutate,
         updateItemQuantity,
+        updateItemSelection,
+        updateAllItemsSelection,
         removeItem,
         dispatchCartAction,
       }}

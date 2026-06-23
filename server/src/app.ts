@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import productRouter from './productApi.ts';
 import shoppingCartRouter from './shoppingCartApi.ts';
+import orderRouter from './orderApi.ts';
 
 const app = express();
 app.use('/images', express.static('public/images'));
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use('/products', productRouter);
 app.use('/carts', shoppingCartRouter);
+app.use('/orders', orderRouter);
 
 app.get('/slow', async (req, res, next) => {
   try {

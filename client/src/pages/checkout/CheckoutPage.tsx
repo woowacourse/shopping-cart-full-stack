@@ -1,32 +1,29 @@
 import Header from '../../shared/ui/Header';
-import Button from '../../shared/ui/Button';
+import { BottomButton } from '../../shared/ui/Button';
 import OrderCheck from './ui/OrderCheck';
 import { colors } from '../../shared/styles/theme';
 import { useNavigate } from 'react-router-dom';
+import Flex from '../../shared/layout/Flex';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
 
   return (
-    <div
-      css={{
+    <Flex
+      direction="column"
+      align="center"
+      styles={{
         backgroundColor: colors.white,
         width: '430px',
-        heigth: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
+        height: '100vh',
         margin: '0 auto',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}
     >
-      <Header page="checkout" />
+      <Header />
       <OrderCheck />
-      <Button
-        type="inactive"
-        text="결제하기"
-        onClick={() => navigate('/pay')}
-      />
-    </div>
+      <BottomButton onClick={() => navigate('/')}>
+        장바구니로 돌아가기
+      </BottomButton>
+    </Flex>
   );
 }

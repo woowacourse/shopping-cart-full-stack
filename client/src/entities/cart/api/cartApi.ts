@@ -25,6 +25,37 @@ export async function updateCartItemQuantity(id: string, quantity: number) {
   }
 }
 
+export async function updateCartItemSelection(
+  id: string,
+  isSelected: boolean,
+) {
+  const response = await fetch(`${API_BASE_URL}/carts/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isSelected }),
+  });
+
+  if (!response.ok) {
+    throw new Error('상품 선택 상태를 변경하지 못했습니다.');
+  }
+}
+
+export async function updateAllCartItemsSelection(isSelected: boolean) {
+  const response = await fetch(`${API_BASE_URL}/carts`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isSelected }),
+  });
+
+  if (!response.ok) {
+    throw new Error('전체 상품 선택 상태를 변경하지 못했습니다.');
+  }
+}
+
 export async function deleteCartItem(id: string) {
   const response = await fetch(`${API_BASE_URL}/carts/${id}`, {
     method: 'DELETE',

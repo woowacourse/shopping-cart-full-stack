@@ -1,12 +1,10 @@
 import {
   deleteCartItem,
   fetchCartItems,
+  updateAllCartItemsSelection,
+  updateCartItemSelection,
   updateCartItemQuantity,
 } from '../../entities/cart/api/cartApi';
-import {
-  getSelectedCartItemIds,
-  saveSelectedCartItemIds,
-} from '../../entities/cart/storage';
 import CartPage from './CartPage';
 import CartProvider from './providers/CartProvider';
 
@@ -15,9 +13,9 @@ export default function CartRoute() {
     <CartProvider
       fetchItems={fetchCartItems}
       updateItemQuantity={updateCartItemQuantity}
+      updateItemSelection={updateCartItemSelection}
+      updateAllItemsSelection={updateAllCartItemsSelection}
       removeItem={deleteCartItem}
-      loadSelectedItemIds={getSelectedCartItemIds}
-      saveSelectedItemIds={saveSelectedCartItemIds}
     >
       <CartPage />
     </CartProvider>

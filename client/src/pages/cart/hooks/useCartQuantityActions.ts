@@ -32,21 +32,25 @@ export function useCartQuantityActions() {
         id,
         quantity: nextQuantity,
       });
-      await mutate(() => updateItemQuantity(id, nextQuantity));
-
-      setQueryData<CartItem[]>('cartItems', (items) =>
-        cartReducer(items, {
-          type: 'CHANGE_QUANTITY',
-          id,
-          quantity: nextQuantity,
-        }),
-      );
-    } catch {
-      dispatchCartAction({
-        type: 'CHANGE_QUANTITY',
-        id,
-        quantity: currentItem.quantity,
+      await mutate(() => updateItemQuantity(id, nextQuantity), {
+        onSuccess: () => {
+          setQueryData<CartItem[]>('cartItems', (items) =>
+            cartReducer(items, {
+              type: 'CHANGE_QUANTITY',
+              id,
+              quantity: nextQuantity,
+            }),
+          );
+        },
+        onError: () => {
+          dispatchCartAction({
+            type: 'CHANGE_QUANTITY',
+            id,
+            quantity: currentItem.quantity,
+          });
+        },
       });
+    } catch {
       return;
     }
   };

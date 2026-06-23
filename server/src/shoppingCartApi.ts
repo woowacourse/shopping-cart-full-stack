@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import {
   getShoppingCart,
-  patchShoppingCart,
+  getShoppingCartAmountSummary,
+  patchAllShoppingCartSelection,
+  patchShoppingCartItem,
   deleteShoppingCart,
   hasShoppingCartProduct,
 } from './service/shoppingCartService.ts';
@@ -16,6 +18,23 @@ router.get('/', (_req, res, next) => {
   }
 });
 
+router.get('/amount-summary', (_req, res, next) => {
+  try {
+    res.status(200).send(getShoppingCartAmountSummary());
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch('/', (req, res) => {
+  if (typeof req.body.isSelected !== 'boolean') {
+    return res.status(400).send({ message: '선택 상태가 올바르지 않습니다.' });
+  }
+
+  patchAllShoppingCartSelection(req.body.isSelected);
+  res.status(204).send();
+});
+
 router.patch('/:id', (req, res, next) => {
   try {
     const productId = req.params.id;
@@ -25,7 +44,17 @@ router.patch('/:id', (req, res, next) => {
       return res.status(404).send({ message: '유효하지 않은 경로입니다.' });
     }
 
-    patchShoppingCart(productId, quantity);
+    if (
+      req.body.isSelected !== undefined &&
+      typeof req.body.isSelected !== 'boolean'
+    ) {
+      return res.status(400).send({ message: '선택 상태가 올바르지 않습니다.' });
+    }
+
+    patchShoppingCartItem(productId, {
+      quantity,
+      isSelected: req.body.isSelected,
+    });
     res.status(204).send();
   } catch (error) {
     if (error instanceof Error) {

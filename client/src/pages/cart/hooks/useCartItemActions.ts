@@ -12,16 +12,18 @@ export function useCartItemActions() {
     if (!currentItem) return;
 
     try {
-      await mutate(() => removeItem(id));
+      await mutate(() => removeItem(id), {
+        onSuccess: () => {
+          dispatchCartAction({ type: 'REMOVE_ITEM', id });
 
-      dispatchCartAction({ type: 'REMOVE_ITEM', id });
-
-      setQueryData<CartItem[]>('cartItems', (items) =>
-        cartReducer(items, {
-          type: 'REMOVE_ITEM',
-          id,
-        }),
-      );
+          setQueryData<CartItem[]>('cartItems', (items) =>
+            cartReducer(items, {
+              type: 'REMOVE_ITEM',
+              id,
+            }),
+          );
+        },
+      });
     } catch {
       return;
     }

@@ -1,11 +1,11 @@
 import { useCartContext } from '../contexts/CartContext';
 
 export function useCartItems() {
-  const { cartItems, isLoading, error } = useCartContext();
+  const { cartItems, isPending, error } = useCartContext();
 
   return {
     cartItems,
-    isLoading,
+    isPending,
     error,
   };
 }

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { colors, typography } from '../../../shared/styles/theme';
+import Txt from '../../../shared/ui/Txt';
+import Flex from '../../../shared/layout/Flex';
 
 type CartSectionProps = {
   cartItemsCount: number;
@@ -13,51 +14,37 @@ export default function CartSection({
   // 상품이 없는 경우
   if (cartItemsCount === 0) {
     return (
-      <p
-        css={{
-          color: colors.text,
-          ...typography.info,
-          textAlign: 'center',
-          margin: 'auto 0',
-        }}
+      <Txt
+        variant="info"
+        color="text"
+        styles={{ textAlign: 'center', margin: 'auto 0' }}
       >
         장바구니에 담은 상품이 없습니다.
-      </p>
+      </Txt>
     );
   }
 
   return (
-    <section
-      css={{
+    <Flex
+      as="section"
+      direction="column"
+      gap={36}
+      styles={{
         height: '75vh',
         overflowY: 'scroll',
         width: '100%',
         padding: '0 24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '36px',
       }}
     >
-      <div>
-        <h1
-          css={{
-            color: colors.black,
-            ...typography.title,
-            marginBottom: '12px',
-          }}
-        >
+      <Flex direction="column" gap={12}>
+        <Txt variant="title" color="black">
           장바구니
-        </h1>
-        <p
-          css={{
-            color: colors.text,
-            ...typography.label,
-          }}
-        >
+        </Txt>
+        <Txt variant="label" color="text">
           현재 {cartItemsCount}종류의 상품이 담겨있습니다.
-        </p>
-      </div>
+        </Txt>
+      </Flex>
       {children}
-    </section>
+    </Flex>
   );
 }

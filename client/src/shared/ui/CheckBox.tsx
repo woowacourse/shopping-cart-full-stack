@@ -1,26 +1,34 @@
+import type { ReactNode } from 'react';
 import checkedIcon from '../../assets/active-check.svg';
 import uncheckedIcon from '../../assets/inactive-check.svg';
-import { colors, typography } from '../styles/theme';
+import Image from './Image';
 
 type CheckboxProps = {
   checked: boolean;
-  label?: string;
+  children?: ReactNode;
+  disabled?: boolean;
   onChange: (checked: boolean) => void;
 };
 
-export default function Checkbox({ checked, label, onChange }: CheckboxProps) {
+export default function Checkbox({
+  checked,
+  children,
+  disabled = false,
+  onChange,
+}: CheckboxProps) {
   return (
     <label
       css={{
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
       }}
     >
       <input
         type="checkbox"
         checked={checked}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}
         css={{
           position: 'absolute',
@@ -28,23 +36,14 @@ export default function Checkbox({ checked, label, onChange }: CheckboxProps) {
           pointerEvents: 'none',
         }}
       />
-      <img
+      <Image
         src={checked ? checkedIcon : uncheckedIcon}
         alt=""
-        aria-hidden="true"
+        ariaHidden
         width={24}
         height={24}
       />
-      {label && (
-        <span
-          css={{
-            ...typography.label,
-            color: colors.text,
-          }}
-        >
-          {label}
-        </span>
-      )}
+      {children}
     </label>
   );
 }
