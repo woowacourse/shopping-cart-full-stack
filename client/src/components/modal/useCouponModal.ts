@@ -24,8 +24,13 @@ export default function useCouponModal(
     if (nextSelectedIds.length > 2) return;
     setSelectedIds(nextSelectedIds);
 
-    const key = [...nextSelectedIds].sort((a, b) => a - b).join(",");
-    setExpectedDiscount(orderData.couponCombinations[key] ?? 0);
+    const sortedIds = [...nextSelectedIds].sort((a, b) => a - b);
+    const match = orderData.couponCombinations.find(
+      (combo) =>
+        combo.couponIds.length === sortedIds.length &&
+        combo.couponIds.every((id, i) => id === sortedIds[i]),
+    );
+    setExpectedDiscount(match?.discount ?? 0);
   };
 
   const isDisabled = (coupon: CouponData): boolean => {

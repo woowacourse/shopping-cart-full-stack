@@ -32,7 +32,7 @@ export interface OrderData {
   couponDiscountAmount: number;
   shippingFee: number;
   totalAmount: number;
-  couponCombinations: Record<string, number>;
+  couponCombinations: { couponIds: number[]; discount: number }[];
 }
 
 export interface CouponData {
