@@ -1,8 +1,9 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import styled from "styled-components";
 
 export default function PayConfirmPage() {
   const { state } = useLocation();
+  if (!state) return <Navigate to="/cart" replace />;
   const { itemCount, orderQuantity, totalAmount } = state;
   const navigate = useNavigate();
 
