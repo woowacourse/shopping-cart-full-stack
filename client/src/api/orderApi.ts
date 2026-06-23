@@ -21,7 +21,7 @@ export const orderApi = {
     }),
 
   // POST/order/:orderId/payment
-  post: (orderId: number, body: {}) =>
+  pay: (orderId: number, body: {}) =>
     fetch(`${BASE_URL}/order/${orderId}/payment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -33,7 +33,7 @@ export const orderApi = {
     fetch(`${BASE_URL}/order/${orderId}`, { method: "DELETE" }),
 
   //쿠폰 적용 PATCH/ order/:orderId/coupon
-  patch: (orderId: number, couponIds: number[]) =>
+  applyCoupon: (orderId: number, couponIds: number[]) =>
     fetch(`${BASE_URL}/order/${orderId}/coupon`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },

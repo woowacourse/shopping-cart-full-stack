@@ -23,7 +23,7 @@ export default function useOrderData(orderId: number) {
 
   const updateAppliedCoupon = async (orderId: number, couponIds: number[]) => {
     try {
-      const res = await orderApi.patch(orderId, couponIds);
+      const res = await orderApi.applyCoupon(orderId, couponIds);
       if (!res.ok) throw new Error();
       fetchData();
     } catch (error) {}

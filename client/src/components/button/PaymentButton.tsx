@@ -10,7 +10,7 @@ export default function PaymentButton({ orderId }: Props) {
   const navigate = useNavigate();
 
   const handlePayment = async () => {
-    const res = await orderApi.post(orderId, {});
+    const res = await orderApi.pay(orderId, {});
     if (!res.ok) return;
     const data = await res.json();
     navigate("/payment", { state: data });
