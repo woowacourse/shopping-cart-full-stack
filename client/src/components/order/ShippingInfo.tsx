@@ -15,8 +15,16 @@ export default function ShippingInfo({ orderData, onRemoteAreaChange }: Props) {
   const handleRemoteArea = async () => {
     const toggledRemoteArea = !isChecked;
     setIsChecked(toggledRemoteArea);
-    await orderApi.patchAddress(orderData.orderId, toggledRemoteArea);
-    onRemoteAreaChange();
+    try {
+      const res = await orderApi.patchAddress(
+        orderData.orderId,
+        toggledRemoteArea,
+      );
+      if (!res.ok) throw new Error();
+      onRemoteAreaChange();
+    } catch {
+      setIsChecked(isChecked);
+    }
   };
 
   return (
