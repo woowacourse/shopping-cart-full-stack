@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { CartItem } from "../../type/types";
 import { useNavigate } from "react-router-dom";
-import { totalQuantity } from "../../util/getOrderPrice";
 import { orderApi } from "../../api/orderApi";
 
 interface Props {
@@ -29,6 +28,7 @@ export default function CheckButton({
         quantity,
       }));
     const res = await orderApi.create({ items: checkedItems });
+    if (!res.ok) throw new Error();
     const { orderId } = await res.json();
 
     navigate(`/order/${orderId}`);
