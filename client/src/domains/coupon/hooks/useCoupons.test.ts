@@ -37,7 +37,7 @@ describe('useCoupons', () => {
   test('preorderId 기준으로 쿠폰 목록을 조회한다', async () => {
     mockGetCoupons();
 
-    const {result} = renderHook(() => useCoupons('preorder-1', false));
+    const {result} = renderHook(() => useCoupons({preorderId: 'preorder-1', isRemoteArea: false}));
 
     await waitFor(() => {
       expect(result.current.status).toBe('success');
@@ -49,7 +49,7 @@ describe('useCoupons', () => {
   });
 
   test('preorderId가 없으면 에러 상태로 변경한다', async () => {
-    const {result} = renderHook(() => useCoupons(undefined, false));
+    const {result} = renderHook(() => useCoupons({preorderId: undefined, isRemoteArea: false}));
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');
@@ -75,7 +75,7 @@ describe('useCoupons', () => {
       })
     );
 
-    const {result} = renderHook(() => useCoupons('preorder-1', false));
+    const {result} = renderHook(() => useCoupons({preorderId: 'preorder-1', isRemoteArea: false}));
 
     await waitFor(() => {
       expect(result.current.status).toBe('success');
@@ -93,7 +93,7 @@ describe('useCoupons', () => {
       })
     );
 
-    const {result} = renderHook(() => useCoupons('preorder-1', false));
+    const {result} = renderHook(() => useCoupons({preorderId: 'preorder-1', isRemoteArea: false}));
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');
@@ -114,7 +114,7 @@ describe('useCoupons', () => {
       })
     );
 
-    const {result} = renderHook(() => useCoupons('preorder-1', false));
+    const {result} = renderHook(() => useCoupons({preorderId: 'preorder-1', isRemoteArea: false}));
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');

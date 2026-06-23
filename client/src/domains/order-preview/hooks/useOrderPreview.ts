@@ -18,12 +18,19 @@ interface UseOrderPreviewOptions {
   keepPrevious?: boolean;
 }
 
-export function useOrderPreview(
-  preorderId: string | undefined,
-  isRemoteArea: boolean,
-  couponIds: CouponId[],
-  {enabled = true, keepPrevious = true}: UseOrderPreviewOptions = {}
-) {
+interface UseOrderPreviewParams extends UseOrderPreviewOptions {
+  preorderId: string | undefined;
+  isRemoteArea: boolean;
+  couponIds: CouponId[];
+}
+
+export function useOrderPreview({
+  preorderId,
+  isRemoteArea,
+  couponIds,
+  enabled = true,
+  keepPrevious = true,
+}: UseOrderPreviewParams) {
   const [orderPreview, setOrderPreview] = useState<PreviewOrder | null>(null);
   const [error, setError] = useState<OrderPreviewError | null>(null);
   const [status, setStatus] = useState<OrderPreviewStatus>('loading');

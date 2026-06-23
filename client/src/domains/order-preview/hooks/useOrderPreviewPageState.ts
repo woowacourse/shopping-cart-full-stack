@@ -21,18 +21,22 @@ export function useOrderPreviewPageState() {
 
   const {error: preorderError, loadPreorder, preorder, status: preorderStatus} = usePreorder(preorderId);
 
-  const {appliedCouponIds, couponModal, couponModalActions} = useOrderPreviewCouponModal(
+  const {appliedCouponIds, couponModal, couponModalActions} = useOrderPreviewCouponModal({
     preorderId,
     isRemoteArea,
-    navigateToCart
-  );
+    onReturnToCart: navigateToCart,
+  });
 
   const {
     error: orderPreviewError,
     loadOrderPreview,
     orderPreview,
     status: orderPreviewStatus,
-  } = useOrderPreview(preorderId, isRemoteArea, appliedCouponIds);
+  } = useOrderPreview({
+    preorderId,
+    isRemoteArea,
+    couponIds: appliedCouponIds,
+  });
 
   const preorderSummary = getPreorderSummary(preorder?.items);
   const {errorAction, page} = useOrderPreviewPageStatus({

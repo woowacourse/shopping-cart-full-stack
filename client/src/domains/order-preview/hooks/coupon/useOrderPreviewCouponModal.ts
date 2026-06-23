@@ -8,11 +8,17 @@ import {useOrderPreviewCouponPreview} from './useOrderPreviewCouponPreview.js';
 type CouponModalStatus = 'loading' | 'success' | 'error';
 type CouponsStatus = 'loading' | 'success' | 'error';
 
-export function useOrderPreviewCouponModal(
-  preorderId: string | undefined,
-  isRemoteArea: boolean,
-  onReturnToCart: () => void
-) {
+interface UseOrderPreviewCouponModalParams {
+  preorderId: string | undefined;
+  isRemoteArea: boolean;
+  onReturnToCart: () => void;
+}
+
+export function useOrderPreviewCouponModal({
+  preorderId,
+  isRemoteArea,
+  onReturnToCart,
+}: UseOrderPreviewCouponModalParams) {
   const {
     appliedCouponIds,
     draftCouponIds,
@@ -29,14 +35,19 @@ export function useOrderPreviewCouponModal(
     loadCoupons,
     recommendedCouponIds,
     status: couponsStatus,
-  } = useCoupons(preorderId, isRemoteArea);
+  } = useCoupons({preorderId, isRemoteArea});
   const {
     error: modalPreviewError,
     loadOrderPreview: loadModalPreview,
     orderPreview: modalOrderPreview,
     resetOrderPreview: resetModalPreview,
     status: modalPreviewStatus,
-  } = useOrderPreviewCouponPreview(preorderId, isRemoteArea, draftCouponIds, isCouponModalOpen);
+  } = useOrderPreviewCouponPreview({
+    preorderId,
+    isRemoteArea,
+    couponIds: draftCouponIds,
+    enabled: isCouponModalOpen,
+  });
 
   const openCouponModal = () => {
     resetModalPreview();

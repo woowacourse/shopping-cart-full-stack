@@ -12,7 +12,12 @@ export type CouponsError = {
   type: CouponsErrorType;
 };
 
-export function useCoupons(preorderId: string | undefined, isRemoteArea: boolean) {
+interface UseCouponsParams {
+  preorderId: string | undefined;
+  isRemoteArea: boolean;
+}
+
+export function useCoupons({preorderId, isRemoteArea}: UseCouponsParams) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [recommendedCouponIds, setRecommendedCouponIds] = useState<CouponId[]>([]);
 

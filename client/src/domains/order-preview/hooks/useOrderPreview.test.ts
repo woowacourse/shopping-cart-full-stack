@@ -33,7 +33,9 @@ describe('useOrderPreview', () => {
   test('주문 미리보기 금액을 조회한다', async () => {
     mockPreviewOrder();
 
-    const {result} = renderHook(() => useOrderPreview('preorder-1', false, [1, 3]));
+    const {result} = renderHook(() =>
+      useOrderPreview({preorderId: 'preorder-1', isRemoteArea: false, couponIds: [1, 3]})
+    );
 
     await waitFor(() => {
       expect(result.current.status).toBe('success');
@@ -44,7 +46,9 @@ describe('useOrderPreview', () => {
   });
 
   test('preorderId가 없으면 notFound 에러 타입으로 변경한다', async () => {
-    const {result} = renderHook(() => useOrderPreview(undefined, false, []));
+    const {result} = renderHook(() =>
+      useOrderPreview({preorderId: undefined, isRemoteArea: false, couponIds: []})
+    );
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');
@@ -64,7 +68,9 @@ describe('useOrderPreview', () => {
       })
     );
 
-    const {result} = renderHook(() => useOrderPreview('preorder-1', false, []));
+    const {result} = renderHook(() =>
+      useOrderPreview({preorderId: 'preorder-1', isRemoteArea: false, couponIds: []})
+    );
 
     await waitFor(() => {
       expect(result.current.status).toBe('error');
@@ -105,7 +111,8 @@ describe('useOrderPreview', () => {
     );
 
     const {result, rerender} = renderHook(
-      ({couponIds}: {couponIds: number[]}) => useOrderPreview('preorder-1', false, couponIds),
+      ({couponIds}: {couponIds: number[]}) =>
+        useOrderPreview({preorderId: 'preorder-1', isRemoteArea: false, couponIds}),
       {
         initialProps: {
           couponIds: [1],
