@@ -10,10 +10,14 @@ export default function PaymentButton({ orderId }: Props) {
   const navigate = useNavigate();
 
   const handlePayment = async () => {
-    const res = await orderApi.pay(orderId, {});
-    if (!res.ok) return;
-    const data = await res.json();
-    navigate("/payment", { state: data });
+    try {
+      const res = await orderApi.pay(orderId, {});
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      navigate("/payment", { state: data });
+    } catch {
+      alert("서버 에러가 발생했습니다!");
+    }
   };
 
   return <Button onClick={handlePayment}>결제하기</Button>;
