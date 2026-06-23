@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { CouponData, OrderData } from "../../type/types";
 import CouponList from "./CouponList";
 import styled from "styled-components";
