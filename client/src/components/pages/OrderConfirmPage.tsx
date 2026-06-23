@@ -10,17 +10,20 @@ import ApplyCouponButton from "../button/ApplyCouponButton";
 import ShippingInfo from "../order/ShippingInfo";
 import FinalResultOrder from "../order/FinalResultOrder";
 import PaymentButton from "../button/PaymentButton";
+import { orderApi } from "../../api/orderApi";
+import { useEffect } from "react";
 
 export default function OrderConfirmPage() {
   const { orderId } = useParams();
-  const {
-    orderState,
-    orderData,
-    onDelete,
-    updateAppliedCoupon,
-    orderFetchData,
-  } = useOrderData(Number(orderId));
+  const { orderState, orderData, updateAppliedCoupon, orderFetchData } =
+    useOrderData(Number(orderId));
   const { couponData } = useCouponData(Number(orderId));
+
+  useEffect(() => {
+    return () => {
+      orderApi.delete(Number(orderId)).catch(() => {});
+    };
+  }, []);
 
   return (
     <MainContainer>
@@ -33,7 +36,7 @@ export default function OrderConfirmPage() {
       {orderState.status === "success" && orderData && (
         <Body>
           <Nav>
-            <BackButton onBack={() => onDelete(Number(orderId))} />
+            <BackButton />
           </Nav>
           <SubContainer>
             <TopSection>

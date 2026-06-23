@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-export default function BackButton({ onBack }: { onBack?: () => void }) {
+export default function BackButton() {
   const navigate = useNavigate();
   return (
     <Button
       type="submit"
       onClick={() => {
-        onBack?.();
         navigate(-1);
       }}
     >
