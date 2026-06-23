@@ -20,7 +20,6 @@ import { productRepository } from "../repositories/ProductRepository";
 const getOrder = (request: Request, response: Response): void => {
   try {
     const orderId = Number(request.params.orderId);
-    applySelectedCouponsService(orderId);
     const updatedOrder = getOrdersService(orderId);
     const couponCombinations = getCouponCombinationsService(orderId);
     const itemsWithProductData = updatedOrder.items.map(
