@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { CouponData, OrderData } from "../../type/types";
 
-export default function useCouponModal(orderData: OrderData) {
+export default function useCouponModal(
+  orderData: OrderData,
+  couponData: CouponData[],
+) {
   // 체크박스로 표시중인 쿠폰 ID 목록/ 초기값 = 현재 적용되어있는 쿠폰
   const [selectedIds, setSelectedIds] = useState<number[]>(
     orderData.appliedCoupon,
@@ -10,6 +13,8 @@ export default function useCouponModal(orderData: OrderData) {
   const [expectedDiscount, setExpectedDiscount] = useState<number>(
     orderData.couponDiscountAmount,
   );
+
+  const btgoId = couponData.find((c) => c.couponCode === "BTGO")?.couponId;
 
   const handleToggle = async (couponId: number) => {
     const nextSelectedIds = selectedIds.includes(couponId)
@@ -27,11 +32,17 @@ export default function useCouponModal(orderData: OrderData) {
     if (!coupon.isAvailable) return true;
     if (selectedIds.length >= 2 && !selectedIds.includes(coupon.couponId))
       return true;
-    if (selectedIds.includes(2) && coupon.couponId !== 2) return true;
     if (
-      coupon.couponId === 2 &&
+      btgoId !== undefined &&
+      selectedIds.includes(btgoId) &&
+      coupon.couponCode !== "BTGO"
+    )
+      return true;
+    if (
+      coupon.couponCode === "BTGO" &&
       selectedIds.length > 0 &&
-      !selectedIds.includes(2)
+      btgoId !== undefined &&
+      !selectedIds.includes(btgoId)
     )
       return true;
     return false;
