@@ -160,7 +160,7 @@ const calculateDiscount = (orderId: number, couponIds: number[]): number => {
 
   //MIRACLESALE
   if (couponIds.includes(4)) {
-    couponDiscount += (orderAmount - couponDiscount) * 0.3;
+    couponDiscount += Math.floor((orderAmount - couponDiscount) * 0.3);
   }
 
   return couponDiscount + shippingDiscount;
