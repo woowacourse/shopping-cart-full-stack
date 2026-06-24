@@ -1,9 +1,8 @@
 import {useCoupons} from '../../../coupon/hooks/useCoupons.js';
 import {useCouponAutoSelection} from '../../../coupon/hooks/useCouponAutoSelection.js';
 import {useCouponDraftSelection} from '../../../coupon/hooks/useCouponDraftSelection.js';
-import type {OrderPreviewStatus} from '../useOrderPreview.js';
+import {useOrderPreview, type OrderPreviewStatus} from '../useOrderPreview.js';
 import {useOrderPreviewCouponErrorAction} from './useOrderPreviewCouponErrorAction.js';
-import {useOrderPreviewCouponPreview} from './useOrderPreviewCouponPreview.js';
 
 type CouponModalStatus = 'loading' | 'success' | 'error';
 type CouponsStatus = 'loading' | 'success' | 'error';
@@ -42,7 +41,7 @@ export function useOrderPreviewCouponModal({
     orderPreview: modalOrderPreview,
     resetOrderPreview: resetModalPreview,
     status: modalPreviewStatus,
-  } = useOrderPreviewCouponPreview({
+  } = useOrderPreview({
     preorderId,
     isRemoteArea,
     couponIds: draftCouponIds,
