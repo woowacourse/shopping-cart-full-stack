@@ -6,7 +6,7 @@ import {OrderPreviewContent} from '../preview/OrderPreviewContent.js';
 import {useOrderPreviewPage} from '../../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewSuccessView = () => {
-  const {actions, content, intro, orderSubmit} = useOrderPreviewPage();
+  const {content, couponModalActions, intro, orderSubmit, pageActions} = useOrderPreviewPage();
   const {isRemoteArea, orderPreview, preorder} = content;
 
   return (
@@ -27,8 +27,8 @@ export const OrderPreviewSuccessView = () => {
           isRemoteArea={isRemoteArea}
           price={orderPreview.price}
           preorder={preorder}
-          onChangeRemoteArea={actions.changeRemoteArea}
-          onOpenCouponModal={actions.openCouponModal}
+          onChangeRemoteArea={pageActions.changeRemoteArea}
+          onOpenCouponModal={couponModalActions.openCouponModal}
         />
       )}
       {orderSubmit.errorMessage && (

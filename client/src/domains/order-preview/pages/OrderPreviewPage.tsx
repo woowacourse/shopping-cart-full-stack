@@ -9,13 +9,13 @@ import {OrderPreviewSuccessView} from '../components/page/OrderPreviewSuccessVie
 import {useOrderPreviewPage} from '../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewPage = () => {
-  const {actions, orderSubmit, page} = useOrderPreviewPage();
+  const {orderSubmit, orderSubmitActions, page, pageActions} = useOrderPreviewPage();
 
   return (
     <ScreenLayout
-      header={<OrderPreviewBackButton onClick={actions.navigateToCart} />}
+      header={<OrderPreviewBackButton onClick={pageActions.navigateToCart} />}
       bottomButton={
-        <Button disabled={!orderSubmit.canSubmit} onClick={actions.submitOrder}>
+        <Button disabled={!orderSubmit.canSubmit} onClick={orderSubmitActions.submitOrder}>
           {orderSubmit.isSubmitting ? '결제 중' : '결제하기'}
         </Button>
       }
@@ -25,7 +25,7 @@ export const OrderPreviewPage = () => {
           <ErrorState
             actionText={page.shouldReturnToCart ? '장바구니로 돌아가기' : '다시 시도'}
             message={page.errorMessage}
-            onAction={actions.errorAction}
+            onAction={pageActions.errorAction}
           />
         }
         status={page.status}

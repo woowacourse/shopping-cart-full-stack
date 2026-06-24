@@ -2,17 +2,17 @@ import {CouponModal} from '../../../coupon/components/CouponModal.js';
 import {useOrderPreviewPage} from '../../hooks/useOrderPreviewPage.js';
 
 export const OrderPreviewCouponModal = () => {
-  const {actions, couponModal} = useOrderPreviewPage();
+  const {couponModal, couponModalActions} = useOrderPreviewPage();
 
   if (!couponModal.isOpen) return null;
 
   return (
     <CouponModal
       actions={{
-        onApply: actions.applyCouponSelection,
-        onChangeSelectedCouponIds: actions.changeSelectedCouponIds,
-        onClose: actions.closeCouponModal,
-        onRetry: actions.handleCouponModalError,
+        onApply: couponModalActions.applyCouponSelection,
+        onChangeSelectedCouponIds: couponModalActions.changeSelectedCouponIds,
+        onClose: couponModalActions.closeCouponModal,
+        onRetry: couponModalActions.handleCouponModalError,
       }}
       state={couponModal}
     />

@@ -65,12 +65,14 @@ export function useOrderPreviewPageState() {
     },
     couponModal,
     orderSubmit,
-    actions: {
+    pageActions: {
       navigateToCart,
       errorAction,
-      submitOrder,
       changeRemoteArea: setIsRemoteArea,
-      ...couponModalActions,
+    },
+    couponModalActions,
+    orderSubmitActions: {
+      submitOrder,
     },
   };
 }
