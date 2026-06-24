@@ -91,6 +91,31 @@ const createRateDiscountCoupon = () =>
     },
   });
 
+const createTimeRangeDiscountCoupon = () =>
+  new Coupon({
+    id: 5,
+    code: 'MIRACLESALE',
+    name: '미라클모닝 30% 할인 쿠폰',
+    expirationDate: new Date('2026-12-31T23:59:59+09:00'),
+    condition: {
+      target: 'TIME',
+      rule: 'TIME_RANGE',
+      params: {
+        start: '04:00',
+        end: '07:00',
+      },
+    },
+    benefit: {
+      target: 'PRODUCT',
+      discountType: 'RATE',
+      rule: 'DISCOUNT_RATE',
+      params: {
+        discountRate: 0.3,
+        applyAfterFixedDiscount: true,
+      },
+    },
+  });
+
 const createFreeShippingCoupon = () =>
   new Coupon({
     id: 4,
@@ -132,6 +157,22 @@ describe('couponPolicy.validateCoupon', () => {
       valid: false,
       reason: '주문 금액이 10,000원 미만입니다.',
     });
+  });
+
+  test.each([
+    ['03:59', false],
+    ['04:00', true],
+    ['06:59', true],
+    ['07:00', false],
+  ])('시간제 쿠폰은 %s 기준으로 사용 가능 여부를 판단한다', (time, expectedValid) => {
+    const coupon = createTimeRangeDiscountCoupon();
+
+    expect(
+      validateCoupon(coupon, preorder, {
+        isRemoteArea: false,
+        now: new Date(`2026-06-22T${time}:00+09:00`),
+      }).valid
+    ).toBe(expectedValid);
   });
 
   test('무료 배송 쿠폰은 배송비가 이미 0원이면 유효하지 않다', () => {
