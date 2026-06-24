@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {http, HttpResponse} from 'msw';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
@@ -356,12 +356,13 @@ describe('OrderPreviewPage', () => {
     ]);
   });
 
-  test('주문 생성에 실패하면 서버 에러 메시지를 보여주고 다시 결제할 수 있다', async () => {
+  test('주문 생성 금액이 일치하지 않으면 서버 에러 메시지를 보여주고 결제 금액을 다시 계산한다', async () => {
     const user = userEvent.setup();
+    const previewRequestBodies: unknown[] = [];
 
     mockGetPreorder();
     mockGetCoupons();
-    mockPreviewOrder();
+    mockPreviewOrder(previewRequestBodies);
     mockGetOrderSummary();
     mockServer.use(
       http.post(`${API_BASE_URL}/order`, () => {
@@ -383,6 +384,9 @@ describe('OrderPreviewPage', () => {
     expect(
       await screen.findByText('서버에서 다시 계산한 결제 금액이 화면에 표시된 금액과 일치하지 않습니다.')
     ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(previewRequestBodies).toHaveLength(2);
+    });
     expect(screen.getByRole('button', {name: '결제하기'})).toBeEnabled();
   });
 

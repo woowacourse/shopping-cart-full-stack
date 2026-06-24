@@ -1,24 +1,50 @@
 import {useCallback, useState} from 'react';
 
+import {ApiError} from '../../../shared/api/requestApi.js';
 import {createOrder, type CreateOrderRequestBody, type CreateOrderResponse} from '../api/orderApi.js';
+
+export type CreateOrderError = {
+  message: string;
+  status: number | null;
+};
+
+export type CreateOrderResult =
+  | {
+      status: 'success';
+      order: CreateOrderResponse;
+    }
+  | {
+      status: 'error';
+      error: CreateOrderError;
+    };
 
 export function useCreateOrder() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState<CreateOrderError | null>(null);
 
   const submitOrder = useCallback(
-    async (body: CreateOrderRequestBody): Promise<CreateOrderResponse | null> => {
+    async (body: CreateOrderRequestBody): Promise<CreateOrderResult | null> => {
       if (isSubmitting) return null;
 
       setIsSubmitting(true);
-      setErrorMessage('');
+      setError(null);
 
       try {
-        return await createOrder(body);
-      } catch (error) {
-        setErrorMessage(getErrorMessage(error));
+        const order = await createOrder(body);
 
-        return null;
+        return {
+          status: 'success',
+          order,
+        };
+      } catch (requestError) {
+        const error = getCreateOrderError(requestError);
+
+        setError(error);
+
+        return {
+          status: 'error',
+          error,
+        };
       } finally {
         setIsSubmitting(false);
       }
@@ -27,14 +53,30 @@ export function useCreateOrder() {
   );
 
   return {
-    errorMessage,
+    error,
+    errorMessage: error?.message ?? '',
     isSubmitting,
     submitOrder,
   };
 }
 
-function getErrorMessage(error: unknown) {
-  if (error instanceof Error) return error.message;
+function getCreateOrderError(error: unknown): CreateOrderError {
+  if (error instanceof ApiError) {
+    return {
+      message: error.message,
+      status: error.status,
+    };
+  }
 
-  return '주문 요청에 실패했습니다.';
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      status: null,
+    };
+  }
+
+  return {
+    message: '주문 요청에 실패했습니다.',
+    status: null,
+  };
 }

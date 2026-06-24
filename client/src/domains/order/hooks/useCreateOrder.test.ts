@@ -20,7 +20,10 @@ describe('useCreateOrder', () => {
     );
     const {result} = renderHook(() => useCreateOrder());
 
-    await expect(result.current.submitOrder(createOrderBody)).resolves.toEqual({orderId: 'order-1'});
+    await expect(result.current.submitOrder(createOrderBody)).resolves.toEqual({
+      status: 'success',
+      order: {orderId: 'order-1'},
+    });
 
     await waitFor(() => {
       expect(result.current.isSubmitting).toBe(false);
@@ -36,9 +39,19 @@ describe('useCreateOrder', () => {
     );
     const {result} = renderHook(() => useCreateOrder());
 
-    await expect(result.current.submitOrder(createOrderBody)).resolves.toBeNull();
+    await expect(result.current.submitOrder(createOrderBody)).resolves.toEqual({
+      status: 'error',
+      error: {
+        message: '결제 금액이 일치하지 않습니다.',
+        status: 409,
+      },
+    });
 
     await waitFor(() => {
+      expect(result.current.error).toEqual({
+        message: '결제 금액이 일치하지 않습니다.',
+        status: 409,
+      });
       expect(result.current.errorMessage).toBe('결제 금액이 일치하지 않습니다.');
     });
     expect(result.current.isSubmitting).toBe(false);
@@ -71,7 +84,10 @@ describe('useCreateOrder', () => {
       resolveOrder?.();
     });
 
-    await expect(submitPromise).resolves.toEqual({orderId: 'order-1'});
+    await expect(submitPromise).resolves.toEqual({
+      status: 'success',
+      order: {orderId: 'order-1'},
+    });
     await waitFor(() => {
       expect(result.current.isSubmitting).toBe(false);
     });

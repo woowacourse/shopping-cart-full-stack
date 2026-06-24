@@ -7,9 +7,15 @@ interface UseOrderPreviewSubmissionParams {
   preorderId: string | undefined;
   orderPreview: PreviewOrder | null;
   canSubmit: boolean;
+  onConflict: () => Promise<void>;
 }
 
-export function useOrderPreviewSubmission({preorderId, orderPreview, canSubmit}: UseOrderPreviewSubmissionParams) {
+export function useOrderPreviewSubmission({
+  preorderId,
+  orderPreview,
+  canSubmit,
+  onConflict,
+}: UseOrderPreviewSubmissionParams) {
   const navigate = useNavigate();
   const {
     errorMessage: orderSubmitErrorMessage,
@@ -20,14 +26,22 @@ export function useOrderPreviewSubmission({preorderId, orderPreview, canSubmit}:
   const submitCurrentOrder = async () => {
     if (!preorderId || !orderPreview) return;
 
-    const order = await submitOrder({
+    const result = await submitOrder({
       preorderId,
       expectedTotalPaymentAmount: orderPreview.price.totalPaymentAmount,
     });
 
-    if (!order) return;
+    if (!result) return;
 
-    navigate(`/order-confirm/${order.orderId}`);
+    if (result.status === 'error') {
+      if (result.error.status === 409) {
+        await onConflict();
+      }
+
+      return;
+    }
+
+    navigate(`/order-confirm/${result.order.orderId}`);
   };
 
   return {

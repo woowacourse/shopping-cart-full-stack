@@ -53,6 +53,7 @@ export function useOrderPreviewPageState() {
     preorderId,
     orderPreview,
     canSubmit: page.status === 'success' && orderPreview !== null,
+    onConflict: loadOrderPreview,
   });
 
   return {
