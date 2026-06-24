@@ -1,3 +1,5 @@
+import {useMemo} from 'react';
+
 import {useCoupons} from '../../../coupon/hooks/useCoupons.js';
 import {useCouponDraftSelection} from '../../../coupon/hooks/useCouponDraftSelection.js';
 import {useOrderPreview, type OrderPreviewStatus} from '../useOrderPreview.js';
@@ -24,6 +26,10 @@ export function useOrderPreviewCouponModal({
     recommendedCouponIds,
     status: couponsStatus,
   } = useCoupons({preorderId, isRemoteArea});
+  const selectableCouponIds = useMemo(
+    () => coupons.filter((coupon) => !coupon.disabled).map((coupon) => coupon.couponId),
+    [coupons]
+  );
   const {
     appliedCouponIds,
     draftCouponIds,
@@ -35,6 +41,7 @@ export function useOrderPreviewCouponModal({
   } = useCouponDraftSelection({
     canUseRecommendedCoupons: couponsStatus === 'success',
     recommendedCouponIds,
+    selectableCouponIds,
   });
   const {
     error: modalPreviewError,
@@ -51,6 +58,7 @@ export function useOrderPreviewCouponModal({
 
   const openCouponModal = () => {
     resetModalPreview();
+    void loadCoupons();
     openDraftCouponModal();
   };
   const retryCoupons = () => {

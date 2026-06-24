@@ -1,21 +1,24 @@
-import {act, renderHook} from '@testing-library/react';
+import {act, renderHook, waitFor} from '@testing-library/react';
 
 import {useCouponDraftSelection} from './useCouponDraftSelection.js';
 
 function renderUseCouponDraftSelection({
   canUseRecommendedCoupons = true,
   recommendedCouponIds = [1, 3],
+  selectableCouponIds = [1, 3],
 }: {
   canUseRecommendedCoupons?: boolean;
   recommendedCouponIds?: number[];
+  selectableCouponIds?: number[];
 } = {}) {
   return renderHook(
-    ({canUseRecommendedCoupons, recommendedCouponIds}) =>
-      useCouponDraftSelection({canUseRecommendedCoupons, recommendedCouponIds}),
+    ({canUseRecommendedCoupons, recommendedCouponIds, selectableCouponIds}) =>
+      useCouponDraftSelection({canUseRecommendedCoupons, recommendedCouponIds, selectableCouponIds}),
     {
       initialProps: {
         canUseRecommendedCoupons,
         recommendedCouponIds,
+        selectableCouponIds,
       },
     }
   );
@@ -44,6 +47,7 @@ describe('useCouponDraftSelection', () => {
     rerender({
       canUseRecommendedCoupons: true,
       recommendedCouponIds: [1, 3],
+      selectableCouponIds: [1, 3],
     });
 
     expect(result.current.draftCouponIds).toEqual([1, 3]);
@@ -95,5 +99,25 @@ describe('useCouponDraftSelection', () => {
     });
 
     expect(result.current.draftCouponIds).toEqual([]);
+  });
+
+  test('선택 불가능해진 쿠폰을 draft 선택값에서 제거한다', async () => {
+    const {result, rerender} = renderUseCouponDraftSelection();
+
+    act(() => {
+      result.current.openCouponModal();
+    });
+
+    expect(result.current.draftCouponIds).toEqual([1, 3]);
+
+    rerender({
+      canUseRecommendedCoupons: true,
+      recommendedCouponIds: [1, 3],
+      selectableCouponIds: [1],
+    });
+
+    await waitFor(() => {
+      expect(result.current.draftCouponIds).toEqual([1]);
+    });
   });
 });

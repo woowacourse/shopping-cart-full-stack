@@ -5,11 +5,13 @@ import type {CouponId} from '../domain/types.js';
 interface UseCouponDraftSelectionParams {
   canUseRecommendedCoupons: boolean;
   recommendedCouponIds: CouponId[];
+  selectableCouponIds: CouponId[];
 }
 
 export function useCouponDraftSelection({
   canUseRecommendedCoupons,
   recommendedCouponIds,
+  selectableCouponIds,
 }: UseCouponDraftSelectionParams) {
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [appliedCouponIds, setAppliedCouponIds] = useState<CouponId[]>([]);
@@ -19,6 +21,11 @@ export function useCouponDraftSelection({
   const openCouponModal = () => {
     if (!hasInitializedDraft && draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
       setDraftCouponIds(appliedCouponIds);
+      setHasInitializedDraft(true);
+    }
+
+    if (!hasInitializedDraft && draftCouponIds.length === 0 && appliedCouponIds.length === 0 && canUseRecommendedCoupons) {
+      setDraftCouponIds(recommendedCouponIds.filter((couponId) => selectableCouponIds.includes(couponId)));
       setHasInitializedDraft(true);
     }
 
@@ -46,9 +53,31 @@ export function useCouponDraftSelection({
     if (draftCouponIds.length > 0) return;
     if (!canUseRecommendedCoupons) return;
 
-    setDraftCouponIds(recommendedCouponIds);
+    setDraftCouponIds(recommendedCouponIds.filter((couponId) => selectableCouponIds.includes(couponId)));
     setHasInitializedDraft(true);
-  }, [canUseRecommendedCoupons, draftCouponIds.length, hasInitializedDraft, isCouponModalOpen, recommendedCouponIds]);
+  }, [
+    canUseRecommendedCoupons,
+    draftCouponIds.length,
+    hasInitializedDraft,
+    isCouponModalOpen,
+    recommendedCouponIds,
+    selectableCouponIds,
+  ]);
+
+  useEffect(() => {
+    if (!isCouponModalOpen) return;
+    if (!canUseRecommendedCoupons) return;
+
+    setDraftCouponIds((couponIds) => {
+      const syncedCouponIds = couponIds.filter((couponId) => selectableCouponIds.includes(couponId));
+
+      if (syncedCouponIds.length === couponIds.length) {
+        return couponIds;
+      }
+
+      return syncedCouponIds;
+    });
+  }, [canUseRecommendedCoupons, isCouponModalOpen, selectableCouponIds]);
 
   return {
     appliedCouponIds,
