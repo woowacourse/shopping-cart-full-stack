@@ -1,19 +1,19 @@
 import {Coupon} from '../Coupon.js';
 
 const createProductDiscountCoupon = (discountType: 'FIXED' | 'RATE' = 'FIXED') => {
-  return new Coupon(
-    1,
-    'FIXED5000',
-    '5000원 할인 쿠폰',
-    new Date('2026-11-30T23:59:59+09:00'),
-    {
+  return new Coupon({
+    id: 1,
+    code: 'FIXED5000',
+    name: '5000원 할인 쿠폰',
+    expirationDate: new Date('2026-11-30T23:59:59+09:00'),
+    condition: {
       target: 'ORDER',
       rule: 'MIN_ORDER_AMOUNT',
       params: {
         minOrderAmount: 100000,
       },
     },
-    {
+    benefit: {
       target: 'PRODUCT',
       discountType,
       rule: discountType === 'FIXED' ? 'DISCOUNT_AMOUNT' : 'DISCOUNT_RATE',
@@ -26,29 +26,29 @@ const createProductDiscountCoupon = (discountType: 'FIXED' | 'RATE' = 'FIXED') =
               discountRate: 0.3,
               applyAfterFixedDiscount: true,
             },
-    }
-  );
+    },
+  });
 };
 
 const createShippingDiscountCoupon = () => {
-  return new Coupon(
-    2,
-    'FREESHIPPING',
-    '무료 배송 쿠폰',
-    new Date('2026-08-31T23:59:59+09:00'),
-    {
+  return new Coupon({
+    id: 2,
+    code: 'FREESHIPPING',
+    name: '무료 배송 쿠폰',
+    expirationDate: new Date('2026-08-31T23:59:59+09:00'),
+    condition: {
       target: 'ORDER',
       rule: 'MIN_ORDER_AMOUNT',
       params: {
         minOrderAmount: 50000,
       },
     },
-    {
+    benefit: {
       target: 'SHIPPING',
       rule: 'FREE_SHIPPING',
       params: {},
-    }
-  );
+    },
+  });
 };
 
 describe('Coupon', () => {

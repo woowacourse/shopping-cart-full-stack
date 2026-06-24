@@ -2,27 +2,27 @@ import {Coupon} from '../Coupon.js';
 import {Coupons} from '../Coupons.js';
 
 const createCoupon = (id: number) => {
-  return new Coupon(
+  return new Coupon({
     id,
-    `COUPON${id}`,
-    `쿠폰${id}`,
-    new Date('2026-11-30T23:59:59+09:00'),
-    {
+    code: `COUPON${id}`,
+    name: `쿠폰${id}`,
+    expirationDate: new Date('2026-11-30T23:59:59+09:00'),
+    condition: {
       target: 'ORDER',
       rule: 'MIN_ORDER_AMOUNT',
       params: {
         minOrderAmount: 100000,
       },
     },
-    {
+    benefit: {
       target: 'PRODUCT',
       discountType: 'FIXED',
       rule: 'DISCOUNT_AMOUNT',
       params: {
         discountAmount: 5000,
       },
-    }
-  );
+    },
+  });
 };
 
 const createCoupons = () => {

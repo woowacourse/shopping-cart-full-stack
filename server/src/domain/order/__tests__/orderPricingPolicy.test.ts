@@ -13,42 +13,42 @@ const items: PreorderItem[] = [
 ];
 
 const createFixedDiscountCoupon = () =>
-  new Coupon(
-    1,
-    'FIXED5000',
-    '5000원 할인 쿠폰',
-    new Date('2026-12-31T23:59:59+09:00'),
-    {
+  new Coupon({
+    id: 1,
+    code: 'FIXED5000',
+    name: '5000원 할인 쿠폰',
+    expirationDate: new Date('2026-12-31T23:59:59+09:00'),
+    condition: {
       target: 'ORDER',
       rule: 'MIN_ORDER_AMOUNT',
       params: {
         minOrderAmount: 10000,
       },
     },
-    {
+    benefit: {
       target: 'PRODUCT',
       discountType: 'FIXED',
       rule: 'DISCOUNT_AMOUNT',
       params: {
         discountAmount: 5000,
       },
-    }
-  );
+    },
+  });
 
 const createRateDiscountCoupon = () =>
-  new Coupon(
-    2,
-    'RATE30',
-    '30% 할인 쿠폰',
-    new Date('2026-12-31T23:59:59+09:00'),
-    {
+  new Coupon({
+    id: 2,
+    code: 'RATE30',
+    name: '30% 할인 쿠폰',
+    expirationDate: new Date('2026-12-31T23:59:59+09:00'),
+    condition: {
       target: 'ORDER',
       rule: 'MIN_ORDER_AMOUNT',
       params: {
         minOrderAmount: 10000,
       },
     },
-    {
+    benefit: {
       target: 'PRODUCT',
       discountType: 'RATE',
       rule: 'DISCOUNT_RATE',
@@ -56,51 +56,51 @@ const createRateDiscountCoupon = () =>
         discountRate: 0.3,
         applyAfterFixedDiscount: true,
       },
-    }
-  );
+    },
+  });
 
 const createFreeShippingCoupon = () =>
-  new Coupon(
-    3,
-    'FREESHIPPING',
-    '무료 배송 쿠폰',
-    new Date('2026-12-31T23:59:59+09:00'),
-    {
+  new Coupon({
+    id: 3,
+    code: 'FREESHIPPING',
+    name: '무료 배송 쿠폰',
+    expirationDate: new Date('2026-12-31T23:59:59+09:00'),
+    condition: {
       target: 'ORDER',
       rule: 'MIN_ORDER_AMOUNT',
       params: {
         minOrderAmount: 10000,
       },
     },
-    {
+    benefit: {
       target: 'SHIPPING',
       rule: 'FREE_SHIPPING',
       params: {},
-    }
-  );
+    },
+  });
 
 const createBogoCoupon = () =>
-  new Coupon(
-    4,
-    'BOGO',
-    '2개 구매 시 1개 무료 쿠폰',
-    new Date('2026-12-31T23:59:59+09:00'),
-    {
+  new Coupon({
+    id: 4,
+    code: 'BOGO',
+    name: '2개 구매 시 1개 무료 쿠폰',
+    expirationDate: new Date('2026-12-31T23:59:59+09:00'),
+    condition: {
       target: 'PRODUCT',
       rule: 'MIN_SAME_PRODUCT_QUANTITY',
       params: {
         minSameProductQuantity: 2,
       },
     },
-    {
+    benefit: {
       target: 'PRODUCT',
       discountType: 'FIXED',
       rule: 'DISCOUNT_HIGHEST_UNIT_PRICE_ITEM',
       params: {
         discountQuantity: 1,
       },
-    }
-  );
+    },
+  });
 
 describe('orderPricingPolicy.calculateOrderPricing', () => {
   test('상품 할인과 배송비 할인을 결제 금액에 반영한다', () => {

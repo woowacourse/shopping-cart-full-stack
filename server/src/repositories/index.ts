@@ -26,10 +26,7 @@ const cartItemList = cartItemData.map(({id, productId, quantity}) => {
 
 export const cartItems = new CartItems(cartItemList);
 
-const couponList = couponData.map(
-  ({id, code, name, expirationDate, condition, benefit}) =>
-    new Coupon(id, code, name, expirationDate, condition, benefit)
-);
+const couponList = couponData.map((coupon) => new Coupon(coupon));
 
 export const coupons = new Coupons(couponList);
 

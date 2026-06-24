@@ -15,14 +15,21 @@ const PRODUCT_DISCOUNT_TYPE_PRIORITY = {
 } as const;
 
 export class Coupon implements CouponType {
-  constructor(
-    public readonly id: number,
-    public readonly code: string,
-    public readonly name: string,
-    public readonly expirationDate: Date,
-    public readonly condition: CouponCondition,
-    public readonly benefit: CouponBenefit
-  ) {}
+  public readonly id: number;
+  public readonly code: string;
+  public readonly name: string;
+  public readonly expirationDate: Date;
+  public readonly condition: CouponCondition;
+  public readonly benefit: CouponBenefit;
+
+  constructor({id, code, name, expirationDate, condition, benefit}: CouponType) {
+    this.id = id;
+    this.code = code;
+    this.name = name;
+    this.expirationDate = expirationDate;
+    this.condition = condition;
+    this.benefit = benefit;
+  }
 
   isExpired(now = new Date()) {
     return this.expirationDate < now;
