@@ -16,17 +16,21 @@ export function useCouponDraftSelection({
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [appliedCouponIds, setAppliedCouponIds] = useState<CouponId[]>([]);
   const [draftCouponIds, setDraftCouponIds] = useState<CouponId[]>([]);
-  const [hasInitializedDraft, setHasInitializedDraft] = useState(false);
+  const [isDraftInitialized, setIsDraftInitialized] = useState(false);
 
   const openCouponModal = () => {
-    if (!hasInitializedDraft && draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
-      setDraftCouponIds(appliedCouponIds);
-      setHasInitializedDraft(true);
-    }
+    if (!isDraftInitialized && draftCouponIds.length === 0) {
+      const initialDraftCouponIds = getInitialDraftCouponIds({
+        appliedCouponIds,
+        canUseRecommendedCoupons,
+        recommendedCouponIds,
+        selectableCouponIds,
+      });
 
-    if (!hasInitializedDraft && draftCouponIds.length === 0 && appliedCouponIds.length === 0 && canUseRecommendedCoupons) {
-      setDraftCouponIds(recommendedCouponIds.filter((couponId) => selectableCouponIds.includes(couponId)));
-      setHasInitializedDraft(true);
+      if (appliedCouponIds.length > 0 || canUseRecommendedCoupons) {
+        setDraftCouponIds(initialDraftCouponIds);
+        setIsDraftInitialized(true);
+      }
     }
 
     setIsCouponModalOpen(true);
@@ -38,27 +42,27 @@ export function useCouponDraftSelection({
 
   const applyDraftCouponIds = () => {
     setAppliedCouponIds(draftCouponIds);
-    setHasInitializedDraft(true);
+    setIsDraftInitialized(true);
     setIsCouponModalOpen(false);
   };
 
   const changeDraftCouponIds = (couponIds: CouponId[]) => {
     setDraftCouponIds(couponIds);
-    setHasInitializedDraft(true);
+    setIsDraftInitialized(true);
   };
 
   useEffect(() => {
     if (!isCouponModalOpen) return;
-    if (hasInitializedDraft) return;
+    if (isDraftInitialized) return;
     if (draftCouponIds.length > 0) return;
     if (!canUseRecommendedCoupons) return;
 
-    setDraftCouponIds(recommendedCouponIds.filter((couponId) => selectableCouponIds.includes(couponId)));
-    setHasInitializedDraft(true);
+    setDraftCouponIds(filterSelectableCouponIds(recommendedCouponIds, selectableCouponIds));
+    setIsDraftInitialized(true);
   }, [
     canUseRecommendedCoupons,
     draftCouponIds.length,
-    hasInitializedDraft,
+    isDraftInitialized,
     isCouponModalOpen,
     recommendedCouponIds,
     selectableCouponIds,
@@ -69,7 +73,7 @@ export function useCouponDraftSelection({
     if (!canUseRecommendedCoupons) return;
 
     setDraftCouponIds((couponIds) => {
-      const syncedCouponIds = couponIds.filter((couponId) => selectableCouponIds.includes(couponId));
+      const syncedCouponIds = filterSelectableCouponIds(couponIds, selectableCouponIds);
 
       if (syncedCouponIds.length === couponIds.length) {
         return couponIds;
@@ -88,4 +92,29 @@ export function useCouponDraftSelection({
     openCouponModal,
     setDraftCouponIds: changeDraftCouponIds,
   };
+}
+
+interface GetInitialDraftCouponIdsParams {
+  appliedCouponIds: CouponId[];
+  canUseRecommendedCoupons: boolean;
+  recommendedCouponIds: CouponId[];
+  selectableCouponIds: CouponId[];
+}
+
+function getInitialDraftCouponIds({
+  appliedCouponIds,
+  canUseRecommendedCoupons,
+  recommendedCouponIds,
+  selectableCouponIds,
+}: GetInitialDraftCouponIdsParams) {
+  if (appliedCouponIds.length > 0) return appliedCouponIds;
+  if (!canUseRecommendedCoupons) return [];
+
+  return filterSelectableCouponIds(recommendedCouponIds, selectableCouponIds);
+}
+
+function filterSelectableCouponIds(couponIds: CouponId[], selectableCouponIds: CouponId[]) {
+  const selectableCouponIdSet = new Set(selectableCouponIds);
+
+  return couponIds.filter((couponId) => selectableCouponIdSet.has(couponId));
 }
