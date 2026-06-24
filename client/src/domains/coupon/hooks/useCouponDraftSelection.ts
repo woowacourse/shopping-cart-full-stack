@@ -1,16 +1,25 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import type {CouponId} from '../domain/types.js';
 
-export function useCouponDraftSelection() {
+interface UseCouponDraftSelectionParams {
+  canUseRecommendedCoupons: boolean;
+  recommendedCouponIds: CouponId[];
+}
+
+export function useCouponDraftSelection({
+  canUseRecommendedCoupons,
+  recommendedCouponIds,
+}: UseCouponDraftSelectionParams) {
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [appliedCouponIds, setAppliedCouponIds] = useState<CouponId[]>([]);
   const [draftCouponIds, setDraftCouponIds] = useState<CouponId[]>([]);
-  const [hasCouponSelectionHistory, setHasCouponSelectionHistory] = useState(false);
+  const [hasInitializedDraft, setHasInitializedDraft] = useState(false);
 
   const openCouponModal = () => {
-    if (!hasCouponSelectionHistory && draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
+    if (!hasInitializedDraft && draftCouponIds.length === 0 && appliedCouponIds.length > 0) {
       setDraftCouponIds(appliedCouponIds);
+      setHasInitializedDraft(true);
     }
 
     setIsCouponModalOpen(true);
@@ -22,19 +31,28 @@ export function useCouponDraftSelection() {
 
   const applyDraftCouponIds = () => {
     setAppliedCouponIds(draftCouponIds);
-    setHasCouponSelectionHistory(true);
+    setHasInitializedDraft(true);
     setIsCouponModalOpen(false);
   };
 
   const changeDraftCouponIds = (couponIds: CouponId[]) => {
     setDraftCouponIds(couponIds);
-    setHasCouponSelectionHistory(true);
+    setHasInitializedDraft(true);
   };
+
+  useEffect(() => {
+    if (!isCouponModalOpen) return;
+    if (hasInitializedDraft) return;
+    if (draftCouponIds.length > 0) return;
+    if (!canUseRecommendedCoupons) return;
+
+    setDraftCouponIds(recommendedCouponIds);
+    setHasInitializedDraft(true);
+  }, [canUseRecommendedCoupons, draftCouponIds.length, hasInitializedDraft, isCouponModalOpen, recommendedCouponIds]);
 
   return {
     appliedCouponIds,
     draftCouponIds,
-    hasCouponSelectionHistory,
     isCouponModalOpen,
     applyDraftCouponIds,
     closeCouponModal,

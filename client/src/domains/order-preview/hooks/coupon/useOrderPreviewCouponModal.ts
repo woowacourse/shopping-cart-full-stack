@@ -1,5 +1,4 @@
 import {useCoupons} from '../../../coupon/hooks/useCoupons.js';
-import {useCouponAutoSelection} from '../../../coupon/hooks/useCouponAutoSelection.js';
 import {useCouponDraftSelection} from '../../../coupon/hooks/useCouponDraftSelection.js';
 import {useOrderPreview, type OrderPreviewStatus} from '../useOrderPreview.js';
 import {useOrderPreviewCouponErrorAction} from './useOrderPreviewCouponErrorAction.js';
@@ -19,22 +18,24 @@ export function useOrderPreviewCouponModal({
   onReturnToCart,
 }: UseOrderPreviewCouponModalParams) {
   const {
-    appliedCouponIds,
-    draftCouponIds,
-    hasCouponSelectionHistory,
-    isCouponModalOpen,
-    applyDraftCouponIds,
-    closeCouponModal,
-    openCouponModal: openDraftCouponModal,
-    setDraftCouponIds,
-  } = useCouponDraftSelection();
-  const {
     coupons,
     error: couponError,
     loadCoupons,
     recommendedCouponIds,
     status: couponsStatus,
   } = useCoupons({preorderId, isRemoteArea});
+  const {
+    appliedCouponIds,
+    draftCouponIds,
+    isCouponModalOpen,
+    applyDraftCouponIds,
+    closeCouponModal,
+    openCouponModal: openDraftCouponModal,
+    setDraftCouponIds,
+  } = useCouponDraftSelection({
+    canUseRecommendedCoupons: couponsStatus === 'success',
+    recommendedCouponIds,
+  });
   const {
     error: modalPreviewError,
     loadOrderPreview: loadModalPreview,
@@ -61,15 +62,6 @@ export function useOrderPreviewCouponModal({
     modalPreviewErrorType: modalPreviewError?.type ?? 'default',
     onReturnToCart,
     retryCoupons,
-  });
-
-  useCouponAutoSelection({
-    couponsStatus,
-    hasCouponSelectionHistory,
-    isCouponModalOpen,
-    onSelectCoupons: setDraftCouponIds,
-    recommendedCouponIds,
-    selectedCouponIds: draftCouponIds,
   });
 
   return {
