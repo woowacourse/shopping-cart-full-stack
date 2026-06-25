@@ -1,49 +1,90 @@
 import styled from "styled-components";
-import { Navigate, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import BackButton from "../button/BackButton";
+import ShoppingCartSkeleton from "../skeleton/ShoppingCartSkeleton";
+import useOrderData from "../../hooks/useOrderData";
+import useCouponData from "../../hooks/useCouponData";
+import OrderCartList from "../order/OrderCartList";
+import ApplyCouponButton from "../button/ApplyCouponButton";
+import ShippingInfo from "../order/ShippingInfo";
+import FinalResultOrder from "../order/FinalResultOrder";
+import PaymentButton from "../button/PaymentButton";
+import { orderApi } from "../../api/orderApi";
+import { useEffect } from "react";
 
 export default function OrderConfirmPage() {
-  const location = useLocation();
-  if (!location.state) {
-    return <Navigate to="/cart" replace />;
-  }
-  const { itemCount, totalQuantity, totalPrice } = location.state;
+  const { orderId } = useParams();
+  const { orderState, orderData, updateAppliedCoupon, orderFetchData } =
+    useOrderData(Number(orderId));
+  const { couponData } = useCouponData(Number(orderId));
+
+  useEffect(() => {
+    return () => {
+      orderApi.delete(Number(orderId)).catch(() => {});
+    };
+  }, []);
+
   return (
     <MainContainer>
-      <Body>
-        <Nav>
-          <BackButton />
-        </Nav>
-        <ConfirmOrderSection>
-          <Title> 주문 확인 </Title>
-          <Label>
-            총 {itemCount}종류의 상품 {totalQuantity}개를 주문합니다. 최종 결제
-            금액을 확인해 주세요.
-          </Label>
-          <TotalPriceLabel>총 결제 금액</TotalPriceLabel>
-          <TotalPrice>{totalPrice.toLocaleString()}원</TotalPrice>
-        </ConfirmOrderSection>
-        <PayButton disabled>결제하기</PayButton>
-      </Body>
+      {orderState.status === "loading" && <ShoppingCartSkeleton />}
+      {orderState.status === "error" && (
+        <ErrorMessage>
+          주문 확인 페이지를 불러오는 데 실패했습니다.
+        </ErrorMessage>
+      )}
+      {orderState.status === "success" && orderData && (
+        <Body>
+          <Nav>
+            <BackButton />
+          </Nav>
+          <SubContainer>
+            <TopSection>
+              <Title> 주문 확인 </Title>
+              <Label>
+                현재 {orderData.items.length} 종류의 상품{" "}
+                {orderData.items.reduce((acc, item) => acc + item.quantity, 0)}
+                개를 주문합니다. <br />
+                최종 결제 금액을 확인해주세요.
+              </Label>
+            </TopSection>
+
+            <OrderCartList items={orderData.items} />
+            <ApplyCouponButton
+              orderId={orderData.orderId}
+              couponData={couponData}
+              orderData={orderData}
+              updateAppliedCoupon={updateAppliedCoupon}
+            />
+            <ShippingInfo
+              orderData={orderData}
+              onRemoteAreaChange={orderFetchData}
+            />
+
+            <FinalResultOrder orderData={orderData} />
+            <PaymentButton orderId={orderData.orderId} />
+          </SubContainer>
+        </Body>
+      )}
     </MainContainer>
   );
 }
+
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 936px;
+  height: 100vh;
+  overflow: hidden;
 `;
-
 const Body = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: flex-start;
   width: 430px;
-  height: 936px;
+  height: 100vh;
+  overflow: hidden;
 `;
 
 const Nav = styled.nav`
@@ -54,15 +95,22 @@ const Nav = styled.nav`
   background-color: #000000;
 `;
 
-const ConfirmOrderSection = styled.div`
-  flex: 1;
+const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
+  justify-content: flex-start;
+  width: 100%;
+  overflow: hidden;
+  flex: 1;
+  padding: 24px;
+  box-sizing: border-box;
 `;
 
+const TopSection = styled.div`
+  width: 100%;
+  height: 62px;
+  margin-bottom: 24px;
+`;
 const Title = styled.div`
   font-size: 24px;
   font-family: sans-serif;
@@ -75,27 +123,8 @@ const Label = styled.div`
   font-weight: 500;
 `;
 
-const TotalPriceLabel = styled.p`
+const ErrorMessage = styled.p`
+  margin-top: 40px;
   font-size: 14px;
-  font-family: sans-serif;
-  font-weight: 500;
-  margin: 0;
-`;
-
-const TotalPrice = styled.p`
-  font-size: 24px;
-  font-family: sans-serif;
-  font-weight: 700;
-  margin: 0;
-`;
-
-const PayButton = styled.button`
-  width: 100%;
-  height: 64px;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: sans-serif;
-  color: #ffffff;
-  background-color: #bebebe;
-  cursor: not-allowed;
+  color: #888;
 `;

@@ -27,3 +27,11 @@ export const validateProductData = (data: ProductInput): void => {
     );
   validateQuantity(data.totalQuantity);
 };
+
+export const validateCouponCount = (couponIds: number[]): void => {
+  if (couponIds.length > 2)
+    throw new InvalidError(
+      "INVALID_COUPON_COUNT",
+      ERROR_MESSAGE.INVALID_COUPON_COUNT,
+    );
+};

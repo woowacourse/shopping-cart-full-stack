@@ -4,7 +4,12 @@ import styled from "styled-components";
 export default function BackButton() {
   const navigate = useNavigate();
   return (
-    <Button type="submit" onClick={() => navigate(-1)}>
+    <Button
+      type="submit"
+      onClick={() => {
+        navigate(-1);
+      }}
+    >
       <img src="/backBtn.png" />
     </Button>
   );
