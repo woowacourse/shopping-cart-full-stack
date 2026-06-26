@@ -4,7 +4,7 @@ import {
   getCartItems,
   patchCartItemQuantity,
   type CartItemResponse,
-} from '../apis/cart';
+} from '../../apis/cart';
 
 export const useCartItems = () => {
   const [cartItems, setCartItems] = useState<CartItemResponse[]>([]);

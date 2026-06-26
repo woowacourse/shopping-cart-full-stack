@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import type { CartItemResponse } from '../cart/apis/cart';
+import type { CartItemResponse } from '../apis/cart';
 import { calCartSummary } from '../cart/utils/calculateCartSummary';
 
 const cartItems: CartItemResponse[] = [

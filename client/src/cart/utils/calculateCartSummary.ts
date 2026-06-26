@@ -1,4 +1,4 @@
-import type { CartItemResponse } from '../apis/cart';
+import type { CartItemResponse } from '../../apis/cart';
 
 const FREE_SHIPPING_THRESHOLD = 100_000;
 const SHIPPING_FEE = 3_000;

@@ -17,7 +17,7 @@ const CartItem = ({ children, name, thumbnail, price }: CartItemProps) => {
         <Name>{name}</Name>
         <Price>{price.toLocaleString()}원</Price>
 
-        <QuantityControl>{children}</QuantityControl>
+        <QuantityArea>{children}</QuantityArea>
       </ProductInfo>
     </Content>
   );
@@ -52,7 +52,7 @@ const Price = styled.strong`
   font-weight: 700;
 `;
 
-const QuantityControl = styled.div`
+const QuantityArea = styled.div`
   margin-top: 0.75rem;
 `;
 

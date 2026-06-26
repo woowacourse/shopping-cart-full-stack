@@ -1,5 +1,5 @@
 import express from 'express';
-import { MY_CART_ID } from '../constanst.js';
+import { DEFAULT_USER_ID } from '../constants/user.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import { NotFoundError } from '../errors.js';
@@ -46,8 +46,9 @@ export function createProductController(storage: Storage): ProductController {
         }
 
         storage.deleteItemById('products', id);
-        const cart = storage.getItemById('cart', MY_CART_ID) as Cart;
+        const cart = storage.getItemById('cart', DEFAULT_USER_ID) as Cart;
         cart.deleteItemByProductId(id);
+        storage.updateItemById<Cart>('cart', DEFAULT_USER_ID, cart);
 
         res.status(204).send();
       } catch (err) {

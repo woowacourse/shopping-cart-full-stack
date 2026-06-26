@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import CheckBox from '../../components/CheckBox';
 import Stepper from '../../components/Stepper';
-import type { Product } from '../apis/cart';
+import type { Product } from '../../apis/cart';
 import CartItem from './CartItem';
 
 interface CartItemRowProps {

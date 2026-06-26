@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { server } from '../mocks/server';
 import CartPage from '../cart/CartPage';
-import type { CartItemResponse } from '../cart/apis/cart';
+import type { CartItemResponse } from '../apis/cart';
 
 const cartItems: CartItemResponse[] = [
   {

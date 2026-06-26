@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './config';
+
 export interface Product {
   id: string;
   name: string;
@@ -14,8 +16,6 @@ export interface CartItemQuantityResponse {
   productId: string;
   quantity: number;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export const getCartItems = async (): Promise<CartItemResponse[]> => {
   const response = await fetch(`${API_BASE_URL}/api/cart/`);

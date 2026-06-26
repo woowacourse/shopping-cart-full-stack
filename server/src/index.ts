@@ -1,15 +1,21 @@
 import InMemoryStorage from './storages/InMemoryStorage.js';
 import { createApp } from './app.js';
-import { MY_CART_ID } from './constanst.js';
+import { DEFAULT_USER_ID } from './constants/user.js';
 import { createCartController } from './controllers/cartController.js';
 import { createProductController } from './controllers/productController.js';
 import Cart from './models/Cart.js';
 import Product from './models/Product.js';
+import { createOrderSheetController } from './controllers/orderSheetController.js';
+import { createCouponController } from './controllers/couponController.js';
+import BuyNGetMCoupon from './models/coupons/BuyNGetMCoupon.js';
+import FixedAmountCoupon from './models/coupons/FixedAmountCoupon.js';
+import FreeShippingCoupon from './models/coupons/FreeShippingCoupon.js';
+import RateCoupon from './models/coupons/RateCoupon.js';
 
 const PORT = process.env.PORT ?? 3000;
 
 const storage = new InMemoryStorage();
-const cart = storage.getItemById('cart', MY_CART_ID) as Cart;
+const cart = storage.getItemById('cart', DEFAULT_USER_ID) as Cart;
 
 // 동작 확인을 위한 초기 데이터 추가
 const initialCartItems = [
@@ -62,9 +68,59 @@ initialCartItems.forEach(({ product, quantity }) => {
   cart.updateItemByProductId(productId, quantity);
 });
 
+const initialCoupons = [
+  new FixedAmountCoupon({
+    code: 'FIXED5000',
+    name: '5,000원 할인 쿠폰',
+    amount: 5000,
+    expiresAt: new Date('2026-11-30'),
+    conditions: {
+      minimumOrderAmount: 100000,
+    },
+  }),
+  new BuyNGetMCoupon({
+    code: 'BOGO',
+    name: '2+1 쿠폰',
+    buyQuantity: 2,
+    freeQuantity: 1,
+    expiresAt: new Date('2026-06-30'),
+  }),
+  new FreeShippingCoupon({
+    code: 'FREESHIPPING',
+    name: '무료 배송 쿠폰',
+    expiresAt: new Date('2026-08-31'),
+    conditions: {
+      minimumOrderAmount: 50000,
+    },
+  }),
+  new RateCoupon({
+    code: 'MIRACLESALE',
+    name: '30% 시간제 할인 쿠폰',
+    rate: 30,
+    expiresAt: new Date('2026-07-31'),
+    conditions: {
+      availableTimeRange: {
+        startsAt: '04:00',
+        endsAt: '07:00',
+      },
+    },
+  }),
+];
+
+initialCoupons.forEach((coupon) => {
+  storage.addItemById('coupons', coupon.getId(), coupon);
+});
+
 const productController = createProductController(storage);
 const cartController = createCartController(storage);
-const app = createApp({ productController, cartController });
+const orderSheetController = createOrderSheetController(storage);
+const couponController = createCouponController(storage);
+const app = createApp({
+  productController,
+  cartController,
+  orderSheetController,
+  couponController,
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

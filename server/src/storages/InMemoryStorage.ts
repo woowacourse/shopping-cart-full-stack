@@ -8,7 +8,7 @@ class InMemoryStorage implements Storage {
     this.#data = INITIAL_DATA;
   }
 
-  getItemById(table: string, id: string) {
+  getItemById<T>(table: string, id: string): T | undefined {
     return this.#data[table].get(id);
   }
 
@@ -28,7 +28,7 @@ class InMemoryStorage implements Storage {
     return this.#data[table].delete(id);
   }
 
-  allItems(table: string) {
+  allItems<T>(table: string): T[] {
     return [...this.#data[table].values()];
   }
 

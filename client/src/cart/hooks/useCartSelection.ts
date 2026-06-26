@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CartItemResponse } from '../apis/cart';
+import type { CartItemResponse } from '../../apis/cart';
 import type { SelectionStorage } from '../../repositories/SelectionStorage';
 
 export const useCartSelection = (

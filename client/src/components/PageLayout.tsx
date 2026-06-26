@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 interface PageLayoutProps {
-  headerContent: ReactNode;
+  headerContent?: ReactNode;
   children: ReactNode;
 }
 

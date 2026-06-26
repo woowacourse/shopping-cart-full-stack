@@ -5,17 +5,25 @@ import UncheckedIcon from '../Icons/UncheckedIcon';
 interface CheckBoxProps {
   ariaLabel?: string;
   checked: boolean;
+  disabled?: boolean;
   label?: string;
   onToggle: () => void;
 }
 
-const CheckBox = ({ ariaLabel, checked, label, onToggle }: CheckBoxProps) => {
+const CheckBox = ({
+  ariaLabel,
+  checked,
+  disabled = false,
+  label,
+  onToggle,
+}: CheckBoxProps) => {
   return (
     <Button
       type="button"
       role="checkbox"
       aria-checked={checked}
       aria-label={ariaLabel}
+      disabled={disabled}
       onClick={onToggle}
       $hasLabel={Boolean(label)}
     >
@@ -35,6 +43,10 @@ const Button = styled.button<{ $hasLabel: boolean }>`
   border: none;
   background: none;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const Label = styled.span`
