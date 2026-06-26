@@ -33,9 +33,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-const baseUrl = import.meta.env.DEV
-  ? "/api"
-  : import.meta.env.VITE_API_BASE_URL;
+const baseUrl =
+  import.meta.env.VITE_USE_MOCK === "true"
+    ? "/api"
+    : import.meta.env.VITE_API_BASE_URL;
 
 const fetcher = {
   get: async <Response>(

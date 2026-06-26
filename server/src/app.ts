@@ -1,6 +1,8 @@
 import express from "express";
-import { productsRouter } from "./modules/products/products.routes";
-import { cartsRouter } from "./modules/carts/carts.routes";
+import { productsRouter } from "./modules/products/products.route";
+import { cartsRouter } from "./modules/carts/carts.route";
+import { ordersRouter } from "./modules/orders/orders.route";
+import { couponsRouter } from "./modules/coupons/coupons.route";
 import errorHandler from "./middlewares/errorHandler";
 
 const app = express();
@@ -18,6 +20,8 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use("/products", productsRouter);
 app.use("/carts", cartsRouter);
+app.use("/order", ordersRouter);
+app.use("/coupons", couponsRouter);
 app.use(errorHandler);
 
 export default app;

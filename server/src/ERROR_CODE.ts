@@ -54,6 +54,46 @@ const ERROR_CODES = {
     message: "장바구니에 존재하지 않는 상품입니다.",
     status: 404,
   },
+  INVALID_COUPON_IDS: {
+    code: "INVALID_COUPON_IDS",
+    message: "올바르지 않은 쿠폰 ID입니다.",
+    status: 400,
+  },
+  INVALID_IS_ISLAND: {
+    code: "INVALID_IS_ISLAND",
+    message: "올바르지 않은 도서 산간 정보입니다.",
+    status: 400,
+  },
+  NOT_EXIST_COUPON: {
+    code: "NOT_EXIST_COUPON",
+    message: "존재하지 않는 쿠폰입니다.",
+    status: 404,
+  },
+  EXCEED_MAX_COUPON_COUNT: {
+    code: "EXCEED_MAX_COUPON_COUNT",
+    message: "쿠폰은 최대 2개까지 적용할 수 있습니다.",
+    status: 400,
+  },
+  UNUSABLE_COUPON: {
+    code: "UNUSABLE_COUPON",
+    message: "사용할 수 없는 쿠폰입니다.",
+    status: 400,
+  },
+  INVALID_ORDER_PRODUCTS: {
+    code: "INVALID_ORDER_PRODUCTS",
+    message: "유효하지 않은 주문 상품 정보입니다.",
+    status: 400,
+  },
+  NOT_EXIST_ORDER: {
+    code: "NOT_EXIST_ORDER",
+    message: "존재하지 않는 주문입니다.",
+    status: 404,
+  },
+  OUT_OF_RANGE_ORDER_QUANTITY: {
+    code: "OUT_OF_RANGE_ORDER_QUANTITY",
+    message: "주문 수량은 1~99까지 가능합니다.",
+    status: 400,
+  },
   INTERNAL_SERVER_ERROR: {
     code: "INTERNAL_SERVER_ERROR",
     message: "서버 내부 오류입니다.",

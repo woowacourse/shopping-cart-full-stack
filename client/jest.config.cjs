@@ -35,6 +35,8 @@ module.exports = {
     "^@constants/(.*)$": "<rootDir>/src/constants/$1",
     "^@apis/(.*)$": "<rootDir>/src/apis/$1",
     "^@hooks/(.*)$": "<rootDir>/src/hooks/$1",
+    "^@libs/(.*)$": "<rootDir>/src/libs/$1",
+    "^@utils/(.*)$": "<rootDir>/src/utils/$1",
     "^@styles/(.*)$": "<rootDir>/src/styles/$1",
     "^@assets/(.*)$": "<rootDir>/src/assets/$1",
   },

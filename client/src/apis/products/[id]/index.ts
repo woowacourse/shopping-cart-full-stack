@@ -1,4 +1,4 @@
-import fetcher from "../../instance";
+import fetcher from "@apis/instance";
 
 const PRODUCTS_API = "/products";
 

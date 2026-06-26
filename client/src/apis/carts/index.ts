@@ -1,5 +1,5 @@
 import type { Cart } from "@/types/cartProduct";
-import fetcher from "../instance";
+import fetcher from "@apis/instance";
 
 const CARTS_API = "/carts";
 
