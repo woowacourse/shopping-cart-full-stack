@@ -16,22 +16,12 @@ export const NumericSpinner = ({disabled = false, max, min, onChange, value}: Nu
   const isIncreaseDisabled = disabled || value >= max;
 
   return (
-    <Container aria-label='숫자 변경' role='group'>
-      <ControlButton
-        aria-label='숫자 감소'
-        disabled={isDecreaseDisabled}
-        onClick={() => onChange(value - 1)}
-        type='button'
-      >
+    <Container>
+      <ControlButton disabled={isDecreaseDisabled} onClick={() => onChange(value - 1)} type='button'>
         -
       </ControlButton>
       <ValueText>{value}</ValueText>
-      <ControlButton
-        aria-label='숫자 증가'
-        disabled={isIncreaseDisabled}
-        onClick={() => onChange(value + 1)}
-        type='button'
-      >
+      <ControlButton disabled={isIncreaseDisabled} onClick={() => onChange(value + 1)} type='button'>
         +
       </ControlButton>
     </Container>

@@ -1,7 +1,7 @@
-import {cartItems, products} from '../db.js';
+import {cartItems, products} from '../repositories/index.js';
 import {HttpError} from '../middlewares/errorHandler.js';
 import {Product} from '../models/Product.js';
-import type {CreateProductRequestBody} from '../type.js';
+import type {CreateProductRequestBody} from '../types/product.js';
 
 const PRODUCT_NAME_MAX_LENGTH = 100;
 
@@ -44,7 +44,7 @@ export const productService = {
     const {name, price, imageUrl} = body;
 
     if (products.hasName(name)) {
-      throw new HttpError(409);
+      throw new HttpError(409, '이미 존재하는 상품명입니다.');
     }
 
     const newId = products.getNextId();
@@ -56,7 +56,7 @@ export const productService = {
 
   deleteProduct(id: string) {
     if (!products.findById(id)) {
-      throw new HttpError(404);
+      throw new HttpError(404, '상품을 찾을 수 없습니다.');
     }
 
     cartItems.deleteByProductId(id);

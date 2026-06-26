@@ -1,4 +1,4 @@
-import {RequestHandler} from 'express';
+import type {RequestHandler} from 'express';
 
 export const asyncHandler = <Params>(handler: RequestHandler<Params>): RequestHandler<Params> => {
   return async (req, res, next) => {

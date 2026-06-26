@@ -1,10 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 
-import {cartController} from './controllers/CartController.js';
 import {asyncHandler} from './middlewares/asyncHandler.js';
 import {errorHandler} from './middlewares/errorHandler.js';
+import {cartController} from './controllers/CartController.js';
 import {productController} from './controllers/ProductController.js';
+import {preorderController} from './controllers/PreorderController.js';
+import {couponController} from './controllers/CouponController.js';
+import {orderController} from './controllers/OrderController.js';
 
 const app = express();
 
@@ -28,6 +31,15 @@ app.get('/carts', asyncHandler(cartController.getCartItems));
 app.patch('/carts/:cartItemId', asyncHandler(cartController.updateQuantity));
 app.delete('/carts/:cartItemId', asyncHandler(cartController.deleteCartItem));
 
+app.post('/preorder', asyncHandler(preorderController.createPreorder));
+app.get('/preorder/:preorderId', asyncHandler(preorderController.getPreorder));
+
+app.get('/coupons', asyncHandler(couponController.getCoupons));
+
+app.post('/order/preview', asyncHandler(orderController.previewOrder));
+app.post('/order', asyncHandler(orderController.createOrder));
+app.get('/order/:orderId', asyncHandler(orderController.getOrderSummary));
+
 app.use(errorHandler);
 
 export default app;
@@ -35,5 +47,9 @@ export default app;
 function createAllowedOrigins() {
   if (!process.env.CLIENT_ORIGIN) return localAllowedOrigins;
 
-  return [...localAllowedOrigins, process.env.CLIENT_ORIGIN];
+  const deployedAllowedOrigins = process.env.CLIENT_ORIGIN.split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return [...localAllowedOrigins, ...deployedAllowedOrigins];
 }

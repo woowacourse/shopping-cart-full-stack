@@ -1,7 +1,7 @@
 import type {Request, Response} from 'express';
 
 import {productService} from '../services/ProductService.js';
-import type {CreateProductRequestBody, ProductIdParams} from '../type.js';
+import type {CreateProductRequestBody, ProductIdParams} from '../types/product.js';
 
 export const productController = {
   getProducts(_req: Request, res: Response) {
