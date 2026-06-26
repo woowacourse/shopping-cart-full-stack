@@ -1,18 +1,14 @@
-import styled from "styled-components";
+import type { ReactNode } from "react";
+import { H1, TitleWrapper } from "./styled/Title.styles";
 
-const TitleWrapper = styled.div`
-  padding: 24px 20px 8px;
-`;
+interface TitleProps {
+  children?: ReactNode;
+}
 
-const H1 = styled.h1`
-  font-size: 24px;
-  font-weight: bold;
-`;
-
-export const Title = () => {
+export const Title = ({ children = "장바구니" }: TitleProps) => {
   return (
     <TitleWrapper>
-      <H1>장바구니</H1>
+      <H1>{children}</H1>
     </TitleWrapper>
   );
 };

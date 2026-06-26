@@ -1,5 +1,10 @@
 import { useState } from "react";
-import styled from "styled-components";
+import {
+  BottomBar,
+  CenterBox,
+  OrderButton,
+  Spacer,
+} from "../components/styled/Cart.styles";
 import { Header } from "../components/Header";
 import { ItemList } from "../components/ItemList";
 import { OrderConfirm } from "../components/OrderConfirm";
@@ -10,46 +15,12 @@ import { useCart } from "../hooks/useCart";
 import { useSelectedIds } from "../hooks/useSelectedIds";
 import { useOrderCalculation } from "../hooks/useOrderCalculation";
 
-const CenterBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60vh;
-  font-size: 16px;
-  color: #555;
-`;
-
-const Spacer = styled.div`
-  height: 80px;
-`;
-
-const BottomBar = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: #000;
-`;
-
-const OrderButton = styled.button<{ $disabled: boolean }>`
-  width: 100%;
-  padding: 20px;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
-  opacity: ${({ $disabled }) => ($disabled ? 0.4 : 1)};
-`;
-
 export const Cart = () => {
   const {
     cartItems,
     isLoading,
-    error,
+    loadError,
+    mutationError,
     increaseQuantity,
     decreaseQuantity,
     removeItem,
@@ -67,23 +38,18 @@ export const Cart = () => {
   } = useOrderCalculation(cartItems, selectedIds);
 
   const onPlus = async (productId: number) => {
-    const item = cartItems.find((item) => item.productId === productId);
-    if (!item) return;
-
-    if (item.quantity >= 99) {
+    const result = await increaseQuantity(productId);
+    if (result.status === "blocked" && result.reason === "MAX_QUANTITY") {
       alert("수량은 최대 99개까지 가능합니다.");
       return;
     }
-    await increaseQuantity(productId, item.quantity);
   };
 
   const onMinus = async (productId: number) => {
-    const item = cartItems.find((item) => item.productId === productId);
-    if (!item) return;
-
-    const success = await decreaseQuantity(productId, item.quantity);
-    if (!success) {
+    const result = await decreaseQuantity(productId);
+    if (result.status === "blocked" && result.reason === "MIN_QUANTITY") {
       alert("수량은 1개 이상부터 가능합니다.");
+      return;
     }
   };
 
@@ -104,7 +70,7 @@ export const Cart = () => {
     );
   }
 
-  if (error) {
+  if (loadError) {
     return (
       <>
         <Header />
@@ -129,12 +95,13 @@ export const Cart = () => {
       <Header
         onBack={isConfirming ? () => setIsConfirming(false) : undefined}
       />
-      <Title />
+      <Title>{isConfirming ? "주문 확인" : "장바구니"}</Title>
       {isConfirming ? (
         <OrderConfirm
+          items={selectedItems}
           itemCount={selectedItems.length}
           totalQuantity={totalQuantity}
-          totalAmount={totalPaymentAmount}
+          onReturnToCart={() => setIsConfirming(false)}
         />
       ) : (
         <>
@@ -143,6 +110,7 @@ export const Cart = () => {
             onPlus={onPlus}
             onMinus={onMinus}
             selectedIds={selectedIds}
+            mutationError={mutationError}
             onSelectAll={onSelectAll}
             onSelectItem={onSelectItem}
             onDelete={onDelete}

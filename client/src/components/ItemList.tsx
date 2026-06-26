@@ -1,42 +1,25 @@
-import styled from "styled-components";
+import {
+  Checkbox,
+  List,
+  SelectAllLabel,
+  SelectAllRow,
+  Subtitle,
+} from "./styled/ItemList.styles";
 import type { CartItem } from "../type/type";
 import { Item } from "./Item";
 import { CartItemActionsContext } from "../context/CartItemActionsContext";
 
-const Subtitle = styled.p`
-  padding: 0 20px 16px;
-  color: #555;
-  font-size: 14px;
-`;
-
-const SelectAllRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-top: 1px solid #eee;
-`;
-
-const Checkbox = styled.input`
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-`;
-
-const SelectAllLabel = styled.span`
-  font-size: 14px;
-`;
-
-const List = styled.ul`
-  padding: 0;
-  margin: 0;
-`;
+interface ItemMutationError {
+  productId: number;
+  message: string;
+}
 
 interface ItemListProps {
   items: Array<CartItem>;
   onPlus: (productId: number) => Promise<void>;
   onMinus: (productId: number) => Promise<void>;
   selectedIds: Set<number>;
+  mutationError: ItemMutationError | null;
   onSelectAll: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSelectItem: (productId: number) => void;
   onDelete: (productId: number) => void;
@@ -50,6 +33,7 @@ export const ItemList = ({
   onSelectAll,
   onDelete,
   selectedIds,
+  mutationError,
 }: ItemListProps) => {
   return (
     <div>
@@ -71,6 +55,11 @@ export const ItemList = ({
               key={item.productId}
               item={item}
               isSelected={selectedIds.has(item.productId)}
+              mutationErrorMessage={
+                mutationError?.productId === item.productId
+                  ? mutationError.message
+                  : undefined
+              }
             />
           ))}
         </List>
