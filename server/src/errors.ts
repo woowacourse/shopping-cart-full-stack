@@ -42,3 +42,34 @@ export class CartItemProductMissingError extends Error {
     this.name = 'CartItemProductMissingError';
   }
 }
+
+export class OrderNotFoundError extends Error {
+  constructor(public readonly orderId: string) {
+    super('Order not found');
+    this.name = 'OrderNotFoundError';
+  }
+}
+
+export class CouponNotFoundError extends Error {
+  constructor(public readonly couponId: string) {
+    super('Coupon not found');
+    this.name = 'CouponNotFoundError';
+  }
+}
+
+export class CouponUnavailableError extends Error {
+  constructor(public readonly couponId: string) {
+    super('Coupon is unavailable');
+    this.name = 'CouponUnavailableError';
+  }
+}
+
+export class CouponTypeLimitError extends Error {
+  constructor(
+    public readonly couponType: 'AMOUNT' | 'PERCENT',
+    public readonly couponIds: string[],
+  ) {
+    super('Coupon type limit exceeded');
+    this.name = 'CouponTypeLimitError';
+  }
+}

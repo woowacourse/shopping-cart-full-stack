@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import useCartItemSelection from '../../hooks/useCartItemSelection';
 import type { CartItem as TCartItem } from '../../types';
 import Typo from '../common/Typo';
 import Flex from '../common/Flex';
@@ -8,37 +6,43 @@ import View from '../common/View';
 import Button from '../common/Button';
 import CartItemList from '../CartItemList';
 import CartAmountSummary from '../CartAmountSummary';
+import useCreateOrderMutation from '../../hooks/mutations/useCreateOrderMutation';
 
 export default function CartTemplate(props: { data: TCartItem[] }) {
   const navigate = useNavigate();
 
-  const { selectedById } = useCartItemSelection(props.data);
+  const createOrder = useCreateOrderMutation({
+    onSuccess: (order) => {
+      navigate(`/order/${order.orderId}`);
+    },
+  });
 
-  const selectedCartItems = useMemo(() => {
-    return props.data.filter((cartItem) => selectedById[cartItem.cartItemId]);
-  }, [props.data, selectedById]);
+  const selectedCartItems = props.data.filter((cartItem) => cartItem.isSelected);
 
   return (
     <View gap={24}>
-      <Flex direction="column">
+      <Flex.Column>
         <Typo as="h1" size="xl" weight="bold">
           장바구니
         </Typo>
         <Typo as="h2" size="s">
           현재 {props.data.length}종류의 상품이 담겨있습니다.
         </Typo>
-      </Flex>
+      </Flex.Column>
       <CartItemList data={props.data} />
-      <CartAmountSummary selectedCartItems={selectedCartItems} />
+      <CartAmountSummary />
       <View.CTA>
         <Button
           variant="cta"
-          onClick={() =>
-            navigate('/order', {
-              state: { products: selectedCartItems },
-            })
-          }
-          disabled={!Object.entries(selectedById).some((el) => el[1])}
+          onClick={() => {
+            createOrder.mutate(
+              selectedCartItems.map((item) => ({
+                productId: item.product.productId,
+                quantity: item.quantity,
+              })),
+            );
+          }}
+          disabled={selectedCartItems.length === 0}
         >
           주문 확인
         </Button>

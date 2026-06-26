@@ -1,0 +1,224 @@
+import { css } from '@emotion/css';
+import { useState } from 'react';
+import type { OrderCoupon, OrderWithProduct } from '../types';
+import { formatWon } from '../utils';
+import useUpdateOrderMutation from '../hooks/mutations/useUpdateOrderMutation';
+import useOrderAmountQuery from '../hooks/queries/useOrderAmountQuery';
+import useOrderCouponRecommendationQuery from '../hooks/queries/useOrderCouponRecommendationQuery';
+import useOrderCouponsQuery from '../hooks/queries/useOrderCouponsQuery';
+import Button from './common/Button';
+import Flex from './common/Flex';
+import Typo from './common/Typo';
+import Image from './common/Image';
+import ModalLayout from './modal/ModalLayout';
+import { useModal } from '../hooks/useModal';
+import ConfirmModal from './ConfirmModal';
+import Spinner from './common/Spinner';
+import CouponListItem from './CouponListItem';
+
+interface CouponApplyModalProps {
+  order: OrderWithProduct;
+  onConfirm: (couponIds: string[]) => void;
+  onCancel: () => void;
+}
+
+export default function CouponApplyModal({ order, onConfirm, onCancel }: CouponApplyModalProps) {
+  const { openModalAsync } = useModal();
+
+  const [selectedCouponIds, setSelectedCouponIds] = useState(order.couponIds);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const couponsQuery = useOrderCouponsQuery(order.orderId);
+  const recommendationQuery = useOrderCouponRecommendationQuery(order.orderId);
+
+  const updateOrder = useUpdateOrderMutation(order.orderId);
+
+  const amountQuery = useOrderAmountQuery(order.orderId, {
+    couponIds: selectedCouponIds,
+    isRemoteArea: order.isRemoteArea,
+  });
+  const isAmountUnavailable = amountQuery.status === 'fail' || amountQuery.status === 'error';
+
+  const toggleCoupon = (coupon: OrderCoupon) => {
+    if (updateOrder.status === 'loading' || recommendationQuery.isFetching) return;
+
+    setErrorMessage('');
+
+    if (selectedCouponIds.includes(coupon.userCouponId)) {
+      setSelectedCouponIds((prev) => prev.filter((couponId) => couponId !== coupon.userCouponId));
+      return;
+    }
+
+    if (selectedCouponIds.length >= 2) {
+      setErrorMessage('쿠폰은 최대 2개까지 사용할 수 있습니다.');
+      return;
+    }
+
+    const selectedCoupons = coupons?.filter((coupon) => selectedCouponIds.includes(coupon.userCouponId)) ?? [];
+    const hasSameTypeCoupon = selectedCoupons.some((selectedCoupon) => selectedCoupon.couponType === coupon.couponType);
+
+    if (hasSameTypeCoupon) {
+      setErrorMessage(
+        coupon.couponType === 'AMOUNT'
+          ? '정액 쿠폰은 1개만 사용할 수 있습니다.'
+          : '정률 쿠폰은 1개만 사용할 수 있습니다.',
+      );
+      return;
+    }
+
+    setSelectedCouponIds((prev) => [...prev, coupon.userCouponId]);
+  };
+
+  const handleApplyRecommendation = async () => {
+    if (updateOrder.status === 'loading') return;
+
+    setErrorMessage('');
+
+    try {
+      const response = await recommendationQuery.refetchAsync();
+
+      if (response.status !== 'success') {
+        setErrorMessage('최고 혜택 쿠폰을 불러올 수 없습니다.');
+        return;
+      }
+
+      setSelectedCouponIds(response.data.couponIds);
+    } catch {
+      setErrorMessage('최고 혜택 쿠폰을 불러올 수 없습니다.');
+    }
+  };
+
+  const handleApply = async () => {
+    setErrorMessage('');
+
+    try {
+      const response = await updateOrder.mutateAsync({ couponIds: selectedCouponIds });
+
+      if (response.status !== 'success') {
+        setErrorMessage('쿠폰을 적용할 수 없습니다. 다시 선택해 주세요.');
+        return;
+      }
+
+      onConfirm(selectedCouponIds);
+    } catch {
+      setErrorMessage('쿠폰을 적용할 수 없습니다. 다시 선택해 주세요.');
+    }
+  };
+
+  const handleClose = async () => {
+    if (isSameCouponIds(order.couponIds, selectedCouponIds)) {
+      onCancel();
+      return;
+    }
+
+    const result = await openModalAsync<boolean>(({ close, exit }) => (
+      <ConfirmModal
+        title="정말 닫으시겠습니까?"
+        description="적용하지 않은 쿠폰 선택은 저장되지 않습니다."
+        cancelText="취소"
+        confirmText="닫기"
+        onCancel={exit}
+        onConfirm={() => close(true)}
+      />
+    ));
+
+    if (result.type === 'exit') return;
+
+    onCancel();
+  };
+
+  const coupons = couponsQuery.status === 'success' ? couponsQuery.data : null;
+  const amount = amountQuery.data ? amountQuery.data : order.amount;
+
+  return (
+    <ModalLayout onClose={handleClose}>
+      <Flex.Column gap={16}>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Typo as="h2" weight="bold">
+            쿠폰을 선택해 주세요
+          </Typo>
+          <Button variant="ghost" size="s" onClick={handleClose} aria-label="쿠폰 모달 닫기">
+            <Image src={`${import.meta.env.BASE_URL}x.svg`} />
+          </Button>
+        </Flex>
+
+        <Flex gap={4}>
+          <Image src={`${import.meta.env.BASE_URL}infomation.svg`} alt="infomation icon" />
+          <Typo size="s">쿠폰은 최대 2개까지 사용할 수 있습니다.</Typo>
+        </Flex>
+
+        <Flex.Column as="ul" className={couponListStyle}>
+          {couponsQuery.status === 'loading' && (
+            <Typo as="li" size="s">
+              쿠폰을 불러오는 중입니다.
+            </Typo>
+          )}
+
+          {(couponsQuery.status === 'fail' || couponsQuery.status === 'error') && (
+            <Typo as="li" size="s">
+              쿠폰을 불러오지 못했습니다.
+            </Typo>
+          )}
+
+          {coupons?.map((coupon) => (
+            <CouponListItem
+              key={coupon.userCouponId}
+              coupon={coupon}
+              checked={selectedCouponIds.includes(coupon.userCouponId)}
+              disabled={coupon.isDisabled || updateOrder.status === 'loading' || recommendationQuery.isFetching}
+              onChange={() => toggleCoupon(coupon)}
+            />
+          ))}
+        </Flex.Column>
+
+        {errorMessage && (
+          <Typo size="s" color="red-500" align="center">
+            {errorMessage}
+          </Typo>
+        )}
+        {updateOrder.error?.message && (
+          <Typo size="s" color="red-500" align="center">
+            {updateOrder.error?.message}
+          </Typo>
+        )}
+        {(amountQuery.status === 'fail' || amountQuery.status === 'error') && (
+          <Typo size="s" color="red-500" align="center">
+            할인 금액을 계산 중 오류가 발생했습니다.
+          </Typo>
+        )}
+
+        <Button onClick={handleApplyRecommendation} disabled={recommendationQuery.isFetching || updateOrder.status === 'loading'}>
+          {recommendationQuery.isFetching ? (
+            <Spinner size="s" mr={8} aria-label="최고 혜택 쿠폰 조회 중" />
+          ) : (
+            '최고 혜택 적용'
+          )}
+        </Button>
+
+        <Button
+          variant="primary"
+          onClick={handleApply}
+          disabled={amountQuery.isFetching || isAmountUnavailable || updateOrder.status === 'loading'}
+        >
+          {amountQuery.isFetching || updateOrder.status === 'loading' ? (
+            <Spinner size="s" mr={8} aria-label="할인 금액 계산 중" />
+          ) : (
+            `총 ${formatWon(amount.discountAmount)} 할인 쿠폰 사용하기`
+          )}
+        </Button>
+      </Flex.Column>
+    </ModalLayout>
+  );
+}
+
+const couponListStyle = css`
+  & > li {
+    border-top: 1px solid var(--color-gray-200);
+  }
+`;
+
+function isSameCouponIds(a: string[], b: string[]) {
+  if (a.length !== b.length) return false;
+
+  return a.every((couponId) => b.includes(couponId));
+}

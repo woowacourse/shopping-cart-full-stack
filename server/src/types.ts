@@ -6,9 +6,88 @@ export interface Product {
   stock: number;
 }
 
-export interface CartItem extends Pick<Product, 'productId'> {
+export interface CartItem {
   cartItemId: string;
+  isSelected: boolean;
+  productId: Product['productId'];
   quantity: number;
+}
+
+type OrderAmountDiscount =
+  | {
+      orderAmountDiscountType: 'NONE';
+      orderAmountDiscountValue: null;
+    }
+  | {
+      orderAmountDiscountType: 'AMOUNT' | 'PERCENT';
+      orderAmountDiscountValue: number;
+    };
+
+type ShippingFeeDiscount =
+  | {
+      shippingFeeDiscountType: 'NONE' | 'FREE';
+      shippingFeeDiscountValue: null;
+    }
+  | {
+      shippingFeeDiscountType: 'AMOUNT';
+      shippingFeeDiscountValue: number;
+    };
+
+type RemoteAreaFeeDiscount =
+  | {
+      remoteAreaFeeDiscountType: 'NONE' | 'FREE';
+      remoteAreaFeeDiscountValue: null;
+    }
+  | {
+      remoteAreaFeeDiscountType: 'AMOUNT';
+      remoteAreaFeeDiscountValue: number;
+    };
+
+type ItemDiscount =
+  | {
+      itemDiscountType: 'NONE';
+      itemDiscountValue: null;
+    }
+  | {
+      itemDiscountType: 'FREE_COUNT';
+      itemDiscountValue: number;
+    };
+
+interface CouponBase {
+  couponId: string;
+  couponType: 'AMOUNT' | 'PERCENT';
+  code: string;
+  name: string;
+  expiresAt: string;
+
+  minOrderAmount: number | null;
+  minItemCount: number | null;
+
+  availableTimeStart: string | null;
+  availableTimeEnd: string | null;
+}
+
+export type Coupon = CouponBase & OrderAmountDiscount & ShippingFeeDiscount & RemoteAreaFeeDiscount & ItemDiscount;
+
+export interface UserCoupon {
+  userCouponId: string;
+  couponId: string;
+  issuedAt: string;
+  usedAt: string | null;
+  usedOrderId: string | null;
+}
+
+export interface OrderItem {
+  productId: Product['productId'];
+  quantity: number;
+}
+
+export interface Order {
+  orderId: string;
+  status: 'PENDING' | 'PAID';
+  isRemoteArea: boolean;
+  items: OrderItem[];
+  couponIds: UserCoupon['userCouponId'][];
 }
 
 export interface ProductsRepository {
@@ -26,8 +105,49 @@ export interface CartItemsRepository {
   deleteById(cartItemId: CartItem['cartItemId']): Promise<Pick<CartItem, 'cartItemId'> | null>;
 }
 
-export interface CartItemWithProduct extends Pick<CartItem, 'cartItemId' | 'quantity'> {
+export interface CouponsRepository {
+  getCoupons(): Promise<Coupon[]>;
+  getUserCoupons(): Promise<UserCoupon[]>;
+}
+
+export interface OrdersRepository {
+  getById(orderId: Order['orderId']): Promise<Order | undefined>;
+  insert(order: Omit<Order, 'orderId'>): Promise<Order>;
+  updateById(orderId: Order['orderId'], order: Order): Promise<Order | undefined>;
+}
+
+export interface CartItemWithProduct extends Omit<CartItem, 'productId'> {
   product: Product;
+}
+
+export interface OrderWithProduct extends Omit<Order, 'items'> {
+  items: { product: Product; quantity: OrderItem['quantity'] }[];
+  amount: AmountSummary;
+}
+
+export interface AmountSummary {
+  orderAmount: number;
+  shippingAmount: number;
+  discountAmount: number;
+  totalAmount: number;
+}
+
+export interface OrderCoupon {
+  userCouponId: UserCoupon['userCouponId'];
+  couponId: Coupon['couponId'];
+  couponType: Coupon['couponType'];
+  isDisabled: boolean;
+  name: Coupon['name'];
+  dueDate: Coupon['expiresAt'];
+  minOrderAmount: Coupon['minOrderAmount'];
+  availableTime: {
+    startTime: Coupon['availableTimeStart'];
+    endTime: Coupon['availableTimeEnd'];
+  };
+}
+
+export interface CouponRecommendation {
+  couponIds: UserCoupon['userCouponId'][];
 }
 
 export interface ProductsServicePort {
@@ -38,10 +158,26 @@ export interface ProductsServicePort {
 
 export interface CartItemsServicePort {
   getCartItems(): Promise<CartItemWithProduct[]>;
-  insertCartItem(cartItem: Omit<CartItem, 'cartItemId'>): Promise<CartItemWithProduct>;
+  getCartAmount(): Promise<AmountSummary>;
+  insertCartItem(cartItem: Omit<CartItem, 'cartItemId' | 'isSelected'>): Promise<CartItemWithProduct>;
   patchCartItem(
     cartItemId: CartItem['cartItemId'],
-    cartItemPartial: Pick<CartItem, 'quantity'>,
+    cartItemPartial: Partial<Omit<CartItem, 'productId' | 'cartItemId'>>,
   ): Promise<CartItemWithProduct>;
   deleteCartItem(cartItemId: CartItem['cartItemId']): Promise<Pick<CartItem, 'cartItemId'>>;
+}
+
+export interface OrdersServicePort {
+  getOrderById(orderId: Order['orderId']): Promise<OrderWithProduct>;
+  insertOrder(items: OrderItem[]): Promise<OrderWithProduct>;
+  getOrderCoupons(orderId: Order['orderId']): Promise<OrderCoupon[]>;
+  getOrderCouponRecommendation(orderId: Order['orderId']): Promise<CouponRecommendation>;
+  getOrderAmount(
+    orderId: Order['orderId'],
+    orderPartial: Partial<Pick<Order, 'isRemoteArea' | 'couponIds'>>,
+  ): Promise<AmountSummary>;
+  patchOrder(
+    orderId: Order['orderId'],
+    orderPartial: Partial<Pick<Order, 'isRemoteArea' | 'couponIds'>>,
+  ): Promise<OrderWithProduct>;
 }

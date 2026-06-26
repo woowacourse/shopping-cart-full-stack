@@ -1,9 +1,4 @@
-import {
-  CartItem,
-  CartItemsRepository,
-  CartItemsServicePort,
-  ProductsRepository,
-} from '../types';
+import { CartItem, CartItemsRepository, CartItemsServicePort, ProductsRepository } from '../types';
 import {
   CartItemDeletionFailedError,
   CartItemNotFoundError,
@@ -11,7 +6,9 @@ import {
   ProductAlreadyInCartError,
   ProductNotFoundError,
 } from '../errors';
-import { CartItemSchema } from '../schemas';
+import { InsertCartItemSchema, UpdateCartItemSchema } from '../schemas';
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from '../constants';
+import { toCartItemsWithProducts, toCartItemWithProduct } from '../mappers/cartItemMapper';
 
 class CartItemsService implements CartItemsServicePort {
   private readonly productsRepository;
@@ -32,24 +29,23 @@ class CartItemsService implements CartItemsServicePort {
     const products = await this.productsRepository.getAll();
     const cartItems = await this.cartItemsRepository.getAll();
 
-    return cartItems.map((item) => {
-      const product = products.find((product) => product.productId === item.productId);
-
-      if (!product) throw new CartItemProductMissingError(item.cartItemId, item.productId);
-
-      return {
-        cartItemId: item.cartItemId,
-        quantity: item.quantity,
-        product,
-      };
-    });
+    return toCartItemsWithProducts(cartItems, products);
   }
 
-  async insertCartItem(cartItem: {
-    productId: CartItem['productId'];
-    quantity: CartItem['quantity'];
-  }) {
-    const parsedCartItem = CartItemSchema.parse(cartItem);
+  async getCartAmount() {
+    const cartItems = await this.getCartItems();
+    const selectedItems = cartItems.filter((item) => item.isSelected);
+
+    const orderAmount = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    const shippingAmount = orderAmount === 0 || orderAmount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    const discountAmount = 0;
+    const totalAmount = orderAmount + shippingAmount - discountAmount;
+
+    return { orderAmount, shippingAmount, discountAmount, totalAmount };
+  }
+
+  async insertCartItem(cartItem: { productId: CartItem['productId']; quantity: CartItem['quantity'] }) {
+    const parsedCartItem = InsertCartItemSchema.parse(cartItem);
 
     const product = await this.productsRepository.getById(parsedCartItem.productId);
 
@@ -61,20 +57,19 @@ class CartItemsService implements CartItemsServicePort {
       throw new ProductAlreadyInCartError(product.productId);
     }
 
-    const inserted = await this.cartItemsRepository.insertByUser(parsedCartItem);
+    const inserted = await this.cartItemsRepository.insertByUser({
+      ...parsedCartItem,
+      isSelected: true,
+    });
 
-    return {
-      cartItemId: inserted.cartItemId,
-      quantity: inserted.quantity,
-      product,
-    };
+    return toCartItemWithProduct(inserted, product);
   }
 
   async patchCartItem(
     cartItemId: CartItem['cartItemId'],
-    cartItemPartial: { quantity: CartItem['quantity'] },
+    cartItemPartial: Partial<Omit<CartItem, 'productId' | 'cartItemId'>>,
   ) {
-    const parsedCartItemPartial = CartItemSchema.pick({ quantity: true }).parse(cartItemPartial);
+    const parsedCartItemPartial = UpdateCartItemSchema.parse(cartItemPartial);
 
     const cartItem = await this.cartItemsRepository.getById(cartItemId);
 
@@ -86,16 +81,12 @@ class CartItemsService implements CartItemsServicePort {
 
     const newCartItem = {
       ...cartItem,
-      quantity: parsedCartItemPartial.quantity,
+      ...parsedCartItemPartial,
     };
 
     await this.cartItemsRepository.updateById(cartItemId, newCartItem);
 
-    return {
-      cartItemId: newCartItem.cartItemId,
-      quantity: newCartItem.quantity,
-      product,
-    };
+    return toCartItemWithProduct(newCartItem, product);
   }
 
   async deleteCartItem(cartItemId: CartItem['cartItemId']) {
