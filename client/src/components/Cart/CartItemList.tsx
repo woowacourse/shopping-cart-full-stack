@@ -4,11 +4,10 @@ import OrderCountStepper from './OrderCountStepper';
 import CheckBox from '../CheckBox/CheckBox';
 import CartItem from './CartItem';
 import type { CartItemType } from '../../types/product.types';
-import { isAllSelected } from '../../utils/cartStorage';
+import { isAllCartItemsSelected } from '../../utils/cart';
 
 interface Props {
   cartItems: CartItemType[];
-  selectedIds: Set<number>;
   onSelect: (id: number, isSelected: boolean) => void;
   onSelectAll: () => void;
   onUpdate: (id: number, orderCount: number, delta: 1 | -1) => void;
@@ -17,7 +16,6 @@ interface Props {
 
 export default function CartItemList({
   cartItems,
-  selectedIds,
   onSelect,
   onSelectAll,
   onUpdate,
@@ -27,10 +25,7 @@ export default function CartItemList({
     <Container>
       <SelectAll>
         <CheckBox
-          isSelected={isAllSelected(
-            cartItems.map((i) => i.id),
-            selectedIds,
-          )}
+          isSelected={isAllCartItemsSelected(cartItems)}
           onSelect={onSelectAll}
         />
         <span>전체선택</span>
@@ -39,13 +34,13 @@ export default function CartItemList({
       {cartItems.map((cartItem) => (
         <CartItem
           key={cartItem.id}
-          isSelected={selectedIds.has(cartItem.id)}
+          isSelected={cartItem.isSelected}
           onSelect={(isSelected) => onSelect(cartItem.id, isSelected)}
           onDelete={() => onDelete(cartItem.id)}
         >
           <ProductCard
             data={cartItem}
-            action={
+            quantitySlot={
               <OrderCountStepper
                 orderCount={cartItem.orderCount}
                 onDecrease={() =>

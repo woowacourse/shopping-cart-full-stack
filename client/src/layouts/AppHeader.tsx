@@ -1,11 +1,8 @@
 import styled from '@emotion/styled';
+import type { ReactNode } from 'react';
 
-export default function Header() {
-  return (
-    <Container>
-      <Title>SHOP</Title>
-    </Container>
-  );
+export default function AppHeader({ slot }: { slot: ReactNode }) {
+  return <Container>{slot}</Container>;
 }
 
 const Container = styled.header`
@@ -15,10 +12,4 @@ const Container = styled.header`
   width: 100%;
   min-height: 64px;
   background-color: #000000;
-`;
-
-const Title = styled.strong`
-  font-size: 20px;
-  font-weight: 800;
-  color: #fff;
 `;

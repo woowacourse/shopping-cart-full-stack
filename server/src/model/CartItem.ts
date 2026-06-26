@@ -3,12 +3,14 @@ import AppError from '../errors/AppError.js';
 export type CartItemType = {
   id: number;
   orderCount: number;
+  isSelected?: boolean;
 };
 
 export default class CartItem {
   constructor(
     private id: number,
     private orderCount: number,
+    private isSelected: boolean = true,
   ) {
     this.validateOrderCount();
   }
@@ -17,6 +19,7 @@ export default class CartItem {
     return {
       id: this.id,
       orderCount: this.orderCount,
+      isSelected: this.isSelected,
     };
   }
 

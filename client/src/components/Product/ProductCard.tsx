@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
 import { formatPrice } from '../../utils/formatPrice';
 import type { ReactNode } from 'react';
-import type { CartItemType } from '../../types/product.types';
+import type { ProductBase } from '../../types/product.types';
 
 interface Props {
-  data: CartItemType;
-  action: ReactNode;
+  data: ProductBase;
+  quantitySlot: ReactNode;
 }
 
-export default function ProductCard({ data, action }: Props) {
+export default function ProductCard({ data, quantitySlot }: Props) {
   return (
     <Card>
       <ImgWrapper>
@@ -21,7 +21,7 @@ export default function ProductCard({ data, action }: Props) {
           <Price>{formatPrice(data.price)}원</Price>
         </Content>
 
-        <>{action}</>
+        {quantitySlot}
       </Body>
     </Card>
   );

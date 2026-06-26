@@ -16,11 +16,18 @@ export default class CartService {
     return newCartItem.toJson().id;
   }
 
-  updateCartItem({ id, orderCount }: CartItemType) {
-    this.cartRepository.update(id, orderCount);
+  updateCartItem({
+    id,
+    orderCount,
+    isSelected,
+  }: {
+    id: number;
+    orderCount?: number;
+    isSelected?: boolean;
+  }) {
+    return this.cartRepository.update(id, { orderCount, isSelected }).toJson();
   }
 
-  // 사용자 직접 제거 요청
   deleteCartItem(id: number) {
     const exists = this.cartRepository
       .findAll()
@@ -30,7 +37,6 @@ export default class CartService {
     this.cartRepository.delete(id);
   }
 
-  // 상품 제거로 인한 부수효과
   deleteCartItemIfExist(id: number) {
     const cartItems = this.getCartItems();
     const target = cartItems.find((item) => item.toJson().id === id);

@@ -59,6 +59,36 @@ export const ERROR_CODE = {
     status: 404,
     message: '삭제하려는 상품이 장바구니에 존재하지 않습니다.',
   },
+  EMPTY_SELECTED_PRODUCTS: {
+    code: 'EMPTY_SELECTED_PRODUCTS',
+    status: 400,
+    message: '주문할 상품이 선택되지 않았습니다.',
+  },
+  PRODUCT_NOT_EXIST_FOR_PURCHASE: {
+    code: 'PRODUCT_NOT_EXIST',
+    status: 404,
+    message: '주문하려는 상품이 존재하지 않습니다.',
+  },
+  ORDER_NOT_EXIST: {
+    code: 'ORDER_NOT_EXIST',
+    status: 404,
+    message: '조회하려는 주문이 존재하지 않습니다.',
+  },
+  COUPON_NOT_EXIST: {
+    code: 'COUPON_NOT_EXIST',
+    status: 404,
+    message: '적용하려는 쿠폰이 존재하지 않습니다.',
+  },
+  COUPON_SELECTION_EXCEEDED: {
+    code: 'COUPON_SELECTION_EXCEEDED',
+    status: 400,
+    message: '쿠폰은 최대 2개까지 선택할 수 있습니다.',
+  },
+  COUPON_NOT_APPLICABLE: {
+    code: 'COUPON_NOT_APPLICABLE',
+    status: 400,
+    message: '적용할 수 없는 쿠폰이 포함되어 있습니다.',
+  },
   INTERNAL_SERVER_ERROR: {
     code: 'INTERNAL_SERVER_ERROR',
     status: 500,

@@ -11,6 +11,7 @@ interface ProductType extends ProductBase {
 
 interface CartItemType extends ProductBase {
   orderCount: number;
+  isSelected: boolean;
 }
 
-export type { ProductType, CartItemType };
+export type { ProductBase, ProductType, CartItemType };

@@ -36,6 +36,18 @@ export const http = {
       ...options,
     }),
 
+  post: <TResponse, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options?: RequestOptions,
+  ) =>
+    request<TResponse>(path, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      body: JSON.stringify(body),
+      ...options,
+    }),
+
   delete: <TResponse>(path: string, options?: RequestOptions) =>
     request<TResponse>(path, {
       method: 'DELETE',

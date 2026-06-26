@@ -13,6 +13,12 @@ class ProductService {
     return this.productRepository.findById(id);
   }
 
+  hasProduct(id: number) {
+    return this.productRepository
+      .findAll()
+      .some((product) => product.toJson().id === id);
+  }
+
   addProduct({ name, price, quantity, imgUrl }: Omit<ProductType, 'id'>) {
     const id = this.productRepository.nextId();
     const newProduct = new Product(id, name, price, quantity, imgUrl);
@@ -22,9 +28,7 @@ class ProductService {
   }
 
   deleteProduct(id: number) {
-    const exists = this.productRepository
-      .findAll()
-      .some((p: Product) => p.toJson().id === id);
+    const exists = this.hasProduct(id);
     if (!exists) throw new AppError('PRODUCT_NOT_EXIST');
 
     this.productRepository.delete(id);

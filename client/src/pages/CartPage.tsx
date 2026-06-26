@@ -2,38 +2,34 @@ import styled from '@emotion/styled';
 import CartHeader from '../components/Cart/CartHeader';
 import CartItemList from '../components/Cart/CartItemList';
 import CartItemListSkeleton from '../components/Cart/CartItemListSkeleton';
-import OrderBill from '../components/Order/OrderBill';
-import { saveSelectedIds } from '../utils/cartStorage';
-import { calculateOrderBill } from '../domain/calculateOrderBill';
+import CartPaymentBill from '../components/Order/CartPaymentBill';
 import { MAX_ORDER_COUNT, MIN_ORDER_COUNT } from '../domain/orderCount';
 import { deleteCartItem, getCartList, updateCartItem } from '../api/cart';
 import { useQuery } from '../api/useQuery';
 import { useCartItemSelect } from '../hooks/useCartItemSelect';
+import { useNavigate } from 'react-router-dom';
+import { createOrder } from '../api/order';
+import {
+  getSelectedCartItemsCount,
+  isSelectedCartItemExist,
+} from '../utils/cart';
 
 export default function CartPage() {
+  const navigate = useNavigate();
   const { data, isLoading, isSuccess, refetch } = useQuery({
     queryFn: getCartList,
   });
   const cartItems = data?.result.cartItems ?? [];
 
-  const { selectedIds, setSelectedIds, handleSelect, handleSelectAll } =
-    useCartItemSelect(cartItems.map((i) => i.id));
+  const { handleSelect, handleSelectAll } = useCartItemSelect(
+    cartItems,
+    refetch,
+  );
 
   const handleDelete = async (id: number) => {
     try {
       await deleteCartItem(id);
       refetch();
-      setSelectedIds((prev) => {
-        const next = new Set<number>(prev);
-
-        if (next.has(id)) {
-          next.delete(id);
-        }
-
-        saveSelectedIds([...next]);
-
-        return next;
-      });
     } catch (err) {
       if (err instanceof Error) {
         alert(err.message);
@@ -55,8 +51,28 @@ export default function CartPage() {
     }
 
     try {
-      await updateCartItem(id, updatedOrderCount);
+      await updateCartItem(id, { orderCount: updatedOrderCount });
       refetch();
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(err.message);
+      }
+    }
+  };
+
+  const handleOrderConfirm = async () => {
+    try {
+      const selectedItems = cartItems
+        .filter((i) => i.isSelected)
+        .map((i) => ({
+          id: i.id,
+          orderCount: i.orderCount,
+        }));
+
+      const res = await createOrder(selectedItems);
+      const orderId = res.result.id;
+
+      navigate(`order/${orderId}`);
     } catch (err) {
       if (err instanceof Error) {
         alert(err.message);
@@ -66,7 +82,7 @@ export default function CartPage() {
 
   return (
     <Container>
-      <CartHeader totalCount={selectedIds.size} />
+      <CartHeader totalCount={getSelectedCartItemsCount(cartItems)} />
 
       {isLoading && <CartItemListSkeleton />}
 
@@ -74,13 +90,12 @@ export default function CartPage() {
         <>
           <CartItemList
             cartItems={cartItems}
-            selectedIds={selectedIds}
             onSelect={handleSelect}
             onSelectAll={handleSelectAll}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
           />
-          <OrderBill orderBill={calculateOrderBill(cartItems, selectedIds)} />
+          <CartPaymentBill />
         </>
       )}
 
@@ -88,7 +103,10 @@ export default function CartPage() {
         <EmptyItem>장바구니에 담은 상품이 없습니다.</EmptyItem>
       )}
 
-      <OrderConfirmButton disabled={cartItems.length === 0}>
+      <OrderConfirmButton
+        disabled={cartItems.length === 0 || !isSelectedCartItemExist(cartItems)}
+        onClick={handleOrderConfirm}
+      >
         주문 확인
       </OrderConfirmButton>
     </Container>

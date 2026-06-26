@@ -19,12 +19,13 @@
 
 ### 1. 상품 조회
 
-- **Method**: `GET`
-- **Path**: `/products`
+**Method**: `GET`
+
+**Path**: `/products`
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `200`**
 
@@ -56,8 +57,9 @@
 
 ### 2. 상품 추가
 
-- **Method**: `POST`
-- **Path**: `/products`
+**Method**: `POST`
+
+**Path**: `/products`
 
 **Request Body**
 
@@ -84,24 +86,15 @@
 **Response `400`**
 
 ```json
-{
-  "code": "PRODUCT_NAME_LENGTH_EXCEEDED",
-  "message": "상품명은 100자를 초과할 수 없습니다."
-}
+{ "code": "PRODUCT_NAME_LENGTH_EXCEEDED", "message": "상품명은 100자를 초과할 수 없습니다." }
 ```
 
 ```json
-{
-  "code": "INVALID_PRODUCT_PRICE_TYPE",
-  "message": "가격은 0보다 큰 숫자여야 합니다."
-}
+{ "code": "INVALID_PRODUCT_PRICE_TYPE", "message": "가격은 0보다 큰 숫자여야 합니다." }
 ```
 
 ```json
-{
-  "code": "INVALID_PRODUCT_QUANTITY_RANGE",
-  "message": "상품 재고는 1이상 99이하의 정수이어야 합니다."
-}
+{ "code": "INVALID_PRODUCT_QUANTITY_RANGE", "message": "상품 재고는 1이상 99이하의 정수이어야 합니다." }
 ```
 
 ```json
@@ -113,22 +106,20 @@
 ```
 
 ```json
-{
-  "code": "EMPTY_PRODUCT_QUANTITY",
-  "message": "상품 재고 필드가 누락되었습니다."
-}
+{ "code": "EMPTY_PRODUCT_QUANTITY", "message": "상품 재고 필드가 누락되었습니다." }
 ```
 
 ---
 
 ### 3. 상품 삭제
 
-- **Method**: `DELETE`
-- **Path**: `/products/{id}`
+**Method**: `DELETE`
+
+**Path**: `/products/{id}`
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `204`**
 
@@ -139,10 +130,7 @@
 **Response `404`**
 
 ```json
-{
-  "code": "PRODUCT_NOT_EXIST",
-  "message": "삭제하려는 상품이 존재하지 않습니다."
-}
+{ "code": "PRODUCT_NOT_EXIST", "message": "삭제하려는 상품이 존재하지 않습니다." }
 ```
 
 ---
@@ -151,12 +139,13 @@
 
 ### 1. 장바구니 상품 조회
 
-- **Method**: `GET`
-- **Path**: `/carts`
+**Method**: `GET`
+
+**Path**: `/carts`
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `200`**
 
@@ -190,8 +179,9 @@
 
 ### 2. 장바구니 상품 추가
 
-- **Method**: `POST`
-- **Path**: `/carts`
+**Method**: `POST`
+
+**Path**: `/carts`
 
 **Request Body**
 
@@ -216,41 +206,30 @@
 **Response `400`**
 
 ```json
-{
-  "code": "INVALID_PRODUCT_ORDER_COUNT_TYPE",
-  "message": "추가할 수량은 0보다 큰 숫자여야 합니다."
-}
+{ "code": "INVALID_PRODUCT_ORDER_COUNT_TYPE", "message": "추가할 수량은 0보다 큰 숫자여야 합니다." }
 ```
 
 ```json
-{
-  "code": "PRODUCT_ORDER_COUNT_EXCEEDED",
-  "message": "보유한 상품의 개수를 넘어섰습니다."
-}
+{ "code": "PRODUCT_ORDER_COUNT_EXCEEDED", "message": "보유한 상품의 개수를 넘어섰습니다." }
 ```
 
 ```json
-{
-  "code": "EMPTY_PRODUCT_ORDER_COUNT",
-  "message": "주문 수량 필드가 누락되었습니다."
-}
+{ "code": "EMPTY_PRODUCT_ORDER_COUNT", "message": "주문 수량 필드가 누락되었습니다." }
 ```
 
 **Response `404`**
 
 ```json
-{
-  "code": "PRODUCT_NOT_EXIST",
-  "message": "수량을 추가하려는 상품이 존재하지 않습니다."
-}
+{ "code": "PRODUCT_NOT_EXIST", "message": "수량을 추가하려는 상품이 존재하지 않습니다." }
 ```
 
 ---
 
 ### 3. 장바구니 상품 선택 및 수량 변경
 
-- **Method**: `PATCH`
-- **Path**: `/carts/{id}`
+**Method**: `PATCH`
+
+**Path**: `/carts/{id}`
 
 **Request Body**
 
@@ -279,45 +258,34 @@
 **Response `400`**
 
 ```json
-{
-  "code": "INVALID_PRODUCT_ORDER_COUNT_TYPE",
-  "message": "변경할 수량은 0보다 큰 숫자여야 합니다."
-}
+{ "code": "INVALID_PRODUCT_ORDER_COUNT_TYPE", "message": "변경할 수량은 0보다 큰 숫자여야 합니다." }
 ```
 
 ```json
-{
-  "code": "PRODUCT_ORDER_COUNT_EXCEEDED",
-  "message": "보유한 상품의 개수를 넘어섰습니다."
-}
+{ "code": "PRODUCT_ORDER_COUNT_EXCEEDED", "message": "보유한 상품의 개수를 넘어섰습니다." }
 ```
 
 ```json
-{
-  "code": "EMPTY_PRODUCT_ORDER_COUNT",
-  "message": "주문 수량 필드가 누락되었습니다."
-}
+{ "code": "EMPTY_PRODUCT_ORDER_COUNT", "message": "주문 수량 필드가 누락되었습니다." }
 ```
 
 **Response `404`**
 
 ```json
-{
-  "code": "PRODUCT_NOT_EXIST",
-  "message": "수량을 변경하려는 상품이 존재하지 않습니다."
-}
+{ "code": "PRODUCT_NOT_EXIST", "message": "수량을 변경하려는 상품이 존재하지 않습니다." }
 ```
 
 ---
 
 ### 4. 장바구니 상품 삭제
 
-- **Method**: `DELETE`
-- **Path**: `/carts/{id}`
+**Method**: `DELETE`
+
+**Path**: `/carts/{id}`
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `204`**
 
@@ -328,10 +296,7 @@
 **Response `404`**
 
 ```json
-{
-  "code": "PRODUCT_NOT_EXIST_IN_CART",
-  "message": "삭제하려는 상품이 장바구니에 존재하지 않습니다."
-}
+{ "code": "PRODUCT_NOT_EXIST_IN_CART", "message": "삭제하려는 상품이 장바구니에 존재하지 않습니다." }
 ```
 
 ---
@@ -340,12 +305,13 @@
 
 선택(`isSelected: true`)된 장바구니 상품을 기준으로 결제 금액 정보를 조회합니다.
 
-- **Method**: `GET`
-- **Path**: `/carts/payment`
+**Method**: `GET`
+
+**Path**: `/carts/payment`
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `200`**
 
@@ -371,22 +337,17 @@
 
 선택한 장바구니 상품으로 주문을 생성합니다.
 
-- **Method**: `POST`
-- **Path**: `/orders`
+**Method**: `POST`
+
+**Path**: `/orders`
 
 **Request Body**
 
 ```json
 {
   "selectedProducts": [
-    {
-      "id": 1,
-      "orderCount": 3
-    },
-    {
-      "id": 2,
-      "orderCount": 1
-    }
+    { "id": 1, "orderCount": 3 },
+    { "id": 2, "orderCount": 1 }
   ]
 }
 ```
@@ -405,31 +366,26 @@
 **Response `400`**
 
 ```json
-{
-  "code": "EMPTY_SELECTED_PRODUCTS",
-  "message": "주문할 상품이 선택되지 않았습니다."
-}
+{ "code": "EMPTY_SELECTED_PRODUCTS", "message": "주문할 상품이 선택되지 않았습니다." }
 ```
 
 **Response `404`**
 
 ```json
-{
-  "code": "PRODUCT_NOT_EXIST",
-  "message": "주문하려는 상품이 존재하지 않습니다."
-}
+{ "code": "PRODUCT_NOT_EXIST", "message": "주문하려는 상품이 존재하지 않습니다." }
 ```
 
 ---
 
 ### 2. 주문 정보 조회
 
-- **Method**: `GET`
-- **Path**: `/orders/{id}`
+**Method**: `GET`
+
+**Path**: `/orders/{id}`
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `200`**
 
@@ -465,20 +421,54 @@
 **Response `404`**
 
 ```json
-{
-  "code": "ORDER_NOT_EXIST",
-  "message": "조회하려는 주문이 존재하지 않습니다."
-}
+{ "code": "ORDER_NOT_EXIST", "message": "조회하려는 주문이 존재하지 않습니다." }
 ```
 
 ---
 
-### 3. 주문 쿠폰 목록 조회
+### 3. 주문 정보 업데이트
+
+배송 지역 등 주문 정보를 업데이트합니다.
+
+**Method**: `PATCH`
+
+**Path**: `/orders/{id}`
+
+**Request Body**
+
+```json
+{
+  "isRemoteArea": true
+}
+```
+
+**Response `200`**
+
+```json
+{
+  "message": "성공적으로 변경되었습니다.",
+  "result": {
+    "id": 1,
+    "isRemoteArea": true
+  }
+}
+```
+
+**Response `404`**
+
+```json
+{ "code": "ORDER_NOT_EXIST", "message": "변경하려는 주문이 존재하지 않습니다." }
+```
+
+---
+
+### 4. 주문 쿠폰 목록 조회
 
 해당 주문에 적용 가능한 쿠폰 목록을 조회합니다.
 
-- **Method**: `GET`
-- **Path**: `/orders/{id}/coupons`
+**Method**: `GET`
+
+**Path**: `/orders/{id}/coupons`
 
 > **🧩 설계 근거**
 >
@@ -491,7 +481,7 @@
 
 **Request Body**
 
-필요 없음
+없음
 
 **Response `200`**
 
@@ -518,18 +508,25 @@
 ```
 
 > `isSelected`: 현재 주문에 적용 중인 쿠폰 여부
-> `isDisabled`: 적용 조건(`minOrderAmount`, `availableTime` 등)을 만족하지 못해 선택 불가능한 쿠폰 여부
+> `isDisabled`: 적용 조건(`minOrderAmount`, `availableTime`, `dueDate`)을 만족하지 못해 선택 불가능한 쿠폰 여부
 > `minOrderAmount`: 쿠폰 사용을 위한 최소 주문 금액
 > `availableTime`: 쿠폰 사용 가능 시간대 (비어 있으면 시간 제약 없음)
 
+**Response `404`**
+
+```json
+{ "code": "ORDER_NOT_EXIST", "message": "조회하려는 주문이 존재하지 않습니다." }
+```
+
 ---
 
-### 4. 할인 금액 계산 요청
+### 5. 할인 금액 계산 요청
 
-선택한 쿠폰들을 적용했을 때의 할인 금액을 계산합니다.
+선택한 쿠폰들을 적용했을 때의 할인 금액을 미리 계산합니다. (쿠폰은 최대 2개까지 선택 가능)
 
-- **Method**: `POST`
-- **Path**: `/orders/{id}/coupons/discount`
+**Method**: `POST`
+
+**Path**: `/orders/{id}/coupons/discount`
 
 **Request Body**
 
@@ -550,61 +547,35 @@
 }
 ```
 
-**Response `404`**
+**Response `400`**
 
 ```json
-{
-  "code": "COUPON_NOT_EXIST",
-  "message": "적용하려는 쿠폰이 존재하지 않습니다."
-}
+{ "code": "COUPON_SELECTION_EXCEEDED", "message": "쿠폰은 최대 2개까지 선택할 수 있습니다." }
 ```
 
----
-
-### 5. 주문 정보 업데이트
-
-배송 지역 등 주문 정보를 업데이트합니다.
-
-- **Method**: `PATCH`
-- **Path**: `/orders/{id}`
-
-**Request Body**
-
 ```json
-{
-  "isRemoteArea": true
-}
-```
-
-**Response `200`**
-
-```json
-{
-  "message": "성공적으로 변경되었습니다.",
-  "result": {
-    "id": 1,
-    "isRemoteArea": true
-  }
-}
+{ "code": "COUPON_NOT_APPLICABLE", "message": "적용할 수 없는 쿠폰이 포함되어 있습니다." }
 ```
 
 **Response `404`**
 
 ```json
-{
-  "code": "ORDER_NOT_EXIST",
-  "message": "변경하려는 주문이 존재하지 않습니다."
-}
+{ "code": "ORDER_NOT_EXIST", "message": "조회하려는 주문이 존재하지 않습니다." }
+```
+
+```json
+{ "code": "COUPON_NOT_EXIST", "message": "적용하려는 쿠폰이 존재하지 않습니다." }
 ```
 
 ---
 
 ### 6. 주문 쿠폰 업데이트
 
-주문에 적용할 쿠폰을 업데이트합니다.
+주문에 적용할 쿠폰을 업데이트합니다. (쿠폰은 최대 2개까지 선택 가능)
 
-- **Method**: `PATCH`
-- **Path**: `/orders/{id}/coupons`
+**Method**: `PATCH`
+
+**Path**: `/orders/{id}/coupons`
 
 **Request Body**
 
@@ -626,11 +597,22 @@
 }
 ```
 
+**Response `400`**
+
+```json
+{ "code": "COUPON_SELECTION_EXCEEDED", "message": "쿠폰은 최대 2개까지 선택할 수 있습니다." }
+```
+
+```json
+{ "code": "COUPON_NOT_APPLICABLE", "message": "적용할 수 없는 쿠폰이 포함되어 있습니다." }
+```
+
 **Response `404`**
 
 ```json
-{
-  "code": "COUPON_NOT_EXIST",
-  "message": "적용하려는 쿠폰이 존재하지 않습니다."
-}
+{ "code": "ORDER_NOT_EXIST", "message": "변경하려는 주문이 존재하지 않습니다." }
+```
+
+```json
+{ "code": "COUPON_NOT_EXIST", "message": "적용하려는 쿠폰이 존재하지 않습니다." }
 ```

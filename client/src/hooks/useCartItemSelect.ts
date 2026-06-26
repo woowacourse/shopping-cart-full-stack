@@ -1,56 +1,39 @@
-import { useEffect, useState } from 'react';
-import { isAllSelected, saveSelectedIds } from '../utils/cartStorage';
+import { updateCartItem } from '../api/cart';
+import type { CartItemType } from '../types/product.types';
+import { isAllCartItemsSelected } from '../utils/cart';
 
-export const useCartItemSelect = (cartItemIds: number[]) => {
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(() => {
-    const saved = localStorage.getItem('selectedCartIds');
-    return saved !== null
-      ? new Set<number>(JSON.parse(saved))
-      : new Set<number>();
-  });
-
-  const cartItemKey = cartItemIds.join(',');
-
-  useEffect(() => {
-    if (cartItemIds.length === 0) return;
-
-    const saved = localStorage.getItem('selectedCartIds');
-    const hasSavedSelection = saved !== null && JSON.parse(saved).length > 0;
-    if (hasSavedSelection) return;
-
-    setSelectedIds(new Set(cartItemIds));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartItemKey]);
-
-  const handleSelect = (id: number, isSelected: boolean) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (isSelected) next.add(id);
-      else next.delete(id);
-
-      saveSelectedIds([...next]);
-      return next;
-    });
+export const useCartItemSelect = (
+  cartItems: CartItemType[],
+  refetch: () => void,
+) => {
+  const handleSelect = async (id: number, isSelected: boolean) => {
+    try {
+      await updateCartItem(id, { isSelected });
+      refetch();
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(err.message);
+      }
+    }
   };
 
-  const handleSelectAll = () => {
-    setSelectedIds(() => {
-      const next = new Set<number>();
+  const handleSelectAll = async () => {
+    const next = !isAllCartItemsSelected(cartItems);
 
-      if (!isAllSelected(cartItemIds, selectedIds)) {
-        cartItemIds.forEach((id) => {
-          next.add(id);
-        });
+    try {
+      // TODO: 전체 선택 API 만들기 (병렬 요청 리소스)
+      await Promise.all(
+        cartItems.map((i) => updateCartItem(i.id, { isSelected: next })),
+      );
+      refetch();
+    } catch (err) {
+      if (err instanceof Error) {
+        alert(err.message);
       }
-
-      saveSelectedIds([...next]);
-      return next;
-    });
+    }
   };
 
   return {
-    selectedIds,
-    setSelectedIds,
     handleSelect,
     handleSelectAll,
   };

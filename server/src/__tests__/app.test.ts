@@ -455,7 +455,7 @@ describe('PATCH /carts/:id API 테스트', () => {
     await request(app).post(`/carts/${productId}`).send({ orderCount: 1 });
   });
 
-  test('정상적인 수량 변경 요청 시 200과 변경된 수량 정보를 응답한다.', async () => {
+  test('정상적인 수량 변경 요청 시 200과 변경된 상품 정보를 응답한다.', async () => {
     // given
     const newOrderCount = mockProduct.quantity;
 
@@ -467,8 +467,23 @@ describe('PATCH /carts/:id API 테스트', () => {
     // then
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      message: '성공적으로 수량이 변경되었습니다.',
-      result: { id: productId, orderCount: newOrderCount },
+      message: '성공적으로 변경되었습니다.',
+      result: { id: productId, orderCount: newOrderCount, isSelected: true },
+    });
+  });
+
+  test('isSelected만 보내면 수량 검증 없이 선택 상태만 변경된다.', async () => {
+    // when
+    const response = await request(app)
+      .patch(`/carts/${productId}`)
+      .send({ isSelected: false });
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body.result).toEqual({
+      id: productId,
+      orderCount: 1,
+      isSelected: false,
     });
   });
 
@@ -486,16 +501,28 @@ describe('PATCH /carts/:id API 테스트', () => {
     });
   });
 
-  test('orderCount 필드가 누락되면 400과 EMPTY_PRODUCT_ORDER_COUNT 코드를 응답한다.', async () => {
+  test('변경할 필드를 보내지 않으면(빈 바디) 기존 상태를 그대로 유지한다.', async () => {
     // when
     const response = await request(app).patch(`/carts/${productId}`).send({});
 
     // then
-    expect(response.status).toBe(400);
-    expect(response.body).toEqual({
-      code: 'EMPTY_PRODUCT_ORDER_COUNT',
-      message: '주문 수량 필드가 누락되었습니다.',
+    expect(response.status).toBe(200);
+    expect(response.body.result).toEqual({
+      id: productId,
+      orderCount: 1,
+      isSelected: true,
     });
+  });
+
+  test('존재하지 않는 장바구니 상품 변경 시 404와 PRODUCT_NOT_EXIST 코드를 응답한다.', async () => {
+    // when
+    const response = await request(app)
+      .patch('/carts/9999')
+      .send({ isSelected: false });
+
+    // then
+    expect(response.status).toBe(404);
+    expect(response.body.code).toBe('PRODUCT_NOT_EXIST');
   });
 
   test('orderCount가 0 이하이면 400과 INVALID_PRODUCT_ORDER_COUNT_TYPE 코드를 응답한다.', async () => {
@@ -509,6 +536,73 @@ describe('PATCH /carts/:id API 테스트', () => {
     expect(response.body).toEqual({
       code: 'INVALID_PRODUCT_ORDER_COUNT_TYPE',
       message: '변경할 수량은 0보다 큰 숫자여야 합니다.',
+    });
+  });
+});
+
+describe('GET /carts/payment API 테스트', () => {
+  beforeEach(() => {
+    products.length = 0;
+    cartItems.length = 0;
+  });
+
+  const addProductToCart = async (
+    price: number,
+    orderCount: number,
+    quantity = 99,
+  ) => {
+    const productResponse = await request(app)
+      .post('/products')
+      .send({ name: '상품', price, imgUrl: 'https://x.com', quantity });
+    const { id } = productResponse.body.result;
+    await request(app).post(`/carts/${id}`).send({ orderCount });
+    return id;
+  };
+
+  test('선택된 상품 기준으로 주문금액, 배송비, 총액을 응답한다. (10만원 미만이면 배송비 3,000원)', async () => {
+    // given: 5,000원 × 2 = 10,000원
+    await addProductToCart(5000, 2);
+
+    // when
+    const response = await request(app).get('/carts/payment');
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.body.result).toEqual({
+      orderPrice: 10000,
+      shippingFee: 3000,
+      totalPrice: 13000,
+    });
+  });
+
+  test('주문 금액이 100,000원 이상이면 배송비가 무료다.', async () => {
+    // given: 50,000원 × 2 = 100,000원
+    await addProductToCart(50000, 2);
+
+    // when
+    const response = await request(app).get('/carts/payment');
+
+    // then
+    expect(response.body.result).toEqual({
+      orderPrice: 100000,
+      shippingFee: 0,
+      totalPrice: 100000,
+    });
+  });
+
+  test('선택 해제된(isSelected: false) 상품은 결제 금액에서 제외된다.', async () => {
+    // given
+    const id = await addProductToCart(5000, 2);
+    await request(app).patch(`/carts/${id}`).send({ isSelected: false });
+
+    // when
+    const response = await request(app).get('/carts/payment');
+
+    // then
+    expect(response.body.result).toEqual({
+      orderPrice: 0,
+      shippingFee: 0,
+      totalPrice: 0,
     });
   });
 });
