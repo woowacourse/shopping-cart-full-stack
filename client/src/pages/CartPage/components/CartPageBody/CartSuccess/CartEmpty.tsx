@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { typography } from "../../../../shared/styles/typography";
+import { typography } from "../../../../../shared/styles/typography";
 
 const CartEmpty = () => {
   return (

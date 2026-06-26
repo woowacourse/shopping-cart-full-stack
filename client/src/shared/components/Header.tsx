@@ -12,6 +12,10 @@ const Header = ({ actionIcon }: HeaderProps) => {
 export default Header;
 
 const Container = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
   display: flex;
   justify-content: start;
   align-items: center;

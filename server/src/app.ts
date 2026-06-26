@@ -9,6 +9,12 @@ import CartController from "./modules/cart/cart.controller.js";
 import createProductRouter from "./modules/product/product.routes.js";
 import createCartRouter from "./modules/cart/cart.routes.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { InMemoryCheckoutRepository } from "./modules/checkout/checkout.repository.js";
+import CheckoutService from "./modules/checkout/checkout.service.js";
+import { InMemoryCouponRepository } from "./modules/coupon/coupon.repository.js";
+import CouponService from "./modules/coupon/coupon.service.js";
+import CheckoutController from "./modules/checkout/checkout.controller.js";
+import createCheckoutRouter from "./modules/checkout/checkout.routes.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://jebiyeon02.github.io",
@@ -21,6 +27,8 @@ const ALLOWED_ORIGINS = new Set([
 const createApp = (): Express => {
   const inMemoryProductRepository = new InMemoryProductRepository();
   const inMemoryCartRepository = new InMemoryCartRepository();
+  const inMemoryCouponRepository = new InMemoryCouponRepository();
+  const inMemoryCheckoutRepository = new InMemoryCheckoutRepository();
 
   const productService = new ProductService(
     inMemoryProductRepository,
@@ -30,11 +38,22 @@ const createApp = (): Express => {
     inMemoryCartRepository,
     inMemoryProductRepository,
   );
+  const couponService = new CouponService(inMemoryCouponRepository);
+  const checkoutService = new CheckoutService(
+    inMemoryCheckoutRepository,
+    cartService,
+    couponService,
+  );
+
   const productController = new ProductController(productService);
   const cartController = new CartController(cartService);
+  const checkoutController = new CheckoutController(checkoutService);
+
   const productRouter = createProductRouter(productController);
   const cartRouter = createCartRouter(cartController);
+  const checkoutRouter = createCheckoutRouter(checkoutController);
 
+  couponService.createBaseCoupon(); // 기본 쿠폰 4개 생성
   const app = express();
 
   app.use((req, res, next) => {
@@ -66,6 +85,7 @@ const createApp = (): Express => {
 
   app.use("/products", productRouter);
   app.use("/carts", cartRouter);
+  app.use("/checkout", checkoutRouter);
   app.use(errorMiddleware);
 
   return app;

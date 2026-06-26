@@ -8,7 +8,7 @@ import { server } from "../../mocks/server";
 import { CartProvider } from "../../pages/CartPage/CartContext";
 import CartPage from "../../pages/CartPage/CartPage";
 import { CartSelectionProvider } from "../../pages/CartPage/CartSelectionContext";
-import OrderConfirmPage from "../../pages/OrderConfirmPage/OrderConfirmPage";
+import OrderConfirmPage from "../../pages/OrderCompletePage/OrderCompletePage";
 
 const cartItems = [
   {
@@ -298,7 +298,9 @@ describe("CartPage", () => {
     await user.click(screen.getByRole("button", { name: "+" }));
 
     await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalledWith("보유한 상품의 개수를 넘어섰습니다.");
+      expect(alertSpy).toHaveBeenCalledWith(
+        "보유한 상품의 개수를 넘어섰습니다.",
+      );
     });
   });
 

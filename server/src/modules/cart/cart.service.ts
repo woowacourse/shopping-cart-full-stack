@@ -28,7 +28,7 @@ class CartService {
       const productData = product.toJson();
 
       return {
-        id: productData.id,
+        productId: productData.id,
         name: productData.name,
         price: productData.price,
         imgUrl: productData.imgUrl,

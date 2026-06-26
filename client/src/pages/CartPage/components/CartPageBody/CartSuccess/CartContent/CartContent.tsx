@@ -1,8 +1,8 @@
 import CartItemList from "./CartItemList/CartItemList";
 import CartPaymentSummary from "./CartPaymentSummary";
 import styled from "@emotion/styled";
-import { typography } from "../../../../../shared/styles/typography";
-import type { CartItemModel } from "../../../../../domain/cart/cart.api";
+import { typography } from "../../../../../../shared/styles/typography";
+import type { CartItemModel } from "../../../../../../domain/cart/cart.api";
 
 const CartContent = ({ cartItems }: { cartItems: CartItemModel[] }) => {
   return (

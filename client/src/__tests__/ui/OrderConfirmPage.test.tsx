@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, test } from "vitest";
-import OrderConfirmPage from "../../pages/OrderConfirmPage/OrderConfirmPage";
+import OrderConfirmPage from "../../pages/OrderCompletePage/OrderCompletePage";
 
 const renderOrderConfirmPage = () => {
   return render(

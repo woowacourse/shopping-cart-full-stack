@@ -3,20 +3,19 @@ import {
   getDeliveryFee,
   getFilteredCartItem,
   getOrderPrice,
-  getProductAllItemCount,
   getTotalPrice,
 } from "../../../domain/cart/cart.util";
 import type { CartItemModel } from "../../../domain/cart/cart.api";
 
 const cartItems: CartItemModel[] = [
   {
-    id: 1,
+    productId: 1,
     name: "테스트 상품 1",
     price: 10000,
     itemCount: 2,
   },
   {
-    id: 2,
+    productId: 2,
     name: "테스트 상품 2",
     price: 3000,
     itemCount: 3,
@@ -46,12 +45,6 @@ describe("getDeliveryFee", () => {
 
   test("주문 금액이 무료 배송 기준 이상이면 0을 반환한다", () => {
     expect(getDeliveryFee(100000)).toBe(0);
-  });
-});
-
-describe("getProductAllItemCount", () => {
-  test("장바구니 상품 수량의 합계를 반환한다", () => {
-    expect(getProductAllItemCount(cartItems)).toBe(5);
   });
 });
 

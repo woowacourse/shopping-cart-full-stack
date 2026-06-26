@@ -56,7 +56,7 @@ describe("장바구니 서비스 테스트", () => {
     // then
     expect(cartItems).toEqual([
       {
-        id: productId,
+        productId: productId,
         name: mockProduct.name,
         price: mockProduct.price,
         imgUrl: mockProduct.imgUrl,

@@ -1,14 +1,7 @@
-import ApiError from "../../error/ApiError";
-import type {
-  ApiErrorResponse,
-  ApiResponse,
-} from "../../shared/apiRespone.type";
-
-const BASE_URL =
-  "https://shopping-cart-full-stack-production-0cf6.up.railway.app";
+import { BASE_URL, throwApiError, type ApiResponse } from "../../shared/api";
 
 export type CartItemModel = {
-  id: number;
+  productId: number;
   name: string;
   price: number;
   imgUrl?: string;
@@ -25,7 +18,7 @@ export const getCartItems = async (
   });
 
   if (!response.ok) {
-    await throwCartApiError(response);
+    await throwApiError(response);
   }
 
   const data: ApiResponse<{ cartItems: CartItemModel[] }> =
@@ -52,7 +45,7 @@ export const addCartItem = async (
   });
 
   if (!response.ok) {
-    await throwCartApiError(response);
+    await throwApiError(response);
   }
 
   const data: ApiResponse<{ productId: number }> = await response.json();
@@ -73,7 +66,7 @@ export const deleteCartItem = async (
   );
 
   if (!response.ok) {
-    await throwCartApiError(response);
+    await throwApiError(response);
   }
 };
 
@@ -96,7 +89,7 @@ export const updateCartItemCount = async (
   );
 
   if (!response.ok) {
-    await throwCartApiError(response);
+    await throwApiError(response);
   }
 
   const data: ApiResponse<{ id: number; itemCount: number }> =
@@ -104,9 +97,4 @@ export const updateCartItemCount = async (
   const updatedProduct = data.result;
 
   return updatedProduct;
-};
-
-const throwCartApiError = async (response: Response) => {
-  const errorData: ApiErrorResponse = await response.json();
-  throw new ApiError(errorData.code, errorData.message);
 };

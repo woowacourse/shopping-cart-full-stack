@@ -2,26 +2,142 @@
 
 ---
 
-## 쿠폰 (Coupon)
+## 임시 영수증 (Checkout)
 
-### 1. 쿠폰 조회
+### 1. 주문확인 임시 영수증 발행
 
-- **Method**: `GET`
-- **Path**: `/coupons`
+- **Method**: `POST`
+- **Path**: `/checkout`
 
 **Request Body**
 
 ```json
 {
-  "orderedProducts": {
-    "product": [
-      { "price": 1000, "quantity": 2 },
-      { "price": 20000, "quantity": 4 }
-    ],
-    "shippingFee": 3000
+  "cartId": 1,
+  "selectedProductIds": [1, 2, 3, 4]
+}
+```
+
+**Response `201`**
+
+```json
+{
+  "code": 201,
+  "message": "성공적으로 생성되었습니다.",
+  "result": {
+    "checkoutId": 1
   }
 }
 ```
+
+**Response `400`**
+
+```json
+{
+  "code": "EMPTY_SELECTED_PRODUCT_IDS",
+  "message": "선택한 상품 목록 필드가 누락되었습니다."
+}
+```
+
+```json
+{
+  "code": "INVALID_SELECTED_PRODUCT_IDS_TYPE",
+  "message": "선택한 상품 목록은 배열이어야 합니다."
+}
+```
+
+```json
+{
+  "code": "EMPTY_SELECTED_PRODUCT_IDS_LIST",
+  "message": "선택한 상품이 없습니다."
+}
+```
+
+```json
+{
+  "code": "INVALID_SELECTED_PRODUCT_ID_TYPE",
+  "message": "선택한 상품 id는 숫자여야 합니다."
+}
+```
+
+**Response `404`**
+
+```json
+{
+  "code": "PRODUCT_NOT_EXIST_IN_CART",
+  "message": "해당 상품이 장바구니에 존재하지 않습니다."
+}
+```
+
+```json
+{
+  "code": "CART_NOT_EXIST",
+  "message": "장바구니가 존재하지 않습니다."
+}
+```
+
+---
+
+### 2. 임시 영수증 조회
+
+- **Method**: `GET`
+- **Path**: `/checkout/{checkoutId}`
+
+**Request Body**
+
+필요 없음
+
+**Response `200`**
+
+```json
+{
+  "code": 200,
+  "message": "요청에 성공했습니다.",
+  "result": {
+    "checkoutId": 1,
+    "checkoutItems": [
+      {
+        "id": 1,
+        "name": "나이키 양말",
+        "price": 5000,
+        "imgUrl": "https://sdasd.asdas.com",
+        "itemCount": 3
+      },
+      {
+        "id": 2,
+        "name": "아디다스 신발",
+        "price": 50000,
+        "imgUrl": "https://sdasd.asdas.com",
+        "itemCount": 1
+      }
+    ],
+    "appliedCouponIds": [],
+    "remoteArea": false,
+    "orderPrice": 55000,
+    "couponDiscountPrice": 0,
+    "deliveryFee": 3000,
+    "totalPrice": 58000
+  }
+}
+```
+
+**Response `404`**
+
+```json
+{
+  "code": "CHECKOUT_NOT_FOUND",
+  "message": "임시 영수증이 존재하지 않습니다."
+}
+```
+
+---
+
+### 3. 영수증 쿠폰 조회
+
+- **Method**: `GET`
+- **Path**: `/checkout/{checkoutId}/coupons`
+
+**Request Body**
 
 **Response `200`**
 
@@ -36,6 +152,8 @@
         "name": "5,000원 할인 쿠폰",
         "type": "FIXED5000",
         "expiryDate": "2026-11-30",
+        "fixedDiscountPrice": 5000,
+        "fixedDiscountRate": null,
         "minAmount": 100000,
         "startTime": null,
         "endTime": null,
@@ -46,6 +164,8 @@
         "name": "2+1 쿠폰",
         "type": "BOGO",
         "expiryDate": "2026-06-30",
+        "fixedDiscountPrice": null,
+        "fixedDiscountRate": null,
         "minAmount": null,
         "startTime": null,
         "endTime": null,
@@ -56,6 +176,8 @@
         "name": "무료 배송 쿠폰",
         "type": "FREESHIPPING",
         "expiryDate": "2026-08-31",
+        "fixedDiscountPrice": null,
+        "fixedDiscountRate": null,
         "minAmount": 50000,
         "startTime": null,
         "endTime": null,
@@ -66,33 +188,43 @@
         "name": "30% 시간제 할인 쿠폰",
         "type": "MIRACLESALE",
         "expiryDate": "2026-07-31",
+        "fixedDiscountPrice": null,
+        "fixedDiscountRate": 30,
         "minAmount": null,
         "startTime": "04:00",
         "endTime": "07:00",
         "isAvailable": true
       }
-    ]
+    ],
+    "recommendedCouponIds": [1, 4]
   }
 }
 ```
 
-API 근거: 전체 쿠폰 리스트를 받는다. 각 쿠폰마다 필드가 다른데 응답 DTO 통일시키기 위해서 사용하지 않는 필드는 null로 채워서 보내준다.
-request body에 상품 정보와 배송비를 보내는 이유는 현재 사용자가 사용할 수 있는 쿠폰인지 아닌지 확인하기 위함(isAvailable)
+**Response `404`**
+
+```json
+{
+  "code": "CHECKOUT_NOT_FOUND",
+  "message": "임시 영수증이 존재하지 않습니다."
+}
+```
+
+API 근거: 이미 영수증을 백엔드에 만들어 놓았기 때문에 백엔드가 쿠폰 할인 금액과 사용가능여부를 계산할 수 있다.
+recommendedCouponIds는 클라이언트의 최초 선택 상태를 위한 추천값이며, 임시 영수증에는 사용하기 버튼을 클릭했을 때 적용된다.
 
 ---
 
-### 2. 할인 금액 계산
+### 4. 임시 영수증 쿠폰 적용
 
-- **Method**: `GET`
-- **Path**: `/coupons/discount`
+- **Method**: `PATCH`
+- **Path**: `/checkout/{checkoutId}/coupons`
 
 **Request Body**
 
 ```json
 {
-  "type": ["FIXED5000", "BOGO"],
-  "orderedProductIds": [1, 2, 3],
-  "isRemoteArea": true
+  "couponIds": [1, 2]
 }
 ```
 
@@ -100,9 +232,13 @@ request body에 상품 정보와 배송비를 보내는 이유는 현재 사용�
 
 ```json
 {
-  "message": "성공적으로 생성되었습니다.",
+  "code": 200,
+  "message": "쿠폰이 적용되었습니다.",
   "result": {
-    "discountAmount": 12000
+    "appliedCouponIds": [1, 2],
+    "couponDiscountPrice": 0,
+    "deliveryFee": 3000,
+    "totalPrice": 58000
   }
 }
 ```
@@ -111,79 +247,46 @@ request body에 상품 정보와 배송비를 보내는 이유는 현재 사용�
 
 ```json
 {
-  "code": "INVALID_COUPON_TYPE",
-  "message": "존재하지 않는 쿠폰 타입입니다."
+  "code": "COUPON_APPLY_COUNT_EXCEEDED",
+  "message": "쿠폰은 2개까지 사용하실 수 있습니다."
 }
 ```
 
-API 근거: 쿠폰 목록 모달에서 쿠폰을 선택할 때마다 아래쪽 버튼에 총 할인 금액을 표시하기 위해서 해당 API를 생성했다. request body에는 선택된 쿠폰의 type과 장바구니에 담은 상품 id, 제주도 및 도서산간 지역 여부를 보낸다.
-coupon type만 보내는 이유는 type을 받아 계산하는 것이 DB까지 가지않고 백엔드에서 처리할 수 있으므로, type만 보내 빠르게 처리하기 위함이다.
-
-### 3. 쿠폰 유효성 검증 (결제할 때)
-
-- **Method**: `GET`
-- **Path**: `/coupons/validation`
-
-**Request Body**
-
 ```json
 {
-  "id": [1, 2]
+  "code": "UNAVIALABLE_COUPON_EXIST",
+  "message": "사용 불가능한 쿠폰이 존재합니다."
 }
 ```
 
-**Response `200`**
+**Response `404`**
 
 ```json
 {
-  "message": "올바른 쿠폰입니다."
-}
-```
-
-**Response `400`**
-
-```json
-{
-  "code": "NOT_FOUND_COUPON",
+  "code": "COUPON_NOT_FOUND",
   "message": "해당 쿠폰이 존재하지 않습니다."
 }
 ```
 
 ```json
 {
-  "code": "EXPIRED_COUPON",
-  "message": "만료된 쿠폰이 존재합니다."
+  "code": "CHECKOUT_NOT_FOUND",
+  "message": "임시 영수증이 존재하지 않습니다."
 }
 ```
-
-```json
-{
-  "code": "TOO_MANY_COUPONS",
-  "message": "사용 가능한 쿠폰 수량을 초과했습니다."
-}
-```
-
-API 근거: 해당 API는 "결제하기" 버튼을 클릭했을 때 사용된다. 유효한 쿠폰인지 검증하는 것을 결제할 때 하는 이유는 결제 시점을 기준으로 해당 쿠폰을 사용하기 위함이다.
 
 ---
 
-### 4. 최대 할인 쿠폰 자동 적용
+### 5. 도서산간 토글
 
-- **Method**: `GET`
-- **Path**: `/coupons/auto-discount`
+- **Method**: `PATCH`
+- **Path**: `/checkout/{checkoutId}/remote-area`
 
 **Request Body**
 
 ```json
 {
-  "orderedProducts": {
-    "product": [
-      { "price": 1000, "quantity": 2 },
-      { "price": 20000, "quantity": 4 }
-    ],
-    "shippingFee": 3000
-  },
-  "availableCouponTypes": ["FIXED5000", "BOGO", "FREESHIPPING"]
+  "remoteArea": true
 }
 ```
 
@@ -194,7 +297,38 @@ API 근거: 해당 API는 "결제하기" 버튼을 클릭했을 때 사용된다
   "code": 200,
   "message": "요청에 성공했습니다.",
   "result": {
-    "maxDiscountCouponTypes": ["FIXED5000", "BOGO"]
+    "remoteArea": true,
+    "deliveryFee": 6000,
+    "couponDiscountPrice": 0,
+    "totalPrice": 61000
+  }
+}
+```
+
+**Response `404`**
+
+```json
+{
+  "code": "CHECKOUT_NOT_FOUND",
+  "message": "임시 영수증이 존재하지 않습니다."
+}
+```
+
+---
+
+### 6. 쿠폰 유효성 검증 (결제할 때)
+
+- **Method**: `POST`
+- **Path**: `/checkout/{checkoutId}/coupons/validation`
+
+**Response `200`**
+
+```json
+{
+  "code": 200,
+  "message": "올바른 쿠폰입니다.",
+  "result": {
+    "valid": true
   }
 }
 ```
@@ -203,13 +337,34 @@ API 근거: 해당 API는 "결제하기" 버튼을 클릭했을 때 사용된다
 
 ```json
 {
-  "code": "INVALID_COUPON_TYPE",
-  "message": "존재하지 않는 쿠폰 타입입니다."
+  "code": "UNAVIALABLE_COUPON_EXIST",
+  "message": "사용 불가능한 쿠폰이 존재합니다."
 }
 ```
 
-API 근거: 클라이언트에서 사용가능한 쿠폰 type과 상품정보를 보내서 최대할인 쿠폰을 계산한다.
-마찬가지로 type만 보내는 이유는 DB까지 가지 않고 백엔드 자체적으로 처리하기 위함이다.
-쿠폰 타입은 최대 2개까지만 받을 수 있다. -> 최대 적용 가능 쿠폰 수가 2개이기 때문.
+```json
+{
+  "code": "COUPON_APPLY_COUNT_EXCEEDED",
+  "message": "쿠폰은 2개까지 사용하실 수 있습니다."
+}
+```
+
+**Response `404`**
+
+```json
+{
+  "code": "CHECKOUT_NOT_FOUND",
+  "message": "임시 영수증이 존재하지 않습니다."
+}
+```
+
+```json
+{
+  "code": "COUPON_NOT_FOUND",
+  "message": "해당 쿠폰이 존재하지 않습니다."
+}
+```
+
+API 근거: 해당 API는 "결제하기" 버튼을 클릭했을 때 사용된다. 유효한 쿠폰인지 검증하는 것을 결제할 때 하는 이유는 결제 시점을 기준으로 해당 쿠폰을 사용하기 위함이다.
 
 ---

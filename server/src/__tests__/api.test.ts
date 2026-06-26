@@ -260,7 +260,7 @@ describe("GET /carts/:cartId/items API 테스트", () => {
       result: {
         cartItems: [
           {
-            id: productId,
+            productId: productId,
             name: "아디다스 양말",
             price: 13000,
             imgUrl: "https://image-url.com",

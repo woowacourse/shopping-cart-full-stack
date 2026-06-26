@@ -4,9 +4,9 @@ import { addCartItem } from "../../../domain/cart/cart.api";
 const 임시추가버튼 = () => {
   const handleClick = async () => {
     try {
-      await addCartItem(1, 5, 10);
-      await addCartItem(1, 4, 5);
-      await addCartItem(1, 7, 1);
+      await addCartItem(1, 1, 10);
+      await addCartItem(1, 2, 5);
+      await addCartItem(1, 3, 1);
     } finally {
       window.location.reload();
     }

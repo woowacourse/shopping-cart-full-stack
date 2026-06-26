@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import {
   deleteCartItem,
   getCartItems,
@@ -11,26 +11,30 @@ import useAsyncTask, {
 
 // 서버상태인 cartItem을 관리하는 Custom Hook
 const useCartItem = (cartId: number) => {
-  const getCartItemsAsyncTask = useAsyncTask<CartItemModel[]>();
+  const {
+    asyncState: getCartItemsAsyncState,
+    executeAsyncFunction: executeGetCartItems,
+  } = useAsyncTask<CartItemModel[]>();
   const deleteCartItemAsyncTask = useAsyncTask<void>();
   const updateCartItemCountAsyncTask = useAsyncTask<{
     id: number;
     itemCount: number;
   }>();
 
-  const requestGetCartItems = (
-    options?: ExecuteAsyncFunctionProps<CartItemModel[]>["options"],
-  ) =>
-    getCartItemsAsyncTask.executeAsyncFunction({
-      asyncFunction: () => getCartItems(cartId),
-      options,
-    });
+  const requestGetCartItems = useCallback(
+    (options?: ExecuteAsyncFunctionProps<CartItemModel[]>["options"]) =>
+      executeGetCartItems({
+        asyncFunction: () => getCartItems(cartId),
+        options,
+      }),
+    [executeGetCartItems, cartId],
+  );
 
   useEffect(() => {
     void requestGetCartItems();
 
     // TODO: cleanup 해보기
-  }, [cartId]);
+  }, [requestGetCartItems]);
 
   const requestDeleteCartItem = async (
     productId: number,
@@ -60,7 +64,7 @@ const useCartItem = (cartId: number) => {
     requestGetCartItems,
     requestDeleteCartItem,
     requestUpdateCartItemCount,
-    getCartItemsAsyncState: getCartItemsAsyncTask.asyncState,
+    getCartItemsAsyncState,
     deleteCartItemAsyncState: deleteCartItemAsyncTask.asyncState,
     updateCartItemCountAsyncState: updateCartItemCountAsyncTask.asyncState,
   };

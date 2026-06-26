@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import type { AsyncState } from "../../shared/useAsyncTask";
 import type { CartItemModel } from "../../domain/cart/cart.api";
 
@@ -11,10 +11,10 @@ export const useCartItemSelection = (
     [],
   );
   // 최초 렌더링 시 상품 전체선택으로 1번 바뀌었다는 것을 나타내는 flag
-  const [isInitialized, setIsInitialized] = useState(false);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (cartItemsAsyncState.status !== "success" || isInitialized) {
+    if (cartItemsAsyncState.status !== "success" || isInitializedRef.current) {
       return;
     }
     const cartItems = cartItemsAsyncState.data;
@@ -24,7 +24,7 @@ export const useCartItemSelection = (
     );
 
     if (!savedCartItemSelection) {
-      const allProductIds = cartItems.map((cartItem) => cartItem.id);
+      const allProductIds = cartItems.map((cartItem) => cartItem.productId);
 
       selectedProductIdsDispatch({
         type: "insertAll",
@@ -41,17 +41,17 @@ export const useCartItemSelection = (
       });
     }
 
-    setIsInitialized(true);
-  }, [cartItemsAsyncState.status, isInitialized]);
+    isInitializedRef.current = true;
+  }, [cartItemsAsyncState]);
 
   useEffect(() => {
-    if (!isInitialized) return;
+    if (!isInitializedRef.current) return;
 
     localStorage.setItem(
       "cart-selected-product-ids",
       JSON.stringify(selectedProductIds),
     );
-  }, [selectedProductIds, isInitialized]);
+  }, [selectedProductIds]);
 
   const clearCartItemSelection = () => {
     selectedProductIdsDispatch({ type: "init" });

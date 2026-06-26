@@ -7,9 +7,7 @@ import { typography } from "../../shared/styles/typography";
 const CartPage = () => {
   return (
     <CartPageLayout>
-      <HeaderArea>
-        <Header actionIcon={<div>SHOP</div>} />
-      </HeaderArea>
+      <Header actionIcon={<div>SHOP</div>} />
       <CartPageBodyArea>
         <CartContentTitle>
           장바구니 <임시추가버튼 />
@@ -27,13 +25,6 @@ const CartPageLayout = styled.div`
   width: 100%;
   min-height: 100vh;
   padding: 64px 0;
-`;
-
-const HeaderArea = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
 `;
 
 const CartPageBodyArea = styled.div`

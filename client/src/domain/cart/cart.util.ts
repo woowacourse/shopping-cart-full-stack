@@ -13,16 +13,12 @@ export const getFilteredCartItem = (
   selectedProductIds: number[],
 ) => {
   return cartItems.filter((cartItem) =>
-    selectedProductIds.includes(cartItem.id),
+    selectedProductIds.includes(cartItem.productId),
   );
 };
 
 export const getDeliveryFee = (orderPrice: number) => {
   return orderPrice >= DELIVERY.FREE_PRICE_BOUNDARY ? 0 : DELIVERY.FEE;
-};
-
-export const getProductAllItemCount = (filteredCartItem: CartItemModel[]) => {
-  return filteredCartItem.reduce((acc, item) => acc + item.itemCount, 0);
 };
 
 export const getTotalPrice = (orderPrice: number, deliveryFee: number) => {

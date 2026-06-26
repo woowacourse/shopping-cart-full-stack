@@ -1,56 +1,54 @@
 import BaseButton from "../../shared/components/BaseButton";
 import Header from "../../shared/components/Header";
-import ArrowBackIcon from "../../assets/arrow_back.png";
 import styled from "@emotion/styled";
 import { useLocation, useNavigate } from "react-router-dom";
 import { formatPrice } from "../../shared/utils";
 import { typography } from "../../shared/styles/typography";
+import type { CheckoutItem } from "../../domain/checkout/checkout.api";
+import { getCheckoutAllItemCount } from "../../domain/checkout/checkout.util";
 
-const OrderConfirmPage = () => {
+const OrderCompletePage = () => {
   const navigate = useNavigate();
-  const { productCount, productItemCount, totalPrice } = useLocation().state;
+  const {
+    checkoutItems,
+    totalPrice,
+  }: {
+    checkoutItems: CheckoutItem[];
+    totalPrice: number;
+  } = useLocation().state;
 
   return (
-    <OrderConfirmPageLayout>
-      <Header
-        actionIcon={
-          <BackButton type="button" onClick={() => navigate(-1)}>
-            <ArrowBackImage src={ArrowBackIcon} alt="뒤로가기" />
-          </BackButton>
-        }
-      />
+    <OrderCompletePageLayout>
+      <Header actionIcon={<></>} />
       <OrderConfirmContent>
-        <OrderConfirmTitle>주문 확인</OrderConfirmTitle>
+        <OrderConfirmTitle>결제 확인</OrderConfirmTitle>
         <OrderConfirmDescription>
-          총 {productCount}종류의 상품 {productItemCount}개를 주문합니다.
+          총 {checkoutItems.length}종류의 상품
+          {getCheckoutAllItemCount(checkoutItems)}개를 주문했습니다.
           <br />
           최종 결제 금액을 확인해 주세요.
         </OrderConfirmDescription>
         <TotalPriceLabel>총 결제 금액</TotalPriceLabel>
         <TotalPrice>{formatPrice(totalPrice)}원</TotalPrice>
       </OrderConfirmContent>
-      <BaseButton disabled={true}>결제하기</BaseButton>
-    </OrderConfirmPageLayout>
+      <BaseButton
+        onClick={() => navigate("/cart")}
+        style={"black"}
+        display="full"
+        rounded="none"
+      >
+        장바구니로 돌아가기
+      </BaseButton>
+    </OrderCompletePageLayout>
   );
 };
 
-export default OrderConfirmPage;
+export default OrderCompletePage;
 
-const OrderConfirmPageLayout = styled.div`
+const OrderCompletePageLayout = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-`;
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-`;
-
-const ArrowBackImage = styled.img`
-  width: 20px;
-  height: 20px;
 `;
 
 const OrderConfirmContent = styled.main`
