@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -17,10 +17,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@eslint/js": "^8.57.1",
     "@swc/core": "^1.15.33",
     "@swc/jest": "^0.2.39",
     "@types/cors": "^2.8.19",
@@ -28,9 +31,11 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
     "@types/supertest": "^7.2.0",
+    "eslint": "^8.57.1",
     "jest": "^30.4.2",
     "supertest": "^7.2.2",
     "tsx": "^4.22.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
   }
 }

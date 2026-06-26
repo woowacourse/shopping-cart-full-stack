@@ -1,6 +1,6 @@
-import { ModelError } from '../../errors/ModelError.js';
+import { invalidPurchaseQuantityError } from '../../errors/domainErrors.js';
 
-export type Type = {
+export type CartItemProps = {
   cartItemId: string;
   productId: string;
   purchaseQuantity: number;
@@ -11,7 +11,7 @@ export class CartItem {
   productId;
   purchaseQuantity;
 
-  constructor(cartItem: Type) {
+  constructor(cartItem: CartItemProps) {
     this.validatePurchaseQuantity(cartItem.purchaseQuantity);
 
     this.cartItemId = cartItem.cartItemId;
@@ -26,10 +26,7 @@ export class CartItem {
 
   private validatePurchaseQuantity(quantity: number) {
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
-      throw new ModelError(
-        'INVALID_PURCHASE_QUANTITY',
-        '유효하지 않은 구매 수량입니다.',
-      );
+      throw invalidPurchaseQuantityError();
     }
   }
 }
