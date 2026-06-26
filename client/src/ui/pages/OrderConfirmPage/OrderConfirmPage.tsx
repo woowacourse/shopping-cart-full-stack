@@ -1,5 +1,5 @@
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import backIcon from "../../../assets/backIcon.svg";
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   BottomSection,
   ContainerWrapper,
@@ -7,61 +7,76 @@ import {
   OrderDescription,
   OrderTitle,
   PageContainer,
-  PayButton,
+  ReturnButton,
   PriceLabel,
   PriceSection,
   PriceValue,
-} from "./OrderConfirmPage.styles";
-import { Header } from "../../components/Header/Header";
-
-interface OrderConfirmState {
-  selectedIds: number[];
-  totalSelectedQuantity: number;
-  totalPrice: number;
-}
+  TopHeaderBar,
+} from './OrderConfirmPage.styles';
+import { useOrderConfirm } from './useOrderConfirm';
 
 export const OrderConfirmPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const { orderId } = useParams<{ orderId: string }>();
+  const { order, isLoading, error } = useOrderConfirm(orderId);
 
-  const state = location.state as OrderConfirmState | null;
+  useEffect(() => {
+    if (error) {
+      alert(error);
+      navigate('/cart', { replace: true });
+    }
+  }, [error, navigate]);
 
-  if (!state || state.selectedIds.length === 0) {
+  if (error || isLoading || !order) {
     return (
-      <Navigate
-        to="/cart"
-        replace
-        state={{ error: "비정상적인 접근입니다!" }}
-      />
+      <PageContainer>
+        <ContainerWrapper>
+          <TopHeaderBar />
+          <MainContent>
+            <OrderDescription>
+              결제 내역을 불러오는 중입니다...
+            </OrderDescription>
+          </MainContent>
+        </ContainerWrapper>
+      </PageContainer>
     );
   }
 
-  const { selectedIds, totalSelectedQuantity, totalPrice } = state;
-  const idCount = selectedIds.length;
+  const baseQuantity = order.items.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
+  const giftQuantity = order.giftItems.reduce(
+    (sum, gift) => sum + gift.giftQuantity,
+    0,
+  );
+  const finalTotalQuantity = baseQuantity + giftQuantity;
 
-  const handlePayment = () => {
-    alert("결제가 완료되었습니다!");
-  };
+  const itemTypesCount = order.items.length;
 
   return (
     <PageContainer>
       <ContainerWrapper>
-        <Header iconSrc={backIcon} onLogoClick={() => navigate("/cart")} />
+        <TopHeaderBar />
 
         <MainContent>
-          <OrderTitle>주문 확인</OrderTitle>
+          <OrderTitle>결제 확인</OrderTitle>
           <OrderDescription>
-            {`총 ${idCount}종류의 상품 ${totalSelectedQuantity}개를 주문합니다.\n최종 결제 금액을 확인해 주세요.`}
+            {`총 ${itemTypesCount}종류의 상품 ${finalTotalQuantity}개를 주문했습니다.\n최종 결제 금액을 확인해 주세요.`}
           </OrderDescription>
 
           <PriceSection>
             <PriceLabel>총 결제 금액</PriceLabel>
-            <PriceValue>{totalPrice.toLocaleString()}원</PriceValue>
+            <PriceValue>
+              {order.priceSummary.totalPaymentAmount.toLocaleString()}원
+            </PriceValue>
           </PriceSection>
         </MainContent>
 
         <BottomSection>
-          <PayButton onClick={handlePayment}>결제하기</PayButton>
+          <ReturnButton onClick={() => navigate('/cart', { replace: true })}>
+            장바구니로 돌아가기
+          </ReturnButton>
         </BottomSection>
       </ContainerWrapper>
     </PageContainer>

@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import type { CartItem } from '../domain/Types';
+import type { Coupon, PreorderResponse } from '@cart/shared';
 
 let mockCartItems: CartItem[] = [
   {
@@ -53,5 +54,56 @@ export const handlers = [
     );
 
     return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post(`http://localhost:3000/preorder`, async () => {
+    return HttpResponse.json(
+      { preorderId: 'msw-test-preorder-id' },
+      { status: 201 },
+    );
+  }),
+
+  http.get(`http://localhost:3000/preorder/:preorderId`, () => {
+    const mockPreorder: PreorderResponse = {
+      preorderId: 'msw-test-preorder-id',
+      items: [
+        {
+          productId: 1,
+          name: 'MSW 테스트 상품',
+          price: 30000,
+          thumbnailUrl: 'https://example.com/test.jpg',
+          quantity: 2,
+        },
+      ],
+    };
+    return HttpResponse.json(mockPreorder, { status: 200 });
+  }),
+
+  http.get(`http://localhost:3000/coupons`, () => {
+    const mockCoupons: Coupon[] = [
+      {
+        couponId: 1,
+        name: 'MSW 5,000원 할인',
+        type: 'DISCOUNT',
+        expirationDate: '2099-12-31',
+        condition: { minOrderLimit: 0 },
+        benefit: { discountAmount: 5000 },
+      },
+    ];
+    return HttpResponse.json(mockCoupons, { status: 200 });
+  }),
+
+  http.post(`http://localhost:3000/orders`, async () => {
+    
+    mockCartItems[0].quantity = 99;
+    mockCartItems[0].product.price = 99999;
+
+    return HttpResponse.json(
+      {
+        message:
+          '결제 요청 금액이 일치하지 않습니다. 그 사이 상품 가격이나 쿠폰 혜택이 변동되었을 수 있습니다.',
+      },
+      { status: 409 },
+    );
   }),
 ];

@@ -98,7 +98,7 @@ describe("장바구니 페이지 통합 테스트", () => {
     server.use(
       http.get("http://localhost:3000/cart", () => {
         return HttpResponse.json([
-          { cartItemId: 999, quantity: 1, product: { productId: 999, name: "커피", price: 4000, thumbnailUrl: "" } }
+          { cartItemId: 999, quantity: 1, product: { productId: 999, name: "커피", price: 4000, thumbnailUrl: "https://example.com/test.jpg" } }
         ]);
       }),
       http.patch("http://localhost:3000/cart/:cartItemId", () => {
@@ -122,7 +122,7 @@ describe("장바구니 페이지 통합 테스트", () => {
     server.use(
       http.get("http://localhost:3000/cart", () => {
         return HttpResponse.json([
-          { cartItemId: 999, quantity: 1, product: { productId: 999, name: "커피", price: 4000, thumbnailUrl: "" } }
+          { cartItemId: 999, quantity: 1, product: { productId: 999, name: "커피", price: 4000, thumbnailUrl: "https://example.com/test.jpg" } }
         ]);
       }),
       http.delete("http://localhost:3000/cart/:cartItemId", () => {
@@ -145,8 +145,8 @@ describe("장바구니 페이지 통합 테스트", () => {
     server.use(
       http.get("http://localhost:3000/cart", () => {
         return HttpResponse.json([
-          { cartItemId: 1, quantity: 1, product: { productId: 1, name: "바닐라 라떼", price: 5000, thumbnailUrl: "" } },
-          { cartItemId: 2, quantity: 99, product: { productId: 2, name: "아메리카노", price: 4000, thumbnailUrl: "" } },
+          { cartItemId: 1, quantity: 1, product: { productId: 1, name: "바닐라 라떼", price: 5000, thumbnailUrl: "https://example.com/test.jpg" } },
+          { cartItemId: 2, quantity: 99, product: { productId: 2, name: "아메리카노", price: 4000, thumbnailUrl: "https://example.com/test.jpg" } },
         ]);
       })
     );
@@ -172,7 +172,7 @@ describe("장바구니 페이지 통합 테스트", () => {
               productId: 1,
               name: "커피 머신",
               price: 100000,
-              thumbnailUrl: "",
+              thumbnailUrl: "https://example.com/test.jpg",
             },
           },
         ]);

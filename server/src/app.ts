@@ -8,10 +8,25 @@ import ProductController from "./controller/ProductController";
 import CartController from "./controller/CartController";
 import { createCartRouter } from "./routes/CartRouter";
 import { createProductRouter } from "./routes/ProductRouter";
+import { CouponRepositoryInterface } from "./repositories/interfaces/CouponRepositoryInterface";
+import { OrderRepositoryInterface } from "./repositories/interfaces/OrderRepositoryInterface";
+import { PreorderRepositoryInterface } from "./repositories/interfaces/PreorderRepositoryInterface";
+import CouponService from "./service/CouponService";
+import PreorderService from "./service/PreorderService";
+import OrderService from "./service/OrderService";
+import { createCouponRouter } from "./routes/CouponRouter";
+import CouponController from "./controller/CouponController";
+import { createPreorderRouter } from "./routes/PreorderRouter";
+import PreorderController from "./controller/PreorderController";
+import { createOrderRouter } from "./routes/OrderRouter";
+import OrderController from "./controller/OrderController";
 
 interface Repositories {
   productRepo: ProductRepositoryInterface;
   cartRepo: CartRepositoryInterface;
+  couponRepo: CouponRepositoryInterface;
+  orderRepo: OrderRepositoryInterface;
+  preorderRepo: PreorderRepositoryInterface;
 }
 
 export const runApp = (repositories: Repositories): express.Express => {
@@ -37,12 +52,31 @@ export const runApp = (repositories: Repositories): express.Express => {
     repositories.productRepo,
     repositories.cartRepo,
   );
+  const couponService = new CouponService(repositories.couponRepo);
+  const preorderService = new PreorderService(
+    repositories.cartRepo,
+    repositories.productRepo,
+    repositories.preorderRepo,
+  );
+  const orderService = new OrderService(
+    repositories.productRepo,
+    repositories.couponRepo,
+    repositories.orderRepo,
+    repositories.cartRepo,
+    repositories.preorderRepo,
+  );
 
   app.use("/cart", createCartRouter(new CartController(cartService)));
   app.use(
     "/products",
     createProductRouter(new ProductController(productService)),
   );
+  app.use("/coupons", createCouponRouter(new CouponController(couponService)));
+  app.use(
+    "/preorder",
+    createPreorderRouter(new PreorderController(preorderService)),
+  );
+  app.use("/orders", createOrderRouter(new OrderController(orderService)));
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });

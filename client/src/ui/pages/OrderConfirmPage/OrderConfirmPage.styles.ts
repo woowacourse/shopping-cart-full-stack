@@ -22,6 +22,12 @@ export const ContainerWrapper = styled.div`
   padding-bottom: 64px;
 `;
 
+export const TopHeaderBar = styled.div`
+  width: 100%;
+  height: 64px;
+  background-color: #000000;
+`;
+
 export const MainContent = styled.main`
   display: flex;
   flex-direction: column;
@@ -42,7 +48,7 @@ export const OrderDescription = styled.p`
   font-weight: 500;
   color: #0a0d13;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 36px;
   line-height: 1.5;
   white-space: pre-line;
 `;
@@ -61,7 +67,7 @@ export const PriceLabel = styled.p`
 `;
 
 export const PriceValue = styled.p`
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   color: #000000;
 `;
@@ -73,13 +79,17 @@ export const BottomSection = styled.div`
   max-width: 430px;
 `;
 
-export const PayButton = styled.button`
+export const ReturnButton = styled.button`
   width: 100%;
   height: 64px;
-  background-color: #bebebe;
+  background-color: #000000;
   color: #ffffff;
   font-size: 16px;
   font-weight: 700;
   border: none;
   cursor: pointer;
+
+  &:hover {
+    background-color: #222222;
+  }
 `;

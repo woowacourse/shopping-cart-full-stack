@@ -17,3 +17,13 @@ export class InvalidError extends Error {
     this.status = 400;
   }
 }
+
+export class ConflictError extends Error {
+  status: number;
+  
+  constructor(message: string) {
+    super(message);
+    this.name = "ConflictError";
+    this.status = 409;
+  }
+}

@@ -28,4 +28,17 @@ export default class InMemoryProductRepository implements ProductRepositoryInter
   deleteById(productId: number): void {
     this.#products.delete(productId);
   }
+
+  decreaseQuantity(productId: number, quantity: number): void {
+    const product = this.#products.get(productId);
+
+    if (!product) {
+      throw new Error("차감할 상품이 존재하지 않습니다.");
+    }
+
+    this.#products.set(productId, {
+      ...product,
+      totalQuantity: product.totalQuantity - quantity,
+    });
+  }
 }

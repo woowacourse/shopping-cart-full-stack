@@ -5,4 +5,5 @@ export interface ProductRepositoryInterface {
   findById(productId: number): ProductData | null;
   addProduct(data: ProductInput): ProductData;
   deleteById(productId: number): void;
+  decreaseQuantity(productId: number, changeQuantity: number): void;
 }

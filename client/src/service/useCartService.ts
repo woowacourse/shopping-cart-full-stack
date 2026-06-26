@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { CartApiInterface } from "../infrastructure/api/CartApiInterface";
+import type { CartApiInterface } from "../infrastructure/interfaces/CartApiInterface";
 import type { CartItem } from "../domain/Types";
 
 export const useCartService = (api: CartApiInterface) => {

@@ -18,7 +18,8 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "@cart/shared": "*"
   },
   "devDependencies": {
     "@swc/core": "^1.15.33",
