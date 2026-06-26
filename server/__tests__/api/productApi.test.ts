@@ -1,60 +1,54 @@
 import request from "supertest";
 import app from "../../src/app";
-import { describe, expect, test } from "@jest/globals";
-
-import { getAllProducts } from "../../src/service/productService";
+import { beforeEach, describe, expect, test } from "@jest/globals";
+import {
+  getAllProducts,
+  addProductToList,
+} from "../../src/service/productService";
 import {
   addItemToCart,
   getItemsFromCart,
 } from "../../src/service/shoppingCartService";
-import { beforeEach } from "node:test";
-import { productRepository } from "../../src/database/inMemoryDatabase";
+import {
+  productRepository,
+  cartRepository,
+} from "../../src/database/inMemoryDatabase";
+
+const productData = {
+  name: "test",
+  price: 1000,
+  image: "example/com",
+};
 
 beforeEach(() => {
   productRepository.clear();
+  cartRepository.clear();
 });
 
 describe("상품 API 테스트", () => {
   test("클라이언트가 POST 요청 시 상품을 등록한다.", async () => {
-    const data = {
-      name: "test",
-      price: 1000,
-      image: "example/com",
-    };
-
-    const response = await request(app).post("/products").send(data);
+    const response = await request(app).post("/products").send(productData);
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual([
-      {
-        id: getAllProducts()[0].id,
-        ...data,
-      },
+      { id: getAllProducts()[0].id, ...productData },
     ]);
   });
 
   test("클라이언트가 GET 요청 시 상품 목록을 반환한다.", async () => {
-    const data = {
-      name: "test",
-      price: 1000,
-      image: "example/com",
-    };
+    addProductToList(productData);
 
     const response = await request(app).get("/products");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
-      {
-        id: getAllProducts()[0].id,
-        ...data,
-      },
+      { id: getAllProducts()[0].id, ...productData },
     ]);
   });
 
   test("클라이언트가 DELETE 요청 시 상품을 삭제한다.", async () => {
-    const product = getAllProducts();
-
-    addItemToCart(product[0].id, 3);
+    addProductToList(productData);
+    addItemToCart(getAllProducts()[0].id, 3);
 
     const response = await request(app).delete(
       `/products/${getItemsFromCart()[0].product.id}`,

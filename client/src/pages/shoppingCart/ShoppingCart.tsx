@@ -31,20 +31,17 @@ export default function ShoppingCart() {
     if (ok) removeChecked(item.product.id);
   };
 
-  const {
-    orderAmount,
-    deliveryFee,
-    totalPayment,
-    totalProductsTypeCount,
-    totalProductsQuantity,
-  } = calculateOrderSummary(shoppingCartItems, checkedIdsSet);
+  const { orderAmount, deliveryFee, totalPayment } = calculateOrderSummary(
+    shoppingCartItems,
+    checkedIdsSet,
+  );
 
   const handleSubmit = () => {
     navigate("/checkorder", {
       state: {
-        price: `${totalPayment}`,
-        totalProductsTypeCount: `${totalProductsTypeCount}`,
-        totalProductsQuantity: `${totalProductsQuantity}`,
+        selectedItems: shoppingCartItems.filter((item) =>
+          checkedIdsSet.has(item.product.id),
+        ),
       },
     });
   };

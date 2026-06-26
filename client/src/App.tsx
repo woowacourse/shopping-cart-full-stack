@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import ShoppingCart from "./pages/shoppingCart/ShoppingCart";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import CheckOrder from "./pages/checkOrder/CheckOrder";
+import PaymentConfirm from "./pages/payment/PaymentConfirm";
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<ShoppingCart />} />
           <Route path="/checkorder" element={<CheckOrder />} />
+          <Route path="/payment" element={<PaymentConfirm />} />
         </Routes>
       </HashRouter>
     </AppContainer>

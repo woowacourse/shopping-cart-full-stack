@@ -2,6 +2,7 @@ import express, { type ErrorRequestHandler } from "express";
 import cors from "cors";
 import productRouter from "./productApi.ts";
 import shoppingCartRouter from "./shoppingCartApi.ts";
+import couponRouter from "./couponApi.ts";
 import {
   BadRequestError,
   NotFoundError,
@@ -36,6 +37,7 @@ app.use((_req, res, next) => {
 
 app.use("/products", productRouter);
 app.use("/carts", shoppingCartRouter);
+app.use("/coupons", couponRouter);
 
 app.use(() => {
   throw new NotFoundError({
