@@ -6,9 +6,6 @@ import { useCart } from '../hooks/useCart';
 const BASE_URL = 'http://localhost:3000';
 
 describe('useCart', () => {
-    beforeEach(() => {
-        localStorage.clear();
-    });
 
     it('마운트 시 apiStatus가 loading이 된다', () => {
         const { result } = renderHook(() => useCart());
@@ -27,19 +24,29 @@ describe('useCart', () => {
     });
 
     it('API 실패 시 apiStatus가 error가 된다', async () => {
-        server.use(
-            http.get(`${BASE_URL}/carts/1`, () =>
-                HttpResponse.json({ status: 500 }, { status: 500 })
-            )
-        );
+        server.use(http.get(`${BASE_URL}/cart`, () => HttpResponse.json({ status: 500 }, { status: 500 })));
 
         const { result } = renderHook(() => useCart());
 
         await waitFor(() => expect(result.current.apiStatus).toBe('error'));
     });
 
-    it('localStorage에 저장된 체크 ID가 있으면 해당 상품만 체크 상태로 초기화된다', async () => {
-        localStorage.setItem('cart_checked_ids', JSON.stringify([1]));
+    it('서버에서 checkStatus가 false인 상품은 체크 해제 상태로 초기화된다', async () => {
+        server.use(
+            http.get(`${BASE_URL}/cart`, () =>
+                HttpResponse.json({
+                    status: 200,
+                    data: {
+                        isAllSelected: false,
+                        cartItems: [
+                            { product: { id: '1', name: 'Shopping Basket', price: 18000, imgUrl: '' }, quantity: 2, checkStatus: true },
+                            { product: { id: '3', name: 'Reusable Cup', price: 9900, imgUrl: '' }, quantity: 1, checkStatus: false },
+                        ],
+                        payInfo: { orderPrice: 36000, deliveryFee: 3000, totalOrderAmount: 39000 },
+                    },
+                })
+            )
+        );
 
         const { result } = renderHook(() => useCart());
 
@@ -53,7 +60,7 @@ describe('useCart', () => {
         await waitFor(() => expect(result.current.apiStatus).toBe('success'));
 
         await act(async () => {
-            result.current.handleIncrease(1);
+            result.current.handleIncrease('1');
         });
 
         expect(result.current.quantityStatus[0]).toBe(3);
@@ -64,7 +71,7 @@ describe('useCart', () => {
         await waitFor(() => expect(result.current.apiStatus).toBe('success'));
 
         await act(async () => {
-            await result.current.remove(1);
+            await result.current.remove('1');
         });
 
         expect(result.current.products).toHaveLength(1);
@@ -76,13 +83,13 @@ describe('useCart', () => {
         await waitFor(() => expect(result.current.apiStatus).toBe('success'));
 
         server.use(
-            http.delete(`${BASE_URL}/carts/:cartId/products/:productId`, () =>
+            http.delete(`${BASE_URL}/cart/product/:productId`, () =>
                 HttpResponse.json({ status: 500 }, { status: 500 })
             )
         );
 
         await act(async () => {
-            await result.current.remove(1);
+            await result.current.remove('1');
         });
 
         expect(result.current.products).toHaveLength(2);

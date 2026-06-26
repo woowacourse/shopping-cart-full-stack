@@ -22,6 +22,7 @@ export default function PageLayout({
     return (
         <Wrapper>
             <Header>
+                {/* TODO 슬롯 prop으로 받도록 수정 */}
                 {showBackButton ? (
                     <BackButton onClick={() => navigate(-1)}>←</BackButton>
                 ) : (

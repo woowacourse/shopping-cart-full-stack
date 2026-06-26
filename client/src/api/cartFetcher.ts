@@ -1,10 +1,16 @@
 import { CartAPiServerError } from './CartApiServerError';
 import { fetcher } from './fetcher';
 
+export interface FieldError {
+    type: string;
+    errorCode: string;
+}
+
 export interface ServerError {
     status: number;
     errorCode: string;
     errorMessage: string;
+    data?: FieldError[];
 }
 
 const isServerError = (error: unknown): error is ServerError => {

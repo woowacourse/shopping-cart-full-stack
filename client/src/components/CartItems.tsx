@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 import CheckBox from './CheckBox';
 import ItemCard from './ItemCard';
-import type { Product } from '../api/cartApiService';
+import type { Product } from '../api/apiTypes';
 
 interface CartItemsProps {
     products: Product[];
     quantityStatus: number[];
     checkStatus: boolean[];
     isAllChecked: boolean;
-    onIncrease: (productId: number) => void;
-    onDecrease: (productId: number) => void;
-    onToggle: (productId: number) => void;
+    onIncrease: (productId: string) => void;
+    onDecrease: (productId: string) => void;
+    onToggle: (productId: string) => void;
     onToggleAll: () => void;
-    onDelete: (productId: number) => void;
+    onDelete: (productId: string) => void;
 }
 
 export default function CartItems({

@@ -1,4 +1,4 @@
-import type { Product } from '../api/cartApiService';
+import type { Product } from '../api/apiTypes';
 
 export const FREE_DELIVERY_THRESHOLD = 100000;
 const DELIVERY_FEE = 3000;
