@@ -1,10 +1,10 @@
-import type { RepsonseDTO } from "@/services/apis/api.types";
+import type { ResponseDTO } from "@/services/apis/api.types";
 
 export interface GetCartsRequestDto {
   pathParams: { name: "cartId"; value: number }[];
 }
 
-export type GetCartsResponseDto = RepsonseDTO<
+export type GetCartsResponseDto = ResponseDTO<
   200,
   {
     id: number;
@@ -23,7 +23,7 @@ export interface PatchCartsProductsRequestDto {
   data: { quantity: number };
 }
 
-export type PatchCartsProductsResponseDto = RepsonseDTO<
+export type PatchCartsProductsResponseDto = ResponseDTO<
   200,
   {
     id: number; // product id,

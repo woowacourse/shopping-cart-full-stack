@@ -39,10 +39,33 @@ export const SizeSmall: Story = {
   },
 };
 
+export const SizeMedium: Story = {
+  args: {
+    children: "button",
+    size: "medium",
+  },
+};
+
 export const SizeLarge: Story = {
   args: {
     children: "button",
     size: "large",
+  },
+};
+
+export const EdgeRounded: Story = {
+  args: {
+    children: "button",
+    variant: "primary",
+    edge: "rounded",
+  },
+};
+
+export const EdgeFlat: Story = {
+  args: {
+    children: "button",
+    variant: "primary",
+    edge: "flat",
   },
 };
 

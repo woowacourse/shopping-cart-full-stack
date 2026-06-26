@@ -3,11 +3,11 @@
  * repository 반환 모델 정의 후 unknown 제거
  */
 
-export interface GetCartsParmas {
+export interface GetCartsParams {
   cartId: number;
 }
 
-export type GetCarts = (params: GetCartsParmas) => Promise<{
+export type GetCarts = (params: GetCartsParams) => Promise<{
   id: number;
   products: {
     id: number;

@@ -1,0 +1,40 @@
+
+.ui-modal .container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 24px;
+  right: 24px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  padding: 24px 32px;
+  z-index: 10;
+}
+
+.ui-modal .container .button-close {
+  position: absolute;
+  top: 20px;
+  right: 27px; 
+  width: 24px;
+  right: 24px;
+  border: none;
+  background: url("./imgs//modal-close.svg") center center no-repeat;
+  text-indent: -9999px;
+}
+
+.ui-modal .header {
+  padding-bottom: 32px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.dim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  content: '';
+  background: #00000059;
+}

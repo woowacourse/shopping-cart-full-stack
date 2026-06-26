@@ -32,6 +32,19 @@ const createInitialRawCarts = () => {
         },
       ],
     },
+    {
+      id: 3,
+      products: [
+        {
+          id: 2,
+          quantity: 4,
+        },
+      ],
+    },
+    {
+      id: 4,
+      products: [{ id: 1, quantity: 3 }],
+    },
   ];
 
   return rawCarts;

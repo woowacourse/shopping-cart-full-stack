@@ -36,6 +36,8 @@ export const Carts = () => {
     updateProductSelection,
     updateAllProductSelection,
 
+    submit,
+
     updateProductQuantityErrorMessage,
     openAlert,
     onAlertClose,
@@ -79,13 +81,10 @@ export const Carts = () => {
   };
 
   const navigate = useNavigate();
-  const handleClickOrderReview = () => {
-    navigate(ROUTES.ORDER_REVIEW, {
-      state: {
-        products: filteredCartProducts.map((product) => product.quantity),
-        paymentAmount,
-      },
-    });
+  const handleClickOrderReview = async () => {
+    const id = await submit();
+
+    navigate(`${ROUTES.ORDER_REVIEW}/${id}`);
   };
 
   const filteredCartProducts = cartProducts.filter(

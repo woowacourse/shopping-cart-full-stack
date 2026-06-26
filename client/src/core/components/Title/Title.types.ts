@@ -6,7 +6,8 @@ export type AS = "div";
 
 export type OwnProps = {
   title: ReactNode;
-  subTitle: ReactNode;
+  subTitle?: ReactNode;
+  level?: 1 | 2;
 };
 
 export type Props<T extends ElementType = AS> = PolymorphicProps<T, OwnProps>;

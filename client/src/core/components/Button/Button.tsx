@@ -18,6 +18,7 @@ export const Button = <T extends ElementType>(props: Props<T>) => {
 
     variant,
     size,
+    edge = "rounded",
     block,
 
     ...restProps
@@ -26,6 +27,7 @@ export const Button = <T extends ElementType>(props: Props<T>) => {
   const modifiers = {
     variant: variant && styles[`variant-${variant}`],
     size: size && styles[`size-${size}`],
+    edge: edge && styles[`edge-${edge}`],
     block: block && styles[`is-block`],
   };
 

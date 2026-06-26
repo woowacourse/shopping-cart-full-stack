@@ -6,7 +6,8 @@ export type AS = "button";
 
 export type OwnProps = {
   variant?: "default" | "primary" | "secondary";
-  size?: "large" | "small";
+  size?: "large" | "medium" | "small";
+  edge?: "rounded" | "flat";
   block?: boolean;
 };
 

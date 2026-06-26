@@ -11,9 +11,18 @@ import type { Props } from "./";
 const classnameDefault = "ui-title";
 
 export const Title = <T extends ElementType>(props: Props<T>) => {
-  const { as = "div", className, title, subTitle, ...restProps } = props;
+  const {
+    as = "div",
+    className,
+    title,
+    subTitle,
+    level = 1,
+    ...restProps
+  } = props;
 
-  const modifiers = {};
+  const modifiers = {
+    level: level && styles[`level-${level}`],
+  };
 
   const classname = createClassName({
     styles,

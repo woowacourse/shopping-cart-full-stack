@@ -1,4 +1,4 @@
-export interface RepsonseDTO<TStatus extends number, TData> {
+export interface ResponseDTO<TStatus extends number, TData> {
   status: TStatus;
   data: TData;
 }

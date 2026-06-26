@@ -1,5 +1,5 @@
 import type {
-  GetCartsParmas,
+  GetCartsParams,
   PatchCartsProductsCommand,
   DeleteCartsProductsParams,
 } from "./repository.types";
@@ -8,8 +8,8 @@ import type { GetCartsResponseDto, PatchCartsProductsResponseDto } from "./dto";
 
 // GetCarts
 export const mapGetCartsModelToRequestDTO = (
-  model: GetCartsParmas,
-): GetCartsParmas => {
+  model: GetCartsParams,
+): GetCartsParams => {
   return model;
 };
 export const mapGetCartsResponseDTOToModel = (

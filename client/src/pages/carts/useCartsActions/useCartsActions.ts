@@ -1,12 +1,17 @@
+import { postOrderSheet } from "@/services/apis/orderSheets/repository";
+
 import { useCarts } from "../useCarts";
 
 import { useCartsDeleteAction } from "./useCartsDeleteAction";
 import { useCartsLoadAction } from "./useCartsLoadAction";
 import { useCartsUpdateQuantityAction } from "./useCartsUpdateQuantityAction";
 
+import { MISSION_CART_ID } from "../constants";
+
 export const useCartsActions = () => {
   const {
     cartProducts,
+    selectionProducts,
     updateCartProducts,
     updateProductQuantity,
     deleteProduct,
@@ -21,6 +26,14 @@ export const useCartsActions = () => {
   });
 
   const deleteAction = useCartsDeleteAction({ deleteProduct });
+
+  const submit = async () => {
+    const res = await postOrderSheet({
+      cartId: MISSION_CART_ID,
+      productIds: selectionProducts,
+    });
+    return res.id;
+  };
 
   return {
     loadCartsProductsStatus: loadAction.status,
@@ -38,5 +51,7 @@ export const useCartsActions = () => {
 
     updateProductSelection,
     updateAllProductSelection,
+
+    submit,
   };
 };
