@@ -1,12 +1,27 @@
-import { canPurchaseCart, toCartItem } from "../utils/cart";
+import { CART_ITEM_STATUS, getCartItemStatusMessage, type CartItem } from "../domain/cart";
 import { useCartQuery } from "./useCartQuery";
 import { useCartSelection } from "./useCartSelection";
 
+export interface CartItemView extends CartItem {
+  isSelected: boolean;
+  errorMsg?: string;
+}
+
+function canPurchaseCart(cartList: CartItemView[]): boolean {
+  const selectedCartItems = cartList.filter((item) => item.isSelected && item.status === CART_ITEM_STATUS.AVAILABLE);
+
+  return selectedCartItems.length > 0;
+}
+
 export function useCartList() {
-  const { cartItemResponses, isLoading, hasError, refetch } = useCartQuery();
+  const { cartItems, isLoading, hasError, refetch } = useCartQuery();
   const { getItemSelection, toggleItemSelection, toggleAllItemSelection } = useCartSelection();
 
-  const cartList = cartItemResponses.map((item) => toCartItem(item, getItemSelection(item.id)));
+  const cartList: CartItemView[] = cartItems.map((item) => ({
+    ...item,
+    isSelected: getItemSelection(item.id),
+    errorMsg: getCartItemStatusMessage(item.status, item.stock, item.quantity),
+  }));
 
   const hasNoCartItem = !isLoading && !hasError && cartList.length === 0;
   const hasCartItem = !isLoading && !hasError && cartList.length > 0;

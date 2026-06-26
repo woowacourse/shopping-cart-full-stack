@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router";
 import ChevronLeft from "../../assets/chevron-left.svg?react";
+import Button from "../Button";
 
 interface HeaderProps {
   children: ReactNode;
@@ -18,9 +19,22 @@ function Title({ children }: HeaderTitleProps) {
 function BackButton() {
   const navigate = useNavigate();
   return (
-    <button css={iconStyle} onClick={() => navigate(-1)}>
+    <button css={iconStyle} onClick={() => navigate(-1)} aria-label="뒤로 가기">
       <ChevronLeft />
     </button>
+  );
+}
+
+interface ResetButtonProps {
+  onClick: () => void;
+  disabled?: boolean;
+}
+
+function ResetButton({ onClick, disabled = false }: ResetButtonProps) {
+  return (
+    <Button variant="secondary" onClick={onClick} disabled={disabled} fit>
+      장바구니 되돌리기
+    </Button>
   );
 }
 
@@ -30,6 +44,7 @@ function Header({ children }: HeaderProps) {
 
 Header.Title = Title;
 Header.BackButton = BackButton;
+Header.ResetButton = ResetButton;
 
 export default Header;
 

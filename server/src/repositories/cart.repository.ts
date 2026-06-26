@@ -1,68 +1,51 @@
+import { Transaction } from "sequelize";
 import { CartItem, newCartItem } from "../interfaces/cart.interface.js";
+import { CartItemModel } from "../models/index.js";
+import { sequelize } from "../db/sequelize.js";
 
-const initialCartItems: CartItem[] = [
-  { id: 1, productId: 1, quantity: 2 },
-  { id: 2, productId: 2, quantity: 1 },
-  { id: 3, productId: 3, quantity: 1 },
-  { id: 4, productId: 4, quantity: 5 },
-];
-
-const cartItems: CartItem[] = [...initialCartItems];
-
-export function isAlreadyExist(id: number) {
-  if (cartItems.find((item) => item.id === id)) return true;
-  return false;
+interface TxOption {
+  transaction?: Transaction;
 }
 
-export function saveNewItem(newItem: newCartItem) {
-  const id = (cartItems.at(-1)?.id ?? 0) + 1;
-  cartItems.push({ id, ...newItem });
+function toCartItem(model: CartItemModel): CartItem {
+  return { id: model.id, productId: model.productId, quantity: model.quantity };
 }
 
-export function updateItemQuantity(id: number, quantity: number) {
-  const existingCartItem = cartItems.find((item) => item.id === id);
-  if (existingCartItem) {
-    existingCartItem.quantity = quantity;
-  }
+export async function isAlreadyExist(id: number): Promise<boolean> {
+  return (await CartItemModel.count({ where: { id } })) > 0;
 }
 
-export function deleteById(id: number) {
-  const index = cartItems.findIndex((item) => item.id === id);
-  if (index === -1) {
-    return false;
-  }
-  cartItems.splice(index, 1);
+export async function saveNewItem(newItem: newCartItem): Promise<void> {
+  await CartItemModel.create(newItem);
+}
+
+export async function updateItemQuantity(id: number, quantity: number): Promise<void> {
+  await CartItemModel.update({ quantity }, { where: { id } });
+}
+
+export async function deleteById(id: number): Promise<boolean> {
+  const deleted = await CartItemModel.destroy({ where: { id } });
+  return deleted > 0;
+}
+
+export async function deleteByProductId(productId: number, options: TxOption = {}): Promise<boolean> {
+  await CartItemModel.destroy({ where: { productId }, transaction: options.transaction });
   return true;
 }
 
-export function deleteByProductId(productId: number) {
-  const index = cartItems.findIndex((item) => item.productId === productId);
-  if (index !== -1) {
-    cartItems.splice(index, 1);
+export async function findAll(): Promise<CartItem[]> {
+  const models = await CartItemModel.findAll({ order: [["id", "ASC"]] });
+  return models.map(toCartItem);
+}
+
+export async function findById(id: number): Promise<CartItem | undefined> {
+  const model = await CartItemModel.findByPk(id);
+  if (!model) {
+    return undefined;
   }
-  return true;
+  return toCartItem(model);
 }
 
-export function findAll(): CartItem[] {
-  return [...cartItems];
-}
-
-export function findProductIdById(id: number) {
-  const index = cartItems.find((item) => item.id === id);
-  if (index) {
-    return index.productId;
-  }
-  return -1;
-}
-
-export function findQuantityById(id: number) {
-  const item = cartItems.find((item) => item.id === id);
-  if (item) {
-    return item.quantity;
-  }
-  return -1;
-}
-
-export function reset() {
-  cartItems.length = 0;
+export async function reset(): Promise<void> {
+  await sequelize.query('TRUNCATE TABLE "cart_items" RESTART IDENTITY CASCADE');
 }

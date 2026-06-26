@@ -1,8 +1,17 @@
 import { createElement } from "react";
 import type { Preview } from "@storybook/react-vite";
+import { worker } from "../src/msw/browser";
 import "../src/index.css";
 
+const mswReady = worker.start({ onUnhandledRequest: "bypass" });
+
 const preview: Preview = {
+  loaders: [
+    async () => {
+      await mswReady;
+      return {};
+    },
+  ],
   decorators: [
     (Story) =>
       createElement(

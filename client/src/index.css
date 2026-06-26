@@ -15,6 +15,18 @@
   line-height: 1;
 }
 
+.typo-lg-r {
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1;
+}
+
+.typo-lg-b {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+}
+
 .typo-md-r {
   font-size: 16px;
   font-weight: normal;

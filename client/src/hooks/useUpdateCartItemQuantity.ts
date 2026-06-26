@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { updateCartItemQuantity } from "../apis/cart";
+import { updateCartItemQuantity } from "../apis/cart/cart";
 import { useMyMutation } from "../lib/myQuery/useMyMutation";
 import { CART_QUERY_KEY } from "../constants/queryKeys";
 

@@ -10,8 +10,8 @@ const validProduct = {
 };
 
 describe("GET /products", () => {
-  beforeEach(() => {
-    reset();
+  beforeEach(async () => {
+    await reset();
   });
 
   it("상품이 없으면 200 OK와 빈 배열을 반환한다.", async () => {

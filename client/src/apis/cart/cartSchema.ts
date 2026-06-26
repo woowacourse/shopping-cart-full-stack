@@ -1,10 +1,10 @@
-import type { CartItemStatus } from "../types/cart";
+import type { CartItemStatus } from "../../domain/cart";
 
 export interface CartItemResponse {
   id: number;
   name: string;
   price: number;
-  imageUrl: string;
+  image_url: string;
   quantity: number;
   stock: number;
   status: CartItemStatus;

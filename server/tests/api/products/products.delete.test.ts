@@ -11,9 +11,9 @@ const validProduct = {
 };
 
 describe("DELETE /products/:id", () => {
-  beforeEach(() => {
-    reset();
-    resetCart();
+  beforeEach(async () => {
+    await reset();
+    await resetCart();
   });
 
   it("존재하는 상품을 삭제하면 204 No Content와 빈 응답을 반환한다.", async () => {
@@ -31,7 +31,7 @@ describe("DELETE /products/:id", () => {
     await request(app).post("/products").send(validProduct).expect(201);
     const { body: products } = await request(app).get("/products").expect(200);
     const productId = products[0].id;
-    saveNewItem({ productId, quantity: 1 });
+    await saveNewItem({ productId, quantity: 1 });
 
     await request(app).delete(`/products/${productId}`).expect(204);
 

@@ -1,19 +1,17 @@
 import { css } from "@emotion/react";
-import MinusIcon from "../../assets/minus.svg?react";
-import PlusIcon from "../../assets/plus.svg?react";
 import { useOptimisticRemoveCartItem } from "../../hooks/useOptimisticRemoveCartItem";
 import { useUpdateCartItemQuantity } from "../../hooks/useUpdateCartItemQuantity";
-import { CART_ITEM_STATUS, type CartItem } from "../../types/cart";
-import { MAX_PURCHASE_QUANTITY, MIN_PURCHASE_QUANTITY } from "../../utils/cart";
+import { CART_ITEM_STATUS, MAX_PURCHASE_QUANTITY, MIN_PURCHASE_QUANTITY } from "../../domain/cart";
+import type { CartItemView } from "../../hooks/useCartList";
 import Button from "../Button";
 import Checkbox from "../Checkbox";
+import Item from "../Item";
+import { formatPrice } from "../../utils/format";
 
 interface CartListItemProps {
-  cartItem: CartItem;
+  cartItem: CartItemView;
   onSelect: (id: number) => void;
 }
-
-const formatPrice = (price: number) => price.toLocaleString("ko-KR") + "원";
 
 export default function CartListItem({ cartItem, onSelect }: CartListItemProps) {
   const { id, name, imageUrl, price, quantity, isSelected, status, errorMsg } = cartItem;
@@ -26,39 +24,32 @@ export default function CartListItem({ cartItem, onSelect }: CartListItemProps) 
   const handleDecrease = () => decreaseCartItemQuantity(id, quantity);
   const handleIncrease = () => increaseCartItemQuantity(id, quantity);
 
+  const isDecreaseDisabled = isPending || quantity <= MIN_PURCHASE_QUANTITY || isOutOfStock;
+  const isIncreaseDisabled = isPending || isPurchaseDisabled || quantity >= MAX_PURCHASE_QUANTITY;
+
   return (
-    <div css={[containerStyle, isPurchaseDisabled && disabledStyle]}>
-      <div css={topRowStyle}>
+    <Item disabled={isPurchaseDisabled}>
+      <Item.Header>
         <Checkbox checked={isSelected} disabled={isPurchaseDisabled} onChange={() => onSelect(id)} />
         <Button variant="secondary" fit onClick={() => removeCartItem(id)}>
           삭제
         </Button>
-      </div>
-      <div css={contentRowStyle}>
-        <img css={imageStyle} src={imageUrl} alt={name} />
+      </Item.Header>
+      <Item.Main>
+        <Item.Thumbnail src={imageUrl} alt={name} />
         <div css={infoStyle}>
           <div css={textGroupStyle}>
-            <span className="typo-sm-r">{name}</span>
-            <span className="typo-xl-b">{formatPrice(price)}</span>
+            <Item.TextSm>{name}</Item.TextSm>
+            <Item.TextXl>{formatPrice(price)}</Item.TextXl>
           </div>
           <div css={quantityRowStyle}>
-            <Button
-              variant="icon"
-              onClick={handleDecrease}
-              disabled={isPending || quantity <= MIN_PURCHASE_QUANTITY || isOutOfStock}
-            >
-              <MinusIcon />
-            </Button>
-            <span className="typo-sm-r" css={quantityTextStyle}>
-              {quantity}
-            </span>
-            <Button
-              variant="icon"
-              onClick={handleIncrease}
-              disabled={isPending || isPurchaseDisabled || quantity >= MAX_PURCHASE_QUANTITY}
-            >
-              <PlusIcon />
-            </Button>
+            <Item.Stepper
+              value={quantity}
+              onDecrease={handleDecrease}
+              onIncrease={handleIncrease}
+              decreaseDisabled={isDecreaseDisabled}
+              increaseDisabled={isIncreaseDisabled}
+            />
             {errorMsg && (
               <span className="typo-sm-r" css={errorMsgStyle}>
                 {errorMsg}
@@ -66,39 +57,10 @@ export default function CartListItem({ cartItem, onSelect }: CartListItemProps) 
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </Item.Main>
+    </Item>
   );
 }
-
-const containerStyle = css`
-  padding: 12px 0;
-  border-top: 1px solid #e5e5e5;
-  opacity: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const topRowStyle = css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const contentRowStyle = css`
-  display: flex;
-  gap: 24px;
-`;
-
-const imageStyle = css`
-  width: 112px;
-  height: 112px;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 8px;
-  flex-shrink: 0;
-`;
 
 const infoStyle = css`
   display: flex;
@@ -118,15 +80,6 @@ const quantityRowStyle = css`
   gap: 8px;
   margin-top: 8px;
   height: 32px;
-`;
-
-const quantityTextStyle = css`
-  min-width: 20px;
-  text-align: center;
-`;
-
-const disabledStyle = css`
-  opacity: 0.4;
 `;
 
 const errorMsgStyle = css`

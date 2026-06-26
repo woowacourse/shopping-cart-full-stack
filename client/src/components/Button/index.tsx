@@ -2,16 +2,25 @@ import { css } from "@emotion/react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type Variant = "primary" | "secondary" | "icon";
+type Radius = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   fit?: boolean;
+  radius?: Radius;
   children: ReactNode;
 }
 
-export default function Button({ variant = "primary", fit = false, children, type = "button", ...props }: ButtonProps) {
+export default function Button({
+  variant = "primary",
+  fit = false,
+  radius,
+  children,
+  type = "button",
+  ...props
+}: ButtonProps) {
   return (
-    <button type={type} css={[baseStyle, variantStyles[variant], fit && fitStyle]} {...props}>
+    <button type={type} css={[baseStyle, variantStyles[variant], fit && fitStyle, radius && radiusStyles[radius]]} {...props}>
       {children}
     </button>
   );
@@ -53,6 +62,18 @@ const variantStyles: Record<Variant, ReturnType<typeof css>> = {
     height: 24px;
     padding: 2px;
     border-radius: 8px;
+  `,
+};
+
+const radiusStyles: Record<Radius, ReturnType<typeof css>> = {
+  sm: css`
+    border-radius: 4px;
+  `,
+  md: css`
+    border-radius: 8px;
+  `,
+  lg: css`
+    border-radius: 12px;
   `,
 };
 

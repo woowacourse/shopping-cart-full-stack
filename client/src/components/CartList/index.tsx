@@ -1,12 +1,13 @@
 import { css } from "@emotion/react";
-import type { CartItem } from "../../types/cart";
-import { getCartSummary } from "../../utils/cart";
+import { CART_ITEM_STATUS } from "../../domain/cart";
+import { calculateShippingFee } from "../../domain/shipping";
+import type { CartItemView } from "../../hooks/useCartList";
 import CartOrderSummary from "../CartOrderSummary";
 import Checkbox from "../Checkbox";
 import CartListItem from "../CartListItem";
 
 interface CartListProps {
-  cartList: CartItem[];
+  cartList: CartItemView[];
   isAllSelected: boolean;
   onSelectItem: (id: number) => void;
   onSelectAllItems: () => void;
@@ -26,15 +27,25 @@ export default function CartList({ cartList, isAllSelected, onSelectItem, onSele
         </Checkbox>
       </div>
       <div css={scrollableStyle}>
-        <div css={itemListStyle}>
+        <ul css={itemListStyle}>
           {cartList.map((cartItem) => (
-            <CartListItem key={cartItem.id} cartItem={cartItem} onSelect={onSelectItem} />
+            <li key={cartItem.id}>
+              <CartListItem cartItem={cartItem} onSelect={onSelectItem} />
+            </li>
           ))}
-        </div>
+        </ul>
         <CartOrderSummary orderAmount={orderAmount} shippingFee={shippingFee} totalAmount={totalAmount} />
       </div>
     </div>
   );
+}
+
+function getCartSummary(cartList: CartItemView[]) {
+  const selectedCartItems = cartList.filter((item) => item.isSelected && item.status === CART_ITEM_STATUS.AVAILABLE);
+  const orderAmount = selectedCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shippingFee = calculateShippingFee(orderAmount);
+
+  return { orderAmount, shippingFee, totalAmount: orderAmount + shippingFee };
 }
 
 const containerStyle = css`
@@ -66,6 +77,9 @@ const scrollableStyle = css`
 `;
 
 const itemListStyle = css`
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 8px;

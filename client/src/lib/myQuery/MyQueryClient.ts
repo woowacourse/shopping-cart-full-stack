@@ -8,6 +8,7 @@ interface QueryRecord<T> {
   queryFn: () => Promise<T>;
   state: QueryState<T>;
   listeners: Set<() => void>;
+  fetchSeq: number;
 }
 
 export class MyQueryClient {
@@ -25,6 +26,7 @@ export class MyQueryClient {
         error: null,
       },
       listeners: new Set(),
+      fetchSeq: 0,
     };
     this.queryCache.set(queryKey, queryRecord as QueryRecord<unknown>);
   }
@@ -41,6 +43,11 @@ export class MyQueryClient {
     const queryRecord = this.queryCache.get(queryKey);
     if (!queryRecord) return null;
 
+    // 같은 키로 fetch가 여러 번 나갈 때, 늦게 도착한 옛 응답이 최신 응답을 덮어쓰지 않도록
+    // 매 요청마다 시퀀스를 발급하고, 응답 시점에 최신 시퀀스가 아니면 상태 반영을 건너뛴다.
+    const seq = queryRecord.fetchSeq + 1;
+    queryRecord.fetchSeq = seq;
+
     if (queryRecord.state.data === null) {
       this.setQueryState(queryKey, {
         status: "loading",
@@ -50,9 +57,11 @@ export class MyQueryClient {
 
     try {
       const data = await queryRecord.queryFn();
+      if (queryRecord.fetchSeq !== seq) return null; // 늦은 응답 → 폐기
       this.setQueryData(queryKey, data);
       return data as T;
     } catch (error) {
+      if (queryRecord.fetchSeq !== seq) return null; // 늦은 에러 → 폐기
       this.setQueryState(queryKey, {
         status: "error",
         error,

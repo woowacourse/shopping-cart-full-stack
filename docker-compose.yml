@@ -1,0 +1,64 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: shopping-cart-caddy
+    restart: unless-stopped
+    environment:
+      SERVER_DOMAIN: ${SERVER_DOMAIN:?SERVER_DOMAIN is required}
+      ZEROSSL_EAB_KEY_ID: ${ZEROSSL_EAB_KEY_ID:?ZEROSSL_EAB_KEY_ID is required}
+      ZEROSSL_EAB_MAC_KEY: ${ZEROSSL_EAB_MAC_KEY:?ZEROSSL_EAB_MAC_KEY is required}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - server
+
+  server:
+    image: ${SERVER_IMAGE:?SERVER_IMAGE is required}
+    container_name: shopping-cart-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      TZ: Asia/Seoul
+      DATABASE_URL: postgres://${POSTGRES_USER:?POSTGRES_USER is required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:?POSTGRES_DB is required}
+    expose:
+      - "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: shopping-cart-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=20"
+      - "-c"
+      - "shared_buffers=128MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  caddy-data:
+  caddy-config:
+  postgres-data:

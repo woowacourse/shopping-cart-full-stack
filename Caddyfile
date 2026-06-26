@@ -1,0 +1,9 @@
+{$SERVER_DOMAIN} {
+  reverse_proxy server:3000
+  tls {
+    issuer acme {
+      dir https://acme.zerossl.com/v2/DV90
+      eab {$ZEROSSL_EAB_KEY_ID} {$ZEROSSL_EAB_MAC_KEY}
+    }
+  }
+}

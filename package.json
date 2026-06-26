@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "e2e:db:up": "docker-compose -f server/docker-compose.yml up -d postgres-test",
+    "e2e:db:down": "docker-compose -f server/docker-compose.yml down",
+    "test:e2e": "npm run test --prefix e2e",
     "prepare": "husky"
   },
   "repository": {

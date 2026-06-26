@@ -26,7 +26,7 @@ export interface CartItemResponse {
   quantity: number;
   stock: number;
   status: CartItemStatus;
-  imageUrl: string;
+  image_url: string;
 }
 
 export type UpdateResultKey = "CART_ITEM_NOT_FOUND" | "PRODUCT_NOT_FOUND" | "OUT_OF_STOCK";

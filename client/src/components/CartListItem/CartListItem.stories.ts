@@ -2,9 +2,10 @@ import { createElement } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import CartListItem from ".";
 import { MyQueryProvider } from "../../lib/myQuery/MyQueryProvider";
-import { CART_ITEM_STATUS, type CartItem } from "../../types/cart";
+import { CART_ITEM_STATUS } from "../../domain/cart";
+import type { CartItemView } from "../../hooks/useCartList";
 
-const selectedItem: CartItem = {
+const selectedItem: CartItemView = {
   id: 1,
   name: "상품 A",
   imageUrl: "https://placehold.co/112x112",
@@ -85,6 +86,10 @@ export const Unavailable: Story = {
 
 export const QuantityError: Story = {
   args: {
-    cartItem: { ...selectedItem, status: CART_ITEM_STATUS.QUANTITY_EXCEEDED, errorMsg: "최대 구매 가능 수량이 10개 입니다." },
+    cartItem: {
+      ...selectedItem,
+      status: CART_ITEM_STATUS.QUANTITY_EXCEEDED,
+      errorMsg: "최대 구매 가능 수량이 10개 입니다.",
+    },
   },
 };

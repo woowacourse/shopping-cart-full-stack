@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getItemSelectionFromStorage, saveItemSelectionToStorage } from "../utils/cart";
+import { getItemSelectionFromStorage, saveItemSelectionToStorage } from "../storage/cartSelection";
 
 export function useCartSelection() {
   const [selectionMap, setSelectionMap] = useState<Record<number, boolean>>(() => getItemSelectionFromStorage());

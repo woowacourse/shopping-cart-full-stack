@@ -73,6 +73,36 @@ export const ERROR_RESPONSE = {
     message: "요청한 수량이 현재 재고보다 많습니다.",
   },
 
+  INVALID_CHECKOUT_ID: {
+    code: "INVALID_CHECKOUT_ID",
+    message: "주문 ID는 1 이상의 정수여야 합니다.",
+  },
+
+  CHECKOUT_NOT_FOUND: {
+    code: "CHECKOUT_NOT_FOUND",
+    message: "주문을 찾을 수 없습니다.",
+  },
+
+  INVALID_QUANTITY: {
+    code: "INVALID_QUANTITY",
+    message: "수량은 1 이상 99 이하의 정수여야 합니다.",
+  },
+
+  INVALID_COUPON_CONDITION: {
+    code: "INVALID_COUPON_CONDITION",
+    message: "쿠폰 사용 조건을 만족하지 않습니다.",
+  },
+
+  COUPON_NOT_FOUND: {
+    code: "COUPON_NOT_FOUND",
+    message: "요청한 쿠폰을 찾을 수 없습니다.",
+  },
+
+  CART_NOT_EMPTY: {
+    code: "CART_NOT_EMPTY",
+    message: "장바구니가 비어 있을 때만 초기화할 수 있습니다.",
+  },
+
   NOT_FOUND: {
     code: "NOT_FOUND",
     message: "요청한 리소스를 찾을 수 없습니다.",

@@ -3,7 +3,8 @@ import MobileLayout from "./components/MobileLayout";
 import { BASE_PATH, ROUTES } from "./constants/routes";
 import { MyQueryProvider } from "./lib/myQuery/MyQueryProvider";
 import CartPage from "./pages/CartPage";
-import OrderConfirmPage from "./pages/OrderConfirmPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrderSuccessPage from "./pages/OrderSuccessPage";
 
 const router = createBrowserRouter(
   [
@@ -12,7 +13,8 @@ const router = createBrowserRouter(
       Component: MobileLayout,
       children: [
         { path: ROUTES.CART.slice(1), Component: CartPage },
-        { path: ROUTES.ORDER_CONFIRM.slice(1), Component: OrderConfirmPage },
+        { path: ROUTES.CHECKOUT.slice(1), Component: CheckoutPage },
+        { path: ROUTES.ORDER_SUCCESS.slice(1), Component: OrderSuccessPage },
       ],
     },
   ],

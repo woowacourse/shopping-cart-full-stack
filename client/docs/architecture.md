@@ -57,7 +57,8 @@ totalAmount: number;
 - toggleItemSelection(id): 선택 상태 토글 및 로컬스토리지 저장
 - toggleAllItemSelection(): 전체선택이 되어있다면 전체 선택해제하고, 전체해제되어있다면 전체선택하고, 일부선택이 되어있다면 전체선택한다.
 - handleUpdateCartItemQuantity(id, quantity): PATCH API 호출. 성공 시 quantity 업데이트, 실패 시 errorMsg 설정.
-- validateCartForm(): 서버에 있는 최신 장바구니를 다시 불러와 quantity를 동기화하고, 서버에서 사라진 상품은 구매 불가능 상태로 변경.
+- submitCart(): 서버에 있는 최신 장바구니를 다시 불러와 quantity를 동기화하고, 서버에서 사라진 상품은 구매 불가능 상태로 변경한 뒤 주문서를 반환.
+  내부적으로 validateCartForm을 호출한다.
 
 ## useUpdateCartItemQuantity
 
@@ -95,8 +96,8 @@ totalAmount: number;
 
 ### functions
 
-- handleSubmitCart: OrderConfirmPage로 이동. state에 주문서 포함.
-  (orderSummary: { cartItemCount, totalQuantity, totalAmount }, totalAmount)
+- handleSubmitCart: submitCart가 주문서를 반환하면 OrderConfirmPage로 이동. state에 주문서 포함.
+  (orderSummary: { cartItemCount, totalQuantity, totalAmount })
 
 ### views
 

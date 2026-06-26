@@ -1,19 +1,22 @@
-import type { CartItemResponse } from "../apis/schema";
-import { createOrderSummary, toCartItem } from "../utils/cart";
+import { createCheckout } from "../apis/checkout/checkout";
+import { toCheckoutItems } from "../apis/checkout/checkoutMapper";
+import type { CartItem } from "../domain/cart";
 
 interface UseCartSubmitParams {
-  refetchCart: () => Promise<CartItemResponse[] | null>;
+  refetchCart: () => Promise<CartItem[] | null>;
   getItemSelection: (id: number) => boolean;
 }
 
 export function useCartSubmit({ refetchCart, getItemSelection }: UseCartSubmitParams) {
-  const submitCart = async () => {
+  const submitCart = async (): Promise<number | null> => {
     const latestCartItems = await refetchCart();
     if (!latestCartItems) return null;
 
-    const latestCartList = latestCartItems.map((item) => toCartItem(item, getItemSelection(item.id)));
+    const selectedItems = toCheckoutItems(latestCartItems, getItemSelection);
 
-    return createOrderSummary(latestCartList);
+    if (selectedItems.length === 0) return null;
+
+    return createCheckout(selectedItems);
   };
 
   return { submitCart };

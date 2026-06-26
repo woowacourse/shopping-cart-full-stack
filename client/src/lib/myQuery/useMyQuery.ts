@@ -2,20 +2,29 @@ import { useContext, useEffect, useState } from "react";
 import { MyQueryContext } from "./MyQueryContext";
 import type { QueryState } from "./MyQueryClient";
 
-export function useMyQuery<T>(queryKey: string, queryFn: () => Promise<T>) {
+interface UseMyQueryOptions<T> {
+  initialData?: T;
+}
+
+export function useMyQuery<T>(queryKey: string, queryFn: () => Promise<T>, options: UseMyQueryOptions<T> = {}) {
   const myQueryClient = useContext(MyQueryContext);
   if (!myQueryClient) {
     throw new Error("useMyQuery는 MyQueryProvider 안에서 사용해야 합니다.");
   }
 
+  const { initialData } = options;
+
   const [queryState, setQueryState] = useState<QueryState<T>>({
-    status: "idle",
-    data: null,
+    status: initialData !== undefined ? "success" : "idle",
+    data: initialData ?? null,
     error: null,
   });
 
   useEffect(() => {
     myQueryClient.createQueryRecord(queryKey, queryFn);
+    if (initialData !== undefined && myQueryClient.getQueryData<T>(queryKey) === null) {
+      myQueryClient.setQueryData<T>(queryKey, initialData);
+    }
 
     const unsubscribe = myQueryClient.subscribe(queryKey, () => {
       const nextState = myQueryClient.getQueryState<T>(queryKey);

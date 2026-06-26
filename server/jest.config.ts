@@ -3,6 +3,8 @@ import type { Config } from "jest";
 const config: Config = {
   testEnvironment: "node",
   extensionsToTreatAsEsm: [".ts"],
+  setupFiles: ["<rootDir>/tests/setEnv.ts"],
+  setupFilesAfterEnv: ["<rootDir>/tests/setupDb.ts"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },

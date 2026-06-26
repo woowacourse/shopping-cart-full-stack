@@ -377,6 +377,24 @@ describe("주문 확인 버튼", () => {
     await screen.findByText("상품 A");
     expect(screen.getByRole("button", { name: "주문 확인" })).not.toBeDisabled();
   });
+
+  it("선택된 상품에 구매 불가 상품이 포함되어도 구매 가능한 상품이 있으면 주문 확인 버튼이 활성화된다", async () => {
+    const products = [
+      { id: 1, name: "상품 A", price: 35000, imageUrl: "https://placehold.co/80x80", stock: 10 },
+      { id: 2, name: "재고 초과 상품", price: 20000, imageUrl: "https://placehold.co/80x80", stock: 2 },
+    ];
+    const cartItems = [
+      { id: 1, productId: 1, quantity: 2 },
+      { id: 2, productId: 2, quantity: 5 },
+    ];
+
+    server.use(...createHandlers(products, cartItems));
+    renderCartPage();
+
+    await screen.findByText("재고 초과 상품");
+    expect(screen.getByText("최대 구매 가능 수량이 2개 입니다.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "주문 확인" })).not.toBeDisabled();
+  });
 });
 
 const getItemContainer = (text: string) =>

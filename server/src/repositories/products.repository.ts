@@ -1,55 +1,46 @@
+import { Transaction } from "sequelize";
 import { newProduct, Product } from "../interfaces/product.interface.js";
+import { ProductModel } from "../models/index.js";
+import { sequelize } from "../db/sequelize.js";
 
-const initialProducts: Product[] = [
-  { id: 1, name: "상품 A", price: 35000, imageUrl: "https://placehold.co/80x80", stock: 10 },
-  { id: 2, name: "상품 B", price: 25000, imageUrl: "https://placehold.co/80x80", stock: 3 },
-  { id: 3, name: "재고 부족 상품", price: 15000, imageUrl: "https://placehold.co/80x80", stock: 1 },
-  { id: 4, name: "재고 초과 상품", price: 20000, imageUrl: "https://placehold.co/80x80", stock: 2 },
-];
-
-const products: Product[] = [...initialProducts];
-
-export function isAlreadyExist(id: number) {
-  if (products.find((product) => product.id === id)) return true;
-  return false;
+interface TxOption {
+  transaction?: Transaction;
 }
 
-export function save(product: newProduct) {
-  const id = (products.at(-1)?.id ?? 0) + 1;
-
-  const newProduct: Product = {
-    id: id,
-    ...product,
-  };
-
-  products.push(newProduct);
+function toProduct(model: ProductModel): Product {
+  return { id: model.id, name: model.name, stock: model.stock, imageUrl: model.imageUrl, price: model.price };
 }
 
-export function findAll() {
-  return [...products];
+export async function isAlreadyExist(id: number): Promise<boolean> {
+  return (await ProductModel.count({ where: { id } })) > 0;
 }
 
-export function findStockById(id: number) {
-  const product = products.find((product) => product.id === id);
-  if (product) {
-    return product.stock;
+export async function save(product: newProduct): Promise<void> {
+  await ProductModel.create(product);
+}
+
+export async function findAll(): Promise<Product[]> {
+  const models = await ProductModel.findAll({ order: [["id", "ASC"]] });
+  return models.map(toProduct);
+}
+
+export async function findById(id: number): Promise<Product | undefined> {
+  const model = await ProductModel.findByPk(id);
+  if (!model) {
+    return undefined;
   }
-  return -1;
+  return toProduct(model);
 }
 
-export function findById(id: number): Product | undefined {
-  return products.find((product) => product.id === id);
+export async function deleteById(id: number): Promise<boolean> {
+  const deleted = await ProductModel.destroy({ where: { id } });
+  return deleted > 0;
 }
 
-export function deleteById(id: number): boolean {
-  const index = products.findIndex((product) => product.id === id);
-  if (index === -1) {
-    return false;
-  }
-  products.splice(index, 1);
-  return true;
+export async function decreaseStock(id: number, options: TxOption & { quantity: number }): Promise<void> {
+  await ProductModel.decrement("stock", { by: options.quantity, where: { id }, transaction: options.transaction });
 }
 
-export function reset() {
-  products.length = 0;
+export async function reset(): Promise<void> {
+  await sequelize.query('TRUNCATE TABLE "products" RESTART IDENTITY CASCADE');
 }
