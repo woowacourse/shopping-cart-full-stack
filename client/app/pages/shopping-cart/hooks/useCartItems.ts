@@ -2,61 +2,55 @@ import { useState, useEffect } from "react";
 import { CartItem } from "../types";
 import { FetchStatus } from "../../../commons/types";
 import { getCartItems, deleteCartItem, updateCartItem } from "../api";
-
-type RemoveCartItem = (
-  itemId: string,
-) => Promise<
-  { success: boolean; error?: undefined } | { success: boolean; error: unknown }
->;
-
-type UpdateCartItem = (
-  imemId: string,
-  body: { quantity: number },
-) => Promise<
-  { success: boolean; error?: undefined } | { success: boolean; error: unknown }
->;
+import { mutate } from "../../../commons/utils";
 
 export default function useCartItems() {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus>("idle");
+  const [initialLoadStatus, setInitialLoadStatus] =
+    useState<FetchStatus>("idle");
 
-  const removeItem: RemoveCartItem = async (itemId) => {
-    try {
-      await deleteCartItem(itemId);
-      setItems((prev) => prev.filter((item) => item.product_id !== itemId));
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: err };
-    }
-  };
+  async function removeItem(
+    itemId: string,
+  ): Promise<{ success: boolean; error?: unknown }> {
+    const response = await mutate({
+      api: () => deleteCartItem(itemId),
+      onSuccess: () =>
+        setItems((prev) => prev.filter((item) => item.product_id !== itemId)),
+    });
+    return response;
+  }
 
-  const updateItem: UpdateCartItem = async (itemId, body) => {
+  async function updateItem(
+    itemId: string,
+    body: { quantity: number },
+  ): Promise<{ success: boolean; error?: unknown }> {
     const original = items.find((item) => item.product_id === itemId);
-    setItems((prev) =>
-      prev.map((item) =>
-        item.product_id === itemId ? { ...item, ...body } : item,
-      ),
-    );
-    try {
-      await updateCartItem(itemId, body);
-      return { success: true };
-    } catch (err) {
-      setItems((prev) =>
-        prev.map((item) => (item.product_id === itemId ? original! : item)),
-      );
-      return { success: false, error: err };
-    }
-  };
+    const response = await mutate({
+      api: () => updateCartItem(itemId, body),
+      onMutate: () => {
+        setItems((prev) =>
+          prev.map((item) =>
+            item.product_id === itemId ? { ...item, ...body } : item,
+          ),
+        );
+        return () =>
+          setItems((prev) =>
+            prev.map((item) => (item.product_id === itemId ? original! : item)),
+          );
+      },
+    });
+    return response;
+  }
 
   useEffect(function initialCartItems() {
     async function fetchItems() {
-      setFetchStatus("loading");
+      setInitialLoadStatus("loading");
       try {
         const data = await getCartItems();
         setItems(data);
-        setFetchStatus("success");
+        setInitialLoadStatus("success");
       } catch {
-        setFetchStatus("error");
+        setInitialLoadStatus("error");
       }
     }
     fetchItems();
@@ -64,7 +58,7 @@ export default function useCartItems() {
 
   return {
     items,
-    fetchStatus,
+    initialLoadStatus,
     removeItem,
     updateItem,
   };

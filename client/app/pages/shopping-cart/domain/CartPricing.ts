@@ -1,30 +1,30 @@
-import { CartItem } from "../types";
+import DeliveryFee from "./DeliveryFee";
+import Cart from "./Cart";
 
-export interface PricingStrategy {
-  total: number;
+export type PriceSummary = {
+  price: number;
   delivery: number;
-  grandTotal: number;
-}
+  totalPrice: number;
+};
 
-const FREE_DELIVERY_THRESHOLD = 100_000;
-const DELIVERY_FEE = 3_000;
-
-export class CartPricing implements PricingStrategy {
-  constructor(private items: CartItem[]) {}
-
-  get total() {
-    return this.items.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0,
-    );
+class CartPricing {
+  constructor(
+    private readonly cart: Cart,
+    private readonly deliveryFee: DeliveryFee,
+  ) {
+    this.cart = cart;
+    this.deliveryFee = deliveryFee;
   }
 
-  get delivery() {
-    if (this.total === 0) return 0;
-    return this.total >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
-  }
+  public calculatePriceSummary(): PriceSummary {
+    const price = this.cart.calculateItemTotalPrice();
+    const delivery = this.cart.selectedItemCount()
+      ? this.deliveryFee.calculate(price)
+      : 0;
+    const totalPrice = price + delivery;
 
-  get grandTotal() {
-    return this.total + this.delivery;
+    return { price, delivery, totalPrice };
   }
 }
+
+export default CartPricing;

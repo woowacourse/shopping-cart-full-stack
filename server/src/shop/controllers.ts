@@ -1,10 +1,15 @@
 import express from "express";
-import { NotFoundError } from "../errors.js";
-import Product from "./models/Product.js";
 import {
   CartRepository,
+  CouponRepository,
   ProductRepository,
+  TempOrderRepository,
 } from "./repositories/InMemoryRepositories.js";
+import { ProductService } from "./services/ProductService.js";
+import { CartService } from "./services/CartService.js";
+import { TempOrderService } from "./services/TempOrderService.js";
+import { CouponService } from "./services/CouponService.js";
+import { DiscountSummaryService } from "./services/DiscountSummaryService.js";
 
 export interface ProductController {
   get: express.RequestHandler;
@@ -18,6 +23,20 @@ export interface CartController {
   delete: express.RequestHandler<{ id: string }>;
 }
 
+export interface TempOrderController {
+  get: express.RequestHandler;
+  post: express.RequestHandler;
+  patch: express.RequestHandler;
+}
+
+export interface CouponController {
+  get: express.RequestHandler;
+}
+
+export interface DiscountSummaryController {
+  post: express.RequestHandler;
+}
+
 export function createProductController({
   productRepository,
   cartRepository,
@@ -25,39 +44,25 @@ export function createProductController({
   productRepository: ProductRepository;
   cartRepository: CartRepository;
 }): ProductController {
+  const service = new ProductService(productRepository, cartRepository);
   return {
     get: (_req, res, next) => {
       try {
-        res.send(
-          productRepository
-            .findAll()
-            .map((product: Product) => product.toObject()),
-        );
+        res.send(service.getAll());
       } catch (err) {
         next(err);
       }
     },
     add: (req, res, next) => {
       try {
-        const product = new Product(req.body);
-        productRepository.save(product.getId(), product);
-        const post = { id: product.toObject().id };
-
-        res.status(201).send(post);
+        res.status(201).send(service.add(req.body));
       } catch (err) {
         next(err);
       }
     },
     delete: (req, res, next) => {
       try {
-        const id = req.params.id as string;
-        const hasItem = productRepository.exists(id);
-        if (!hasItem) {
-          throw new NotFoundError();
-        }
-        productRepository.delete(id);
-        const cart = cartRepository.get();
-        cart.deleteItemByProductId(id);
+        service.delete(req.params.id as string);
         res.status(204).send();
       } catch (err) {
         next(err);
@@ -73,43 +78,108 @@ export function createCartController({
   cartRepository: CartRepository;
   productRepository: ProductRepository;
 }): CartController {
+  const service = new CartService(cartRepository, productRepository);
   return {
     get: (_req, res, next) => {
       try {
-        const cart = cartRepository.get();
-        const items = cart.getAllItems().map(({ product_id, quantity }) => {
-          const product = productRepository.findById(product_id)?.toObject();
-          return { product_id, quantity, product };
-        });
-        res.send(items);
+        res.send(service.getAll());
       } catch (err) {
         next(err);
       }
     },
     update: (req, res, next) => {
       try {
-        const id = req.params.id;
-        const { quantity } = req.body;
-        const cart = cartRepository.get();
-        if (!cart.hasItemByProductId(id)) {
-          throw new NotFoundError();
-        }
-
-        cart.updateItemByProductId(id, quantity);
-        res.status(200).send({ product_id: id, quantity: quantity });
+        res.status(200).send(service.update(req.params.id, req.body.quantity));
       } catch (err) {
         next(err);
       }
     },
     delete: (req, res, next) => {
       try {
-        const id = req.params.id;
-        const cart = cartRepository.get();
-        if (!cart.hasItemByProductId(id)) {
-          throw new NotFoundError();
-        }
-        cart.deleteItemByProductId(id);
+        service.delete(req.params.id);
         res.status(204).send();
+      } catch (err) {
+        next(err);
+      }
+    },
+  };
+}
+
+export function createTempOrderController({
+  tempOrderRepository,
+  productRepository,
+  couponRepository,
+}: {
+  tempOrderRepository: TempOrderRepository;
+  productRepository: ProductRepository;
+  couponRepository: CouponRepository;
+}): TempOrderController {
+  const service = new TempOrderService(
+    tempOrderRepository,
+    productRepository,
+    couponRepository,
+  );
+  return {
+    get: (req, res, next) => {
+      try {
+        res.status(200).send(service.getById(req.params.id as string));
+      } catch (err) {
+        next(err);
+      }
+    },
+    post: (req, res, next) => {
+      try {
+        res.status(201).send(service.create(req.body));
+      } catch (err) {
+        next(err);
+      }
+    },
+    patch: (req, res, next) => {
+      try {
+        res.status(200).send(service.patch(req.params.id as string, req.body));
+      } catch (err) {
+        next(err);
+      }
+    },
+  };
+}
+
+export function createCouponController({
+  couponRepository,
+  tempOrderRepository,
+}: {
+  couponRepository: CouponRepository;
+  tempOrderRepository: TempOrderRepository;
+}): CouponController {
+  const service = new CouponService(couponRepository, tempOrderRepository);
+  return {
+    get: (req, res, next) => {
+      try {
+        res.status(200).send(service.getByOrderId(req.params.id as string));
+      } catch (err) {
+        next(err);
+      }
+    },
+  };
+}
+
+export function createDiscountSummaryController({
+  tempOrderRepository,
+  couponRepository,
+}: {
+  tempOrderRepository: TempOrderRepository;
+  couponRepository: CouponRepository;
+}): DiscountSummaryController {
+  const service = new DiscountSummaryService(
+    tempOrderRepository,
+    couponRepository,
+  );
+  return {
+    post: (req, res, next) => {
+      try {
+        res
+          .status(200)
+          .send(service.calculate(req.params.id as string, req.body.selected_coupons));
       } catch (err) {
         next(err);
       }

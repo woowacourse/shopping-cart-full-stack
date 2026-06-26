@@ -1,4 +1,9 @@
-import { ProductFieldValidators, CartFieldValidators } from "../validators.js";
+import {
+  ProductFieldValidators,
+  CartFieldValidators,
+  TempOrderFieldValidators,
+  DiscountSummaryFieldValidators,
+} from "../validators.js";
 import { createValidateBodyMiddleware } from "../../middlewares.js";
 
 export const productBodyValidateMiddelware = createValidateBodyMiddleware(
@@ -7,3 +12,10 @@ export const productBodyValidateMiddelware = createValidateBodyMiddleware(
 
 export const cartBodyValidateMiddelware =
   createValidateBodyMiddleware(CartFieldValidators);
+
+export const tempOrderBodyValidateMiddleware = createValidateBodyMiddleware(
+  TempOrderFieldValidators,
+);
+
+export const discountSummaryBodyValidateMiddleware =
+  createValidateBodyMiddleware(DiscountSummaryFieldValidators);

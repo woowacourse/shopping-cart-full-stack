@@ -24,3 +24,23 @@ export function runValidate(
 
   return errors;
 }
+
+export function combinations<T>(arr: T[], k: number) {
+  const result: T[][] = [];
+
+  function combine(start: number, combo: T[]) {
+    if (combo.length === k) {
+      result.push([...combo]);
+      return;
+    }
+
+    for (let i = start; i < arr.length; i++) {
+      combo.push(arr[i]);
+      combine(i + 1, combo);
+      combo.pop();
+    }
+  }
+
+  combine(0, []);
+  return result;
+}

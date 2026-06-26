@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { ReactNode } from "react";
 
-export default function Navigation({ children }: { children: ReactNode }) {
+export default function Navigation({ children }: { children?: ReactNode }) {
   return <Nav>{children}</Nav>;
 }
 

@@ -1,10 +1,6 @@
 import styled from "@emotion/styled";
 
 export const Button = styled.button`
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
   background-color: #000000;
   font-weight: 700;
   padding: 1.5rem 0;
@@ -19,4 +15,11 @@ export const Button = styled.button`
     border: none;
     cursor: default;
   }
+`;
+
+export const FixedButton = styled(Button)`
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 `;

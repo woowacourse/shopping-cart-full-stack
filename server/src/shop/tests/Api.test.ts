@@ -1,29 +1,24 @@
 import { jest } from "@jest/globals";
-import { createApp } from "../../route.js";
+import { DeliveryFee, HardPlacePolicy } from "../models/DeliveryFee.js";
+import TempOrder from "../models/TempOrder.js";
 import {
-  InMemoryCartRepository,
-  InMemoryProductRepository,
-} from "../repositories/InMemoryRepositories.js";
+  AmountDiscountCoupon,
+  BonusCoupon,
+  FreeDeliveryCoupon,
+  RateDiscountCoupon,
+} from "../models/Coupon.js";
 import Product from "../models/Product.js";
 import request from "supertest";
-import {
-  createCartController,
-  createProductController,
-} from "../controllers.js";
 import { ProductType } from "../models/Product.js";
+import {
+  HotTimeDiscountCondition,
+  MinimumOrderPriceDiscountCondition,
+} from "../models/DiscountCondition.js";
+import { createShopApp } from "../factory.js";
 
 describe("프로덕트 API 테스트", () => {
-  const cartRepository = new InMemoryCartRepository();
-  const productRepository = new InMemoryProductRepository();
+  const { app, productRepository } = createShopApp();
 
-  const cartController = createCartController({
-    cartRepository,
-    productRepository,
-  });
-  const productController = createProductController({
-    cartRepository,
-    productRepository,
-  });
   const product1 = new Product({
     name: "피자",
     price: 30000,
@@ -34,8 +29,6 @@ describe("프로덕트 API 테스트", () => {
     price: 20000,
     thumbnail: "chicken.png",
   });
-
-  const app = createApp({ productController, cartController });
 
   beforeEach(() => {
     productRepository.save(product1.getId(), product1);
@@ -158,14 +151,7 @@ describe("프로덕트 API 테스트", () => {
 });
 
 describe("카트 API 테스트", () => {
-  const productRepository = new InMemoryProductRepository();
-  const cartRepository = new InMemoryCartRepository();
-  const productController = createProductController({
-    productRepository,
-    cartRepository,
-  });
-  const cartController = createCartController({ cartRepository, productRepository });
-  const app = createApp({ productController, cartController });
+  const { app, cartRepository } = createShopApp();
   const cart = cartRepository.get();
 
   beforeEach(() => {
@@ -236,6 +222,386 @@ describe("카트 API 테스트", () => {
     expect(res.body).toEqual({
       code: "RESOURCE_NOT_FOUND",
       message: "요청한 리소스를 찾을 수 없습니다.",
+    });
+  });
+});
+
+describe("임시 주문서 API 테스트", () => {
+  const { app, productRepository, tempOrderRepository, couponRepository } =
+    createShopApp();
+
+  const amountDiscountCoupon = new AmountDiscountCoupon({
+    conditions: [],
+    discountPrice: 5000,
+  });
+
+  const rateDiscountCoupon = new RateDiscountCoupon({
+    conditions: [],
+    discountRate: 30,
+  });
+
+  const tempOrder = new TempOrder(
+    [
+      {
+        product_id: "777",
+        quantity: 4,
+        product: {
+          name: "레몬에이드",
+          price: 2500,
+          thumbnail: "lemon-ade.png",
+        },
+      },
+      {
+        product_id: "555",
+        quantity: 4,
+        product: {
+          name: "블루레몬에이드",
+          price: 10000,
+          thumbnail: "blue-lemon-ade.png",
+        },
+      },
+    ],
+    new DeliveryFee(3000, [new HardPlacePolicy(3000)], true),
+    [amountDiscountCoupon, rateDiscountCoupon],
+  );
+
+  const freeDeliveryCoupon = new FreeDeliveryCoupon({
+    conditions: [],
+  });
+  const bonusCoupon = new BonusCoupon({
+    conditions: [],
+    minQuantity: 2,
+    bonusCount: 1,
+  });
+
+  beforeEach(() => {
+    productRepository.save(
+      "123",
+      new Product({ name: "상품A", price: 10000, thumbnail: "a.png" }),
+    );
+    productRepository.save(
+      "456",
+      new Product({ name: "상품B", price: 20000, thumbnail: "b.png" }),
+    );
+    tempOrderRepository.save(tempOrder.getId(), tempOrder);
+    couponRepository.save(freeDeliveryCoupon.getId(), freeDeliveryCoupon);
+    couponRepository.save(bonusCoupon.getId(), bonusCoupon);
+  });
+
+  afterEach(() => {
+    tempOrderRepository.clearAll();
+    couponRepository.clearAll();
+    productRepository.clearAll();
+  });
+
+  test("임시 주문서를 생성한다.", async () => {
+    tempOrderRepository.clearAll();
+    const res = await request(app)
+      .post("/api/orders/")
+      .send([
+        { product_id: "123", quantity: 2 },
+        { product_id: "456", quantity: 5 },
+      ])
+      .set("Accept", "application/json");
+    res.body.order_id = "fixed id";
+    expect(res.status).toBe(201);
+    expect(res.body).toEqual({ order_id: "fixed id" });
+    const tempOrder = tempOrderRepository.findAll();
+    expect(tempOrder.length).toBe(1);
+  });
+
+  test("존재하지 않는 상품 id로 임시 주문서를 생성하려 하면 404 에러가 발생한다.", async () => {
+    const res = await request(app)
+      .post("/api/orders/")
+      .send([
+        { product_id: "123", quantity: 2 },
+        { product_id: "unknown", quantity: 5 },
+      ])
+      .set("Accept", "application/json");
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: "RESOURCE_NOT_FOUND",
+      message: "요청한 리소스를 찾을 수 없습니다.",
+    });
+  });
+
+  test("특정 임시 주문서를 가져온다.", async () => {
+    const id = tempOrder.getId();
+    const res = await request(app).get(`/api/orders/${id}/`);
+    expect(res.status).toBe(200);
+    res.body.selected_coupons = ["SOME_COUPON1", "SOME_COUPON2"];
+    res.body.price_summary = {
+      order_price: 30500,
+      discount_price: 6000,
+      delivery_price: 3000,
+      total_price: 21500,
+    };
+    expect(res.body).toEqual({
+      id: id,
+      hard_delivery_place: true,
+      selected_coupons: ["SOME_COUPON1", "SOME_COUPON2"],
+      selected_items: [
+        {
+          product_id: "777",
+          quantity: 4,
+          product: {
+            name: "레몬에이드",
+            price: 2500,
+            thumbnail: "lemon-ade.png",
+          },
+        },
+        {
+          product_id: "555",
+          quantity: 4,
+          product: {
+            name: "블루레몬에이드",
+            price: 10000,
+            thumbnail: "blue-lemon-ade.png",
+          },
+        },
+      ],
+      price_summary: {
+        order_price: 30500,
+        discount_price: 6000,
+        delivery_price: 3000,
+        total_price: 21500,
+      },
+    });
+  });
+
+  test("존재하지 않은 임시주문서를 가져오면 404 에러가 발생한다.", async () => {
+    const res = await request(app).get(`/api/orders/unknown/`);
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: "RESOURCE_NOT_FOUND",
+      message: "요청한 리소스를 찾을 수 없습니다.",
+    });
+  });
+
+  test("특정 임시 주문서를 수정한다.", async () => {
+    const id = tempOrder.getId();
+    const res = await request(app)
+      .patch(`/api/orders/${id}/`)
+      .send({
+        selected_coupons: [freeDeliveryCoupon.getId(), bonusCoupon.getId()],
+      })
+      .set("Accept", "application/json");
+    expect(res.status).toBe(200);
+    res.body.price_summary = {
+      order_price: 30500,
+      discount_price: 4000,
+      delivery_price: 0,
+      total_price: 26500,
+    };
+    expect(res.body).toEqual({
+      id: id,
+      hard_delivery_place: true,
+      selected_coupons: [freeDeliveryCoupon.getId(), bonusCoupon.getId()],
+      selected_items: [
+        {
+          product_id: "777",
+          quantity: 4,
+          product: {
+            name: "레몬에이드",
+            price: 2500,
+            thumbnail: "lemon-ade.png",
+          },
+        },
+        {
+          product_id: "555",
+          quantity: 4,
+          product: {
+            name: "블루레몬에이드",
+            price: 10000,
+            thumbnail: "blue-lemon-ade.png",
+          },
+        },
+      ],
+      price_summary: {
+        order_price: 30500,
+        discount_price: 4000,
+        delivery_price: 0,
+        total_price: 26500,
+      },
+    });
+  });
+
+  test("존재하지 않은 임시주문서를 수정하려고 하면 404 에러가 발생한다.", async () => {
+    const res = await request(app)
+      .patch(`/api/orders/unknown/`)
+      .send({
+        selected_coupons: [freeDeliveryCoupon.getId(), bonusCoupon.getId()],
+      })
+      .set("Accept", "application/json");
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      code: "RESOURCE_NOT_FOUND",
+      message: "요청한 리소스를 찾을 수 없습니다.",
+    });
+  });
+
+  test("쿠폰을 2개 초과 전달하면 400 에러가 발생한다.", async () => {
+    const id = tempOrder.getId();
+    const res = await request(app)
+      .patch(`/api/orders/${id}/`)
+      .send({
+        selected_coupons: [
+          freeDeliveryCoupon.getId(),
+          bonusCoupon.getId(),
+          freeDeliveryCoupon.getId(),
+        ],
+      })
+      .set("Accept", "application/json");
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({
+      code: "BAD_REQUEST",
+      message: "요청 데이터가 유효하지 않습니다.",
+      errors: {
+        selected_coupons: {
+          code: "EXCEED_MAX_COUNT",
+          message: "쿠폰은 최대 2개까지 선택할 수 있습니다.",
+        },
+      },
+    });
+  });
+});
+
+describe("쿠폰 API 테스트", () => {
+  const { app, couponRepository, tempOrderRepository } = createShopApp();
+
+  const amountDiscountCoupon = new AmountDiscountCoupon({
+    conditions: [new HotTimeDiscountCondition(5, 8)],
+    discountPrice: 5000,
+    expirationDate: new Date("2020-01-01"),
+  });
+
+  const rateDiscountCoupon = new RateDiscountCoupon({
+    conditions: [new MinimumOrderPriceDiscountCondition(1000)],
+    discountRate: 30,
+    expirationDate: new Date("2030-12-31"),
+  });
+
+  const tempOrder = new TempOrder(
+    [
+      {
+        product_id: "1",
+        quantity: 1,
+        product: { name: "피자", price: 5000, thumbnail: "" },
+      },
+    ],
+    new DeliveryFee(0, []),
+    [],
+  );
+
+  couponRepository.save(amountDiscountCoupon.getId(), amountDiscountCoupon);
+  couponRepository.save(rateDiscountCoupon.getId(), rateDiscountCoupon);
+  tempOrderRepository.save(tempOrder.getId(), tempOrder);
+
+  test("쿠폰 목록을 가져온다", async () => {
+    const res = await request(app).get(
+      `/api/orders/${tempOrder.getId()}/coupons/`,
+    );
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      max_coupon_count: 2,
+      items: [
+        {
+          id: amountDiscountCoupon.getId(),
+          name: "5,000원 할인 쿠폰",
+          expiration_date: "2020년 1월 1일",
+          description: "사용 가능 시간: 오전 5시부터 오전 8시까지",
+          is_active: false,
+        },
+        {
+          id: rateDiscountCoupon.getId(),
+          name: "30% 시간제 할인 쿠폰",
+          expiration_date: "2030년 12월 31일",
+          description: "최소 주문 금액: 1000",
+          is_active: true,
+        },
+      ],
+    });
+  });
+});
+
+describe("할인금액 API 테스트", () => {
+  const { app, tempOrderRepository, couponRepository } = createShopApp();
+
+  const amountDiscountCoupon = new AmountDiscountCoupon({
+    conditions: [],
+    discountPrice: 5000,
+  });
+
+  const rateDiscountCoupon = new RateDiscountCoupon({
+    conditions: [],
+    discountRate: 30,
+  });
+
+  const freeDeliveryCoupon = new FreeDeliveryCoupon({
+    conditions: [],
+  });
+
+  const tempOrder = new TempOrder(
+    [
+      {
+        product_id: "777",
+        quantity: 4,
+        product: {
+          name: "레몬에이드",
+          price: 2500,
+          thumbnail: "lemon-ade.png",
+        },
+      },
+      {
+        product_id: "555",
+        quantity: 4,
+        product: {
+          name: "블루레몬에이드",
+          price: 10000,
+          thumbnail: "blue-lemon-ade.png",
+        },
+      },
+    ],
+    new DeliveryFee(3000, [new HardPlacePolicy(3000)], true),
+    [amountDiscountCoupon, rateDiscountCoupon],
+  );
+
+  tempOrderRepository.save(tempOrder.getId(), tempOrder);
+  couponRepository.save(amountDiscountCoupon.getId(), amountDiscountCoupon);
+  couponRepository.save(rateDiscountCoupon.getId(), rateDiscountCoupon);
+
+  test("할인 금액을 응답한다", async () => {
+    const res = await request(app)
+      .post(`/api/orders/${tempOrder.getId()}/discount-summary/`)
+      .send({ selected_coupons: [amountDiscountCoupon.getId()] })
+      .set("Accept", "application/json");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      discount_price: 5000,
+    });
+  });
+
+  test("쿠폰을 2개 초과 전달하면 400 에러가 발생한다.", async () => {
+    const res = await request(app)
+      .post(`/api/orders/${tempOrder.getId()}/discount-summary/`)
+      .send({
+        selected_coupons: [
+          amountDiscountCoupon.getId(),
+          rateDiscountCoupon.getId(),
+          freeDeliveryCoupon.getId(),
+        ],
+      })
+      .set("Accept", "application/json");
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({
+      code: "BAD_REQUEST",
+      message: "요청 데이터가 유효하지 않습니다.",
+      errors: {
+        selected_coupons: {
+          code: "EXCEED_MAX_COUNT",
+          message: "쿠폰은 최대 2개까지 선택할 수 있습니다.",
+        },
+      },
     });
   });
 });

@@ -42,3 +42,15 @@ export function validateNumberRange(label: string, min: number, max: number) {
     }
   };
 }
+
+export function validateMaxArrayLength(label: string, max: number) {
+  return function validate(value: unknown) {
+    if (!Array.isArray(value)) return;
+    if (value.length > max) {
+      throw new FieldError({
+        code: "EXCEED_MAX_COUNT",
+        message: `${label}은 최대 ${max}개까지 선택할 수 있습니다.`,
+      });
+    }
+  };
+}

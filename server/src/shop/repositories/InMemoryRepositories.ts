@@ -1,5 +1,7 @@
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
+import TempOrder from "../models/TempOrder.js";
+import { Coupon } from "../models/Coupon.js";
 
 export interface CartRepository {
   get: () => Cart;
@@ -13,6 +15,19 @@ export interface ProductRepository {
   delete: (id: string) => void;
   findAll: () => Product[];
   clearAll: () => void;
+}
+
+export interface TempOrderRepository {
+  findById: (id: string) => TempOrder | undefined;
+  save: (id: string, obj: TempOrder) => void;
+  findAll: () => TempOrder[];
+  clearAll: () => void;
+}
+
+export interface CouponRepository {
+  save: (id: string, obj: Coupon) => void;
+  findById: (id: string) => Coupon | undefined;
+  findAll: () => Coupon[];
 }
 
 export class InMemoryCartRepository implements CartRepository {
@@ -52,5 +67,45 @@ export class InMemoryProductRepository implements ProductRepository {
 
   clearAll() {
     return (this.products = new Map());
+  }
+}
+
+export class InMemoryTempOrderRepository implements TempOrderRepository {
+  private tempOrders = new Map<string, TempOrder>();
+
+  findById(id: string) {
+    return this.tempOrders.get(id);
+  }
+
+  save(id: string, obj: TempOrder) {
+    this.tempOrders.set(id, obj);
+  }
+
+  findAll() {
+    return [...this.tempOrders.values()];
+  }
+
+  clearAll() {
+    return (this.tempOrders = new Map());
+  }
+}
+
+export class InMemoryCouponRepository implements CouponRepository {
+  private coupons = new Map<string, Coupon>();
+
+  save(id: string, obj: Coupon) {
+    this.coupons.set(id, obj);
+  }
+
+  findById(id: string) {
+    return this.coupons.get(id);
+  }
+
+  findAll() {
+    return [...this.coupons.values()];
+  }
+
+  clearAll() {
+    return (this.coupons = new Map());
   }
 }

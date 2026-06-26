@@ -118,49 +118,55 @@ STATUS: 201
 
 STATUS: 200
 
-## `GET` `/api/coupons/`- 쿠폰 데이터를 가져온다.
+## `GET` `/api/orders/${order-id}/coupons/`- 주문서의 쿠폰 데이터를 가져온다.
 
 ### Success Response
 
 ```
-[
+{
+  max_coupon_count: 2,
+  items: [
   {
     id: "FIXED5000",
     name: "5,000원 할인 쿠폰",
     expiriation_date: 2026-11-30,
-    description: "최소 주문 금액: 100,000원"
+    description: "최소 주문 금액: 100,000원",
+    is_active: false
   },
   {
     id: "BOGO",
     name: "2+1 쿠폰",
     expiriation_date: 2026-06-30,
-    description: ""
+    description: "",
+    is_active: false
   },
   {
     id: "FREESHIPPING",
     name: "무료 배송 쿠폰",
     expiriation_date: 2026-08-31,
-    description: "최소 주문 금액: 50,000원"
+    description: "최소 주문 금액: 50,000원",
+    is_active: true
   },
   {
     id: "MIRACLESALE",
     name: "30% 시간제 할인 쿠폰",
     expiriation_date: 2026-07-31,
-    description: "사용 가능 시간: 오전 4시부터 7시까지"
+    description: "사용 가능 시간: 오전 4시부터 7시까지",
+    is_active: true
   },
 ]
+}
 ```
 
 STATUS: 200
 
-## `POST` `/api/coupons/discount-summary/` - 쿠폰 할인 예상 금액을 반환한다.
+## `POST` `/api/orders/{order-id}/discount-summary/ ` - 쿠폰 할인 예상 금액을 반환한다.
 
 ### Body
 
 ```
 {
-  order_id: "123-456-789",
-  coupon_id: ["BOGO", "FREESHIPPING"]
+  selected_coupons: ["BOGO", "FREESHIPPING"]
 }
 ```
 
@@ -168,8 +174,7 @@ STATUS: 200
 
 ```
 {
-  selected_coupons: ["BOGO", "FREESHIPPING"],
-  coupon_discount_price: 5000
+  discount_price: 5000
 }
 ```
 
@@ -224,26 +229,6 @@ STATUS: 200
     delivery_price: 3000
     total_price: 67000
   }
-}
-```
-
-STATUS: 201
-
-## `POST` `/api/payment/` - 영수증을 생성한다.
-
-### Body
-
-```
-{
-  order_id: "123-456-789",
-}
-```
-
-### Success Response
-
-```
-{
-  receipt_id: "123-456",
 }
 ```
 

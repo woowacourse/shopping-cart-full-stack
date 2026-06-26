@@ -26,7 +26,7 @@ export default function Checkbox({
 const CheckboxLabel = styled.label`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   input {
     display: none;
   }

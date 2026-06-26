@@ -26,6 +26,24 @@ export async function deleteCartItem(id: string) {
   }
 }
 
+export async function createOrder(
+  items: { product_id: string; quantity: number }[],
+) {
+  let response: Response;
+  try {
+    response = await fetch(`${BASE_URL}/api/orders/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(items),
+    });
+  } catch {
+    throw new NetworkError();
+  }
+  if (!response.ok) throw new Error("주문 생성 실패");
+  const data = await response.json();
+  return data;
+}
+
 export async function updateCartItem(id: string, body: { quantity: number }) {
   let response: Response;
   try {

@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router";
 
 import OrderCheckPage from "./OrderCheckPage";
 
-const meta = {
+const meta: Meta = {
   title: "shopping-cart/OrderCheckPage",
   component: OrderCheckPage,
   parameters: {
@@ -12,25 +12,19 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <MemoryRouter
-        initialEntries={[
-          {
-            pathname: "/cart/check/",
-            state: {
-              totalItems: 10,
-              totalQuantity: 100,
-              totalPrice: 100000000,
-            },
-          },
-        ]}
-      >
+      <MemoryRouter initialEntries={["/cart/check/1"]}>
         <Story />
       </MemoryRouter>
     ),
   ],
-} satisfies Meta<typeof OrderCheckPage>;
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Base: Story = {};
+export const Base: Story = {
+  render: () => {
+    const props = { params: { id: "1" } } as Parameters<typeof OrderCheckPage>[0];
+    return <OrderCheckPage {...props} />;
+  },
+};

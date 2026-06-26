@@ -42,3 +42,84 @@
 - [x] getItem -> getItemById 형식으로 전환
 - [x] getProduct 네이밍 변화
 - [] 장바구니 목록 응답형태 수정
+
+</br>
+
+# STEP 4
+
+</br>
+
+## FE
+
+- [x] UI
+  - [x] 주문확인
+  - [x] 쿠폰선택 모달
+    - [x] 쿠폰이 두 개 선택되었다면 나머지 쿠폰 비활성화
+  - [x] 결제 확인
+
+- 사용자 흐름 기반
+  - [x] 사용자가 장바구니 페이지에서 주문 확인 버튼을 클릭했다.
+    - [x] 임시 주문서 생성하기.(API POST /api/orders/)
+      - [x] 임시 주문서에서 가진 쿠폰을 통해 최대효율 쿠폰 판단하고 적용하기.
+      - [x] 제주/도서 산간은 기본으로 False로 하기.
+
+  - [x] 사용자가 주문 확인 페이지에 도달했다.
+    - [x] 임시 주문서 가져와서 데이터 보여주기.(API GET /api/orders/{orderId}/)
+
+  - [x] 사용자가 쿠폰 적용 버튼(주문 확인 페이지에서)을 클릭했다.
+    - [x] 쿠폰을 가져와서 데이터 보여주기.(API GET /api/coupons/)
+
+  - [x] 사용자가 각 쿠폰을 적용하는 체크 버튼을 클릭했다.
+    - [x] 쿠폰 할인금액을 계산하여 데이터를 보여주기.(API POST /api/orders/{order-id}/discount-summary/ )
+      - [x] 검증로직 수행.(BE)
+
+  - [x] 사용자가 총 xx원 할인 쿠폰 사용하기 버튼을 클릭했다.
+    - [x] 임시주문서에 선택된 쿠폰 반영하기.(API PATCH /api/order/{orderId}/, selected_coupons)
+
+  - [x] 사용자가 제주/도서 산간 체크버튼을 활성화/비활성화 했다.
+    - [x] 임시주문서에 제주/도서 산간 여부 반영하기.(API PATCH /api/order/{orderId}/, hard_delivery_place)
+
+  - [x] 사용자가 결제하기 버튼을 클릭했다.
+    - [x] 결제금액 확인 페이지로 이동.
+
+## BE
+
+- [x] API
+  - [x] 임시 주문서 생성
+    - API POST /api/orders/
+  - [x] 특정 임시 주문서 가져오기
+    - API GET /api/orders/{orderId}/
+  - [x] 쿠폰 가져오기
+    - API GET /api/coupons/
+  - [x] 쿠폰 할인금액 계산
+    - API POST /api/orders/{order-id}/discount-summary/
+  - [x] 쿠폰 적용, 제주 산간(배송지) 변경
+    - API PATCH /api/order/{orderId}/
+
+- [x] 임시 주문서
+
+- [x] 쿠폰
+  - [x] 5000원 할인 쿠폰(FIXED5000)
+  - [x] 2+1 쿠폰(BOGO)
+  - [x] 무료 배송 쿠폰(FREESHIPPING)
+  - [x] 30% 시간제 할인 쿠폰(MIRACLESALE)
+  - [x] 검증
+    - [x] 최대 2개 쿠폰 사용(수량제한)
+    - [x] 만료일
+  - [x] 최대효율 쿠폰 판단(정액 쿠폰 우선하여 계산, 제주도 도서산간 여부 포함)
+
+- [x] 배송비
+  - [x] 무료배송(100000 이상)
+  - [x] 제주도 도서산간시 배송비 3000원 추가
+
+## 추가 생각 포인트
+
+- [] 임시 주문서가 시간이 지나면 제거하도록 할 수 있을까 ?
+- [] 데이터베이스전환(supabase)
+- [] 프론트엔드에서 수행할만한 작업이 있을까 ?
+
+## 컴포넌트 중복
+
+- [] OrderSummary
+- [] CartItem, OrderItem
+- [] 체크박스 텍스트

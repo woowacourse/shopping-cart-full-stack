@@ -1,22 +1,24 @@
-import { useLocation } from "react-router";
 import styled from "@emotion/styled";
-import { Button } from "../../commons/styles/Button";
+import { useLocation } from "react-router";
 import { formatToKoreanPrice } from "../../commons/utils";
+import { FixedButton } from "../../commons/styles/Button";
 
 export default function Section() {
-  const { totalItems, totalQuantity, totalPrice } = useLocation().state;
+  const location = useLocation();
+
+  const { orderItemsTypeLength, orderItemsLength, totalPrice } = location.state;
   return (
     <SectionLayout>
-      <Title>주문 확인</Title>
+      <Title>결제 확인</Title>
       <SubText>
-        총 {totalItems}종류의 상품 {totalQuantity}개를 주문합니다.
+        총 {orderItemsTypeLength}종류의 상품 {orderItemsLength}개를
+        주문했습니다.
       </SubText>
       <SubText>최종 결제 금액을 확인해 주세요.</SubText>
-      <TotalPriceLabel>총 결제 금액</TotalPriceLabel>
+
+      <MiddleTitle>총 결제 금액</MiddleTitle>
       <TotalPrice>{formatToKoreanPrice(totalPrice)}</TotalPrice>
-      <Button type="button" disabled={true}>
-        결제하기
-      </Button>
+      <FixedButton>장바구니로 돌아가기</FixedButton>
     </SectionLayout>
   );
 }
@@ -35,19 +37,18 @@ const Title = styled.h2`
 `;
 
 const SubText = styled.p`
-  margin: 0;
   font-weight: 500;
   font-size: 12px;
+  margin: 2px 0;
 `;
 
-const TotalPriceLabel = styled.p`
-  margin: 1.5rem 0;
+const MiddleTitle = styled.p`
   font-weight: 700;
   font-size: 16px;
 `;
 
 const TotalPrice = styled.p`
-  margin: 0;
   font-weight: 700;
   font-size: 24px;
+  margin: 4px 0;
 `;
