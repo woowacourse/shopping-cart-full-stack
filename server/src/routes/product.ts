@@ -5,8 +5,6 @@ import { validateRequestBody, ValidationError } from '../validation';
 const productRouter = express.Router();
 productRouter.use(express.json());
 
-// Product API
-// GET
 productRouter.get('/', (req: Request, res: Response) => {
   if (!DB.Products) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
@@ -14,7 +12,6 @@ productRouter.get('/', (req: Request, res: Response) => {
   res.status(200).json(DB.Products);
 });
 
-// POST
 productRouter.post('/', (req: Request, res: Response) => {
   if (!DB.Products) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
@@ -41,7 +38,6 @@ productRouter.post('/', (req: Request, res: Response) => {
   }
 });
 
-// DELETE
 productRouter.delete('/:id', (req: Request, res: Response) => {
   const requestedId = Number(req.params.id);
 

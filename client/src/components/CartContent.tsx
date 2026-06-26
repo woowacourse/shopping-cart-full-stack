@@ -42,12 +42,13 @@ function CartContent({ cartProducts, handleQuantityChange, deleteCartItem }: Car
         disabled={checkedIds.size === 0}
         onClick={() => {
           const checkedProducts = cartProducts.filter((p) => checkedIds.has(p.id));
-          const totalQuantity = checkedProducts.reduce((sum, p) => sum + p.quantity, 0);
-          navigate('/confirm', {
+          navigate('/order', {
             state: {
+              products: checkedProducts,
+              orderAmount,
+              couponDiscount: 0,
+              deliveryFee,
               totalAmount,
-              productCount: checkedIds.size,
-              totalQuantity,
             },
           });
         }}

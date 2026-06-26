@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import productRouter from './routes/product';
 import cartRouter from './routes/cart';
+import couponRouter from './routes/coupon';
+import orderRouter from './routes/order';
 
 const app = express();
 
@@ -21,5 +23,7 @@ app.use((req: Request, res: Response, next) => {
 
 app.use('/product', productRouter);
 app.use('/cart', cartRouter);
+app.use('/coupons', couponRouter);
+app.use('/order', orderRouter);
 
 export default app;

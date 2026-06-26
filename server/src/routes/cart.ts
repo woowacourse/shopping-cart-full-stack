@@ -5,8 +5,6 @@ import { ValidationError, validateRequestBody } from '../validation';
 const cartRouter = express.Router();
 cartRouter.use(express.json());
 
-// Cart API
-// GET
 cartRouter.get('/', (req: Request, res: Response) => {
   if (!DB.Cart) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
@@ -14,7 +12,6 @@ cartRouter.get('/', (req: Request, res: Response) => {
   res.status(200).json(DB.Cart);
 });
 
-// POST
 cartRouter.post('/:id', function (req: Request, res: Response) {
   const requestId = Number(req.params.id);
 
@@ -32,7 +29,6 @@ cartRouter.post('/:id', function (req: Request, res: Response) {
   res.status(201).json({ message: '상품이 장바구니에 추가되었습니다.' });
 });
 
-// PUT
 cartRouter.put('/', function (req: Request, res: Response) {
   if (!DB.Cart) {
     return res.status(500).json({ errorMessage: '서버에 일시적인 오류가 발생했습니다.' });
@@ -58,7 +54,6 @@ cartRouter.put('/', function (req: Request, res: Response) {
   }
 });
 
-// DELETE
 cartRouter.delete('/:id', (req: Request, res: Response) => {
   const requestId = Number(req.params.id);
   if (Number.isNaN(requestId)) {
