@@ -5,7 +5,7 @@ import { Button } from "../common/Button";
 import { CartHeader } from "./CartHeader";
 import { CartItems } from "./CartItems";
 import { OrderSummary } from "./OrderSummary";
-import { calcOrderSummary } from "../utils/orderSummaryUtils";
+import { useOrderSummary } from "../hooks/useOrderSummary";
 import { CART_QUANTITY } from "../domain/cart";
 
 interface CartListProps {
@@ -13,6 +13,7 @@ interface CartListProps {
   onUpdateQuantity: (productId: number, quantity: number) => void;
   onDeleteItem: (productId: number) => void;
   onOrderCheck: (info: OrderCheckInfo) => void;
+  ordering: boolean;
 }
 
 export function CartList({
@@ -20,6 +21,7 @@ export function CartList({
   onUpdateQuantity,
   onDeleteItem,
   onOrderCheck,
+  ordering,
 }: CartListProps) {
   const { isSelected, allSelected, toggleItem, toggleAll } =
     useCartSelection(cartItems);
@@ -30,15 +32,25 @@ export function CartList({
     orderAmount,
     shippingFee,
     totalAmount,
-  } = calcOrderSummary(cartItems, isSelected);
+  } = useOrderSummary(cartItems, isSelected);
 
   function handleOrderCheck() {
-    onOrderCheck({ selectedCount, totalQuantity, totalAmount });
+    const products = cartItems
+      .filter((item) => isSelected[item.product.id])
+      .map((item) => ({ id: item.product.id, quantity: item.quantity }));
+
+    onOrderCheck({ selectedCount, totalQuantity, totalAmount, products });
   }
 
   return (
     <PageLayout
-      footer={<Button label="주문 확인" onClick={handleOrderCheck} />}
+      footer={
+        <Button
+          label="주문 확인"
+          onClick={handleOrderCheck}
+          disabled={ordering}
+        />
+      }
     >
       <CartHeader itemCount={cartItems.length} />
       <CartItems

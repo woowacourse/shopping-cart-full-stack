@@ -9,4 +9,5 @@ export interface OrderCheckInfo {
   selectedCount: number;
   totalQuantity: number;
   totalAmount: number;
+  products: { id: number; quantity: number }[];
 }

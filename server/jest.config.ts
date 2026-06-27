@@ -22,6 +22,7 @@ const config: Config = {
       },
     ],
   },
+  setupFiles: ["<rootDir>/jest.setup.ts"],
   testMatch: ["<rootDir>/**/*.test.ts"],
   testPathIgnorePatterns: ["/node_modules/", "/dist/"],
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.test.ts", "!src/index.ts"],
