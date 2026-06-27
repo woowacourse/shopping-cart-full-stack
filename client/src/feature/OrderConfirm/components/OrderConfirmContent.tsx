@@ -1,19 +1,19 @@
-import type { CartOrderSummary } from '../../Cart/types/orderSummary.types';
 import styled from 'styled-components';
+import type { OrderConfirmSummary } from '../types/orderConfirm.types';
 
 export const OrderContent = ({
   orderSummary,
 }: {
-  orderSummary: CartOrderSummary;
+  orderSummary: OrderConfirmSummary;
 }) => {
   return (
     <ContentContainer>
       <Title>주문 확인</Title>
       <Description>
-          총 {orderSummary.productKindCount}종류의 상품{' '}
-          {orderSummary.totalProductCount}개를 주문합니다.
-          <br />
-          최종 결제 금액을 확인해 주세요.
+        총 {orderSummary.productKindCount}종류의 상품{' '}
+        {orderSummary.totalProductCount}개를 주문했습니다.
+        <br />
+        최종 결제 금액을 확인해 주세요.
       </Description>
 
       <TotalPriceSection>

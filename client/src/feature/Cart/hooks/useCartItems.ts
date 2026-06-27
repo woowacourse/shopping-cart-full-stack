@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   deleteCartItemApi,
   getCartItemsApi,
@@ -111,6 +111,8 @@ export const useCartItems = () => {
     cartFetchStatus,
     cartFetchError,
     cartActionError,
+    isDeleting,
+    isChangingQuantity,
 
     loadCartItems,
     deleteCartItem,

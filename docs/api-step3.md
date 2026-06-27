@@ -1,10 +1,10 @@
-# API 명세서
+# 3단계 API 명세서
 
 ## 1. 공통 규칙
 
 ### 1-1. Base URL
 
-```
+```http
 http://localhost:3000
 ```
 
@@ -16,117 +16,87 @@ http://localhost:3000
 ### 1-3. 응답 형식
 
 - 응답 body는 JSON 형식으로 전달한다.
-- 삭제 성공 응답은 body를 반환하지 않는다.
+- 날짜는 ISO 문자열 형식으로 응답한다.
 - 에러 응답은 공통 에러 응답 형식으로 반환한다.
 
-### 1-4. 주요 식별자
+### 1-4. 공통 에러 응답
 
-| 이름      | 설명      |
-| --------- | --------- |
-| `order`   | 주문 정보 |
-| `coupons` | 쿠폰 정보 |
+```json
+{
+  "code": "ORDER_NOT_FOUND",
+  "message": "존재하지 않는 주문입니다."
+}
+```
 
 ### 1-5. 상태 코드
 
-| 상태 코드                   | 설명                 |
-| --------------------------- | -------------------- |
-| `200 OK`                    | 조회, 수정 성공      |
-| `201 Created`               | 생성 성공            |
-| `204 No Content`            | 삭제 성공            |
-| `400 Bad Request`           | 잘못된 요청          |
-| `404 Not Found`             | 존재하지 않는 리소스 |
-| `500 Internal Server Error` | 서버 내부 오류       |
+| 상태 코드                   | 설명                                        |
+| --------------------------- | ------------------------------------------- |
+| `200 OK`                    | 조회, 수정 성공                             |
+| `201 Created`               | 생성 성공                                   |
+| `400 Bad Request`           | 잘못된 요청 또는 적용할 수 없는 도메인 규칙 |
+| `404 Not Found`             | 존재하지 않는 리소스                        |
+| `500 Internal Server Error` | 서버 내부 오류                              |
 
-### 1-6. 에러 응답
+### 1-6. 주요 응답 타입
 
-```json
-{
-  "message": "유효하지 않은 쿠폰입니다."
-}
-```
-
-## 2. 주문 정보 API
-
-### 2-1. 주문 정보 조회
-
-```http
-GET /order
-```
-
-#### Request
-
-없음
-
-#### Response
-
-`200 OK`
+#### PriceInfo
 
 ```json
 {
-  "orderId": "order-20260612-0001",
-  "orderProducts": [
-    {
-      "productId": "prod-1001",
-      "productName": "상품A",
-      "productPrice": 16000,
-      "imgUrl": "./asset/imageA.png",
-      "quantity": 2
-    },
-    {
-      "productId": "prod-1002",
-      "productName": "상품B",
-      "productPrice": 11000,
-      "imgUrl": "./asset/imageB.png",
-      "quantity": 1
-    }
-  ],
-  "isIsland": false,
-  "couponIds": ["coupon-5000", "coupon-night10"],
-  "priceInfo": {
-    "orderPrice": 58000,
-    "discountPrice": 10800,
-    "DeliveryFee": 3000,
-    "totalPrice": 50200
-  }
+  "orderPrice": 120000,
+  "productDiscountPrice": 5000,
+  "deliveryDiscountPrice": 0,
+  "deliveryFee": 0,
+  "totalPrice": 115000
 }
 ```
 
-#### Error
+| 필드                    | 타입     | 설명                                            |
+| ----------------------- | -------- | ----------------------------------------------- |
+| `orderPrice`            | `number` | 쿠폰 할인과 배송비가 적용되기 전 주문 상품 금액 |
+| `productDiscountPrice`  | `number` | 상품 금액에서 차감되는 쿠폰 할인 금액           |
+| `deliveryDiscountPrice` | `number` | 배송비에서 차감되는 쿠폰 할인 금액              |
+| `deliveryFee`           | `number` | 최종 배송비                                     |
+| `totalPrice`            | `number` | 최종 결제 금액                                  |
 
-없음
+`totalPrice`는 아래 식으로 계산된다.
 
----
+```ts
+totalPrice =
+  orderPrice - productDiscountPrice - deliveryDiscountPrice + deliveryFee;
+```
 
-### 2-2. 주문 정보 추가
+## 2. 주문 API
+
+### 2-1. 주문 생성
+
+선택된 장바구니 상품 목록을 기준으로 주문 정보를 생성한다.
 
 ```http
-POST /order
+POST /orders
 ```
 
 #### Request
 
 ```json
 {
-  "orderProducts": [
+  "products": [
     {
-      "productId": "prod-1001",
-      "quantity": 2
-    },
-    {
-      "productId": "prod-1002",
-      "quantity": 1
+      "productId": "product-1",
+      "quantity": 3
     }
   ]
 }
 ```
 
-- 그 외 속성값들은 모두 내부적으로 초기화
+| 필드                   | 타입     | 필수 여부 | 설명             |
+| ---------------------- | -------- | --------- | ---------------- |
+| `products`             | `Array`  | 필수      | 주문할 상품 목록 |
+| `products[].productId` | `string` | 필수      | 상품 id          |
+| `products[].quantity`  | `number` | 필수      | 주문 수량         |
 
-| 이름            | 필수 여부 | 설명                                                         |
-| --------------- | --------- | ------------------------------------------------------------ |
-| `orderProducts` | 필수      | 빈 배열인 경우                                               |
-| `productId`     | 필수      | productId가 유효하지 않거나 존재하지 않은 상품인 경우        |
-| `quantity`      | 필수      | quantity가 유효하지 않거나 수량이 1 이상 99 이하가 아닌 경우 |
+서버는 주문 생성 시점에 적용 가능한 쿠폰 조합을 계산하고, 할인 금액이 가장 큰 조합을 주문에 자동 적용한다.
 
 #### Response
 
@@ -140,44 +110,55 @@ POST /order
 
 #### Error
 
-Request 필드 안에 필수 필드가 정의되지 않았거나, 필드 값이 유효하지 않을 때 `400 Bad Request`를 응답한다.
+주문 상품 목록이 비어 있는 경우 `400 Bad Request`
 
 ```json
 {
-  "message": "유효하지 않은 상품 이름입니다."
+  "code": "EMPTY_ORDER_PRODUCTS",
+  "message": "주문 상품 목록이 비어 있습니다."
 }
 ```
 
-productId에 해당하는 상품이 존재하지 않는 경우 `404 Not Found`를 응답한다.
+쿠폰이 2개를 초과하는 경우 `400 Bad Request`
 
 ```json
 {
-  "message": "존재하지 않는 상품 이름입니다."
+  "code": "EXCEEDS_MAX_COUPON_COUNT",
+  "message": "쿠폰은 최대 2개까지만 적용할 수 있습니다."
+}
+```
+
+중복된 쿠폰 id가 포함된 경우 `400 Bad Request`
+
+```json
+{
+  "code": "DUPLICATE_COUPON_ID",
+  "message": "중복된 쿠폰은 적용할 수 없습니다."
+}
+```
+
+상품이 존재하지 않는 경우 `404 Not Found`
+
+```json
+{
+  "code": "PRODUCT_NOT_FOUND",
+  "message": "존재하지 않는 상품입니다."
 }
 ```
 
 ---
 
-### 2-3. 주문 정보 수정
+### 2-2. 주문 조회
+
+주문 id를 기준으로 주문 상품 정보, 적용된 쿠폰, 배송 지역 여부, 가격 정보를 조회한다.
 
 ```http
-PATCH /order
+GET /orders/:orderId
 ```
 
 #### Request
 
-```json
-{
-  "couponIds": ["coupon-5000", "coupon-night10"],
-  "isIsland": true
-}
-```
-
-| 이름        | 필수 여부 | 설명                                             |
-| ----------- | --------- | ------------------------------------------------ |
-| `couponIds` | 선택      | couponIds가 유효하지 않거나 2개 이하가 아닌 경우 |
-| `couponIds` | 선택      | couponIds가 존재하지 않는 경우                   |
-| `isIsland`  | 선택      | isIsland가 유효하지 않은 경우                    |
+없음
 
 #### Response
 
@@ -185,51 +166,78 @@ PATCH /order
 
 ```json
 {
+  "orderId": "order-20260612-0001",
+  "products": [
+    {
+      "productId": "product-1",
+      "productName": "콜라",
+      "productPrice": 12000,
+      "imageUrl": "src/assets/coke.png",
+      "quantity": 3
+    }
+  ],
+  "isIsland": false,
+  "couponIds": [],
   "priceInfo": {
-    "orderPrice": 58000,
-    "discountPrice": 10800,
-    "DeliveryFee": 6000,
-    "totalPrice": 53200
+    "orderPrice": 36000,
+    "productDiscountPrice": 0,
+    "deliveryDiscountPrice": 0,
+    "deliveryFee": 3000,
+    "totalPrice": 39000
   }
 }
 ```
 
 #### Error
 
-Request 필드 안에 필수 필드가 정의되지 않았거나, 필드 값이 유효하지 않을 때 `400 Bad Request`를 응답한다.
+주문이 존재하지 않는 경우 `404 Not Found`
 
 ```json
 {
-  "message": "유효하지 않은 쿠폰입니다."
+  "code": "ORDER_NOT_FOUND",
+  "message": "존재하지 않는 주문입니다."
 }
 ```
 
-couponIds에 해당하는 쿠폰이 존재하지 않는 경우 `404 Not Found`를 응답한다.
+주문에 포함된 상품이 존재하지 않는 경우 `404 Not Found`
 
 ```json
 {
+  "code": "PRODUCT_NOT_FOUND",
+  "message": "존재하지 않는 상품입니다."
+}
+```
+
+주문에 적용된 쿠폰이 존재하지 않는 경우 `404 Not Found`
+
+```json
+{
+  "code": "COUPON_NOT_FOUND",
   "message": "존재하지 않는 쿠폰입니다."
 }
 ```
 
-### 2-4. 할인율 계산
+---
+
+### 2-3. 주문 쿠폰 적용
+
+선택한 쿠폰 목록을 주문에 적용한다. 서버는 쿠폰 id가 존재하는지, 현재 주문에 적용 가능한 쿠폰인지 다시 검증한다.
 
 ```http
-POST /order/discount-price
+PATCH /orders/:orderId/coupons
 ```
 
 #### Request
 
 ```json
 {
-  "couponIds": ["coupon-5000", "coupon-night10"]
+  "couponIds": ["FIXED5000"]
 }
 ```
 
-| 이름        | 필수 여부 | 설명                           |
-| ----------- | --------- | ------------------------------ |
-| `couponIds` | 선택      | couponIds가 유효하지 않은 경우 |
-| `couponIds` | 선택      | couponIds가 존재하지 않는 경우 |
+| 필드        | 타입       | 필수 여부 | 설명                          |
+| ----------- | ---------- | --------- | ----------------------------- |
+| `couponIds` | `string[]` | 필수      | 적용할 쿠폰 id 목록. 최대 2개 |
 
 #### Response
 
@@ -237,34 +245,224 @@ POST /order/discount-price
 
 ```json
 {
-  "discountPrice": 6000
+  "couponIds": ["FIXED5000"],
+  "priceInfo": {
+    "orderPrice": 120000,
+    "productDiscountPrice": 5000,
+    "deliveryDiscountPrice": 0,
+    "deliveryFee": 0,
+    "totalPrice": 115000
+  }
 }
 ```
 
 #### Error
 
-Request 필드 안에 필수 필드가 정의되지 않았거나, 필드 값이 유효하지 않을 때 `400 Bad Request`를 응답한다.
+주문이 존재하지 않는 경우 `404 Not Found`
 
 ```json
 {
-  "message": "유효하지 않은 쿠폰입니다."
+  "code": "ORDER_NOT_FOUND",
+  "message": "존재하지 않는 주문입니다."
 }
 ```
 
-couponIds에 해당하는 쿠폰이 존재하지 않는 경우 `404 Not Found`를 응답한다.
+쿠폰이 존재하지 않는 경우 `404 Not Found`
 
 ```json
 {
+  "code": "COUPON_NOT_FOUND",
   "message": "존재하지 않는 쿠폰입니다."
 }
 ```
 
-## 3. 쿠폰 정보 API
+현재 주문에 적용할 수 없는 쿠폰인 경우 `400 Bad Request`
 
-### 3-1. 쿠폰 목록 조회
+```json
+{
+  "code": "INVALID_COUPON",
+  "message": "적용할 수 없는 쿠폰입니다."
+}
+```
+
+쿠폰이 2개를 초과하는 경우 `400 Bad Request`
+
+```json
+{
+  "code": "EXCEEDS_MAX_COUPON_COUNT",
+  "message": "쿠폰은 최대 2개까지만 적용할 수 있습니다."
+}
+```
+
+중복된 쿠폰 id가 포함된 경우 `400 Bad Request`
+
+```json
+{
+  "code": "DUPLICATE_COUPON_ID",
+  "message": "중복된 쿠폰은 적용할 수 없습니다."
+}
+```
+
+---
+
+### 2-4. 주문 배송 지역 변경
+
+제주도 및 도서산간 지역 여부를 변경하고, 변경된 배송비와 가격 정보를 다시 계산한다.
 
 ```http
-GET /coupons
+PATCH /orders/:orderId/delivery-area
+```
+
+#### Request
+
+```json
+{
+  "isIsland": true
+}
+```
+
+| 필드       | 타입      | 필수 여부 | 설명                         |
+| ---------- | --------- | --------- | ---------------------------- |
+| `isIsland` | `boolean` | 필수      | 제주도 및 도서산간 지역 여부 |
+
+#### Response
+
+`200 OK`
+
+```json
+{
+  "orderPrice": 36000,
+  "productDiscountPrice": 0,
+  "deliveryDiscountPrice": 0,
+  "deliveryFee": 6000,
+  "totalPrice": 42000
+}
+```
+
+#### Error
+
+주문이 존재하지 않는 경우 `404 Not Found`
+
+```json
+{
+  "code": "ORDER_NOT_FOUND",
+  "message": "존재하지 않는 주문입니다."
+}
+```
+
+### 2-5. 선택 쿠폰 할인 금액 미리보기
+
+쿠폰 모달에서 선택 중인 쿠폰 id 목록을 기준으로 할인 금액을 계산한다. 계산 결과만 반환하며 주문에 적용된 `couponIds`는 변경하지 않는다.
+
+```http
+POST /orders/:orderId/discount-price
+```
+
+#### Request
+
+```json
+{
+  "couponIds": ["FIXED5000"]
+}
+```
+
+| 필드        | 타입       | 필수 여부 | 설명                              |
+| ----------- | ---------- | --------- | --------------------------------- |
+| `couponIds` | `string[]` | 필수      | 미리보기할 쿠폰 id 목록. 최대 2개 |
+
+#### Response
+
+`200 OK`
+
+```json
+{
+  "couponIds": ["FIXED5000"],
+  "productDiscountPrice": 5000,
+  "deliveryDiscountPrice": 0,
+  "totalDiscountPrice": 5000
+}
+```
+
+| 필드                    | 타입       | 설명                             |
+| ----------------------- | ---------- | -------------------------------- |
+| `couponIds`             | `string[]` | 할인 계산에 사용한 쿠폰 id 목록  |
+| `productDiscountPrice`  | `number`   | 상품 금액에서 차감되는 할인 금액 |
+| `deliveryDiscountPrice` | `number`   | 배송비에서 차감되는 할인 금액    |
+| `totalDiscountPrice`    | `number`   | 상품 할인과 배송 할인의 합계     |
+
+#### Error
+
+쿠폰 id 목록 형식이 유효하지 않은 경우 `400 Bad Request`
+
+```json
+{
+  "code": "INVALID_COUPON_IDS",
+  "message": "유효하지 않은 쿠폰 목록입니다."
+}
+```
+
+쿠폰이 2개를 초과하는 경우 `400 Bad Request`
+
+```json
+{
+  "code": "EXCEEDS_MAX_COUPON_COUNT",
+  "message": "쿠폰은 최대 2개까지만 적용할 수 있습니다."
+}
+```
+
+중복된 쿠폰 id가 포함된 경우 `400 Bad Request`
+
+```json
+{
+  "code": "DUPLICATE_COUPON_ID",
+  "message": "중복된 쿠폰은 적용할 수 없습니다."
+}
+```
+
+현재 주문에 적용할 수 없는 쿠폰인 경우 `400 Bad Request`
+
+```json
+{
+  "code": "INVALID_COUPON",
+  "message": "적용할 수 없는 쿠폰입니다."
+}
+```
+
+주문이 존재하지 않는 경우 `404 Not Found`
+
+```json
+{
+  "code": "ORDER_NOT_FOUND",
+  "message": "존재하지 않는 주문입니다."
+}
+```
+
+쿠폰이 존재하지 않는 경우 `404 Not Found`
+
+```json
+{
+  "code": "COUPON_NOT_FOUND",
+  "message": "존재하지 않는 쿠폰입니다."
+}
+```
+
+주문에 포함된 상품이 존재하지 않는 경우 `404 Not Found`
+
+```json
+{
+  "code": "PRODUCT_NOT_FOUND",
+  "message": "존재하지 않는 상품입니다."
+}
+```
+
+## 3. 쿠폰 API
+
+### 3-1. 주문 기준 쿠폰 목록 조회
+
+주문 id를 기준으로 사용자의 쿠폰 목록을 조회한다. 서버는 현재 주문 상품, 주문 금액, 배송 지역 여부, 현재 시간을 기준으로 각 쿠폰의 사용 가능 여부를 계산한다.
+
+```http
+GET /orders/:orderId/coupons
 ```
 
 #### Request
@@ -281,138 +479,68 @@ GET /coupons
     {
       "couponId": "FIXED5000",
       "couponName": "5,000원 할인 쿠폰",
+      "couponDescription": "최소 주문 금액: 100,000원",
       "isDisabled": false,
-      "couponExpiration": 1796050799000,
-      "option": "최소 주문 금액: 100,000원"
+      "couponExpiration": "2026-11-30T14:59:59.000Z"
     },
     {
       "couponId": "BOGO",
       "couponName": "2개 구매 시 1개 무료 쿠폰",
-      "isDisabled": true,
-      "couponExpiration": 1782831599000
+      "couponDescription": "",
+      "isDisabled": false,
+      "couponExpiration": "2026-06-30T14:59:59.000Z"
     },
     {
       "couponId": "FREESHIPPING",
       "couponName": "5만원 이상 구매 시 무료 배송 쿠폰",
-      "isDisabled": true,
-      "couponExpiration": 1788188399000,
-      "option": "최소 주문 금액: 50,000원"
+      "couponDescription": "최소 주문 금액: 50,000원",
+      "isDisabled": false,
+      "couponExpiration": "2026-08-31T14:59:59.000Z"
     },
     {
       "couponId": "MIRACLESALE",
       "couponName": "미라클모닝 30% 할인 쿠폰",
+      "couponDescription": "사용 가능 시간: 오전 4시부터 7시까지",
       "isDisabled": false,
-      "couponExpiration": 1785509999000,
-      "option": "사용 가능 시간: 오전 4시부터 7시까지"
+      "couponExpiration": "2026-07-31T14:59:59.000Z"
     }
   ]
 }
 ```
 
-- couponDB에는 isDisabled 속성이 없지만, BE에서 계산해서 같이 내려준다.
+| 필드                | 타입      | 설명                                   |
+| ------------------- | --------- | -------------------------------------- |
+| `couponId`          | `string`  | 쿠폰 id                                |
+| `couponName`        | `string`  | 쿠폰 이름                              |
+| `couponDescription` | `string`  | 쿠폰 사용 조건 설명                    |
+| `isDisabled`        | `boolean` | 현재 주문 기준 쿠폰 선택 비활성화 여부 |
+| `couponExpiration`  | `string`  | 쿠폰 만료일 ISO 문자열                 |
 
 #### Error
 
-없음
+주문이 존재하지 않는 경우 `404 Not Found`
 
----
-
-## 시퀀스 다이어그램과 API 설계 이유
-
-### 1. 주문 확인 페이지로 이동하기 전에 할인 최대 조합을 계산하는 이유
-
-- 주문 확인 페이지에 들어가자마자 할인 적용된 상태여야 하기 때문이다.
-
-### 2. GET /order 요청 시 productDB에 접근하는 이유
-
-- orderDB에는 product에 대한 정보가 없기 때문에, product 정보를 가져와서 합친 후 전달해주기 위해서다.
-
-### 3-1. GET /coupons 요청 시 orderDB에 접근하는 이유
-
-- 응답 객체에 각 쿠폰의 disabled를 포함해서 전달해야 하는데, disabled를 계산하기 위해서 각 총 결제 금액과 상품의 개수를
-  알아야 하기 때문이다.
-
-### 3-2. GET /coupons 요청 시 모달에서 필요한 할인 금액을 보내주지 않는 이유
-
-- 이미 주문 확인 페이지가 로드되었을 때 가져온 order로 보여줄 수 있기 때문이다.
-
-### 4. 쿠폰 선택 시마다 couponIds를 프론트에서 관리하다가, 쿠폰 적용 버튼을 누를 때 DB에 업데이트한 이유
-
-- 모달에서 x버튼을 누르면, 쿠폰 적용이 되지 않아야 한다고 생각했다. 예를 들어, 적용된 쿠폰이 0개였다가 쿠폰을2개 선택하고,
-  모달 x버튼을 누르고 다시 모달을 열면, 적용된 쿠폰이 0개여야 한다.
-  -> 최종적으로, 최종 금액은 be에서 계산하기 때문에 쿠폰 적용 버튼을 눌러야만 할인이 적용되도록 의도했다.
-
-### 5. 사용자가 쿠폰을 사용했을 때, 에러를 바로 띄우고 쿠폰 선택 상태를 초기화하기로 설계한 이유
-
-- 빠른 피드백이 가능하기 때문이다.
-
-### 6. 배송 정보 변경 시 priceInfo를 받지만, productDB에는 접근하지 않은 이유
-
-- 상품의 개수와 관계없이 할인 금액만 변경되기 때문이다.
-
-### 7. 쿠폰 적용이나 계산 로직이 FE에 없는 이유
-
-- 정확한 계산을 하기 위해서이다.
-- 변경에 유연하기 때문이다. (쿠폰이 추가되거나, 계산 로직이 수정되거나)
-- DB에 직접 접근하는 BE가 더 신뢰성이 있다.
-
-### 8. orderTable을 DB로 둔 이유
-
-- 만약 상품 목록을 이전 페이지에서 전달한다면, 주문 확인 페이지에서 새로고침 시 데이터가 사라질 수 있다.
-- 장바구니 페이지에서 다룬 데이터가 DB와 로컬 스토리지에 흩어져 있어서, 그걸 선택된 상품들에 대한 DB를 만들어서
-  한 곳으로 모았다.
-
-### 9. 쿠폰 선택할 때마다 BE에서 최종 할인 금액을 계산하기로 결정한 이유
-
-- 쿠폰이 추후에 추가되거나 정책이 변경되면 프론트에서와 백에서의 싱크가 맞지 않을 수 있다.
-
----
-
-### couponDB 구조
-
-```ts
-type Coupon = {
-  couponId: string;
-  code: 'FIXED5000' | 'BOGO' | 'FREESHIPPING' | 'MIRACLESALE';
-  name: string;
-  discountType: ...
-  expiresAt: string;
-
-  minimumOrderPrice?: number;
-  discountPrice?: number;
-  discountRate?: number;
-
-  buyQuantity?: number;
-  freeQuantity?: number;
-
-  availableStartHour?: number;
-  availableEndHour?: number;
-};
+```json
+{
+  "code": "ORDER_NOT_FOUND",
+  "message": "존재하지 않는 주문입니다."
+}
 ```
 
-### orderDB 구조
+주문에 포함된 상품이 존재하지 않는 경우 `404 Not Found`
 
-```ts
-type OrderProduct = {
-  productId: string;
-  productName: string;
-  productPrice: number;
-  imgUrl: string;
-  quantity: number;
-};
-
-type PriceInfo = {
-  orderPrice: number;
-  discountPrice: number;
-  deliveryFee: number;
-  totalPrice: number;
-};
-
-type Order = {
-  orderId: string;
-  orderProducts: OrderProduct[];
-  isIsland: boolean;
-  couponIds: string[];
-  priceInfo: PriceInfo;
-};
+```json
+{
+  "code": "PRODUCT_NOT_FOUND",
+  "message": "존재하지 않는 상품입니다."
+}
 ```
+
+## 4. 쿠폰 id 목록
+
+| 쿠폰 id        | 이름                              | 조건                         |
+| -------------- | --------------------------------- | ---------------------------- |
+| `FIXED5000`    | 5,000원 할인 쿠폰                 | 주문 금액 100,000원 이상     |
+| `BOGO`         | 2개 구매 시 1개 무료 쿠폰         | 동일 상품 3개 이상 구매      |
+| `FREESHIPPING` | 5만원 이상 구매 시 무료 배송 쿠폰 | 주문 금액 50,000원 이상      |
+| `MIRACLESALE`  | 미라클모닝 30% 할인 쿠폰          | 오전 4시 이상, 오전 7시 미만 |

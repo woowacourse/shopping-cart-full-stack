@@ -16,10 +16,10 @@ export const CartSummary = () => {
         총 주문 금액이 100,000원 이상일 경우 무료 배송됩니다.
       </DeliveryNotice>
       <SummaryBox>
-      <CartSummaryLine title="주문 금액" value={orderPrice} />
-      <CartSummaryLine title="배송비" value={deliveryPrice} />
+        <CartSummaryLine title="주문 금액" value={orderPrice} />
+        <CartSummaryLine title="배송비" value={deliveryPrice} />
         <Divider />
-      <CartSummaryLine title="총 결제 금액" value={totalPrice} />
+        <CartSummaryLine title="총 결제 금액" value={totalPrice} />
       </SummaryBox>
     </SummarySection>
   );

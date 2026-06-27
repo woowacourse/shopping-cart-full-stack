@@ -24,12 +24,14 @@ export const useMutation = <TVariables, TData>(
     try {
       const result = await mutationFn(variables);
       options?.onSuccess?.(result);
+      return result;
     } catch (error) {
       const nextError = createError(error);
       setError(nextError);
 
       // 에러 발생 시 onError 콜백을 통해 컴포넌트에 알림
       options?.onError?.(nextError);
+      return undefined;
     } finally {
       setIsLoading(false);
     }

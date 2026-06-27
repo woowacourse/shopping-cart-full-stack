@@ -1,15 +1,15 @@
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../../common/components/Button';
 import { Header } from '../../common/components/Header';
-import type { CartOrderSummary } from '../Cart/types/orderSummary.types';
 import { Container, Wrapper } from '../../common/styles/global';
 import { OrderContent } from './components/OrderConfirmContent';
 import styled from 'styled-components';
+import type { OrderConfirmSummary } from './types/orderConfirm.types';
 
 export const OrderConfirmPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const orderSummary = location.state as CartOrderSummary | null;
+  const orderSummary = location.state as OrderConfirmSummary | null;
 
   if (orderSummary === null) {
     return <Navigate to="/cart" replace />;
@@ -31,8 +31,8 @@ export const OrderConfirmPage = () => {
         </ContentArea>
 
         <ButtonArea>
-          <Button type="button" disabled>
-            결제하기
+          <Button type="button" onClick={() => navigate('/cart')}>
+            장바구니로 돌아가기
           </Button>
         </ButtonArea>
       </Container>

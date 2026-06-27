@@ -12,21 +12,37 @@ type UseQueryResult<T> = {
   setQueryData: (updater: (previousData: T) => T) => void;
 };
 
-export const useQuery = <T>(
+export function useQuery<T>(
   queryKey: string,
   queryFn: () => Promise<T>,
-): UseQueryResult<T> => {
+): UseQueryResult<T>;
+
+export function useQuery<T>(
+  queryKey: string,
+  queryFn: (id: string) => Promise<T>,
+  id: string | undefined,
+  enabled?: boolean,
+): UseQueryResult<T>;
+
+export function useQuery<T>(
+  queryKey: string,
+  queryFn: (() => Promise<T>) | ((id: string) => Promise<T>),
+  id?: string,
+  enabled = true,
+): UseQueryResult<T> {
   const cachedData = queryCache.get(queryKey) as T | undefined;
 
   const [state, setState] = useState<
     Omit<UseQueryResult<T>, 'refetch' | 'setQueryData'>
   >({
     data: cachedData ?? null,
-    isLoading: !cachedData,
+    isLoading: enabled && !cachedData,
     error: null,
   });
 
   const executeQuery = useCallback(async () => {
+    if (!enabled) return null;
+
     try {
       setState((prev) => ({
         ...prev,
@@ -34,7 +50,10 @@ export const useQuery = <T>(
         error: null,
       }));
 
-      const result = await queryFn();
+      const result =
+        id === undefined
+          ? await (queryFn as () => Promise<T>)()
+          : await (queryFn as (queryId: string) => Promise<T>)(id);
       queryCache.set(queryKey, result);
 
       setState({
@@ -55,14 +74,16 @@ export const useQuery = <T>(
       });
       return null;
     }
-  }, [queryKey, queryFn]);
+  }, [enabled, id, queryKey, queryFn]);
 
   useEffect(() => {
-    if (queryCache.has(queryKey)) {
+    if (!enabled || queryCache.has(queryKey)) {
       return;
     }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     executeQuery();
-  }, [executeQuery]);
+  }, [enabled, executeQuery, queryKey]);
 
   const setQueryData = useCallback(
     (updater: (previousData: T) => T) => {
@@ -92,4 +113,4 @@ export const useQuery = <T>(
     refetch: executeQuery,
     setQueryData,
   };
-};
+}

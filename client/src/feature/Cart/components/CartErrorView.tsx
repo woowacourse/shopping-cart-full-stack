@@ -13,7 +13,7 @@ export const CartErrorView = ({ error, onRetry }: CartErrorViewProps) => {
         <Message>장바구니 상품을 불러오지 못했습니다.</Message>
         {error && <Description>{error.message}</Description>}
         <RetryButton type="button" onClick={onRetry}>
-        다시 시도
+          다시 시도
         </RetryButton>
       </Content>
     </ErrorContainer>
