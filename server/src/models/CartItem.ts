@@ -1,9 +1,7 @@
-import {Product} from './Product.js';
-
 export class CartItem {
   constructor(
     public readonly id: string,
-    public readonly product: Product,
+    public readonly productId: string,
     private quantity: number
   ) {}
 
@@ -18,7 +16,7 @@ export class CartItem {
   toJSON() {
     return {
       id: this.id,
-      product: this.product,
+      productId: this.productId,
       quantity: this.quantity,
     };
   }

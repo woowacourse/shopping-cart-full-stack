@@ -1,5 +1,5 @@
-import { Global, css } from '@emotion/react';
-import { colors, fonts } from './tokens';
+import { Global, css } from "@emotion/react";
+import { colors, fonts } from "./tokens";
 
 const globalStyles = css`
   *,
@@ -54,6 +54,11 @@ const globalStyles = css`
   a {
     color: inherit;
     text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid ${colors.ctaActive}; /* #000 — 체크박스와 동일 */
+    outline-offset: 2px;
   }
 `;
 

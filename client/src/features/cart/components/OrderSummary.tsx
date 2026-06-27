@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { colors } from "../../../shared/styles/tokens";
 import { FREE_SHIPPING_THRESHOLD } from "../selectors";
 import { InfoOutlineIcon } from "../../../assets/icons/InfoOutlineIcon";
+import { Row } from "../../../shared/components/layout";
 
 interface OrderSummaryProps {
   subtotal: number;
@@ -18,43 +19,35 @@ export function OrderSummary({ subtotal, shippingFee }: OrderSummaryProps) {
         배송됩니다.
       </Hint>
       <Section>
-        <SummaryRow>
+        <Row justify="space-between" align="center">
           <Label>주문 금액</Label>
           <Amount>{subtotal.toLocaleString()}원</Amount>
-        </SummaryRow>
-        <SummaryRow>
+        </Row>
+        <Row justify="space-between" align="center">
           <Label>배송비</Label>
           <Amount>{shippingFee.toLocaleString()}원</Amount>
-        </SummaryRow>
+        </Row>
       </Section>
 
       <Section>
-        <SummaryRow>
+        <Row justify="space-between" align="center">
           <Label>총 결제 금액</Label>
           <Amount>{total.toLocaleString()}원</Amount>
-        </SummaryRow>
+        </Row>
       </Section>
     </>
   );
 }
 
 const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding-top: 16px;
   border-top: 1px solid ${colors.divider};
 
   & + & {
     margin-top: 16px;
-  }
-`;
-
-const SummaryRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-
-  &:last-of-type {
-    margin-bottom: 0;
   }
 `;
 

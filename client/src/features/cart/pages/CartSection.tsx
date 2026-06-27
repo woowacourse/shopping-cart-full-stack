@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../shared/components/Button";
 import { Checkbox } from "../../../shared/components/CheckBox";
+import { Stack } from "../../../shared/components/layout";
 import { colors } from "../../../shared/styles/tokens";
 import { CartItemRow } from "../components/CartItemRow";
 import { EmptyCart } from "../components/EmptyCart";
@@ -33,18 +34,14 @@ export function CartSection() {
   const shippingFee = selectShippingFee(items, ids);
 
   const handleProceed = () => {
-    const selectedItems = items.filter((item) => ids.has(item.id));
-    const total = subtotal + shippingFee;
     const state: CheckoutState = {
-      kindsCount: selectedItems.length,
-      totalQuantity: selectedItems.reduce((sum, item) => sum + item.quantity, 0),
-      total,
+      selectedItemIds: [...ids],
     };
     navigate("/checkout", { state });
   };
 
   return (
-    <>
+    <Stack gap={16}>
       <Subtitle>현재 {items.length}종류의 상품이 담겨있습니다.</Subtitle>
       <Checkbox
         checked={isAllSelected}
@@ -52,18 +49,24 @@ export function CartSection() {
         onChange={isAllSelected ? deselectAll : selectAll}
         label="전체선택"
       />
-      {items.map((item) => (
-        <CartItemRow
-          key={item.id}
-          item={item}
-          isSelected={ids.has(item.id)}
-          onToggle={() => toggle(item.id)}
-          onUpdateQuantity={(next) =>
-            updateMutate({ id: item.id, quantity: next })
-          }
-          onRemove={() => deleteMutate(item.id)}
-        />
-      ))}
+      <Stack
+        as="ul"
+        gap={20}
+        style={{ listStyle: "none", padding: 0, margin: 0 }}
+      >
+        {items.map((item) => (
+          <CartItemRow
+            key={item.id}
+            item={item}
+            isSelected={ids.has(item.id)}
+            onToggle={() => toggle(item.id)}
+            onUpdateQuantity={(next) =>
+              updateMutate({ id: item.id, quantity: next })
+            }
+            onRemove={() => deleteMutate(item.id)}
+          />
+        ))}
+      </Stack>
       <OrderSummary subtotal={subtotal} shippingFee={shippingFee} />
       <Button
         variant="primary"
@@ -73,7 +76,7 @@ export function CartSection() {
       >
         주문 확인
       </Button>
-    </>
+    </Stack>
   );
 }
 

@@ -2,6 +2,7 @@ import type { Config } from 'jest';
 
 const config: Config = {
   testEnvironment: 'node',
+  setupFiles: ['<rootDir>/jest.setup.ts'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
@@ -24,6 +25,10 @@ const config: Config = {
     'src/**/*.ts',
     '!src/**/*.test.ts',
     '!src/index.ts',
+    // 라이브 DB 연결이 필요해 단위테스트에서 제외되는 모듈
+    '!src/container.ts',
+    '!src/config/**',
+    '!src/repositories/supabase/**',
   ],
 };
 

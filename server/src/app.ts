@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 
 import {cartController} from './controllers/CartController.js';
+import {couponController} from './controllers/CouponController.js';
+import {orderController} from './controllers/OrderController.js';
 import {asyncHandler} from './middlewares/asyncHandler.js';
 import {errorHandler} from './middlewares/errorHandler.js';
 import {productController} from './controllers/ProductController.js';
@@ -31,6 +33,10 @@ app.delete('/products/:id', asyncHandler(productController.deleteProduct));
 app.get('/carts', asyncHandler(cartController.getCartItems));
 app.patch('/carts/:id', asyncHandler(cartController.updateQuantity));
 app.delete('/carts/:id', asyncHandler(cartController.deleteCartItem));
+
+app.get('/coupons', asyncHandler(couponController.getCoupons));
+
+app.post('/order/preview', asyncHandler(orderController.previewOrder));
 
 app.use(errorHandler);
 

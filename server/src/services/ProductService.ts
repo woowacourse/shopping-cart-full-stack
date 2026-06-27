@@ -1,10 +1,10 @@
-import { cartItems, products } from "../db.js";
 import {
   DuplicateNameError,
   InvalidInputError,
   NotFoundError,
 } from "../errors/HttpError.js";
-import { Product } from "../models/Product.js";
+import type { CartItemRepository } from "../repositories/CartItemRepository.js";
+import type { ProductRepository } from "../repositories/ProductRepository.js";
 import type { CreateProductRequestBody } from "../type.js";
 
 const PRODUCT_NAME_MAX_LENGTH = 100;
@@ -45,35 +45,43 @@ const isValidCreateProductBody = (
   );
 };
 
-export const productService = {
-  getProducts() {
-    return products.findAll();
+export interface ProductServiceDeps {
+  productRepository: ProductRepository;
+  cartItemRepository: CartItemRepository;
+}
+
+export const createProductService = ({
+  productRepository,
+  cartItemRepository,
+}: ProductServiceDeps) => ({
+  async getProducts() {
+    return productRepository.findAll();
   },
 
-  createProduct(body: unknown): Product {
+  async createProduct(body: unknown) {
     if (!isValidCreateProductBody(body)) {
       throw new InvalidInputError();
     }
 
     const { name, price, imageUrl } = body;
 
-    if (products.hasName(name)) {
+    if (await productRepository.existsByName(name)) {
       throw new DuplicateNameError();
     }
 
-    const newId = products.getNextId();
-    const newProduct = new Product(newId, name, price, imageUrl);
-
-    products.add(newProduct);
-
-    return newProduct;
+    return productRepository.create({ name, price, imageUrl });
   },
 
-  deleteProduct(id: string): void {
-    if (!products.findById(id)) {
+  async deleteProduct(id: string): Promise<void> {
+    const product = await productRepository.findById(id);
+
+    if (!product) {
       throw new NotFoundError();
     }
-    cartItems.deleteByProductId(id);
-    products.deleteById(id);
+
+    await cartItemRepository.deleteByProductId(id);
+    await productRepository.deleteById(id);
   },
-};
+});
+
+export type ProductService = ReturnType<typeof createProductService>;

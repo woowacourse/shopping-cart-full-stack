@@ -1,22 +1,21 @@
 import type { Request, Response } from "express";
 
-import { cartService } from "../services/CartService.js";
+import { cartService } from "../container.js";
 import type { IdParams } from "../type.js";
 
 export const cartController = {
-  getCartItems(_req: Request, res: Response) {
-    res.status(200).json(cartService.getCartItems());
+  async getCartItems(_req: Request, res: Response) {
+    res.status(200).json(await cartService.getCartItems());
   },
 
-  updateQuantity(req: Request<IdParams>, res: Response) {
-    const id = req.params.id;
-    const cartItem = cartService.updateQuantity(id, req.body);
+  async updateQuantity(req: Request<IdParams>, res: Response) {
+    const cartItem = await cartService.updateQuantity(req.params.id, req.body);
 
     res.status(200).json(cartItem);
   },
 
-  deleteCartItem(req: Request<IdParams>, res: Response) {
-    cartService.deleteCartItem(req.params.id);
+  async deleteCartItem(req: Request<IdParams>, res: Response) {
+    await cartService.deleteCartItem(req.params.id);
     res.sendStatus(204);
   },
 };

@@ -1,10 +1,7 @@
 import {CartItem} from './CartItem.js';
-import {Product} from './Product.js';
 
 const createCartItem = () => {
-  const product = new Product('1', '상품', 1000, '/image.png');
-
-  return new CartItem('1', product, 1);
+  return new CartItem('1', '1', 1);
 };
 
 describe('CartItem', () => {
@@ -27,7 +24,7 @@ describe('CartItem', () => {
 
     expect(cartItem.toJSON()).toEqual({
       id: '1',
-      product: new Product('1', '상품', 1000, '/image.png'),
+      productId: '1',
       quantity: 1,
     });
   });

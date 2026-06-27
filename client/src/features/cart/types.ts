@@ -1,12 +1,17 @@
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string;
-}
+import { z } from "../../shared/schema";
 
-export interface CartItem {
-  id: string;
-  product: Product;
-  quantity: number;
-}
+export const productSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number(),
+  imageUrl: z.string(),
+});
+
+export const cartItemSchema = z.object({
+  id: z.string(),
+  product: productSchema,
+  quantity: z.number(),
+});
+
+export type Product = z.infer<typeof productSchema>;
+export type CartItem = z.infer<typeof cartItemSchema>;

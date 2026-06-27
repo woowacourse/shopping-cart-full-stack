@@ -23,6 +23,8 @@ const config: Config = {
     ],
   },
   moduleNameMapper: {
+    // NodeNext 스타일 .js import(서버와 공유하는 schema 파일)를 .ts로 해석
+    '^(\\.{1,2}/.*)\\.js$': '$1',
     '\\.(css|scss|sass)$': 'identity-obj-proxy',
   },
   // MSW v2 가 의존하는 ESM 패키지들을 swc 로 트랜스폼

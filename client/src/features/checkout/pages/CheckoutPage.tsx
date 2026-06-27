@@ -1,9 +1,14 @@
 import styled from "@emotion/styled";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "../../../shared/components/Button";
 import { colors } from "../../../shared/styles/tokens";
 import type { CheckoutState } from "../types";
+import { ErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { ErrorFallback } from "../../../shared/components/ErrorFallback";
+import { queryStore } from "../../../shared/queries";
+import { COUPONS_QUERY_KEY } from "../hooks/useCouponsQuery";
+import { CartSkeleton } from "../../../shared/components/CartSkeleton";
+import { CheckoutSection } from "./CheckoutSection";
 
 export function CheckoutPage() {
   const { state } = useLocation() as { state: CheckoutState | null };
@@ -15,26 +20,16 @@ export function CheckoutPage() {
 
   if (!state) return null;
 
-  const { kindsCount, totalQuantity, total } = state;
-
   return (
     <Page>
-      <Title>주문 확인</Title>
-
-      <Description>
-        총 {kindsCount}종류의 상품 {totalQuantity}개를 주문합니다.
-        <br />
-        최종 결제 금액을 확인해 주세요.
-      </Description>
-
-      <TotalSection>
-        <TotalLabel>총 결제 금액</TotalLabel>
-        <TotalAmount>{total.toLocaleString()}원</TotalAmount>
-      </TotalSection>
-
-      <Button variant="primary" fullWidth disabled>
-        결제하기
-      </Button>
+      <ErrorBoundary
+        fallback={ErrorFallback}
+        onReset={() => queryStore.invalidate(COUPONS_QUERY_KEY)}
+      >
+        <Suspense fallback={<CartSkeleton />}>
+          <CheckoutSection selectedItemIds={state.selectedItemIds} />
+        </Suspense>
+      </ErrorBoundary>
     </Page>
   );
 }
@@ -46,43 +41,4 @@ const Page = styled.section`
   min-height: calc(100vh - 64px);
   background: ${colors.background};
   box-sizing: border-box;
-`;
-
-const Title = styled.h1`
-  font-family: "Noto Sans KR", sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  color: ${colors.textPrimary};
-  text-align: center;
-  margin: 0 0 16px;
-`;
-
-const Description = styled.p`
-  text-align: center;
-  font-size: 12px;
-  font-weight: 500;
-  color: ${colors.textPrimary};
-  margin: 0 0 32px;
-  line-height: 1.5;
-`;
-
-const TotalSection = styled.section`
-  padding-top: 16px;
-  border-top: 1px solid ${colors.divider};
-  text-align: center;
-  margin-bottom: 24px;
-`;
-
-const TotalLabel = styled.div`
-  font-size: 16px;
-  font-weight: 700;
-  color: ${colors.textPrimary};
-  margin-bottom: 8px;
-`;
-
-const TotalAmount = styled.div`
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: ${colors.textPrimary};
 `;

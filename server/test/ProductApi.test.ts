@@ -3,8 +3,7 @@ import request from "supertest";
 
 const loadApp = async () => {
   jest.resetModules();
-  jest.unstable_unmockModule("../src/services/ProductService.js");
-  jest.unstable_unmockModule("../src/services/CartService.js");
+  jest.unstable_unmockModule("../src/container.js");
 
   const { default: app } = await import("../src/app.js");
 
@@ -13,14 +12,24 @@ const loadApp = async () => {
 
 const loadAppWithProductServiceError = async () => {
   jest.resetModules();
-  jest.unstable_unmockModule("../src/services/CartService.js");
-  jest.unstable_mockModule("../src/services/ProductService.js", () => ({
+  jest.unstable_mockModule("../src/container.js", () => ({
     productService: {
       getProducts() {
         throw new Error("product service error");
       },
       createProduct: jest.fn(),
       deleteProduct: jest.fn(),
+    },
+    cartService: {
+      getCartItems: jest.fn(),
+      updateQuantity: jest.fn(),
+      deleteCartItem: jest.fn(),
+    },
+    couponService: {
+      getCoupons: jest.fn(),
+    },
+    orderService: {
+      previewOrder: jest.fn(),
     },
   }));
 
