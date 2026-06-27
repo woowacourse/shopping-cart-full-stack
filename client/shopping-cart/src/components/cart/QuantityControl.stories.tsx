@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import QuantityControl from './QuantityControl';
 
 const meta: Meta<typeof QuantityControl> = {
+  title: 'Cart/QuantityControl',
   component: QuantityControl,
   argTypes: {
     onIncrease: { action: 'increased' },

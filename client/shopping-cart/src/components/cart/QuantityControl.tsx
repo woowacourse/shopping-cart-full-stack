@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import minusIcon from '../../assets/minus_icon.svg';
 import plusIcon from '../../assets/plus_icon.svg';
-import OutlineButton from '../buttons/OutlineButton';
+import IconButton from '../common/buttons/IconButton';
 
 type Props = {
   quantity: number;
@@ -18,9 +18,9 @@ const QuantityControl = ({ quantity, onIncrease, onDecrease }: Props) => {
         gap: 4px;
       `}
     >
-      <OutlineButton onClick={onDecrease} disabled={quantity <= 1}>
+      <IconButton onClick={onDecrease} disabled={quantity <= 1}>
         <img src={minusIcon} />
-      </OutlineButton>
+      </IconButton>
       <p
         css={css`
           display: flex;
@@ -31,9 +31,9 @@ const QuantityControl = ({ quantity, onIncrease, onDecrease }: Props) => {
       >
         {quantity}
       </p>
-      <OutlineButton onClick={onIncrease} disabled={quantity >= 99}>
+      <IconButton onClick={onIncrease} disabled={quantity >= 99}>
         <img src={plusIcon} />
-      </OutlineButton>
+      </IconButton>
     </div>
   );
 };

@@ -1,49 +1,31 @@
 import { css } from '@emotion/react';
 import type { CartItem } from '../../types';
-import OutlineButton from '../buttons/OutlineButton';
-import { CheckIcon } from '../icons/CheckIcon';
-import CartItemRaw from './CartItemRaw';
-
+import Checkbox from '../common/buttons/Checkbox';
+import DeleteButton from '../common/buttons/DeleteButton';
+import ProductRaw from '../common/ProductRaw';
+import QuantityControl from './QuantityControl';
 type Props = {
   cartItems: CartItem[];
-  handleSelect: (id: string) => void;
-  selectItems: string[];
+  handleSelect: (id: string, nextCheckStatus: boolean) => void;
   onChangeQuantity: (cartItemId: string, quantity: number) => Promise<void>;
   onDelete: (cartItemId: string) => Promise<void>;
 };
 
-const CartItemList = ({
-  cartItems,
-  handleSelect,
-  selectItems,
-  onChangeQuantity,
-  onDelete,
-}: Props) => {
+const CartItemList = ({ cartItems, handleSelect, onChangeQuantity, onDelete }: Props) => {
   return (
     <ul
       css={css`
         display: flex;
         flex-direction: column;
-        flex: 1;
-        min-height: 0;
         list-style: none;
         margin: 0;
         padding: 0;
-        overflow-y: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-
-        &::-webkit-scrollbar {
-          display: none;
-        }
       `}
     >
       {cartItems.map((cartItem) => {
-        const isSelected = selectItems.includes(cartItem.cartItemId);
-
         return (
           <li
-            key={cartItem.cartItemId}
+            key={cartItem.product.id}
             css={css`
               display: flex;
               flex-direction: column;
@@ -61,31 +43,25 @@ const CartItemList = ({
                 width: 100%;
               `}
             >
-              <OutlineButton
-                isActive={isSelected}
-                onClick={() => handleSelect(cartItem.cartItemId)}
-              >
-                <CheckIcon isActive={isSelected} />
-              </OutlineButton>
+              <Checkbox
+                isSelected={cartItem.checkStatus}
+                onToggle={() => handleSelect(cartItem.product.id, !cartItem.checkStatus)}
+              />
 
-              <OutlineButton variant="text" onClick={() => onDelete(cartItem.cartItemId)}>
-                <p
-                  css={css`
-                    font: var(--text-label);
-                  `}
-                >
-                  삭제
-                </p>
-              </OutlineButton>
+              <DeleteButton onClick={() => onDelete(cartItem.product.id)} />
             </div>
 
-            <CartItemRaw
-              image={cartItem.product.image}
+            <ProductRaw
+              image={cartItem.product.imgUrl}
               name={cartItem.product.name}
               price={cartItem.product.price}
-              quantity={cartItem.quantity}
-              onChangeQuantity={(quantity) => onChangeQuantity(cartItem.cartItemId, quantity)}
-            />
+            >
+              <QuantityControl
+                quantity={cartItem.quantity}
+                onDecrease={() => onChangeQuantity(cartItem.product.id, cartItem.quantity - 1)}
+                onIncrease={() => onChangeQuantity(cartItem.product.id, cartItem.quantity + 1)}
+              />
+            </ProductRaw>
           </li>
         );
       })}

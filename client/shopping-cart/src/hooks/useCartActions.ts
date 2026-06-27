@@ -1,48 +1,54 @@
-import type { CartItem, UpdateCartQuantity, DeleteCartItem } from '../types';
+import {
+  deleteCartItem,
+  getCart,
+  updateCartQuantity,
+  updateCartSelect,
+  updateCartSelectAll,
+} from '../apis/cartApi';
+import type { Cart } from '../types';
 
-type CartActionsParams = {
-  cartItems: CartItem[];
-  setCartItems: (updater: (prev: CartItem[]) => CartItem[]) => void;
-  removeSelectItem: (id: string) => void;
-  updateQuantity: UpdateCartQuantity;
-  deleteItem: DeleteCartItem;
-};
-
-const useCartActions = ({
-  cartItems,
-  setCartItems,
-  removeSelectItem,
-  updateQuantity,
-  deleteItem,
-}: CartActionsParams) => {
-  const handleQuantityChange = async (cartItemId: string, quantity: number) => {
-    const itemName = cartItems.find((item) => item.cartItemId === cartItemId)?.product.name;
-
+const useCartActions = (setCart: (cart: Cart) => void) => {
+  const handleSelect = async (productId: string, nextCheckStatus: boolean) => {
     try {
-      const updatedCartItem = await updateQuantity(cartItemId, quantity);
-      setCartItems((prev) =>
-        prev.map((item) => (item.cartItemId === cartItemId ? updatedCartItem : item)),
-      );
+      await updateCartSelect(productId, nextCheckStatus);
+      setCart(await getCart());
     } catch (error) {
       console.error(error);
-      alert(`${itemName} 수량 변경에 실패했습니다.`);
+      alert('상품 선택에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
-  const handleDeleteItem = async (cartItemId: string) => {
-    if (!window.confirm('장바구니에서 삭제하시겠습니까?')) return;
-    const itemName = cartItems.find((item) => item.cartItemId === cartItemId)?.product.name;
+  const handleSelectAll = async (nextIsAllSelected: boolean) => {
     try {
-      await deleteItem(cartItemId);
-      setCartItems((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
-      removeSelectItem(cartItemId);
+      await updateCartSelectAll(nextIsAllSelected);
+      setCart(await getCart());
     } catch (error) {
       console.error(error);
-      alert(`${itemName} 삭제에 실패했습니다.`);
+      alert('전체 선택에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
-  return { handleQuantityChange, handleDeleteItem };
+  const handleDelete = async (productId: string) => {
+    try {
+      await deleteCartItem(productId);
+      setCart(await getCart());
+    } catch (error) {
+      console.error(error);
+      alert('상품 삭제에 실패했습니다. 다시 시도해 주세요.');
+    }
+  };
+
+  const handleQuantity = async (productId: string, quantity: number) => {
+    try {
+      await updateCartQuantity(productId, quantity);
+      setCart(await getCart());
+    } catch (error) {
+      console.error(error);
+      alert('수량 변경에 실패했습니다. 다시 시도해 주세요.');
+    }
+  };
+
+  return { handleSelect, handleSelectAll, handleDelete, handleQuantity };
 };
 
 export default useCartActions;

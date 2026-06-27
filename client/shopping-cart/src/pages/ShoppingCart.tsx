@@ -1,32 +1,20 @@
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router';
-import { deleteCartItem, getCartList, updateCartQuantity } from '../apis/cartApi';
-import PrimaryButton from '../components/buttons/PrimaryButton';
-import CartContent from '../components/cart/CartContent';
-import CartSection from '../components/cart/CartSection';
-import OrderSummary from '../components/cart/OrderSummary';
-import AppHeader from '../components/layout/AppHeader';
-import useCartActions from '../hooks/useCartActions';
-import useCartItems from '../hooks/useCartItems';
-import useSelectItems from '../hooks/useSelectItems';
-import { countCartItemTypes, calcOrderAmount, isFreeShipping } from '../utils/cart';
 
+import PrimaryButton from '../components/common/buttons/PrimaryButton';
+import CartBody from '../components/cart/CartBody';
+import ProductRawSkeleton from '../components/common/ProductRawSkeleton';
+import AsyncContent from '../components/common/AsyncContent';
+import AppHeader from '../components/layout/AppHeader';
+
+import useCart from '../hooks/useCart';
+import { createOrderCheck } from '../apis/orderCheckApi';
+import { getCart } from '../apis/cartApi';
+import useCartActions from '../hooks/useCartActions';
 const ShoppingCart = () => {
   const navigate = useNavigate();
-  const { cartItems, setCartItems, isLoading, isError } = useCartItems(getCartList);
-  const { selectItems, isAllSelect, handleToggleSelect, handleSelectAll, removeSelectItem } =
-    useSelectItems(cartItems);
-  const { handleQuantityChange, handleDeleteItem } = useCartActions({
-    cartItems,
-    setCartItems,
-    removeSelectItem,
-    updateQuantity: updateCartQuantity,
-    deleteItem: deleteCartItem,
-  });
-
-  const purchasePrice = calcOrderAmount(cartItems, selectItems);
-  const shippingFee = isFreeShipping(purchasePrice) && selectItems.length >= 1 ? 3000 : 0;
-  const totalPurchasePrice = purchasePrice + shippingFee;
+  const { cart, setCart, isLoading, isError } = useCart(getCart);
+  const { handleSelect, handleSelectAll, handleDelete, handleQuantity } = useCartActions(setCart);
 
   return (
     <>
@@ -50,53 +38,45 @@ const ShoppingCart = () => {
           overflow-y: auto;
         `}
       >
-        <section
-          css={css`
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-          `}
+        <AsyncContent
+          isLoading={isLoading}
+          isError={isError}
+          loadingFallback={
+            <ul
+              css={css`
+                list-style: none;
+                margin: 0;
+                padding: 0;
+              `}
+            >
+              {Array.from({ length: 3 }).map((_, i) => (
+                <ProductRawSkeleton key={i} />
+              ))}
+            </ul>
+          }
+          errorFallback={<p>장바구니를 불러오는 데 실패했습니다.</p>}
         >
-          <h2
-            css={css`
-              font: var(--text-heading);
-            `}
-          >
-            장바구니
-          </h2>
-          {cartItems.length !== 0 && (
-            <p>현재 {countCartItemTypes(cartItems)} 종류의 상품이 담겨있습니다.</p>
-          )}
-        </section>
-
-        <CartContent cartItems={cartItems} isLoading={isLoading} isError={isError}>
-          <CartSection
-            cartItems={cartItems}
-            selectItems={selectItems}
-            isAllSelect={isAllSelect}
-            onSelectAll={handleSelectAll}
-            onSelect={handleToggleSelect}
-            onChangeQuantity={handleQuantityChange}
-            onDelete={handleDeleteItem}
-          />
-          <OrderSummary
-            purchasePrice={purchasePrice}
-            shippingFee={shippingFee}
-            totalPurchasePrice={totalPurchasePrice}
-          />
-        </CartContent>
+          {cart &&
+            (cart.cartItems.length === 0 ? (
+              <p>장바구니에 담은 상품이 없습니다.</p>
+            ) : (
+              <CartBody
+                cart={cart}
+                onSelect={handleSelect}
+                onSelectAll={handleSelectAll}
+                onDelete={handleDelete}
+                onChangeQuantity={handleQuantity}
+              />
+            ))}
+        </AsyncContent>
       </main>
 
       <PrimaryButton
         text="주문 확인"
-        isDisabled={selectItems.length === 0}
-        onClick={() => {
-          navigate('/order', {
-            state: {
-              selectedItems: cartItems.filter((item) => selectItems.includes(item.cartItemId)),
-              totalPurchasePrice,
-            },
-          });
+        isDisabled={!cart || !cart.cartItems.some((item) => item.checkStatus)}
+        onClick={async () => {
+          await createOrderCheck();
+          navigate('/order-check');
         }}
       />
     </>

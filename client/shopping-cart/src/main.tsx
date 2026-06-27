@@ -9,7 +9,10 @@ import App from './App.tsx';
 async function enableMocking() {
   if (import.meta.env.DEV) {
     const { worker } = await import('./mocks/browser.ts');
-    return worker.start({ onUnhandledRequest: 'bypass' });
+    return worker.start({
+      onUnhandledRequest: 'bypass',
+      serviceWorker: { url: '/shopping-cart-full-stack/mockServiceWorker.js' },
+    });
   }
 }
 
