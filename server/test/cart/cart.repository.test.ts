@@ -3,6 +3,7 @@ import InMemoryCartRepository from "../../src/features/cart/cart.repository.js";
 
 const testDB = (): InMemoryDB => ({
   PRODUCT_TABLE: [],
+  COUPON_TABLE: [],
   CART_TABLE: [],
 });
 

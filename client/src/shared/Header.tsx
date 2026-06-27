@@ -1,5 +1,16 @@
 import styles from "./Header.module.css";
 
-export const Header = () => {
-  return <div className={styles.header}>SHOP</div>;
+interface HeaderProps {
+  logo?: string;
+  onClick?: () => void;
+}
+
+export const Header = ({ onClick, logo }: HeaderProps) => {
+  return (
+    <div className={styles.header}>
+      <button type="button" className={styles.logo} onClick={onClick}>
+        {logo}
+      </button>
+    </div>
+  );
 };

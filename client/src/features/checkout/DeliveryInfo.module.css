@@ -1,0 +1,17 @@
+.delivery {
+  padding: 0 24px;
+  margin: 16px 0;
+}
+
+.deliveryTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.deliveryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}

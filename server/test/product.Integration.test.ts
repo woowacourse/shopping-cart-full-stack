@@ -8,9 +8,13 @@ import ProductController from "../src/features/product/product.controller.js";
 import InMemoryCartRepository from "../src/features/cart/cart.repository.js";
 import CartService from "../src/features/cart/cart.service.js";
 import CartController from "../src/features/cart/cart.controller.js";
+import InMemoryCouponRepository from "../src/features/coupon/coupon.repository.js";
+import CheckoutService from "../src/features/checkout/checkout.service.js";
+import CheckoutController from "../src/features/checkout/checkout.controller.js";
 
 const testDB = (): InMemoryDB => ({
   PRODUCT_TABLE: [],
+  COUPON_TABLE: [],
   CART_TABLE: [],
 });
 
@@ -39,7 +43,11 @@ const createTestApp = (testDb: InMemoryDB) => {
 
   const cartController = new CartController(cartService);
 
-  return createApp({ productController, cartController });
+  const couponRepository = new InMemoryCouponRepository(testDb);
+  const checkoutService = new CheckoutService(cartService, couponRepository);
+  const checkoutController = new CheckoutController(checkoutService);
+
+  return createApp({ productController, cartController, checkoutController });
 };
 
 describe("Products API", () => {

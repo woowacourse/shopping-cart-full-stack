@@ -54,8 +54,7 @@
       message: null,
       apply: true,
     },
-    discount_rate: null,
-    discount_fixed: 5000,
+    discount: { type: "FIXED", amount: 5000 },
   },
   {
     id: "BOGO",
@@ -67,8 +66,7 @@
       message: null,
       apply: false,
     },
-    discount_rate: null,
-    discount_fixed: 0,
+    discount: { type: "FIXED", amount: 0 },
   },
   {
     id: "FREESHIPPING",
@@ -80,8 +78,7 @@
       message: null,
       apply: false,
     },
-    discount_rate: null,
-    discount_fixed: 3000,
+    discount: { type: "FIXED", amount: 3000 },
   },
   {
     id: "MIRACLESALE",
@@ -93,11 +90,11 @@
       message: "현재 사용 가능 시간이 아닙니다",
       apply: false,
     },
-    discount_rate: 30,
-    discount_fixed: null,
+    discount: { type: "RATE", rate: 30 },
   },
   ],
   best_coupons: ["FIXED5000","FREESHIPPING"],
+  gifts: [{ product_id: "456", quantity: 1 }],
 }
 ```
 
@@ -106,8 +103,6 @@ STATUS: 200
 클라이언트는 `apply` 필드와 비교하여 적용됐는지 확인 할 수 있다
 
 ## `POST` `/api/payment/` - 영수증을 생성한다.
-
-### Body
 
 ### Body
 

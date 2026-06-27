@@ -8,6 +8,9 @@ import ProductController from "../src/features/product/product.controller.js";
 import InMemoryCartRepository from "../src/features/cart/cart.repository.js";
 import CartService from "../src/features/cart/cart.service.js";
 import CartController from "../src/features/cart/cart.controller.js";
+import InMemoryCouponRepository from "../src/features/coupon/coupon.repository.js";
+import CheckoutService from "../src/features/checkout/checkout.service.js";
+import CheckoutController from "../src/features/checkout/checkout.controller.js";
 
 const product_1 = { id: 1, name: "상품이름A", imgUrl: "/src.com", price: 35000 };
 const product_2 = { id: 2, name: "상품이름B", imgUrl: "/src.com", price: 25000 };
@@ -24,13 +27,18 @@ const createTestApp = (testDb: InMemoryDB) => {
 
   const cartController = new CartController(cartService);
 
-  return createApp({ productController, cartController });
+  const couponRepository = new InMemoryCouponRepository(testDb);
+  const checkoutService = new CheckoutService(cartService, couponRepository);
+  const checkoutController = new CheckoutController(checkoutService);
+
+  return createApp({ productController, cartController, checkoutController });
 };
 
 describe("GET /cart", () => {
   it("Success[status:200] 장바구니안의 상품 정보들을 모두 가져온다.", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1, product_2],
+      COUPON_TABLE: [],
       CART_TABLE: [
         { product_id: 1, quantity: 2 },
         { product_id: 2, quantity: 2 },
@@ -67,6 +75,7 @@ describe("PATCH /cart/:productId", () => {
   it("Success[status:200] 장바구니에서 해당 상품의 수량을 변경한다.", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1, product_2],
+      COUPON_TABLE: [],
       CART_TABLE: [
         { product_id: 1, quantity: 2 },
         { product_id: 2, quantity: 2 },
@@ -93,6 +102,7 @@ describe("PATCH /cart/:productId", () => {
   it("Error[Status:400] 변경 수량이 유효하지 않을 때", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1, product_2],
+      COUPON_TABLE: [],
       CART_TABLE: [
         { product_id: 1, quantity: 2 },
         { product_id: 2, quantity: 2 },
@@ -115,6 +125,7 @@ describe("PATCH /cart/:productId", () => {
   it("Error[Status:400] 변경 수량이 0일 때 에러 반환", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1, product_2],
+      COUPON_TABLE: [],
       CART_TABLE: [
         { product_id: 1, quantity: 2 },
       ],
@@ -136,6 +147,7 @@ describe("PATCH /cart/:productId", () => {
   it("Error[Status:400] 변경 수량이 100일 때 에러 반환", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1, product_2],
+      COUPON_TABLE: [],
       CART_TABLE: [
         { product_id: 1, quantity: 2 },
       ],
@@ -157,6 +169,7 @@ describe("PATCH /cart/:productId", () => {
   it("Error[Status:404] 장바구니에 해당 상품이 없을 때", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1, product_2],
+      COUPON_TABLE: [],
       CART_TABLE: [
         { product_id: 1, quantity: 2 },
         { product_id: 2, quantity: 2 },
@@ -181,6 +194,7 @@ describe("DELETE /cart/1", () => {
   it("Success[Status:204] 장바구니의 특정 상품을 삭제한다", async () => {
     const testDb: InMemoryDB = {
       PRODUCT_TABLE: [product_1],
+      COUPON_TABLE: [],
       CART_TABLE: [{ product_id: 1, quantity: 2 }],
     };
 

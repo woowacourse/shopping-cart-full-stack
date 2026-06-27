@@ -6,6 +6,8 @@ import { getCartHandler } from "./cart/get-cart";
 import { patchCartHandler } from "./cart/patch-cart";
 import { deleteCartHandler } from "./cart/delete-cart";
 
+import { postCheckoutHandler, postPaymentHandler } from "./checkout";
+
 export const handlers = [
   getProductsHandler,
   postProductHandler,
@@ -14,4 +16,7 @@ export const handlers = [
   getCartHandler,
   patchCartHandler,
   deleteCartHandler,
+
+  postCheckoutHandler,
+  postPaymentHandler,
 ];

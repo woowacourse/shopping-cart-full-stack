@@ -27,11 +27,6 @@ export const CartSection = ({
 
   return (
     <div className={styles.content}>
-      <div>
-        <h2 className={styles.titleText}>장바구니</h2>
-        <p className={styles.subtitle}>현재 {totalCount}종류의 상품이 담겨있습니다.</p>
-      </div>
-
       <span className={styles.checkCount}>
         ({checks.length}/{totalCount})
       </span>
@@ -46,7 +41,11 @@ export const CartSection = ({
               onToggle={() => toggleSelect(id)}
               onDelete={() => handleDelete(id)}
             >
-              <CartItemComponent cartItem={cartItem} isMutating={isMutating} onQuantityChange={changeQuantity} />
+              <CartItemComponent
+                cartItem={cartItem}
+                isMutating={isMutating}
+                onQuantityChange={changeQuantity}
+              />
             </CheckListItem>
           );
         })}

@@ -4,6 +4,7 @@ import { VALID_PRODUCT_A } from "../mock-data/product.mock.js";
 
 const testDB = (): InMemoryDB => ({
   PRODUCT_TABLE: [],
+  COUPON_TABLE: [],
   CART_TABLE: [],
 });
 
