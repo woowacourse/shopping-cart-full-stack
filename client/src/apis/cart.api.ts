@@ -9,17 +9,11 @@ export class NetworkError extends Error {
   }
 }
 
-function createApiUrl(path: string) {
-  if (API_BASE_URL === "") return path;
-
-  return `${API_BASE_URL}${path}`;
-}
-
 export async function getCartItems(): Promise<CartItemsResponseDto> {
   let response: Response;
 
   try {
-    response = await fetch(createApiUrl("/cart"));
+    response = await fetch(`${API_BASE_URL}/cart`);
   } catch {
     throw new NetworkError();
   }
@@ -39,7 +33,7 @@ export async function updateCartItemQuantity(
   let response: Response;
 
   try {
-    response = await fetch(createApiUrl(`/cart/${id}`), {
+    response = await fetch(`${API_BASE_URL}/cart/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +54,7 @@ export async function deleteCartItem(id: number): Promise<void> {
   let response: Response;
 
   try {
-    response = await fetch(createApiUrl(`/cart/${id}`), {
+    response = await fetch(`${API_BASE_URL}/cart/${id}`, {
       method: "DELETE",
     });
   } catch {

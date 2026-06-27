@@ -11,6 +11,11 @@ export const Container = styled.button<{ isChecked: boolean }>`
   justify-content: center;
   cursor: pointer;
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
   > img {
     width: 18px;
     height: 14px;

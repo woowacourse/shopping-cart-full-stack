@@ -33,7 +33,6 @@ export default function useMutation() {
     } catch (error) {
       if (error instanceof Error) setMutationError(error);
       if (error instanceof NetworkError) await onNetworkError();
-      throw error;
     } finally {
       setMutationLoading(false);
     }

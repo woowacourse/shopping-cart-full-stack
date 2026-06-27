@@ -9,12 +9,14 @@ import {
 } from "react-router";
 import CartPage from "./pages/CartPage/CartPage.tsx";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage.tsx";
+import OrderCompletePage from "./pages/OrderCompletePage/OrderCompletePage.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index element={<CartPage />} />
       <Route path="checkout" element={<CheckoutPage />} />
+      <Route path="complete" element={<OrderCompletePage />} />
     </Route>,
   ),
 );

@@ -6,6 +6,28 @@ export const handlers = [
     return HttpResponse.json(cartItems);
   }),
 
+  http.post(/\/orders\/summary$/, async ({ request }) => {
+    const { selectedCartItemIds } = (await request.json()) as {
+      selectedCartItemIds: number[];
+    };
+    const orderItems = cartItems.filter((item) =>
+      selectedCartItemIds.includes(item.id),
+    );
+    const orderAmount = orderItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+    const shippingFee = orderAmount >= 100000 ? 0 : 3000;
+
+    return HttpResponse.json({
+      orderItems,
+      orderAmount,
+      couponDiscountAmount: 0,
+      shippingFee,
+      totalPaymentAmount: orderAmount + shippingFee,
+    });
+  }),
+
   http.patch(/\/cart\/\d+$/, async ({ request }) => {
     const id = Number(new URL(request.url).pathname.split("/").at(-1));
     const cartItem = cartItems.find((item) => item.id === id);

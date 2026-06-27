@@ -6,14 +6,14 @@ const products: Product[] = [
     name: "나이키",
     stock: 10,
     imageUrl: "https://picsum.photos/seed/laptop/160/160",
-    price: 300000,
+    price: 30000,
   },
   {
     id: 2,
     name: "아디다스",
     stock: 5,
     imageUrl: "https://picsum.photos/seed/camera/160/160",
-    price: 250000,
+    price: 25000,
   },
 ];
 

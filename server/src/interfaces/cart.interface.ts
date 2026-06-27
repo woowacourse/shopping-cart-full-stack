@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { updateCartItemRequestSchema } from "../schemas/cart.schema.js";
-import { Product } from "./product.interface.js";
+import type { Product } from "./product.interface.js";
 
 export type UpdateCartItemDto = z.infer<typeof updateCartItemRequestSchema>;
 

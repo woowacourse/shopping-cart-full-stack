@@ -388,7 +388,7 @@ describe("CartPage", () => {
       await userEvent.click(screen.getByRole("button", { name: "주문 확인" }));
 
       expect(
-        await screen.findByText("총 1종류의 상품 1개 주문합니다."),
+        await screen.findByText("총 1종류의 상품 1개를 주문합니다."),
       ).toBeInTheDocument();
       expect(screen.getByText("총 결제 금액")).toBeInTheDocument();
       expect(screen.getByText("63,000원")).toBeInTheDocument();

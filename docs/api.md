@@ -1,4 +1,4 @@
-# step3 API 명세서
+# step4 API 명세서
 
 ## 공통 규칙
 
@@ -14,7 +14,11 @@
 }
 ```
 
-## 1. 주문 확인 페이지 진입 시 (주문 요약 계산)
+## 1. 주문 요약 계산
+
+> 주문 확인 페이지 첫 진입 시 호출되며, 사용자의 행동에 따라 금액이 확정되어야 할 때(쿠폰 적용 및 산간지역 토글 시), 재호출됩니다.
+
+> 변경의 이유는 다르더라도 결국 한 묶음의 주문 옵션으로 생각했기 때문에, 묶어서 하나의 API로 구현하였습니다.
 
 ```http
 POST /orders/summary
@@ -24,16 +28,15 @@ POST /orders/summary
 
 ```json
 {
-  "userId": 1,
-  "selectedCartItemIds": ["10", "12"],
-  "selectedCouponIds": ["1", "3"],
+  "selectedCartItemIds": [10, 12],
+  "selectedCouponIds": [1, 3],
   "isRemoteArea": false
 }
 ```
 
 | 이름                  | 필수 여부 | 설명                                               |
 | --------------------- | --------- | -------------------------------------------------- |
-| `selectedCartItemIds` | 필수      | 선택된 장바구니 상품 id 배열 (1개 이상)            |
+| `selectedCartItemIds` | 필수      | 선택된 장바구니 상품 id 배열                       |
 | `selectedCouponIds`   | 필수      | 적용할 쿠폰 id 배열 (최대 2개, 없으면 쿠폰 미적용) |
 | `isRemoteArea`        | 필수      | 제주도·도서 산간 지역 체크 여부 (기본값 `false`)   |
 
@@ -43,6 +46,17 @@ POST /orders/summary
 
 ```json
 {
+  "orderItems": [
+    {
+      "id": 10,
+      "productId": 1,
+      "quantity": 2,
+      "name": "나이키",
+      "stock": 10,
+      "imageUrl": "https://picsum.photos/seed/laptop/160/160",
+      "price": 300000
+    }
+  ],
   "orderAmount": 10000,
   "couponDiscountAmount": 5000,
   "shippingFee": 3000,
@@ -50,12 +64,13 @@ POST /orders/summary
 }
 ```
 
-| 이름                   | 설명           |
-| ---------------------- | -------------- |
-| `orderAmount`          | 주문 금액      |
-| `couponDiscountAmount` | 쿠폰 할인 금액 |
-| `shippingFee`          | 배송비         |
-| `totalPaymentAmount`   | 총 결제 금액   |
+| 이름                   | 설명                      |
+| ---------------------- | ------------------------- |
+| `orderItems`           | 선택된 장바구니 상품 목록 |
+| `orderAmount`          | 주문 금액                 |
+| `couponDiscountAmount` | 쿠폰 할인 금액            |
+| `shippingFee`          | 배송비                    |
+| `totalPaymentAmount`   | 총 결제 금액              |
 
 ### Error
 
@@ -70,108 +85,77 @@ POST /orders/summary
 
 | 상태 코드         | 에러 코드               | 설명                                                        |
 | ----------------- | ----------------------- | ----------------------------------------------------------- |
-| `400 Bad Request` | `INVALID_CART_ITEM_IDS` | `selectedCartItemIds`가 없거나 빈 배열인 경우               |
+| `400 Bad Request` | `INVALID_REQUEST_BODY`  | 요청값이 없거나 형식에 맞지 않는 경우                       |
 | `404 Not Found`   | `CART_ITEM_NOT_FOUND`   | 해당 `cartItemId`의 장바구니 상품이 존재하지 않는 경우      |
 | `404 Not Found`   | `COUPON_NOT_FOUND`      | 해당 `couponId`의 쿠폰이 존재하지 않는 경우                 |
 | `400 Bad Request` | `EXCEEDS_COUPON_LIMIT`  | 적용하려는 쿠폰이 최대 적용 개수(2장)를 초과한 경우         |
 | `400 Bad Request` | `COUPON_NOT_APPLICABLE` | 만료·사용 완료·적용 조건 미달 등 적용할 수 없는 쿠폰인 경우 |
 
-## 2. 쿠폰 적용하기 클릭 시 (쿠폰 목록 조회)
+## 2. 쿠폰 목록 조회
 
 ```http
-GET /coupons?selectedCartItemIds=10,12
+POST /coupon
 ```
-
-> GET 요청은 body를 가질 수 없으므로, 선택된 장바구니 상품 id는 query string으로 전달한다.
 
 ### Request
 
-| 이름                  | 위치  | 필수 여부 | 설명                                     |
-| --------------------- | ----- | --------- | ---------------------------------------- |
-| `selectedCartItemIds` | query | 필수      | 선택된 장바구니 상품 id 배열 (쉼표 구분) |
+```json
+{
+  "selectedCartItemIds": [10, 12],
+  "isRemoteArea": false
+}
+```
+
+| 이름                  | 필수 여부 | 설명                                             |
+| --------------------- | --------- | ------------------------------------------------ |
+| `selectedCartItemIds` | 필수      | 선택된 장바구니 상품 id 배열                     |
+| `isRemoteArea`        | 필수      | 제주도·도서 산간 지역 체크 여부 (기본값 `false`) |
 
 ### Response
 
 `200 OK`
 
-보유한 쿠폰이 없으면 `coupons`는 빈 배열을 응답한다.
+사용 가능한 쿠폰이 없으면 `bestCombination`은 빈 배열을 응답한다.
 
 ```json
 {
-  "orderAmount": 100000,
-  "coupons": [
+  "bestCombination": [1, 3],
+  "totalPrice": 100000,
+  "couponResponses": [
     {
-      "couponId": "3465",
-      "couponName": "5,000원 할인 쿠폰",
-      "discountType": "정액",
-      "isApplicable": true,
-      "discountAmount": 5000
+      "id": 1,
+      "name": "5,000원 할인 쿠폰",
+      "description": ["만료일: 2027년 11월 30일", "최소 주문 금액: 100,000원"],
+      "discountType": "FIXED",
+      "isUsable": true,
+      "discountValue": 5000
     },
     {
-      "couponId": "3466",
-      "couponName": "30% 할인 쿠폰",
-      "discountType": "정률",
-      "isApplicable": true,
-      "discountAmount": 30000
+      "id": 3,
+      "name": "5만원 이상 구매 시 무료 배송 쿠폰",
+      "description": ["만료일: 2027년 11월 30일"],
+      "discountType": "SHIPPING",
+      "isUsable": true,
+      "discountValue": 3000
     }
   ]
 }
 ```
 
-| 이름             | 설명                                              |
-| ---------------- | ------------------------------------------------- |
-| `orderAmount`    | 선택된 상품 기준 전체 주문 금액                   |
-| `couponId`       | 쿠폰 식별 id                                      |
-| `couponName`     | 쿠폰 이름                                         |
-| `discountType`   | 할인 타입 (`정액` / `정률` / `무료배송` / `증정`) |
-| `isApplicable`   | 활성화(적용 가능) 여부                            |
-| `discountAmount` | 현재 주문 기준 할인 금액 (적용 불가 시 `0`)       |
+| 이름              | 설명                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| `bestCombination` | 최대 할인을 받을 수 있는 쿠폰 id 배열                        |
+| `totalPrice`      | 선택된 상품 기준 전체 주문 금액                              |
+| `id`              | 쿠폰 식별 id                                                 |
+| `name`            | 쿠폰 이름                                                    |
+| `description`     | 쿠폰 상세 정보 배열                                          |
+| `discountType`    | 할인 타입 (`FIXED` / `RATE` / `SHIPPING`)                    |
+| `isUsable`        | 현재 주문에서 쿠폰을 사용할 수 있는지 여부                   |
+| `discountValue`   | 정액 할인 금액, 할인율 또는 배송비 할인액 (사용 불가 시 `0`) |
 
 ### Error
 
-| 상태 코드         | 에러 코드               | 설명                                                     |
-| ----------------- | ----------------------- | -------------------------------------------------------- |
-| `400 Bad Request` | `INVALID_CART_ITEM_IDS` | `selectedCartItemIds`가 없거나 형식이 유효하지 않은 경우 |
-| `404 Not Found`   | `CART_ITEM_NOT_FOUND`   | 해당 `cartItemId`의 장바구니 상품이 존재하지 않는 경우   |
-
-## 3. 사용 쿠폰 유효기간 검증
-
-```http
-POST /coupons/validate
-```
-
-### Request
-
-```json
-{
-  "selectedCouponIds": ["1", "3"]
-}
-```
-
-| 이름                | 필수 여부 | 설명                           |
-| ------------------- | --------- | ------------------------------ |
-| `selectedCouponIds` | 필수      | 검증할 쿠폰 id 배열 (최대 2개) |
-
-### Response
-
-`204 No Content`
-
-모든 쿠폰이 유효하면 응답 본문 없이 성공을 반환한다.
-
-### Error
-
-`400 Bad Request` 또는 `404 Not Found`
-
-```json
-{
-  "code": "COUPON_EXPIRED",
-  "message": "유효기간이 지난 쿠폰입니다."
-}
-```
-
-| 상태 코드         | 에러 코드              | 설명                                                |
-| ----------------- | ---------------------- | --------------------------------------------------- |
-| `404 Not Found`   | `COUPON_NOT_FOUND`     | 해당 `couponId`의 쿠폰이 존재하지 않는 경우         |
-| `400 Bad Request` | `COUPON_EXPIRED`       | 쿠폰의 유효기간이 지난 경우                         |
-| `400 Bad Request` | `COUPON_ALREADY_USED`  | 이미 사용한 쿠폰인 경우                             |
-| `400 Bad Request` | `EXCEEDS_COUPON_LIMIT` | 검증하려는 쿠폰이 최대 적용 개수(2장)를 초과한 경우 |
+| 상태 코드         | 에러 코드              | 설명                                                   |
+| ----------------- | ---------------------- | ------------------------------------------------------ |
+| `400 Bad Request` | `INVALID_REQUEST_BODY` | 요청값이 없거나 형식에 맞지 않는 경우                  |
+| `404 Not Found`   | `CART_ITEM_NOT_FOUND`  | 해당 `cartItemId`의 장바구니 상품이 존재하지 않는 경우 |

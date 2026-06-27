@@ -1,6 +1,6 @@
 import useCartItems from "../../hooks/useCartItems";
-import CartItems from "../CartItems/CartItmes";
-import OrderSummary from "../OrderSummary/OrderSummary";
+import CartItems from "./CartItems/CartItmes";
+import OrderSummary from "./OrderSummary/OrderSummary";
 import { Container, Description } from "./Cart.styles";
 import type { UseCartDataReturn } from "../../hooks/useCartData.types";
 

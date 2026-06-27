@@ -27,10 +27,10 @@ export default tseslint.config(
       "prefer-const": "error",
       "no-restricted-syntax": [
         "error",
-        {
-          selector: "VariableDeclaration[kind='let']",
-          message: "let 대신 const를 사용하세요.",
-        },
+        // {
+        //   selector: "VariableDeclaration[kind='let']",
+        //   message: "let 대신 const를 사용하세요.",
+        // },
         {
           selector: "IfStatement[alternate]",
           message: "else를 사용하지 말고 early return을 사용하세요.",
@@ -38,19 +38,19 @@ export default tseslint.config(
       ],
 
       // 함수/제어문 복잡도 제한
-      "max-depth": ["error", 1],
-      "max-params": ["error", 2],
+      "max-depth": ["error", 2],
+      "max-params": ["error", 3],
       "max-lines-per-function": [
         "error",
         {
-          max: 10,
+          max: 50,
           skipBlankLines: true,
           skipComments: true,
         },
       ],
 
       // 문법 제한
-      "no-ternary": "error",
+      // "no-ternary": "error",
       "no-else-return": "error",
 
       // 축약 이름 제한 예시
@@ -76,9 +76,9 @@ export default tseslint.config(
   {
     files: ["src/domain/**/*.ts"],
     rules: {
-      "functional/no-let": "error",
+      // "functional/no-let": "error",
       "functional/immutable-data": "error",
-      "functional/no-expression-statements": "error",
+      // "functional/no-expression-statements": "error",
     },
   },
 

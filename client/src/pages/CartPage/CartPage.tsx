@@ -1,11 +1,11 @@
 import Cart from "../../components/Cart/Cart";
-import CartEmpty from "../../components/CartEmpty/CartEmpty";
-import CartError from "../../components/CartError/CartError";
-import CartLoading from "../../components/CartLoading/CartLoading";
+import CartEmpty from "../../components/Cart/CartEmpty/CartEmpty";
+import CartError from "../../components/Cart/CartError/CartError";
 import { Container, Title } from "./CartPage.styles";
 import useCartData from "../../hooks/useCartData";
-import CartUpdatingOverlay from "../../components/CartUpdatingOverlay/CartUpdatingOverlay";
+import UpdatingOverlay from "../../commons/UpdatingOverlay/UpdatingOverlay";
 import Toast from "../../commons/Toast/Toast";
+import CartLoading from "../../components/Cart/CartLoading/CartLoading";
 
 const CartPage = () => {
   const {
@@ -34,7 +34,7 @@ const CartPage = () => {
     <Container>
       <Title>장바구니</Title>
       {content}
-      {mutationLoading && <CartUpdatingOverlay />}
+      {mutationLoading && <UpdatingOverlay ariaLabel="장바구니 수정 중" />}
       {mutationError && <Toast message={mutationError.message} />}
     </Container>
   );

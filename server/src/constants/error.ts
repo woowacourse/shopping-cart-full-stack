@@ -74,6 +74,26 @@ export const CART_ERROR_RESPONSE = {
   },
 } as const;
 
+export const COUPON_ERROR_RESPONSE = {
+  COUPON_NOT_FOUND: {
+    status: 404,
+    code: "COUPON_NOT_FOUND",
+    message: "쿠폰을 찾을 수 없습니다.",
+  },
+
+  COUPON_NOT_APPLICABLE: {
+    status: 400,
+    code: "COUPON_NOT_APPLICABLE",
+    message: "선택한 쿠폰을 사용할 수 없습니다.",
+  },
+
+  EXCEEDS_COUPON_LIMIT: {
+    status: 400,
+    code: "EXCEEDS_COUPON_LIMIT",
+    message: "쿠폰 사용은 2장을 초과할 수 없습니다.",
+  },
+};
+
 export const COMMON_ERROR_RESPONSE = {
   INVALID_REQUEST_BODY: {
     status: 400,
@@ -96,4 +116,5 @@ export const ERROR_RESPONSE = {
   ...PRODUCT_ERROR_RESPONSE,
   ...CART_ERROR_RESPONSE,
   ...COMMON_ERROR_RESPONSE,
+  ...COUPON_ERROR_RESPONSE,
 } as const;

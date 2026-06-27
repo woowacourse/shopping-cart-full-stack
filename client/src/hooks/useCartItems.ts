@@ -1,10 +1,7 @@
 import { useState } from "react";
 import type { CartItemsResponseDto } from "../apis/cart.api.dto";
 import type { CartItemModel, UseCartItemsReturn } from "./useCartItems.types";
-import {
-  getUnselectedItems,
-  saveUnselectedItems,
-} from "../storage/cart.storage";
+import { getSelectedItems, saveSelectedItems } from "../storage/cart.storage";
 import type { UseCartDataReturn } from "./useCartData.types";
 
 interface Props {
@@ -16,12 +13,20 @@ const useCartItems = ({
   cartItemsList,
   deleteItem,
 }: Props): UseCartItemsReturn => {
-  const [unselectedItemIds, setUnselectedItemIds] =
-    useState(getUnselectedItems);
+  const [selectedItemIds, setSelectedItemIds] = useState<number[]>(() => {
+    const stored = getSelectedItems();
+    if (stored !== null) {
+      return stored;
+    }
+
+    const nextIds = cartItemsList.map((item) => item.id);
+    saveSelectedItems(nextIds);
+    return nextIds;
+  });
 
   const items: CartItemModel[] = cartItemsList.map((cartItem) => ({
     ...cartItem,
-    isSelected: !unselectedItemIds.includes(cartItem.id),
+    isSelected: selectedItemIds.includes(cartItem.id),
   }));
 
   const handleDeleteItem = async (id: number) => {
@@ -31,30 +36,31 @@ const useCartItems = ({
       return;
     }
 
-    setUnselectedItemIds((prevIds) => {
+    setSelectedItemIds((prevIds) => {
       const nextIds = prevIds.filter((itemId) => itemId !== id);
-      saveUnselectedItems(nextIds);
+
+      saveSelectedItems(nextIds);
       return nextIds;
     });
   };
 
   const toggleSelection = (id: number) => {
-    setUnselectedItemIds((prevIds) => {
+    setSelectedItemIds((prevIds) => {
       const nextIds = prevIds.includes(id)
         ? prevIds.filter((itemId) => itemId !== id)
         : [...prevIds, id];
 
-      saveUnselectedItems(nextIds);
+      saveSelectedItems(nextIds);
       return nextIds;
     });
   };
 
   const toggleAllSelection = () => {
-    setUnselectedItemIds(() => {
+    setSelectedItemIds(() => {
       const hasUnselectedItem = items.some((item) => !item.isSelected);
-      const nextIds = hasUnselectedItem ? [] : items.map((item) => item.id);
+      const nextIds = hasUnselectedItem ? items.map((item) => item.id) : [];
 
-      saveUnselectedItems(nextIds);
+      saveSelectedItems(nextIds);
       return nextIds;
     });
   };
