@@ -1,47 +1,40 @@
-import OrderAmountContent from "@components/common/entities/OrderAmountContent";
-import OrderConfirmContent from "@components/common/entities/OrderConfirmContent";
-import Button from "@components/common/shared/Button";
-import PositionBottom from "@components/common/shared/PositionBottom";
+import Text from "@components/common/shared/Text";
 import Spacing from "@components/common/shared/Spacing";
 import styled from "@emotion/styled";
-import useOrderConfirmNavigate from "@hooks/useOrderConfirmNavigate";
-
-function calcTotalQuantity(products: { quantity: number }[]) {
-  return products.reduce((acc, product) => acc + product.quantity, 0);
-}
+import Flex from "@components/common/shared/Flex";
+import useOrderCompleteNavigate from "@hooks/useOrderCompleteNavigate.ts";
 
 export default function OrderConfirmSection() {
-  const { getState } = useOrderConfirmNavigate();
-  const state = getState();
+  const { getState } = useOrderCompleteNavigate();
+  const state = getState() ?? { productCount: 0, totalQuantity: 0, totalAmount: 0 };
 
-  if (!state) {
-    return null;
-  }
-
-  const { products, totalAmount } = state;
+  const { productCount, totalQuantity, totalAmount } = state;
 
   return (
-    <ContentContainer>
-      <OrderConfirmContent
-        productCount={products.length}
-        totalQuantity={calcTotalQuantity(products)}
-      />
+    <Wrapper direction="column" align="center">
+      <Text typograph="heading1" as="h2">
+        결제 확인
+      </Text>
       <Spacing size={1.5} />
-      <OrderAmountContent totalAmount={totalAmount} />
-
-      <PositionBottom>
-        <Button fullWidth disabled>
-          결제하기
-        </Button>
-      </PositionBottom>
-    </ContentContainer>
+      <Description typograph="caption" as="p">
+        총 {productCount}종류의 상품 {totalQuantity}개를 주문했습니다.
+        <br />
+        최종 결제 금액을 확인해 주세요.
+      </Description>
+      <Spacing size={1.5} />
+      <Text typograph="heading2">총 결제 금액</Text>
+      <Spacing size={0.75} />
+      <Text typograph="heading1">{totalAmount.toLocaleString()}원</Text>
+      <Spacing size={7} />
+    </Wrapper>
   );
 }
 
-const ContentContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
+const Wrapper = styled(Flex)`
+  height: 100%;
+  margin: auto;
+`;
+
+const Description = styled(Text)`
+  text-align: center;
 `;

@@ -1,7 +1,8 @@
 import { useSyncExternalStore } from "react";
 import { queryStore } from "@/queries/instance";
+import type { QueryKey } from "./stores/queryStore";
 interface UseQueryParams<T> {
-  key: string;
+  key: QueryKey;
   queryFn: () => Promise<T>;
 }
 

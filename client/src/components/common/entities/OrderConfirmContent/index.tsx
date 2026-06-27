@@ -1,37 +1,24 @@
 import Spacing from "@components/common/shared/Spacing";
-import styled from "@emotion/styled";
+import Text from "@components/common/shared/Text";
 
 interface OrderConfirmContentProps {
   productCount: number;
   totalQuantity: number;
 }
 
-export default function OrderConfirmContent({
-  productCount,
-  totalQuantity,
-}: OrderConfirmContentProps) {
+export default function OrderConfirmContent({ productCount, totalQuantity }: OrderConfirmContentProps) {
   return (
     <>
-      <OrderConfirmHeading>주문 확인</OrderConfirmHeading>
+      <Text typograph="heading1" as="h2">
+        주문 확인
+      </Text>
       <Spacing size={1.5} />
-      <OrderConfirmDescription>
+      <Text typograph="caption" as="p">
         총 {productCount}종류의 상품 {totalQuantity}개를 주문합니다.
-      </OrderConfirmDescription>
-      <OrderConfirmDescription>
+      </Text>
+      <Text typograph="caption" as="p">
         최종 결제 금액을 확인해 주세요.
-      </OrderConfirmDescription>
+      </Text>
     </>
   );
 }
-
-const OrderConfirmHeading = styled.h2`
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 100%;
-`;
-
-const OrderConfirmDescription = styled.p`
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 150%;
-`;

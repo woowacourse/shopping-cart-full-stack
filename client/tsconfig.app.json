@@ -17,7 +17,8 @@
       "@apis/*": ["./src/apis/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@styles/*": ["./src/styles/*"],
-      "@assets/*": ["./src/assets/*"]
+      "@assets/*": ["./src/assets/*"],
+      "@contexts/*": ["./src/contexts/*"]
     },
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

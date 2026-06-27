@@ -1,17 +1,18 @@
-import type { Cart } from "@/types/cartProduct";
 import { useLocation, useNavigate } from "react-router";
+import { ROUTES } from "@constants/routes.ts";
 
 interface LocationState {
-  products: Cart[];
+  productCount: number;
+  totalQuantity: number;
   totalAmount: number;
 }
 
-export default function useOrderConfirmNavigate() {
+export default function useOrderCompleteNavigate() {
   const nav = useNavigate();
   const loc = useLocation();
 
   const navigate = (state: LocationState) => {
-    nav("/order-confirm", { state });
+    nav(ROUTES.ORDER_COMPLETE, { state, replace: true });
   };
 
   const getState = (): LocationState | null => {

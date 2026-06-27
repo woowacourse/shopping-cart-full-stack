@@ -7,7 +7,7 @@ const DEFAULT_CART_ID = 1;
 
 export default function useCartQuery() {
   return useSuspenseQuery({
-    key: CART_QUERY_KEY,
+    key: [CART_QUERY_KEY],
     queryFn: () => getCart(DEFAULT_CART_ID),
   });
 }

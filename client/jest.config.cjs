@@ -2,10 +2,7 @@ const path = require("node:path");
 
 // babel-jest 의 transform 옵션은 babel 로 그대로 전달되며 babel 은 jest 의 <rootDir>
 // 토큰을 해석하지 못한다 → 플러그인은 절대경로로 지정한다.
-const importMetaEnvPlugin = path.resolve(
-  __dirname,
-  "babel-plugin-import-meta-env.cjs",
-);
+const importMetaEnvPlugin = path.resolve(__dirname, "babel-plugin-import-meta-env.cjs");
 
 /** @type {import('jest').Config} */
 module.exports = {
@@ -37,6 +34,7 @@ module.exports = {
     "^@hooks/(.*)$": "<rootDir>/src/hooks/$1",
     "^@styles/(.*)$": "<rootDir>/src/styles/$1",
     "^@assets/(.*)$": "<rootDir>/src/assets/$1",
+    "^@contexts/(.*)$": "<rootDir>/src/contexts/$1",
   },
 
   transform: {

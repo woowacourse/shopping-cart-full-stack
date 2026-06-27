@@ -1,8 +1,8 @@
 import minus from "@assets/minus.svg";
 import plus from "@assets/plus.svg";
-import Spacing from "@components/common/shared/Spacing";
-import CheckBox from "@components/common/shared/CheckBox";
-import Divider from "@components/common/shared/Divider";
+import ProductImg from "@components/common/entities/ProductImg";
+import Flex from "@components/common/shared/Flex";
+import Text from "@components/common/shared/Text";
 import styled from "@emotion/styled";
 import { COLOR_PALETTE } from "@styles/colorPalette";
 
@@ -16,125 +16,44 @@ interface CartItemProps {
   image: string;
   price: number;
   quantity: number;
-  checked: boolean;
   quantityRange: QuantityRange;
-  onSelect: () => void;
-  onDelete: () => void;
   onChangeQuantity: (quantity: number) => void;
 }
 
-export default function CartItem({
-  name,
-  image,
-  price,
-  quantity,
-  checked,
-  onSelect,
-  onDelete,
-  quantityRange,
-  onChangeQuantity,
-}: CartItemProps) {
+export default function CartItem({ name, image, price, quantity, quantityRange, onChangeQuantity }: CartItemProps) {
   return (
-    <CartItemContainer>
-      <Divider />
-      <Spacing size={0.75} />
-      <ActionButtonWrapper>
-        <CheckBox checked={checked} onChange={onSelect} />
-        <DeleteButton onClick={onDelete}>삭제</DeleteButton>
-      </ActionButtonWrapper>
-      <Spacing size={0.75} />
-      <CartItemInfoContainer>
-        <CartItemImg src={image} alt={name} />
-        <CartItemInfoWrapper>
-          <ProductInfoWrapper>
-            <CartItemName>{name}</CartItemName>
-            <CartItemPrice>{price.toLocaleString()}원</CartItemPrice>
-          </ProductInfoWrapper>
-          <QuantityWrapper>
-            <QuantityButton
-              src={minus}
-              disabled={quantity <= quantityRange.min}
-              onClick={() => onChangeQuantity(Math.max(1, quantity - 1))}
-            />
-            <Quantity>{quantity}</Quantity>
-            <QuantityButton
-              src={plus}
-              disabled={quantity >= quantityRange.max}
-              onClick={() => onChangeQuantity(quantity + 1)}
-            />
-          </QuantityWrapper>
-        </CartItemInfoWrapper>
-      </CartItemInfoContainer>
-    </CartItemContainer>
+    <Flex gap={24} align="center">
+      <ProductImg src={image} alt={name} />
+      <Flex direction="column" gap={24}>
+        <Flex direction="column" gap={4}>
+          <Text typograph="caption" as="p">
+            {name}
+          </Text>
+          <Text typograph="heading1" as="p">
+            {price.toLocaleString()}원
+          </Text>
+        </Flex>
+        <Flex gap={8} align="center">
+          <QuantityButton
+            src={minus}
+            disabled={quantity <= quantityRange.min}
+            onClick={() => onChangeQuantity(Math.max(1, quantity - 1))}
+          />
+          <Quantity>
+            <Text typograph="caption" as="span">
+              {quantity}
+            </Text>
+          </Quantity>
+          <QuantityButton
+            src={plus}
+            disabled={quantity >= quantityRange.max}
+            onClick={() => onChangeQuantity(quantity + 1)}
+          />
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }
-
-const CartItemContainer = styled.li``;
-
-const ActionButtonWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const DeleteButton = styled.button`
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  border: 1px solid ${COLOR_PALETTE.border};
-  background-color: ${COLOR_PALETTE.white};
-  font-weight: 500;
-  font-size: 0.75rem;
-  line-height: 0.9375rem;
-
-  :active {
-    background-color: ${COLOR_PALETTE.border};
-  }
-`;
-
-const CartItemInfoContainer = styled.div`
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-`;
-
-const CartItemImg = styled.img`
-  width: 7rem;
-  aspect-ratio: 1/1;
-  border-radius: 0.5rem;
-  border: none;
-  background-color: ${COLOR_PALETTE["image-placeholder"]};
-	object-fit: cover;
-`;
-
-const CartItemInfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const ProductInfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-const CartItemName = styled.p`
-  font-weight: 500;
-  font-size: 0.75rem;
-  line-height: 0.9375rem;
-`;
-
-const CartItemPrice = styled.p`
-  font-weight: 700;
-  font-size: 1.5rem;
-  line-height: 100%;
-`;
-
-const QuantityWrapper = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-`;
 
 const QuantityButton = styled.button<{ src: string }>`
   width: 1.5rem;
@@ -158,9 +77,7 @@ const QuantityButton = styled.button<{ src: string }>`
   }
 `;
 
-const Quantity = styled.span`
-  font-weight: 500;
-  font-size: 0.75rem;
+const Quantity = styled.div`
   width: 1.5rem;
   text-align: center;
 `;

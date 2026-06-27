@@ -1,4 +1,5 @@
 import Divider from "@components/common/shared/Divider";
+import Flex from "@components/common/shared/Flex";
 import Skeleton from "@components/common/shared/Skeleton";
 import Spacing from "@components/common/shared/Spacing";
 import styled from "@emotion/styled";
@@ -9,18 +10,18 @@ interface CartListSkeletonProps {
 
 export default function CartListSkeleton({ count = 3 }: CartListSkeletonProps) {
   return (
-    <CartListSkeletonContainer data-testid="cart-list-skeleton">
-      <SelectAllWrapper>
+    <Flex direction="column" data-testid="cart-list-skeleton">
+      <Flex gap={8} align="center">
         <Skeleton width="1.25rem" height="1.25rem" borderRadius="0.25rem" />
         <Skeleton width="4rem" height="0.9375rem" />
-      </SelectAllWrapper>
+      </Flex>
       <Spacing size={1.25} />
-      <CartItemSkeletonList>
+      <Flex direction="column" gap={20}>
         {Array.from({ length: count }).map((_, index) => (
           <CartItemSkeleton key={index}>
             <Divider />
             <Spacing size={0.75} />
-            <ActionButtonWrapper>
+            <Flex justify="space-between" align="center">
               <Skeleton
                 width="1.25rem"
                 height="1.25rem"
@@ -31,16 +32,16 @@ export default function CartListSkeleton({ count = 3 }: CartListSkeletonProps) {
                 height="1.5rem"
                 borderRadius="0.25rem"
               />
-            </ActionButtonWrapper>
+            </Flex>
             <Spacing size={0.75} />
-            <CartItemInfoContainer>
+            <Flex gap={24} align="center">
               <Skeleton width="7rem" height="7rem" borderRadius="0.5rem" />
-              <CartItemInfoWrapper>
-                <ProductInfoWrapper>
+              <CartItemInfoWrapper direction="column" gap={24}>
+                <Flex direction="column" gap={4}>
                   <Skeleton width="60%" height="0.9375rem" />
                   <Skeleton width="40%" height="1.5rem" />
-                </ProductInfoWrapper>
-                <QuantityWrapper>
+                </Flex>
+                <Flex gap={8} align="center">
                   <Skeleton
                     width="1.5rem"
                     height="1.5rem"
@@ -52,62 +53,18 @@ export default function CartListSkeleton({ count = 3 }: CartListSkeletonProps) {
                     height="1.5rem"
                     borderRadius="0.5rem"
                   />
-                </QuantityWrapper>
+                </Flex>
               </CartItemInfoWrapper>
-            </CartItemInfoContainer>
+            </Flex>
           </CartItemSkeleton>
         ))}
-      </CartItemSkeletonList>
-    </CartListSkeletonContainer>
+      </Flex>
+    </Flex>
   );
 }
 
-const CartListSkeletonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SelectAllWrapper = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-`;
-
-const CartItemSkeletonList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-`;
-
 const CartItemSkeleton = styled.div``;
 
-const ActionButtonWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const CartItemInfoContainer = styled.div`
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-`;
-
-const CartItemInfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+const CartItemInfoWrapper = styled(Flex)`
   flex: 1;
-`;
-
-const ProductInfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-const QuantityWrapper = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
 `;

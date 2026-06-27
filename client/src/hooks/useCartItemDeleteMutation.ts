@@ -10,7 +10,7 @@ export default function useCartItemDeleteMutation() {
     mutateFn: (productId: number) =>
       deleteCartItem(DEFAULT_CART_ID, productId),
     onSuccess: () => {
-      queryStore.invalidate(CART_QUERY_KEY);
+      queryStore.invalidate([CART_QUERY_KEY]);
     },
   });
 }

@@ -1,5 +1,7 @@
 import Button from "@components/common/shared/Button";
+import Flex from "@components/common/shared/Flex";
 import Spacing from "@components/common/shared/Spacing";
+import Text from "@components/common/shared/Text";
 import styled from "@emotion/styled";
 import { COLOR_PALETTE } from "@styles/colorPalette";
 
@@ -24,12 +26,16 @@ export default function ErrorFallback({
   };
 
   return (
-    <ErrorFallbackContainer role="alert">
-      <ErrorIcon aria-hidden>!</ErrorIcon>
+    <ErrorFallbackContainer role="alert" direction="column" align="center" justify="center">
+      <ErrorIcon aria-hidden align="center" justify="center">!</ErrorIcon>
       <Spacing size={1.5} />
-      <ErrorTitle>{title}</ErrorTitle>
+      <Text typograph="heading2" as="h2">
+        {title}
+      </Text>
       <Spacing size={0.5} />
-      <ErrorDescription>{description}</ErrorDescription>
+      <Text typograph="body2" as="p" color="disabled">
+        {description}
+      </Text>
       <Spacing size={2} />
       <ButtonWrapper>
         <Button fullWidth onClick={handleRetry}>
@@ -40,20 +46,13 @@ export default function ErrorFallback({
   );
 }
 
-const ErrorFallbackContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+const ErrorFallbackContainer = styled(Flex)`
   flex: 1;
   padding: 4rem 1.5rem;
   text-align: center;
 `;
 
-const ErrorIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const ErrorIcon = styled(Flex)`
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
@@ -61,19 +60,6 @@ const ErrorIcon = styled.div`
   border: 2px solid ${COLOR_PALETTE.border};
   font-size: 1.5rem;
   font-weight: 700;
-`;
-
-const ErrorTitle = styled.h2`
-  font-weight: 700;
-  font-size: 1.25rem;
-  line-height: 1.5rem;
-`;
-
-const ErrorDescription = styled.p`
-  font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  color: ${COLOR_PALETTE.disabled};
 `;
 
 const ButtonWrapper = styled.div`
