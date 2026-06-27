@@ -1,8 +1,9 @@
-import type { ComponentPropsWithRef } from "react";
 import styled from "@emotion/styled";
-import { Stack } from "../../shared/components/layout/Stack.tsx";
-import { Row } from "../../shared/components/layout/Row.tsx";
+import type { ComponentPropsWithRef } from "react";
+
 import { Media } from "../../shared/components/layout/Media.tsx";
+import { Row } from "../../shared/components/layout/Row.tsx";
+import { Stack } from "../../shared/components/layout/Stack.tsx";
 import { formatPrice } from "../../shared/lib/format.ts";
 import type { SelectableCartItem } from "../types.ts";
 
@@ -26,11 +27,7 @@ export function CartItem({ item, onSelect, onQuantityChange, onRemove, ...rest }
               aria-label={`${item.name} 선택`}
             />
           }
-          right={
-            <button type="button" onClick={() => onRemove(item.id)}>
-              삭제
-            </button>
-          }
+          right={<button type="button" onClick={() => onRemove(item.id)}>삭제</button>}
         />
         <Media gap={12}>
           <img src={item.imageUrl} alt={item.name} width={80} height={80} />
@@ -38,13 +35,9 @@ export function CartItem({ item, onSelect, onQuantityChange, onRemove, ...rest }
             <span>{item.name}</span>
             <span>{formatPrice(item.price)}</span>
             <QuantityControl>
-              <button type="button" aria-label="수량 감소" onClick={() => onQuantityChange(item.id, item.quantity - 1)}>
-                -
-              </button>
+              <button type="button" aria-label="수량 감소" onClick={() => onQuantityChange(item.id, item.quantity - 1)}>-</button>
               <Quantity aria-label="수량">{item.quantity}</Quantity>
-              <button type="button" aria-label="수량 증가" onClick={() => onQuantityChange(item.id, item.quantity + 1)}>
-                +
-              </button>
+              <button type="button" aria-label="수량 증가" onClick={() => onQuantityChange(item.id, item.quantity + 1)}>+</button>
             </QuantityControl>
           </Stack>
         </Media>

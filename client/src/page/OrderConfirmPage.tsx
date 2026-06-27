@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { Stack } from "../shared/components/layout/Stack.tsx";
+import { useNavigate } from "react-router-dom";
+
+import { OrderConfirmContainer } from "../order/components/OrderConfirmContainer.tsx";
 import { Row } from "../shared/components/layout/Row.tsx";
-import { OrderConfirmContainer } from "../cart/components/OrderConfirmContainer.tsx";
+import { Stack } from "../shared/components/layout/Stack.tsx";
 
 export function OrderConfirmPage() {
   const navigate = useNavigate();
@@ -10,15 +11,9 @@ export function OrderConfirmPage() {
   return (
     <Page>
       <Stack gap={24}>
-        <Row
-          left={
-            <button type="button" aria-label="뒤로 가기" onClick={() => navigate(-1)}>
-              ←
-            </button>
-          }
-        />
+        <Row left={<button type="button" aria-label="뒤로 가기" onClick={() => navigate(-1)}>←</button>}/>
         <Title>주문 확인</Title>
-        <OrderConfirmContainer onBackToCart={() => navigate("/cart")} />
+        <OrderConfirmContainer onProceed={() => navigate("/order/complete")} />
       </Stack>
     </Page>
   );
